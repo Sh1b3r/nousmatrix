@@ -11,7 +11,21 @@ import AuditPanel from './components/AuditPanel';
 import TrophyModal from './components/TrophyModal';
 import { iconUrl, calculateCharacterAudit } from './utils/audit';
 import { getDetectedLanguage, translations } from './utils/i18n';
-import presetProfiles from './data/presetProfiles.json';
+
+let cachedPresets = null;
+async function getLocalizedPresets(lang) {
+  if (!cachedPresets) {
+    try {
+      const mod = await import('./data/presetProfiles.json');
+      cachedPresets = mod.default || mod;
+    } catch {
+      return null;
+    }
+  }
+  return (cachedPresets && cachedPresets[lang])
+    ? cachedPresets[lang]
+    : (cachedPresets?.en || cachedPresets?.ru || cachedPresets);
+}
 
 export default function App() {
   const [currentProfile, setCurrentProfile] = useState(null);
@@ -66,10 +80,6 @@ export default function App() {
     setIsLoading(true);
     setErrorMsg('');
 
-    const localizedPresets = (presetProfiles && presetProfiles[lang])
-      ? presetProfiles[lang]
-      : (presetProfiles?.en || presetProfiles?.ru || presetProfiles);
-
     try {
       let data = null;
       let lastStatus = 0;
@@ -93,8 +103,11 @@ export default function App() {
       }
 
       // 2. Check local presets (if offline or preset UID entered)
-      if (!data && localizedPresets && localizedPresets[uid]) {
-        data = localizedPresets[uid];
+      if (!data) {
+        const localizedPresets = await getLocalizedPresets(lang);
+        if (localizedPresets && localizedPresets[uid]) {
+          data = localizedPresets[uid];
+        }
       }
 
       // 3. Try direct Mihomo endpoint if not running through proxy
@@ -143,18 +156,23 @@ export default function App() {
     }
   };
 
-  const handleOpenDemo = () => {
-    const localizedPresets = (presetProfiles && presetProfiles[lang])
-      ? presetProfiles[lang]
-      : (presetProfiles?.en || presetProfiles?.ru || presetProfiles);
-    const demoUid = Object.keys(localizedPresets || {})[0] || '700142890';
-    if (localizedPresets && localizedPresets[demoUid]) {
-      setCurrentProfile(localizedPresets[demoUid]);
-      setActiveIndex(0);
-      setErrorMsg('');
-      window.history.replaceState({}, '', `?uid=${demoUid}`);
-    } else {
+  const handleOpenDemo = async () => {
+    setIsLoading(true);
+    try {
+      const localizedPresets = await getLocalizedPresets(lang);
+      const demoUid = Object.keys(localizedPresets || {})[0] || '700142890';
+      if (localizedPresets && localizedPresets[demoUid]) {
+        setCurrentProfile(localizedPresets[demoUid]);
+        setActiveIndex(0);
+        setErrorMsg('');
+        window.history.replaceState({}, '', `?uid=${demoUid}`);
+      } else {
+        fetchProfile('700142890');
+      }
+    } catch {
       fetchProfile('700142890');
+    } finally {
+      setIsLoading(false);
     }
   };
 
