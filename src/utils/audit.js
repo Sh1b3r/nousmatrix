@@ -158,7 +158,7 @@ export function calculateCharacterAudit(char, lang = 'en') {
         ? `Сбалансированное распределение статов (CV ${cv.toFixed(1)}, SPD ${spd.toFixed(1)}). Ограничением являются холостые роллы в Защиту/HP на сабстатах.`
         : `Balanced stat distribution (CV ${cv.toFixed(1)}, SPD ${spd.toFixed(1)}). Bottleneck comes from dead rolls into Flat HP/DEF.`;
       actions.push({
-        title: isRu ? "Оптимизация: Перекрафт слабейшего артефакта" : "Optimization: Recraft Weakest Relic",
+        title: isRu ? "Оптимизация: Замена худшего артефакта" : "Optimization: Replace Worst Relic",
         desc: isRu
           ? "Замените кусок с наибольшим числом мусорных роллов на реликвию с полезными атакующими статами."
           : "Replace the piece with the highest number of dead substats with offensive roll upgrades."

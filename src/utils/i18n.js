@@ -111,7 +111,7 @@ export const translations = {
     basePlusBonus: "BASE + BONUS = TOTAL",
     relicsTitle: "EQUIPPED RELICS (6 SLOTS)",
     verifiedData: "OFFICIAL LIVE DATA",
-    weakPiece: "WEAKEST LINK",
+    weakPiece: "WORST RELIC",
     goldRelic: "5★ GOLD",
     rollTag: (count) => `+${count} roll${count === 1 ? '' : 's'}`,
     setsTitle: "ACTIVE RELIC SETS",
@@ -188,7 +188,7 @@ export const translations = {
     basePlusBonus: "БАЗА + БОНУС = ИТОГО",
     relicsTitle: "ЭКИПИРОВАННЫЕ РЕЛИКВИИ (6 СЛОТОВ)",
     verifiedData: "ОФИЦИАЛЬНЫЕ ДАННЫЕ",
-    weakPiece: "СЛАБОЕ ЗВЕНО",
+    weakPiece: "ХУДШИЙ АРТЕФАКТ",
     goldRelic: "5★ РЕЛИКВИЯ",
     rollTag: (count) => {
       if (count === 1) return '+1 ролл';
