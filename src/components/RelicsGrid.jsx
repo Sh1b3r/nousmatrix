@@ -17,8 +17,9 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
 
     return (
       <div key={idx} className={`relic-item-card ${isWeak ? 'weak-piece' : ''}`}>
+        {/* On mobile: banner written on top */}
         {isWeak && (
-          <div className="relic-worst-banner-top">
+          <div className="relic-worst-banner-top mobile-only">
             <span className="worst-warn-icon">⚠️</span>
             <span>{t.weakPiece}</span>
           </div>
@@ -39,9 +40,22 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
               <span className="relic-piece-title" title={r.name}>{r.name}</span>
             </div>
           </div>
-          <span className="relic-cv-pill" style={{ color: 'var(--text-secondary)', background: 'none' }}>
-            {idx >= 4 ? (lang === 'ru' ? '5★ ОРНАМЕНТ' : '5★ ORNAMENT') : t.goldRelic}
-          </span>
+          {isWeak ? (
+            <>
+              {/* On desktop: badge on the right in top row */}
+              <span className="relic-cv-pill weak-pill desktop-only">
+                {t.weakPiece}
+              </span>
+              {/* On mobile: standard rarity tag on the right since worst is on top */}
+              <span className="relic-cv-pill mobile-only" style={{ color: 'var(--text-secondary)', background: 'none' }}>
+                {idx >= 4 ? (lang === 'ru' ? '5★ ОРНАМЕНТ' : '5★ ORNAMENT') : t.goldRelic}
+              </span>
+            </>
+          ) : (
+            <span className="relic-cv-pill" style={{ color: 'var(--text-secondary)', background: 'none' }}>
+              {idx >= 4 ? (lang === 'ru' ? '5★ ОРНАМЕНТ' : '5★ ORNAMENT') : t.goldRelic}
+            </span>
+          )}
         </div>
 
         {/* Main Stat */}

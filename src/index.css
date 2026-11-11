@@ -1045,27 +1045,7 @@ main {
 }
 
 .relic-worst-banner-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background: rgba(255, 60, 60, 0.18);
-  border: 1px solid rgba(255, 60, 60, 0.5);
-  color: #ff4d4f;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-  width: 100%;
-  white-space: nowrap;
-}
-
-.relic-worst-banner-top .worst-warn-icon {
-  font-size: 12px;
+  display: none;
 }
 
 .relic-top-row {
@@ -1143,6 +1123,23 @@ main {
   background: var(--surface-3);
   padding: 2px 6px;
   border-radius: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.relic-cv-pill.weak-pill {
+  color: #ff4d4f;
+  background: rgba(255, 60, 60, 0.15);
+  border: 1px solid rgba(255, 60, 60, 0.4);
+  white-space: nowrap;
+}
+
+.desktop-only {
+  display: inline-flex;
+}
+
+.mobile-only {
+  display: none !important;
 }
 
 .relic-main-stat-box {
@@ -1583,6 +1580,35 @@ main {
 
 @media (max-width: 768px) {
   /* Full 100% width on all cards and containers on mobile */
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: inline-flex !important;
+  }
+
+  .relic-worst-banner-top.mobile-only {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(255, 60, 60, 0.18);
+    border: 1px solid rgba(255, 60, 60, 0.5);
+    color: #ff4d4f;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
   .char-hero-card,
   .lightcone-box,
   .relic-item-card,
