@@ -53,24 +53,44 @@ export default function App() {
     window.history.replaceState({}, '', window.location.pathname);
   };
 
-  // Keyboard navigation on PC: Left Arrow (ArrowLeft) or Escape returns to UID input
+  // When profile is opened, blur any previous input and ensure window focus
+  useEffect(() => {
+    if (currentProfile) {
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
+      window.focus();
+    }
+  }, [currentProfile]);
+
+  // Robust PC keyboard navigation: Left Arrow (ArrowLeft) or Escape returns to UID input
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+      const isLeft = e.key === 'ArrowLeft' || e.code === 'ArrowLeft' || e.key === 'Left' || e.keyCode === 37;
+      const isEsc = e.key === 'Escape' || e.code === 'Escape' || e.key === 'Esc' || e.keyCode === 27;
+
+      if (!isLeft && !isEsc) return;
+
+      if (isTrophyOpen) {
+        setIsTrophyOpen(false);
+        e.preventDefault();
         return;
       }
 
-      if (e.key === 'ArrowLeft' || e.key === 'Escape') {
-        if (isTrophyOpen) {
-          setIsTrophyOpen(false);
-        } else if (currentProfile) {
+      if (currentProfile) {
+        const isTyping = document.activeElement &&
+          ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) &&
+          document.body.contains(document.activeElement);
+
+        if (!isTyping) {
+          e.preventDefault();
           handleBackToHome();
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [currentProfile, isTrophyOpen]);
 
   const fetchProfile = async (targetUid) => {

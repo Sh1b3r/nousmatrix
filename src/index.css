@@ -1572,6 +1572,29 @@ main {
     box-sizing: border-box !important;
   }
 
+  /* UID Search Input on Mobile: Button in its own separate row */
+  .input-box-wrapper {
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .uid-input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 14px !important;
+    padding: 14px 16px !important;
+  }
+
+  .input-box-wrapper .btn-submit {
+    width: 100% !important;
+    padding: 13px 20px !important;
+    text-align: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    font-size: 13px !important;
+  }
+
   /* Character Hero Card on Mobile */
   .char-hero-card {
     flex-direction: column !important;

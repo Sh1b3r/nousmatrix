@@ -3,6 +3,7 @@ import React from 'react';
 export default function AuditPanel({ audit, t, lang = 'ru' }) {
   if (!audit) return null;
 
+  const isRu = (lang || (t?.lvl === 'Ур.' ? 'ru' : 'en')) === 'ru';
   const cvBarWidth = Math.min(100, Math.max(10, (parseFloat(audit.cv) / 320) * 100));
   const isSpdOk = parseFloat(audit.spd) >= 134;
 
@@ -71,7 +72,7 @@ export default function AuditPanel({ audit, t, lang = 'ru' }) {
             <div className="planar-audit-name">
               <span>{audit.planar.setName}</span>
               <span className="planar-rolls-badge">
-                {audit.planar.usefulRolls}/{audit.planar.rollsTotal} {lang === 'ru' ? 'роллов' : 'rolls'}
+                {audit.planar.usefulRolls}/{audit.planar.rollsTotal} {isRu ? 'роллов' : 'rolls'}
               </span>
             </div>
 
