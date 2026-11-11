@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function AuditPanel({ audit, t }) {
+export default function AuditPanel({ audit, t, lang = 'ru' }) {
   if (!audit) return null;
 
   const cvBarWidth = Math.min(100, Math.max(10, (parseFloat(audit.cv) / 320) * 100));

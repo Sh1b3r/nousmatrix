@@ -262,7 +262,7 @@ export default function App() {
 
                 {/* 2. Audit Benchmark & Bottleneck */}
                 <div className="panel">
-                  <AuditPanel audit={audit} t={t} />
+                  <AuditPanel audit={audit} t={t} lang={lang} />
                 </div>
               </div>
 
