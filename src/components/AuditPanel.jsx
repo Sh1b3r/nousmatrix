@@ -71,7 +71,7 @@ export default function AuditPanel({ audit, t }) {
             <div className="planar-audit-name">
               <span>{audit.planar.setName}</span>
               <span className="planar-rolls-badge">
-                {audit.planar.usefulRolls}/{audit.planar.rollsTotal} роллов
+                {audit.planar.usefulRolls}/{audit.planar.rollsTotal} {lang === 'ru' ? 'роллов' : 'rolls'}
               </span>
             </div>
 

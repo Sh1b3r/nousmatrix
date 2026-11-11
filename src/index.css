@@ -992,6 +992,12 @@ main {
   border-color: var(--accent);
 }
 
+.relic-group-tag.broken {
+  color: #FF3C3C;
+  background: rgba(255, 60, 60, 0.15);
+  border-color: rgba(255, 60, 60, 0.45);
+}
+
 /* PLANAR AUDIT BREAKDOWN BOX IN AUDIT PANEL */
 .planar-audit-box {
   background: var(--surface-2);
@@ -1506,6 +1512,12 @@ main {
   color: #fff;
   background: var(--accent-dim);
   border-color: var(--accent);
+}
+
+.relic-group-tag.broken {
+  color: #FF3C3C;
+  background: rgba(255, 60, 60, 0.15);
+  border-color: rgba(255, 60, 60, 0.45);
 }
 
 /* PLANAR AUDIT BREAKDOWN BOX IN AUDIT PANEL */

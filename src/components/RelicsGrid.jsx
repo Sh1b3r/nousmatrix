@@ -114,7 +114,11 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
       <div className="relic-group-header planar">
         <span className="relic-group-title">{t.planarRelicsTitle}</span>
         {planarRelics.length > 0 && (
-          <span className="relic-group-tag accent">{planarRelics[0].set_name}</span>
+          <span className={`relic-group-tag ${audit?.planar?.isComplete ? 'accent' : 'broken'}`}>
+            {audit?.planar?.isComplete
+              ? `✓ 2/2 ${planarRelics[0].set_name}`
+              : (lang === 'ru' ? '1/2 + 1/2 РАЗОРВАННЫЙ СЕТ ⚠️' : '1/2 + 1/2 BROKEN SET ⚠️')}
+          </span>
         )}
       </div>
       <div className="relics-grid planar-grid">
