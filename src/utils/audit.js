@@ -1,8 +1,27 @@
-export const CDN_BASE = 'https://fastly.jsdelivr.net/gh/Mar-7th/StarRailRes@master/';
+export const CDN_MIRRORS = [
+  'https://fastly.jsdelivr.net/gh/Mar-7th/StarRailRes@master/',
+  'https://cdn.jsdelivr.net/gh/Mar-7th/StarRailRes@master/',
+  'https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/',
+  'https://raw.gitmirror.com/Mar-7th/StarRailRes/master/'
+];
+
+export const CDN_BASE = CDN_MIRRORS[0];
 
 export function iconUrl(path) {
   if (!path) return '';
   return path.startsWith('http') ? path : `${CDN_BASE}${path}`;
+}
+
+export function handleImageFallback(e, originalPath) {
+  if (!e || !e.target || !originalPath) return;
+  const currentSrc = e.target.src || '';
+  const tryIndex = parseInt(e.target.dataset.tryIndex || '0', 10);
+
+  if (tryIndex + 1 < CDN_MIRRORS.length) {
+    const nextMirror = CDN_MIRRORS[tryIndex + 1];
+    e.target.dataset.tryIndex = String(tryIndex + 1);
+    e.target.src = `${nextMirror}${originalPath}`;
+  }
 }
 
 export function getCharHeadIcon(char) {

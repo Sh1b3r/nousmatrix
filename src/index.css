@@ -656,32 +656,81 @@ main {
 
 .char-skills-row {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   flex-wrap: wrap;
+  margin-top: 6px;
 }
 
 .skill-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  cursor: help;
+  transition: transform 150ms ease;
+}
+
+.skill-item:hover {
+  transform: translateY(-2px);
+}
+
+.skill-icon-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
   background: var(--surface-2);
-  padding: 3px 8px;
-  border-radius: 3px;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  transition: border-color 150ms ease;
+}
+
+.skill-item:hover .skill-icon-wrap {
+  border-color: var(--accent);
 }
 
 .skill-icon {
-  width: 18px;
-  height: 18px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
 }
 
-.skill-lvl {
+.skill-lvl-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: var(--surface-1);
+  border: 1px solid var(--accent);
+  color: #fff;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--text-primary);
+  padding: 1px 4px;
+  border-radius: 3px;
+  line-height: 1.1;
+}
+
+.skill-lvl-badge.trace {
+  border-color: var(--gold);
+  color: var(--gold);
+  font-size: 9px;
+}
+
+.skill-name-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.skill-item.trace-item.locked {
+  opacity: 0.45;
+  filter: grayscale(1);
 }
 
 /* LIGHT CONE CARD */
@@ -689,21 +738,22 @@ main {
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
   border-radius: 4px;
-  padding: 12px 16px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  min-width: 290px;
+  gap: 16px;
+  min-width: 310px;
 }
 
 .cone-img {
-  width: 52px;
-  height: 60px;
+  width: 68px;
+  height: 84px;
   object-fit: cover;
-  border-radius: 3px;
+  border-radius: 4px;
   border: 1px solid var(--gold);
   background: var(--surface-3);
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .cone-info {
@@ -1020,6 +1070,21 @@ main {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.relic-affix-icon {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.relic-affix-icon.main {
+  width: 18px;
+  height: 18px;
+}
+
+.relic-affix-icon.sub {
+  width: 15px;
+  height: 15px;
 }
 
 .relic-main-val {

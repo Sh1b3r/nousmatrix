@@ -1,5 +1,5 @@
 import React from 'react';
-import { iconUrl } from '../utils/audit';
+import { iconUrl, handleImageFallback } from '../utils/audit';
 import { formatStatName } from '../utils/i18n';
 
 export default function CombatStats({ character, t, lang = 'ru' }) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { iconUrl } from '../utils/audit';
+import { iconUrl, handleImageFallback } from '../utils/audit';
 import { formatStatName } from '../utils/i18n';
 
 export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
@@ -19,7 +19,12 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
             <div className="relic-top-row">
               <div className="relic-left-meta">
                 <div className="relic-icon-wrap">
-                  <img className="relic-icon-img" src={iconUrl(r.icon)} alt={r.name} />
+                  <img
+                    className="relic-icon-img"
+                    src={iconUrl(r.icon)}
+                    alt={r.name}
+                    onError={(e) => handleImageFallback(e, r.icon)}
+                  />
                   <span className="relic-lvl-badge">+{r.level}</span>
                 </div>
                 <div className="relic-name-col">
@@ -41,9 +46,10 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
               <span className="relic-main-label">
                 {r.main_affix?.icon && (
                   <img
-                    style={{ width: '16px', height: '16px', objectFit: 'contain' }}
+                    className="relic-affix-icon main"
                     src={iconUrl(r.main_affix?.icon)}
                     alt=""
+                    onError={(e) => handleImageFallback(e, r.main_affix?.icon)}
                   />
                 )}
                 {formatStatName(r.main_affix?.name, lang)}
@@ -61,9 +67,10 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
                     <span className="relic-sub-name">
                       {sub.icon && (
                         <img
-                          style={{ width: '14px', height: '14px', objectFit: 'contain' }}
+                          className="relic-affix-icon sub"
                           src={iconUrl(sub.icon)}
                           alt=""
+                          onError={(e) => handleImageFallback(e, sub.icon)}
                         />
                       )}
                       {formatStatName(sub.name, lang)}

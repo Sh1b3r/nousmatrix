@@ -227,7 +227,7 @@ export default function App() {
             />
 
             {/* Character Overview Card */}
-            <CharacterOverview character={activeChar} t={t} />
+            <CharacterOverview character={activeChar} t={t} lang={lang} />
 
             {/* Main Content Grid */}
             <div className="dashboard-grid">
