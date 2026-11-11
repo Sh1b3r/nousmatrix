@@ -10,6 +10,7 @@ import SetBonuses from './components/SetBonuses';
 import AuditPanel from './components/AuditPanel';
 import TrophyModal from './components/TrophyModal';
 import { iconUrl, calculateCharacterAudit } from './utils/audit';
+import { getDetectedLanguage, translations } from './utils/i18n';
 import presetProfiles from './data/presetProfiles.json';
 
 export default function App() {
@@ -17,6 +18,24 @@ export default function App() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Region-based automatic locale detection (Default: English 'en', Slavic: 'ru', NO manual switcher)
+  const lang = getDetectedLanguage();
+  const t = translations[lang] || translations.en;
+
+  // Read ?uid=... from URL on initial load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlUid = params.get('uid');
+    if (urlUid) {
+      fetchProfile(urlUid);
+    }
+  }, []);
+
+  const handleBackToHome = () => {
+    setCurrentProfile(null);
+    window.history.replaceState({}, '', window.location.pathname);
+  };
 
   // Keyboard navigation on PC: Left Arrow (ArrowLeft) or Escape returns to UID input
   useEffect(() => {
@@ -30,7 +49,7 @@ export default function App() {
         if (isTrophyOpen) {
           setIsTrophyOpen(false);
         } else if (currentProfile) {
-          setCurrentProfile(null);
+          handleBackToHome();
         }
       }
     };
@@ -43,12 +62,16 @@ export default function App() {
     const uid = targetUid.trim() || '700142890';
     setIsLoading(true);
 
+    const localizedPresets = (presetProfiles && presetProfiles[lang])
+      ? presetProfiles[lang]
+      : (presetProfiles?.en || presetProfiles?.ru || presetProfiles);
+
     try {
       let data = null;
 
-      // 1. Try Vercel Serverless API first (works seamlessly on Vercel deployment & production domain)
+      // 1. Try Vercel Serverless API first (works seamlessly on Vercel deployment with correct lang)
       try {
-        const apiRes = await fetch(`/api/mihomo?uid=${uid}`);
+        const apiRes = await fetch(`/api/mihomo?uid=${uid}&lang=${lang}`);
         if (apiRes.ok) {
           data = await apiRes.json();
         }
@@ -57,14 +80,14 @@ export default function App() {
       }
 
       // 2. Check local preset database
-      if (!data && presetProfiles && presetProfiles[uid]) {
-        data = presetProfiles[uid];
+      if (!data && localizedPresets && localizedPresets[uid]) {
+        data = localizedPresets[uid];
       }
 
       // 3. Try direct Mihomo API
       if (!data) {
         try {
-          const directRes = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=ru`, { cache: 'no-cache' });
+          const directRes = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${lang}`, { cache: 'no-cache' });
           if (directRes.ok) {
             data = await directRes.json();
           }
@@ -74,28 +97,29 @@ export default function App() {
       }
 
       // 4. Offline fallback if UID not found
-      if (!data && presetProfiles) {
-        const fallbackUid = Object.keys(presetProfiles)[0] || '700142890';
-        data = presetProfiles[fallbackUid];
-        alert(`UID ${uid} не найден в открытой сети. Загружен проверенный профиль ${data.player?.nickname} (${fallbackUid}).`);
+      if (!data && localizedPresets) {
+        const fallbackUid = Object.keys(localizedPresets)[0] || '700142890';
+        data = localizedPresets[fallbackUid];
+        alert(t.fallbackAlert(uid, data.player?.nickname || '', fallbackUid));
       }
 
       if (data && data.characters && data.characters.length > 0) {
         setCurrentProfile(data);
         setActiveIndex(0);
+        window.history.replaceState({}, '', `?uid=${data.player?.uid || uid}`);
       } else {
-        alert('Не удалось получить витрину персонажей. Убедитесь, что витрина открыта в игре.');
+        alert(t.errorNoShowcase);
       }
     } catch (err) {
       console.error('Fetch error:', err);
-      alert('Ошибка при загрузке: ' + err.message);
+      alert('Error: ' + err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   const activeChar = currentProfile?.characters?.[activeIndex] || null;
-  const audit = activeChar ? calculateCharacterAudit(activeChar) : null;
+  const audit = activeChar ? calculateCharacterAudit(activeChar, lang) : null;
   const player = currentProfile?.player || null;
 
   return (
@@ -104,11 +128,11 @@ export default function App() {
       <ThreeBackground />
 
       {/* Navigation Header */}
-      <Header onBackToHome={() => setCurrentProfile(null)} />
+      <Header onBackToHome={handleBackToHome} />
 
       <main>
         {!currentProfile ? (
-          <HomeView onSearch={fetchProfile} isLoading={isLoading} />
+          <HomeView onSearch={fetchProfile} isLoading={isLoading} t={t} />
         ) : (
           <section id="view-dashboard" style={{ display: 'block' }}>
             {/* Player Banner */}
@@ -123,9 +147,9 @@ export default function App() {
                 )}
                 <div className="player-name-block">
                   <div className="player-nickname">
-                    <span>{player?.nickname || 'Первопроходец'}</span>
+                    <span>{player?.nickname || (lang === 'ru' ? 'Первопроходец' : 'Trailblazer')}</span>
                     <span className="player-uid-badge">UID: {player?.uid}</span>
-                    <span className="player-level-badge">Ур. {player?.level}</span>
+                    <span className="player-level-badge">{t.lvl} {player?.level}</span>
                   </div>
                   {player?.signature && (
                     <div className="player-signature">«{player.signature}»</div>
@@ -136,13 +160,13 @@ export default function App() {
               <div className="player-actions">
                 <button
                   className="btn-outline back-btn"
-                  onClick={() => setCurrentProfile(null)}
-                  title="Нажмите ← на клавиатуре или кнопку для смены UID"
+                  onClick={handleBackToHome}
+                  title={lang === 'ru' ? "Нажмите ← на клавиатуре или кнопку для смены UID" : "Press ← on keyboard or click to change UID"}
                 >
-                  <span className="arrow-icon">←</span> СМЕНИТЬ UID (Стрелочка ←)
+                  <span className="arrow-icon">←</span> {t.btnBackUid}
                 </button>
                 <button className="btn-outline" onClick={() => setIsTrophyOpen(true)}>
-                  ТРОФЕЙНАЯ КАРТОЧКА (TOP 1%)
+                  {t.btnTrophy}
                 </button>
               </div>
             </div>
@@ -152,10 +176,12 @@ export default function App() {
               characters={currentProfile.characters}
               activeIndex={activeIndex}
               onSelect={setActiveIndex}
+              t={t}
+              lang={lang}
             />
 
             {/* Character Overview Card */}
-            <CharacterOverview character={activeChar} />
+            <CharacterOverview character={activeChar} t={t} />
 
             {/* Main Content Grid */}
             <div className="dashboard-grid">
@@ -164,15 +190,15 @@ export default function App() {
                 {/* 1. Real In-Game Combat Attributes Table */}
                 <div className="panel" style={{ marginBottom: '24px' }}>
                   <div className="panel-title">
-                    <span>БОЕВЫЕ ХАРАКТЕРИСТИКИ (ИЗ ИГРЫ)</span>
-                    <span style={{ color: 'var(--text-tertiary)', fontSize: '10px' }}>БАЗА + БОНУС</span>
+                    <span>{t.combatStatsTitle}</span>
+                    <span style={{ color: 'var(--text-tertiary)', fontSize: '10px' }}>{t.basePlusBonus}</span>
                   </div>
-                  <CombatStats character={activeChar} />
+                  <CombatStats character={activeChar} t={t} />
                 </div>
 
                 {/* 2. Audit Benchmark & Bottleneck */}
                 <div className="panel">
-                  <AuditPanel audit={audit} />
+                  <AuditPanel audit={audit} t={t} />
                 </div>
               </div>
 
@@ -181,18 +207,18 @@ export default function App() {
                 {/* 1. 6 Relic Slots Grid */}
                 <div className="panel" style={{ marginBottom: '24px' }}>
                   <div className="panel-title">
-                    <span>РЕЛИКВИИ ПЕРСОНАЖА (ПОСЛОЙНЫЙ АНАЛИЗ 6 СЛОТОВ)</span>
-                    <span style={{ color: 'var(--accent)' }}>АКТУАЛЬНЫЕ ДАННЫЕ</span>
+                    <span>{t.relicsTitle}</span>
+                    <span style={{ color: 'var(--accent)' }}>{t.verifiedData}</span>
                   </div>
-                  <RelicsGrid character={activeChar} audit={audit} />
+                  <RelicsGrid character={activeChar} audit={audit} t={t} />
                 </div>
 
                 {/* 2. Active Set Bonuses */}
                 <div className="panel">
                   <div className="panel-title">
-                    <span>АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ</span>
+                    <span>{t.setsTitle}</span>
                   </div>
-                  <SetBonuses character={activeChar} />
+                  <SetBonuses character={activeChar} t={t} />
                 </div>
               </div>
             </div>
@@ -204,6 +230,7 @@ export default function App() {
               character={activeChar}
               audit={audit}
               uid={player?.uid}
+              t={t}
             />
           </section>
         )}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { iconUrl } from '../utils/audit';
 
-export default function CombatStats({ character }) {
+export default function CombatStats({ character, t }) {
   if (!character) return null;
 
   const baseMap = {};
@@ -45,13 +45,13 @@ export default function CombatStats({ character }) {
 
   // 8. Element DMG
   const elementFields = [
-    { field: 'physical_dmg', icon: 'icon/property/IconPhysicalAddedRatio.png', name: 'Бонус физ. урона' },
-    { field: 'fire_dmg', icon: 'icon/property/IconFireAddedRatio.png', name: 'Бонус огненного урона' },
-    { field: 'ice_dmg', icon: 'icon/property/IconIceAddedRatio.png', name: 'Бонус ледяного урона' },
-    { field: 'thunder_dmg', icon: 'icon/property/IconThunderAddedRatio.png', name: 'Бонус элек. урона' },
-    { field: 'wind_dmg', icon: 'icon/property/IconWindAddedRatio.png', name: 'Бонус ветряного урона' },
-    { field: 'quantum_dmg', icon: 'icon/property/IconQuantumAddedRatio.png', name: 'Бонус квант. урона' },
-    { field: 'imaginary_dmg', icon: 'icon/property/IconImaginaryAddedRatio.png', name: 'Бонус мним. урона' }
+    { field: 'physical_dmg', icon: 'icon/property/IconPhysicalAddedRatio.png', defaultName: 'Physical DMG' },
+    { field: 'fire_dmg', icon: 'icon/property/IconFireAddedRatio.png', defaultName: 'Fire DMG' },
+    { field: 'ice_dmg', icon: 'icon/property/IconIceAddedRatio.png', defaultName: 'Ice DMG' },
+    { field: 'thunder_dmg', icon: 'icon/property/IconThunderAddedRatio.png', defaultName: 'Lightning DMG' },
+    { field: 'wind_dmg', icon: 'icon/property/IconWindAddedRatio.png', defaultName: 'Wind DMG' },
+    { field: 'quantum_dmg', icon: 'icon/property/IconQuantumAddedRatio.png', defaultName: 'Quantum DMG' },
+    { field: 'imaginary_dmg', icon: 'icon/property/IconImaginaryAddedRatio.png', defaultName: 'Imaginary DMG' }
   ];
 
   const activeElementDmgs = elementFields.filter(el => addMap[el.field] && addMap[el.field].value > 0);
@@ -71,7 +71,7 @@ export default function CombatStats({ character }) {
       <div className="stat-entry">
         <div className="stat-left">
           <img className="stat-icon" src={iconUrl('icon/property/IconMaxHP.png')} alt="HP" />
-          <span className="stat-name">Макс. HP</span>
+          <span className="stat-name">{t.maxHp}</span>
         </div>
         <div className="stat-values">
           <span className="stat-calc">{hpBase} <span className="stat-bonus">+{hpAdd}</span> =</span>
@@ -83,7 +83,7 @@ export default function CombatStats({ character }) {
       <div className="stat-entry">
         <div className="stat-left">
           <img className="stat-icon" src={iconUrl('icon/property/IconAttack.png')} alt="ATK" />
-          <span className="stat-name">Сила атаки</span>
+          <span className="stat-name">{t.atk}</span>
         </div>
         <div className="stat-values">
           <span className="stat-calc">{atkBase} <span className="stat-bonus">+{atkAdd}</span> =</span>
@@ -95,7 +95,7 @@ export default function CombatStats({ character }) {
       <div className="stat-entry">
         <div className="stat-left">
           <img className="stat-icon" src={iconUrl('icon/property/IconDefence.png')} alt="DEF" />
-          <span className="stat-name">Защита</span>
+          <span className="stat-name">{t.def}</span>
         </div>
         <div className="stat-values">
           <span className="stat-calc">{defBase} <span className="stat-bonus">+{defAdd}</span> =</span>
@@ -107,7 +107,7 @@ export default function CombatStats({ character }) {
       <div className="stat-entry">
         <div className="stat-left">
           <img className="stat-icon" src={iconUrl('icon/property/IconSpeed.png')} alt="SPD" />
-          <span className="stat-name">Скорость (SPD)</span>
+          <span className="stat-name">{t.spd}</span>
         </div>
         <div className="stat-values">
           <span className="stat-calc">{spdBase} <span className="stat-bonus">+{spdAdd}</span> =</span>
@@ -119,7 +119,7 @@ export default function CombatStats({ character }) {
       <div className="stat-entry">
         <div className="stat-left">
           <img className="stat-icon" src={iconUrl('icon/property/IconCriticalChance.png')} alt="CR" />
-          <span className="stat-name">Крит. шанс</span>
+          <span className="stat-name">{t.critRate}</span>
         </div>
         <div className="stat-values">
           <span className="stat-total">{crTotal}</span>
@@ -130,7 +130,7 @@ export default function CombatStats({ character }) {
       <div className="stat-entry">
         <div className="stat-left">
           <img className="stat-icon" src={iconUrl('icon/property/IconCriticalDamage.png')} alt="CD" />
-          <span className="stat-name">Крит. урон</span>
+          <span className="stat-name">{t.critDmg}</span>
         </div>
         <div className="stat-values">
           <span className="stat-total">{cdTotal}</span>
@@ -142,7 +142,7 @@ export default function CombatStats({ character }) {
         <div className="stat-entry">
           <div className="stat-left">
             <img className="stat-icon" src={iconUrl('icon/property/IconBreakUp.png')} alt="BE" />
-            <span className="stat-name">Эффект пробития</span>
+            <span className="stat-name">{t.breakEffect}</span>
           </div>
           <div className="stat-values">
             <span className="stat-total">{beTotal}</span>
@@ -154,8 +154,8 @@ export default function CombatStats({ character }) {
       {activeElementDmgs.map((el, i) => (
         <div className="stat-entry" key={i}>
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl(el.icon)} alt={el.name} />
-            <span className="stat-name">{el.name}</span>
+            <img className="stat-icon" src={iconUrl(el.icon)} alt={el.defaultName} />
+            <span className="stat-name">{addMap[el.field].name || el.defaultName}</span>
           </div>
           <div className="stat-values">
             <span className="stat-total">{(addMap[el.field].value * 100).toFixed(1)}%</span>
@@ -168,7 +168,7 @@ export default function CombatStats({ character }) {
         <div className="stat-entry">
           <div className="stat-left">
             <img className="stat-icon" src={iconUrl('icon/property/IconEnergyRecovery.png')} alt="ERR" />
-            <span className="stat-name">Восст. энергии (ERR)</span>
+            <span className="stat-name">{t.err}</span>
           </div>
           <div className="stat-values">
             <span className="stat-total">{errTotal}</span>
@@ -181,7 +181,7 @@ export default function CombatStats({ character }) {
         <div className="stat-entry">
           <div className="stat-left">
             <img className="stat-icon" src={iconUrl('icon/property/IconStatusProbability.png')} alt="EHR" />
-            <span className="stat-name">Шанс попад. эффектов</span>
+            <span className="stat-name">{t.ehr}</span>
           </div>
           <div className="stat-values">
             <span className="stat-total">{ehrTotal}</span>
@@ -194,7 +194,7 @@ export default function CombatStats({ character }) {
         <div className="stat-entry">
           <div className="stat-left">
             <img className="stat-icon" src={iconUrl('icon/property/IconStatusResistance.png')} alt="RES" />
-            <span className="stat-name">Сопротивление эффектам</span>
+            <span className="stat-name">{t.effectRes}</span>
           </div>
           <div className="stat-values">
             <span className="stat-total">{resTotal}</span>

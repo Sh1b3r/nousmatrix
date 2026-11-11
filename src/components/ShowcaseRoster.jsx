@@ -1,25 +1,25 @@
 import React, { useRef } from 'react';
 import { getCharHeadIcon, iconUrl, calculateCharacterAudit } from '../utils/audit';
 
-export default function ShowcaseRoster({ characters, activeIndex, onSelect }) {
+export default function ShowcaseRoster({ characters, activeIndex, onSelect, t, lang }) {
   const trackRef = useRef(null);
 
   return (
     <div className="roster-section">
       <div className="roster-header">
         <div className="roster-title">
-          <span>ВИТРИНА АККАУНТА (SHOWCASE ROSTER)</span>
-          <span className="badge-count">{characters.length} ПЕРСОНАЖ{characters.length > 4 ? 'ЕЙ' : 'А'}</span>
+          <span>{t.rosterTitle}</span>
+          <span className="badge-count">{t.rosterCharsSuffix(characters.length)}</span>
         </div>
         <span className="roster-hint">
-          Выберите персонажа • Используйте <code>←</code> на клавиатуре для возврата
+          {t.rosterHint}
         </span>
       </div>
 
       <div className="roster-track" ref={trackRef}>
         {characters.map((char, idx) => {
           const isActive = idx === activeIndex;
-          const audit = calculateCharacterAudit(char);
+          const audit = calculateCharacterAudit(char, lang);
 
           return (
             <div
@@ -60,7 +60,7 @@ export default function ShowcaseRoster({ characters, activeIndex, onSelect }) {
               </div>
 
               <div className="roster-char-meta">
-                Ур. {char.level} • E{char.rank}
+                {t.lvl} {char.level} • E{char.rank}
               </div>
 
               <div className="roster-score-pill">

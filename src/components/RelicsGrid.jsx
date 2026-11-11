@@ -1,16 +1,17 @@
 import React from 'react';
-import { iconUrl, SLOT_NAMES } from '../utils/audit';
+import { iconUrl } from '../utils/audit';
 
-export default function RelicsGrid({ character, audit }) {
+export default function RelicsGrid({ character, audit, t }) {
   if (!character) return null;
 
   const relics = character.relics || [];
+  const slots = t.relicSlots || [];
 
   return (
     <div className="relics-grid">
       {relics.map((r, idx) => {
         const isWeak = idx === audit?.weakestRelicIndex;
-        const slotTitle = SLOT_NAMES[idx] || `Слот ${idx + 1}`;
+        const slotTitle = slots[idx] || `Slot ${idx + 1}`;
 
         return (
           <div key={idx} className={`relic-item-card ${isWeak ? 'weak-piece' : ''}`}>
@@ -26,10 +27,10 @@ export default function RelicsGrid({ character, audit }) {
                 </div>
               </div>
               {isWeak ? (
-                <span className="relic-cv-pill">СЛАБОЕ ЗВЕНО</span>
+                <span className="relic-cv-pill">{t.weakPiece}</span>
               ) : (
                 <span className="relic-cv-pill" style={{ color: 'var(--text-secondary)', background: 'none' }}>
-                  5★ GOLD
+                  {t.goldRelic}
                 </span>
               )}
             </div>
@@ -63,7 +64,7 @@ export default function RelicsGrid({ character, audit }) {
                     <span className="relic-sub-val">
                       {sub.display}
                       <span className={`roll-count-tag ${isHigh ? 'high' : ''}`}>
-                        {rolls > 1 ? `${rolls} ролла` : '1 ролл'}
+                        {rolls > 1 ? t.rollsMulti(rolls) : t.rollSingle}
                       </span>
                     </span>
                   </div>

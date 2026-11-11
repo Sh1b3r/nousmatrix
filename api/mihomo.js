@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const { uid } = req.query;
+  const { uid, lang = 'en' } = req.query;
   if (!uid) {
     return res.status(400).json({ error: 'UID is required' });
   }
@@ -13,7 +13,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=ru`, {
+    const targetLang = (lang === 'ru' || lang === 'uk') ? 'ru' : 'en';
+    const response = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${targetLang}`, {
       headers: {
         'User-Agent': 'NousMatrix/1.0'
       }
@@ -33,3 +34,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: err.message });
   }
 }
+

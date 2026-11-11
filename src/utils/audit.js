@@ -13,17 +13,10 @@ export function getCharHeadIcon(char) {
   return iconUrl(char.icon);
 }
 
-export const SLOT_NAMES = [
-  "Голова (Head)",
-  "Руки (Hands)",
-  "Тело (Body)",
-  "Сапоги (Feet)",
-  "Планарная сфера (Sphere)",
-  "Соединительная веревка (Rope)"
-];
-
-export function calculateCharacterAudit(char) {
+export function calculateCharacterAudit(char, lang = 'en') {
   if (!char) return null;
+
+  const isRu = lang === 'ru';
 
   const baseMap = {};
   (char.attributes || []).forEach(a => { baseMap[a.field] = a; });
@@ -48,45 +41,61 @@ export function calculateCharacterAudit(char) {
   const charName = char.name || '';
 
   // 1. Preservation archetype
-  if (charName.includes('Авантюрин') || path === 'Knight') {
+  if (charName.includes('Авантюрин') || charName.includes('Aventurine') || path === 'Knight') {
     if (def >= 4000) {
       score = 94.6;
       topPercent = 0.6;
       rollEfficiency = 95.8;
-      bottleneck = `Защита ${Math.round(def)} превосходит порог пассивки (4000 DEF = +48% Крит. Шанса). Высокая прочность щитов и стабильный урон.`;
+      bottleneck = isRu
+        ? `Защита ${Math.round(def)} превосходит порог пассивки (4000 DEF = +48% Крит. Шанса). Высокая прочность щитов и стабильный урон.`
+        : `DEF ${Math.round(def)} exceeds talent cap (4000 DEF = +48% CRIT Rate). Strong shields and consistent sub-DPS.`;
       actions.push({
-        title: "Оптимизация: Перевод избыточной защиты в Крит. Урон",
-        desc: "Кап пассивной конверсии защиты достигнут. Дальнейшие роллы в Защиту дают меньший прирост, чем в Крит. Урон и Скорость."
+        title: isRu ? "Оптимизация: Перевод избыточной защиты в Крит. Урон" : "Optimization: Shift excess DEF to CRIT DMG / SPD",
+        desc: isRu
+          ? "Кап пассивной конверсии защиты достигнут. Дальнейшие роллы в Защиту дают меньший прирост, чем в Крит. Урон и Скорость."
+          : "Passive conversion cap is already maxed. Further rolls in DEF provide less DPS return than CRIT DMG or SPD."
       });
     } else {
       score = 86.2;
       topPercent = 4.2;
       rollEfficiency = 88.0;
-      bottleneck = `Защита ${Math.round(def)} ниже рекомендованного капа 4000. Талант недополучает ${Math.round((4000 - def) * 0.024)}% бесплатного Крит. Шанса.`;
+      bottleneck = isRu
+        ? `Защита ${Math.round(def)} ниже рекомендованного капа 4000. Талант недополучает ${Math.round((4000 - def) * 0.024)}% бесплатного Крит. Шанса.`
+        : `DEF ${Math.round(def)} is below the 4000 breakpoint. The talent is missing ${Math.round((4000 - def) * 0.024)}% free CRIT Rate.`;
       actions.push({
-        title: "Приоритет: Добрать 4000 Защиты",
-        desc: `Необходимо добрать ${Math.round(4000 - def)} защиты через соединительную веревку или сабстаты.`
+        title: isRu ? "Приоритет: Добрать 4000 Защиты" : "Priority: Reach 4,000 DEF threshold",
+        desc: isRu
+          ? `Необходимо добрать ${Math.round(4000 - def)} защиты через соединительную веревку или сабстаты.`
+          : `Gain ${Math.round(4000 - def)} more DEF via link rope or substats to unlock maximum talent scaling.`
       });
     }
-  } else if (charName.includes('Светлячок') || be > 200) {
+  } else if (charName.includes('Светлячок') || charName.includes('Firefly') || be > 200) {
     // 2. Break Effect archetype
     if (be >= 360 && spd >= 150) {
       score = 96.2;
       topPercent = 0.3;
       rollEfficiency = 97.4;
-      bottleneck = `Пороги 360% Эффекта Пробития и 150+ Скорости (4 действия в ультимейте) закрыты. Сборка топового ранга.`;
+      bottleneck = isRu
+        ? `Пороги 360% Эффекта Пробития и 150+ Скорости (4 действия в ультимейте) закрыты. Сборка топового ранга.`
+        : `Break Effect (${be.toFixed(1)}%) and SPD (${spd.toFixed(1)}) hit all major Cycle 0 breakpoints. Top-tier build.`;
       actions.push({
-        title: "Сборка завершена (End-Game Build)",
-        desc: "Все ключевые брейкпоинты достигнуты. Трата смолы на перекрафт текущих артефактов не требуется."
+        title: isRu ? "Сборка завершена (End-Game Build)" : "Build Completed (End-Game Tier)",
+        desc: isRu
+          ? "Все ключевые брейкпоинты достигнуты. Трата смолы на перекрафт текущих артефактов не требуется."
+          : "All key threshold benchmarks are satisfied. Resin investment into recrafting is not necessary."
       });
     } else {
       score = 89.4;
       topPercent = 1.8;
       rollEfficiency = 91.2;
-      bottleneck = `Эффект пробития (${be.toFixed(1)}%) или Скорость (${spd.toFixed(1)}) слегка отстают от идеального тайминга полного цикла ультимейта.`;
+      bottleneck = isRu
+        ? `Эффект пробития (${be.toFixed(1)}%) или Скорость (${spd.toFixed(1)}) слегка отстают от идеального тайминга полного цикла ультимейта.`
+        : `Break Effect (${be.toFixed(1)}%) or SPD (${spd.toFixed(1)}) is slightly behind optimal ultimate rotation timing.`;
       actions.push({
-        title: "Приоритет: Роллы в Эффект Пробития и Скорость",
-        desc: "Криты этому персонажу не нужны: избавьтесь от кусков с роллами в КУ/КШ в пользу чистого Пробития и Силы Атаки."
+        title: isRu ? "Приоритет: Роллы в Эффект Пробития и Скорость" : "Priority: Roll Break Effect and SPD",
+        desc: isRu
+          ? "Криты этому персонажу не нужны: избавьтесь от кусков с роллами в КУ/КШ в пользу чистого Пробития и Силы Атаки."
+          : "Crits are not required on this kit: replace CR/CD pieces in favor of pure Break Effect, SPD and ATK%."
       });
     }
   } else {
@@ -106,22 +115,34 @@ export function calculateCharacterAudit(char) {
     }
 
     if (cr < 70 && cd > 160) {
-      bottleneck = `Перекос баланса критов: Крит. Шанс (${cr.toFixed(1)}%) отстает от Крит. Урона (${cd.toFixed(1)}%). Ультимейт теряет стабильность, пропуская критические удары.`;
+      bottleneck = isRu
+        ? `Перекос баланса критов: Крит. Шанс (${cr.toFixed(1)}%) отстает от Крит. Урона (${cd.toFixed(1)}%). Ультимейт теряет стабильность, пропуская критические удары.`
+        : `Imbalanced CRIT ratio: CRIT Rate (${cr.toFixed(1)}%) lags behind CRIT DMG (${cd.toFixed(1)}%). Missed crits reduce expected rotation DPA.`;
       actions.push({
-        title: "Приоритет №1: Стабилизация Крит. Шанса",
-        desc: `Замена одного куска на КШ приблизит соотношение 1:2. Это увеличит урон за ротацию минимум на 4–6%.`
+        title: isRu ? "Приоритет №1: Стабилизация Крит. Шанса" : "Priority #1: Stabilize CRIT Rate",
+        desc: isRu
+          ? `Замена одного куска на КШ приблизит соотношение 1:2. Это увеличит урон за ротацию минимум на 4–6%.`
+          : `Swapping a piece to CRIT Rate brings your ratio closer to 1:2, boosting average rotation DPA by 4–6%.`
       });
     } else if (spd < 134) {
-      bottleneck = `Скорость (${spd.toFixed(1)}) ниже контрольного брейкпоинта 134.0 SPD. Персонаж совершает только 1 действие в первом цикле Зала Забвения.`;
+      bottleneck = isRu
+        ? `Скорость (${spd.toFixed(1)}) ниже контрольного брейкпоинта 134.0 SPD. Персонаж совершает только 1 действие в первом цикле Зала Забвения.`
+        : `Speed (${spd.toFixed(1)}) is below the 134.0 SPD breakpoint. The character takes only 1 action in Cycle 0.`;
       actions.push({
-        title: "Приоритет №1: Достижение 134.0 SPD",
-        desc: "Добрав 1-2 сабстата скорости (+4-6 SPD), вы получите 2 полноценных хода в первом цикле."
+        title: isRu ? "Приоритет №1: Достижение 134.0 SPD" : "Priority #1: Reach 134.0 SPD Breakpoint",
+        desc: isRu
+          ? "Добрав 1-2 сабстата скорости (+4-6 SPD), вы получите 2 полноценных хода в первом цикле."
+          : "Rolling 1–2 speed substats (+4–6 SPD) grants 2 full actions in the first Memory of Chaos cycle."
       });
     } else {
-      bottleneck = `Сбалансированное распределение статов (CV ${cv.toFixed(1)}, SPD ${spd.toFixed(1)}). Ограничением являются холостые роллы в Защиту/HP на сабстатах.`;
+      bottleneck = isRu
+        ? `Сбалансированное распределение статов (CV ${cv.toFixed(1)}, SPD ${spd.toFixed(1)}). Ограничением являются холостые роллы в Защиту/HP на сабстатах.`
+        : `Balanced stat distribution (CV ${cv.toFixed(1)}, SPD ${spd.toFixed(1)}). Bottleneck comes from dead rolls into Flat HP/DEF.`;
       actions.push({
-        title: "Оптимизация: Перекрафт слабейшего артефакта",
-        desc: "Замените кусок с наибольшим числом мусорных роллов на реликвию с полезными атакующими статами."
+        title: isRu ? "Оптимизация: Перекрафт слабейшего артефакта" : "Optimization: Recraft Weakest Relic",
+        desc: isRu
+          ? "Замените кусок с наибольшим числом мусорных роллов на реликвию с полезными атакующими статами."
+          : "Replace the piece with the highest number of dead substats with offensive roll upgrades."
       });
     }
   }

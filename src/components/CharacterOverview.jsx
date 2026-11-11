@@ -1,7 +1,7 @@
 import React from 'react';
 import { getCharHeadIcon, iconUrl } from '../utils/audit';
 
-export default function CharacterOverview({ character }) {
+export default function CharacterOverview({ character, t }) {
   if (!character) return null;
 
   const mainSkills = (character.skills || []).filter(s =>
@@ -38,10 +38,10 @@ export default function CharacterOverview({ character }) {
           </h2>
 
           <div className="char-tags-row">
-            <span className="char-pill">Ур. {character.level}/80</span>
-            <span className="char-pill accent">Эйдолоны: E{character.rank}</span>
-            <span className="char-pill">Путь: {character.path?.name || '—'}</span>
-            <span className="char-pill">Стихия: {character.element?.name || '—'}</span>
+            <span className="char-pill">{t.lvl} {character.level}/80</span>
+            <span className="char-pill accent">{t.eidolons}{character.rank}</span>
+            <span className="char-pill">{t.path}{character.path?.name || '—'}</span>
+            <span className="char-pill">{t.combatType}{character.element?.name || '—'}</span>
           </div>
 
           <div className="char-skills-row">
@@ -49,7 +49,7 @@ export default function CharacterOverview({ character }) {
               <div
                 key={s.id}
                 className="skill-item"
-                title={`${s.type_text}: ${s.name} (Ур. ${s.level}/${s.max_level})`}
+                title={`${s.type_text}: ${s.name} (${t.lvl} ${s.level}/${s.max_level})`}
               >
                 <img className="skill-icon" src={iconUrl(s.icon)} alt={s.name} />
                 <span className="skill-lvl">{s.level}</span>
@@ -69,9 +69,9 @@ export default function CharacterOverview({ character }) {
           <div className="cone-info">
             <div className="cone-name">{character.light_cone.name}</div>
             <div className="cone-super">
-              Наложение S{character.light_cone.rank} ({'★'.repeat(character.light_cone.rarity || 5)})
+              {t.superimposition}{character.light_cone.rank} ({'★'.repeat(character.light_cone.rarity || 5)})
             </div>
-            <div className="cone-level">Ур. {character.light_cone.level}/80</div>
+            <div className="cone-level">{t.lvl} {character.light_cone.level}/80</div>
             <div className="cone-stats">
               {(character.light_cone.attributes || []).map((a, i) => (
                 <span key={i}>

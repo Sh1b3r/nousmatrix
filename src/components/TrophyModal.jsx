@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getCharHeadIcon, iconUrl } from '../utils/audit';
 
-export default function TrophyModal({ isOpen, onClose, character, audit, uid }) {
+export default function TrophyModal({ isOpen, onClose, character, audit, uid, t }) {
   const [copied, setCopied] = useState(false);
 
   if (!isOpen || !character || !audit) return null;
@@ -51,7 +51,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid }) 
             />
           </div>
           <div>
-            <div className="trophy-badge">GLOBAL TOP {audit.topPercent}% VALIDATED</div>
+            <div className="trophy-badge">{t.verifiedBadge} {audit.topPercent}% {t.verifiedSuffix}</div>
             <div className="trophy-char">{character.name.toUpperCase()}</div>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid }) 
               alt=""
               style={{ width: '18px', height: '18px', borderRadius: '3px' }}
             />
-            VERIFIED BY NOUSMATRIX
+            {t.verifiedBy}
           </span>
           <button
             className="btn-submit"
@@ -96,7 +96,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid }) 
               color: copied ? '#0C0814' : ''
             }}
           >
-            {copied ? '✓ СКОПИРОВАНО!' : 'СКОПИРОВАТЬ ДЛЯ DISCORD/TG'}
+            {copied ? t.copied : t.copyTrophy}
           </button>
         </div>
       </div>
