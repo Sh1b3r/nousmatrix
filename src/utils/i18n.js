@@ -183,7 +183,6 @@ export const translations = {
       if (rem10 >= 2 && rem10 <= 4 && (rem100 < 10 || rem100 >= 20)) return `${count} ПЕРСОНАЖА`;
       return `${count} ПЕРСОНАЖЕЙ`;
     },
-    rosterHint: "Выберите персонажа • Клавиша ← или Escape для смены UID",
     btnBackUid: "СМЕНИТЬ UID",
     btnTrophy: "ТРОФЕЙНАЯ КАРТОЧКА",
     lvl: "Ур.",
@@ -201,7 +200,6 @@ export const translations = {
     planarSetBroken: "1/2 РАЗОРВАННЫЙ СЕТ",
     planarRollQuality: "Качество роллов планарок (Сфера + Вервь)",
     planarCv: "Крит. масса планарок (Planar CV)",
-    verifiedData: "ОФИЦИАЛЬНЫЕ ДАННЫЕ",
     weakPiece: "ХУДШИЙ АРТЕФАКТ",
     goldRelic: "5★ РЕЛИКВИЯ",
     rollTag: (count) => {

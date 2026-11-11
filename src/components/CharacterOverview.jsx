@@ -33,23 +33,15 @@ export default function CharacterOverview({ character, t, lang = 'ru' }) {
     return isRu ? 'СЛЕД' : 'TRACE';
   };
 
-  const portraitSrc = character.portrait
-    ? iconUrl(character.portrait)
-    : (character.preview ? iconUrl(character.preview) : getCharHeadIcon(character));
-
   return (
     <div className="char-hero-card">
       <div className="char-hero-left">
         <div className="char-portrait-box">
           <img
             className="char-portrait-img"
-            src={portraitSrc}
+            src={getCharHeadIcon(character)}
             alt={character.name}
-            onError={(e) => {
-              if (e.target.src !== getCharHeadIcon(character)) {
-                e.target.src = getCharHeadIcon(character);
-              }
-            }}
+            onError={(e) => handleImageFallback(e, character.icon)}
           />
           {character.element && (
             <img
