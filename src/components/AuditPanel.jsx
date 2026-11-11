@@ -57,6 +57,54 @@ export default function AuditPanel({ audit, t }) {
         </div>
       </div>
 
+      {/* Planar Ornaments Audit Section (Подсчет планарок) */}
+      {audit.planar && audit.planar.setName && (
+        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
+          <div className="panel-title">
+            <span>{t.planarAuditTitle}</span>
+            <span style={{ color: audit.planar.isComplete ? 'var(--accent)' : 'var(--text-tertiary)', fontSize: '10px' }}>
+              {audit.planar.isComplete ? t.planarSetComplete : t.planarSetBroken}
+            </span>
+          </div>
+
+          <div className="planar-audit-box">
+            <div className="planar-audit-name">
+              <span>{audit.planar.setName}</span>
+              <span className="planar-rolls-badge">
+                {audit.planar.usefulRolls}/{audit.planar.rollsTotal} роллов
+              </span>
+            </div>
+
+            <div className="metric-row" style={{ marginTop: '8px' }}>
+              <div className="metric-label-line">
+                <span>{t.planarRollQuality}</span>
+                <span style={{ fontFamily: 'var(--font-mono)' }}>{audit.planar.efficiency}%</span>
+              </div>
+              <div className="metric-bar-bg">
+                <div
+                  className="metric-bar-fill accent"
+                  style={{ width: `${audit.planar.efficiency}%` }}
+                />
+              </div>
+            </div>
+
+            {parseFloat(audit.planar.cv) > 0 && (
+              <div className="metric-row">
+                <div className="metric-label-line">
+                  <span>{t.planarCv}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)' }}>{audit.planar.cv}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="planar-condition-line">
+              {audit.planar.condition}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bottleneck Analysis */}
       <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
         <div className="panel-title">{t.bottleneck}</div>
         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
@@ -64,6 +112,7 @@ export default function AuditPanel({ audit, t }) {
         </p>
       </div>
 
+      {/* Action Plan */}
       <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
         <div className="panel-title">{t.improvementPlan}</div>
         {audit.actions.map((act, i) => (

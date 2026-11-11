@@ -390,6 +390,75 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const zScore = (finalScore - 68.0) / 11.5;
   const topPercent = zScoreToTopPercent(zScore);
 
+  // 6. Planar Ornaments Calculation (Подсчет планарок)
+  const planarRelics = (char.relics || []).filter(r => r.type === 5 || r.type === 6);
+  let planarRollsTotal = 0;
+  let planarUsefulRolls = 0;
+  let planarCv = 0;
+
+  planarRelics.forEach(r => {
+    (r.sub_affix || []).forEach(sub => {
+      const cnt = sub.count || 1;
+      planarRollsTotal += cnt;
+      if (sub.field === 'crit_rate') {
+        planarCv += (sub.value || 0) * 200;
+        planarUsefulRolls += cnt;
+      } else if (sub.field === 'crit_dmg') {
+        planarCv += (sub.value || 0) * 100;
+        planarUsefulRolls += cnt;
+      } else if (['spd', 'atk', 'def', 'hp', 'break_dmg', 'effect_hit', 'effect_res'].includes(sub.field)) {
+        planarUsefulRolls += cnt * 0.9;
+      }
+    });
+  });
+
+  const planarSet = planarRelics.length > 0 ? (planarRelics[0].set_name || '') : '';
+  const isPlanarSetComplete = planarRelics.length === 2 && planarRelics[0].set_id === planarRelics[1].set_id;
+  const planarEfficiency = planarRollsTotal > 0 ? Math.round((planarUsefulRolls / planarRollsTotal) * 100) : 75;
+
+  let planarCondition = "";
+  if (planarSet.includes('Салсотто') || planarSet.includes('Salsotto')) {
+    planarCondition = cr >= 50
+      ? (isRu ? `50%+ КШ выполнено (${cr}% ✓) • Бонус +15% к ульту/бонус-атаке активен` : `50%+ CR achieved (${cr}% ✓) • +15% Ult/FUA DMG active`)
+      : (isRu ? `Требуется 50% КШ (текущий: ${cr}% ⚠️) • Бонус сета не активирован!` : `Requires 50% CR (current: ${cr}% ⚠️) • Inactive!`);
+  } else if (planarSet.includes('Гламот') || planarSet.includes('Glamoth')) {
+    planarCondition = spd >= 160
+      ? (isRu ? `160+ СКОР выполнено (${spd} ✓) • Максимальный бонус +18% урона активен` : `160+ SPD achieved (${spd} ✓) • Max +18% DMG active`)
+      : spd >= 135
+        ? (isRu ? `135+ СКОР выполнено (${spd} ✓) • Бонус +12% урона активен` : `135+ SPD achieved (${spd} ✓) • +12% DMG active`)
+        : (isRu ? `Требуется 135 СКОР (текущая: ${spd} ⚠️) • Бонус урона не активирован!` : `Requires 135 SPD (current: ${spd} ⚠️) • Inactive!`);
+  } else if (planarSet.includes('Арена') || planarSet.includes('Rutilant')) {
+    planarCondition = cr >= 70
+      ? (isRu ? `70%+ КШ выполнено (${cr}% ✓) • Бонус +20% к базовой атаке и навыку активен` : `70%+ CR achieved (${cr}% ✓) • +20% Basic/Skill DMG active`)
+      : (isRu ? `Требуется 70% КШ (текущий: ${cr}% ⚠️) • Бонус урона не активирован!` : `Requires 70% CR (current: ${cr}% ⚠️) • Inactive!`);
+  } else if (planarSet.includes('Киль') || planarSet.includes('Keel')) {
+    planarCondition = eres >= 30
+      ? (isRu ? `30%+ СЭ выполнено (${eres}% ✓) • Бонус отряда +10% Крит. Урона активен` : `30%+ E-RES achieved (${eres}% ✓) • Team +10% CD active`)
+      : (isRu ? `Требуется 30% СЭ (текущее: ${eres}% ⚠️) • Бонус критов не активирован!` : `Requires 30% E-RES (current: ${eres}% ⚠️) • Inactive!`);
+  } else if (planarSet.includes('Герта') || planarSet.includes('Space Sealing')) {
+    planarCondition = spd >= 120
+      ? (isRu ? `120+ СКОР выполнено (${spd} ✓) • Дополнительные +12% Силы Атаки активны` : `120+ SPD achieved (${spd} ✓) • Extra +12% ATK active`)
+      : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ⚠️) • Доп. атака не активирована!` : `Requires 120 SPD (current: ${spd} ⚠️) • Inactive!`);
+  } else if (planarSet.includes('Флот') || planarSet.includes('Ageless')) {
+    planarCondition = spd >= 120
+      ? (isRu ? `120+ СКОР выполнено (${spd} ✓) • Бонус отряда +8% Силы Атаки активен` : `120+ SPD achieved (${spd} ✓) • Team +8% ATK active`)
+      : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ⚠️) • Бафф отряда не активирован!` : `Requires 120 SPD (current: ${spd} ⚠️) • Inactive!`);
+  } else if (planarSet.includes('Русалка') || planarSet.includes('Lushaka')) {
+    planarCondition = isRu ? '+5% ВЭ и +12% Силы Атаки первому союзнику в отряде ✓' : '+5% ERR & +12% ATK to 1st slot ally ✓';
+  } else if (planarSet.includes('Сигония') || planarSet.includes('Sigonia')) {
+    planarCondition = isRu ? '+4% КШ и до +40% Крит. Урона за поверженных врагов' : '+4% CR & up to +40% CD on enemy defeated';
+  } else if (planarSet.includes('Изуми') || planarSet.includes('Izumo')) {
+    planarCondition = isRu ? '+12% Силы Атаки и +12% КШ при наличии союзника того же пути' : '+12% ATK & +12% CR with same-path ally';
+  } else if (planarSet.includes('Дуран') || planarSet.includes('Duran')) {
+    planarCondition = isRu ? 'До 5 стаков: +25% к бонус-атакам и +25% Крит. Урона' : 'Up to 5 stacks: +25% FUA DMG & +25% CD';
+  } else if (planarSet.includes('Калпаги') || planarSet.includes('Kalpagni')) {
+    planarCondition = spd >= 145
+      ? (isRu ? `145+ СКОР выполнено (${spd} ✓) • +40% Эффекта Пробития по огненной уязвимости` : `145+ SPD achieved (${spd} ✓) • +40% BE on Fire weakness`)
+      : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ⚠️)` : `Requires 145 SPD (current: ${spd} ⚠️)`);
+  } else {
+    planarCondition = isRu ? 'Параметры планарного сета активны' : 'Planar set passives active';
+  }
+
   return {
     score: finalScore.toFixed(1),
     topPercent: topPercent.toFixed(1),
@@ -398,6 +467,15 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     spd: spd.toFixed(1),
     bottleneck,
     actions,
-    weakestRelicIndex
+    weakestRelicIndex,
+    planar: {
+      setName: planarSet,
+      isComplete: isPlanarSetComplete,
+      efficiency: planarEfficiency,
+      cv: planarCv.toFixed(1),
+      condition: planarCondition,
+      rollsTotal: planarRollsTotal,
+      usefulRolls: Math.round(planarUsefulRolls)
+    }
   };
 }
