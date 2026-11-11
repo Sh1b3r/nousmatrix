@@ -32,6 +32,579 @@ export function getCharHeadIcon(char) {
   return iconUrl(char.icon);
 }
 
+// Archetype-aware main stat validation and scoring
+export function evaluateRelicMainStat(relic, archetype, char) {
+  if (!relic || !relic.main_affix) {
+    return { status: 'optimal', scoreBonus: 0, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+  }
+
+  const slotType = Number(relic.type);
+  const field = relic.main_affix.field || '';
+  const charElemId = (char?.element?.id || '').toLowerCase(); // 'physical', 'fire', 'ice', 'thunder', 'wind', 'quantum', 'imaginary'
+  const charElemField = charElemId ? `${charElemId}_dmg` : '';
+
+  // Slot 1 (Head) & Slot 2 (Hands) are fixed main stats in HSR (Flat HP and Flat ATK)
+  if (slotType === 1 || slotType === 2) {
+    return {
+      status: 'optimal',
+      scoreBonus: 2,
+      labelRu: 'ВЕРНЫЙ СТАТ',
+      labelEn: 'OPTIMAL'
+    };
+  }
+
+  // Slot 3: Body (Тело)
+  if (slotType === 3) {
+    switch (archetype) {
+      case 'CRIT_DPS':
+        if (field === 'crit_rate' || field === 'crit_dmg') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (КРИТЫ)', labelEn: 'OPTIMAL (CRIT)' };
+        }
+        if (field === 'atk') {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ (АТК%)', labelEn: 'VIABLE (ATK%)', recommendedRu: 'Крит. Шанс / Крит. Урон', recommendedEn: 'CRIT Rate / CRIT DMG' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Крит. Шанс или Крит. Урон',
+          recommendedEn: 'CRIT Rate or CRIT DMG'
+        };
+
+      case 'HP_CRIT_DPS':
+        if (field === 'crit_rate' || field === 'crit_dmg' || field === 'hp') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Крит. Шанс, Крит. Урон или HP%',
+          recommendedEn: 'CRIT Rate, CRIT DMG or HP%'
+        };
+
+      case 'BREAK_DPS':
+        if (field === 'atk' || field === 'hp' || field === 'def' || field === 'crit_rate' || field === 'crit_dmg') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Сила атаки% или HP%',
+          recommendedEn: 'ATK% or HP%'
+        };
+
+      case 'DOT_DPS':
+        if (field === 'atk' || field === 'effect_hit') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        }
+        if (field === 'hp' || field === 'def') {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE', recommendedRu: 'АТК% или ШПЭ', recommendedEn: 'ATK% or EHR' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Сила атаки% или Шанс попадания эффектов',
+          recommendedEn: 'ATK% or Effect Hit Rate'
+        };
+
+      case 'HARMONY_CRIT':
+        if (field === 'crit_dmg') {
+          return { status: 'optimal', scoreBonus: 4, labelRu: 'ВЕРНЫЙ СТАТ (КУ)', labelEn: 'OPTIMAL (CD)' };
+        }
+        if (field === 'hp' || field === 'def') {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ (ВЫЖИВАЕМОСТЬ)', labelEn: 'VIABLE (SURVIVAL)', recommendedRu: 'Крит. Урон', recommendedEn: 'CRIT DMG' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Крит. Урон (бафф союзников масштабируется от КУ)',
+          recommendedEn: 'CRIT DMG (buff scales off character CD)'
+        };
+
+      case 'HARMONY_ATK':
+        if (field === 'atk') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (АТК%)', labelEn: 'OPTIMAL (ATK%)' };
+        }
+        if (field === 'hp' || field === 'def') {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE', recommendedRu: 'Сила атаки%', recommendedEn: 'ATK%' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Сила атаки%',
+          recommendedEn: 'ATK%'
+        };
+
+      case 'HARMONY_BREAK':
+        if (field === 'hp' || field === 'def') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        }
+        if (field === 'atk') {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'HP% или Защита%',
+          recommendedEn: 'HP% or DEF%'
+        };
+
+      case 'PRESERVATION_DEF':
+        if (field === 'def' || field === 'crit_dmg') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        }
+        if (field === 'crit_rate' || field === 'hp') {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Защита% (или Крит. Урон для Авантюрина)',
+          recommendedEn: 'DEF% (or CRIT DMG for Aventurine)'
+        };
+
+      case 'PRESERVATION_HP':
+        if (field === 'hp' || field === 'def') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'HP% или Защита%',
+          recommendedEn: 'HP% or DEF%'
+        };
+
+      case 'ABUNDANCE_HP':
+      case 'ABUNDANCE_BREAK':
+        if (field === 'heal_rate' || field === 'hp') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (ИСЦЕЛЕНИЕ)', labelEn: 'OPTIMAL (HEAL)' };
+        }
+        if (field === 'def' || (archetype === 'ABUNDANCE_BREAK' && field === 'atk')) {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Исходящее исцеление или HP%',
+          recommendedEn: 'Outgoing Healing Boost or HP%'
+        };
+
+      case 'ABUNDANCE_ATK':
+        if (field === 'heal_rate' || field === 'atk') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        }
+        if (field === 'hp') {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Исходящее исцеление или Сила атаки%',
+          recommendedEn: 'Outgoing Healing or ATK%'
+        };
+
+      case 'NIHILITY_DEBUFF':
+        if (field === 'effect_hit' || field === 'crit_rate' || field === 'crit_dmg') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (ШПЭ)', labelEn: 'OPTIMAL (EHR)' };
+        }
+        if (field === 'hp' || field === 'def' || field === 'atk') {
+          return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Шанс попадания эффектов (ШПЭ)',
+          recommendedEn: 'Effect Hit Rate'
+        };
+
+      default:
+        return { status: 'optimal', scoreBonus: 0, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+    }
+  }
+
+  // Slot 4: Feet (Сапоги)
+  if (slotType === 4) {
+    if (field === 'spd') {
+      return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (СКОР)', labelEn: 'OPTIMAL (SPD)' };
+    }
+
+    if (archetype === 'CRIT_DPS' || archetype === 'BREAK_DPS' || archetype === 'DOT_DPS') {
+      if (field === 'atk') {
+        return { status: 'optimal', scoreBonus: 2, labelRu: 'ВЕРНЫЙ СТАТ (АТК%)', labelEn: 'OPTIMAL (ATK%)' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Скорость или Сила атаки%',
+        recommendedEn: 'Speed or ATK%'
+      };
+    }
+
+    if (archetype === 'HP_CRIT_DPS') {
+      if (field === 'hp') {
+        return { status: 'optimal', scoreBonus: 2, labelRu: 'ВЕРНЫЙ СТАТ (HP%)', labelEn: 'OPTIMAL (HP%)' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Скорость или HP%',
+        recommendedEn: 'Speed or HP%'
+      };
+    }
+
+    if (archetype === 'HARMONY_ATK') {
+      if (field === 'atk') {
+        return { status: 'optimal', scoreBonus: 2, labelRu: 'ВЕРНЫЙ СТАТ (АТК%)', labelEn: 'OPTIMAL (ATK%)' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Скорость или Сила атаки%',
+        recommendedEn: 'Speed or ATK%'
+      };
+    }
+
+    if (archetype === 'PRESERVATION_DEF') {
+      if (field === 'def') {
+        return { status: 'optimal', scoreBonus: 2, labelRu: 'ВЕРНЫЙ СТАТ (ЗАЩ%)', labelEn: 'OPTIMAL (DEF%)' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Скорость или Защита%',
+        recommendedEn: 'Speed or DEF%'
+      };
+    }
+
+    if (archetype === 'PRESERVATION_HP' || archetype === 'ABUNDANCE_HP') {
+      if (field === 'hp') {
+        return { status: 'optimal', scoreBonus: 2, labelRu: 'ВЕРНЫЙ СТАТ (HP%)', labelEn: 'OPTIMAL (HP%)' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Скорость или HP%',
+        recommendedEn: 'Speed or HP%'
+      };
+    }
+
+    if (field === 'hp' || field === 'def') {
+      return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE', recommendedRu: 'Скорость', recommendedEn: 'Speed' };
+    }
+    return {
+      status: 'wrong',
+      scoreBonus: -18,
+      labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+      labelEn: 'WRONG MAIN STAT',
+      recommendedRu: 'Скорость',
+      recommendedEn: 'Speed'
+    };
+  }
+
+  // Slot 5: Planar Sphere (Планарная сфера)
+  if (slotType === 5) {
+    const isMatchingElement = charElemField && field === charElemField;
+    const isOtherElement = field.endsWith('_dmg') && !isMatchingElement;
+
+    if (isOtherElement) {
+      return {
+        status: 'wrong',
+        scoreBonus: -20,
+        labelRu: 'ЧУЖАЯ СТИХИЯ',
+        labelEn: 'WRONG ELEMENT',
+        recommendedRu: 'Бонус стихийного урона персонажа или АТК%',
+        recommendedEn: 'Matching Element DMG or ATK%'
+      };
+    }
+
+    if (archetype === 'CRIT_DPS' || archetype === 'BREAK_DPS' || archetype === 'DOT_DPS') {
+      if (isMatchingElement) {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (СТИХИЯ)', labelEn: 'OPTIMAL (ELEM)' };
+      }
+      if (field === 'atk') {
+        return { status: 'optimal', scoreBonus: 2, labelRu: 'ВЕРНЫЙ СТАТ (АТК%)', labelEn: 'OPTIMAL (ATK%)' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Бонус урона стихии или Сила атаки%',
+        recommendedEn: 'Elemental DMG Boost or ATK%'
+      };
+    }
+
+    if (archetype === 'HP_CRIT_DPS') {
+      if (isMatchingElement || field === 'hp') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Бонус стихийного урона или HP%',
+        recommendedEn: 'Elemental DMG or HP%'
+      };
+    }
+
+    if (archetype === 'HARMONY_ATK') {
+      if (isMatchingElement || field === 'atk') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+      }
+      if (field === 'hp' || field === 'def') {
+        return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Сила атаки% или HP%/ЗАЩ%',
+        recommendedEn: 'ATK% or HP%/DEF%'
+      };
+    }
+
+    if (archetype === 'PRESERVATION_DEF') {
+      if (field === 'def' || isMatchingElement) {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (ЗАЩ%)', labelEn: 'OPTIMAL (DEF%)' };
+      }
+      if (field === 'hp') {
+        return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Защита%',
+        recommendedEn: 'DEF%'
+      };
+    }
+
+    if (archetype === 'PRESERVATION_HP' || archetype === 'ABUNDANCE_HP') {
+      if (field === 'hp') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (HP%)', labelEn: 'OPTIMAL (HP%)' };
+      }
+      if (field === 'def') {
+        return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'HP%',
+        recommendedEn: 'HP%'
+      };
+    }
+
+    if (archetype === 'ABUNDANCE_ATK') {
+      if (field === 'atk') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (АТК%)', labelEn: 'OPTIMAL (ATK%)' };
+      }
+      if (field === 'hp') {
+        return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Сила атаки%',
+        recommendedEn: 'ATK%'
+      };
+    }
+
+    if (field === 'hp' || field === 'def' || isMatchingElement) {
+      return { status: 'optimal', scoreBonus: 2, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+    }
+    if (field === 'atk') {
+      return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+    }
+    return {
+      status: 'wrong',
+      scoreBonus: -18,
+      labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+      labelEn: 'WRONG MAIN STAT',
+      recommendedRu: 'HP% или Защита%',
+      recommendedEn: 'HP% or DEF%'
+    };
+  }
+
+  // Slot 6: Link Rope (Соединительная вервь)
+  if (slotType === 6) {
+    if (archetype.startsWith('HARMONY') || archetype.startsWith('ABUNDANCE') || archetype === 'NIHILITY_DEBUFF') {
+      if (field === 'sp_rate') {
+        return { status: 'optimal', scoreBonus: 4, labelRu: 'ВЕРНЫЙ СТАТ (ВЭ)', labelEn: 'OPTIMAL (ERR)' };
+      }
+      if (archetype === 'HARMONY_BREAK' && field === 'break_dmg') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (ЭП)', labelEn: 'OPTIMAL (BE)' };
+      }
+      if (archetype === 'ABUNDANCE_BREAK' && field === 'break_dmg') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (ЭП)', labelEn: 'OPTIMAL (BE)' };
+      }
+      if (archetype === 'ABUNDANCE_ATK' && field === 'atk') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (АТК%)', labelEn: 'OPTIMAL (ATK%)' };
+      }
+      if (archetype === 'ABUNDANCE_HP' && field === 'hp') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (HP%)', labelEn: 'OPTIMAL (HP%)' };
+      }
+      if (field === 'hp' || field === 'def' || field === 'atk') {
+        return {
+          status: 'viable',
+          scoreBonus: 0,
+          labelRu: 'ДОПУСТИМЫЙ',
+          labelEn: 'VIABLE',
+          recommendedRu: 'Восстановление энергии (ВЭ)',
+          recommendedEn: 'Energy Regeneration Rate (ERR)'
+        };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Восстановление энергии (ВЭ)',
+        recommendedEn: 'Energy Regeneration Rate (ERR)'
+      };
+    }
+
+    if (archetype === 'PRESERVATION_DEF') {
+      if (field === 'def' || field === 'sp_rate') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+      }
+      if (field === 'hp') {
+        return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Защита% или ВЭ',
+        recommendedEn: 'DEF% or ERR'
+      };
+    }
+
+    if (archetype === 'PRESERVATION_HP') {
+      if (field === 'hp' || field === 'sp_rate') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+      }
+      if (field === 'def') {
+        return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'HP% или ВЭ',
+        recommendedEn: 'HP% or ERR'
+      };
+    }
+
+    if (archetype === 'BREAK_DPS') {
+      if (field === 'break_dmg') {
+        return { status: 'optimal', scoreBonus: 4, labelRu: 'ВЕРНЫЙ СТАТ (ЭП)', labelEn: 'OPTIMAL (BE)' };
+      }
+      if (field === 'atk') {
+        return { status: 'viable', scoreBonus: 1, labelRu: 'ДОПУСТИМЫЙ (АТК%)', labelEn: 'VIABLE (ATK%)', recommendedRu: 'Эффект пробития (ЭП)', recommendedEn: 'Break Effect (BE)' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Эффект пробития (ЭП)',
+        recommendedEn: 'Break Effect (BE)'
+      };
+    }
+
+    if (archetype === 'HP_CRIT_DPS') {
+      if (field === 'hp' || field === 'sp_rate') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'HP% или ВЭ',
+        recommendedEn: 'HP% or ERR'
+      };
+    }
+
+    if (archetype === 'DOT_DPS') {
+      if (field === 'atk' || field === 'sp_rate') {
+        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+      }
+      return {
+        status: 'wrong',
+        scoreBonus: -18,
+        labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+        labelEn: 'WRONG MAIN STAT',
+        recommendedRu: 'Сила атаки% или ВЭ',
+        recommendedEn: 'ATK% or ERR'
+      };
+    }
+
+    // Default: CRIT_DPS
+    if (field === 'atk') {
+      return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ (АТК%)', labelEn: 'OPTIMAL (ATK%)' };
+    }
+    if (field === 'sp_rate') {
+      return { status: 'viable', scoreBonus: 1, labelRu: 'ДОПУСТИМЫЙ (ВЭ)', labelEn: 'VIABLE (ERR)' };
+    }
+    if (field === 'break_dmg') {
+      return { status: 'viable', scoreBonus: 0, labelRu: 'ДОПУСТИМЫЙ (ЭП)', labelEn: 'VIABLE (BE)' };
+    }
+    return {
+      status: 'wrong',
+      scoreBonus: -18,
+      labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+      labelEn: 'WRONG MAIN STAT',
+      recommendedRu: 'Сила атаки%',
+      recommendedEn: 'ATK%'
+    };
+  }
+
+  return { status: 'optimal', scoreBonus: 0, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+}
+
 // Approximation of the standard normal error function erf(x)
 function erf(x) {
   const a1 = 0.254829592;
@@ -210,10 +783,16 @@ export function calculateCharacterAudit(char, lang = 'ru') {
       pScore += cnt * weight;
       usefulRollsSum += cnt * weight;
     });
-    relicScores.push({ idx, pScore, pTotal });
+
+    // Archetype-aware Main Stat Evaluation
+    const mainEval = evaluateRelicMainStat(rel, archetype, char);
+    rel.main_eval = mainEval;
+    pScore += mainEval.scoreBonus;
+
+    relicScores.push({ idx, pScore, pTotal, mainEval });
   });
 
-  // Find exact weakest relic (lowest useful rolls)
+  // Find exact weakest relic (lowest useful rolls + main stat penalty)
   let weakestRelicIndex = 0;
   let minScore = 999;
   relicScores.forEach(r => {
@@ -381,6 +960,36 @@ export function calculateCharacterAudit(char, lang = 'ru') {
       break;
     }
   }
+
+  // Factor in Main Stat validity into overall score and bottlenecks
+  const slotNamesRu = ['Голова', 'Руки', 'Тело', 'Сапоги', 'Планарная сфера', 'Соединительная вервь'];
+  const slotNamesEn = ['Head', 'Hands', 'Body', 'Feet', 'Planar Sphere', 'Link Rope'];
+  const wrongMainRelics = relicScores.filter(r => r.mainEval?.status === 'wrong');
+
+  if (wrongMainRelics.length > 0) {
+    const worstMain = wrongMainRelics[0];
+    const sName = isRu ? (slotNamesRu[worstMain.idx] || `Слот ${worstMain.idx + 1}`) : (slotNamesEn[worstMain.idx] || `Slot ${worstMain.idx + 1}`);
+    const recText = isRu ? worstMain.mainEval.recommendedRu : worstMain.mainEval.recommendedEn;
+
+    actions.unshift({
+      title: isRu ? `Критично: Неверный главный стат (${sName})` : `Critical: Wrong Main Stat (${sName})`,
+      desc: isRu
+        ? `На реликвии «${sName}» активен неподходящий главный стат. Для вашего архетипа необходимо заменить на: ${recText}.`
+        : `Slot "${sName}" has incompatible main stat. For this archetype, switch to: ${recText}.`
+    });
+
+    bottleneck = isRu
+      ? `Критическая потеря урона/эффективности: ${sName} имеет неподходящий главный стат. Срочно замените на: ${recText}.`
+      : `Critical efficiency loss: ${sName} has incompatible main stat. Priority replacement: ${recText}.`;
+  }
+
+  // Deduct main stat penalties from statPoints (14 pts per wrong main stat, 2 pts per non-optimal viable)
+  let mainStatPenalty = 0;
+  relicScores.forEach(r => {
+    if (r.mainEval?.status === 'wrong') mainStatPenalty += 14;
+    else if (r.mainEval?.status === 'viable') mainStatPenalty += 2;
+  });
+  statPoints = Math.max(15, statPoints - mainStatPenalty);
 
   // 4. Combined Combat Score (0 - 100)
   const finalScore = Math.min(99.4, Math.max(45.0, (statPoints * 0.7) + (rollEfficiency * 0.3)));

@@ -44,17 +44,24 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
 
         {/* Main Stat */}
         <div className="relic-main-stat-box">
-          <span className="relic-main-label">
-            {r.main_affix?.icon && (
-              <img
-                className="relic-affix-icon main"
-                src={iconUrl(r.main_affix?.icon)}
-                alt=""
-                onError={(e) => handleImageFallback(e, r.main_affix?.icon)}
-              />
+          <div className="relic-main-left">
+            <span className="relic-main-label">
+              {r.main_affix?.icon && (
+                <img
+                  className="relic-affix-icon main"
+                  src={iconUrl(r.main_affix?.icon)}
+                  alt=""
+                  onError={(e) => handleImageFallback(e, r.main_affix?.icon)}
+                />
+              )}
+              {formatStatName(r.main_affix?.name, lang)}
+            </span>
+            {r.main_eval && (idx >= 2) && (
+              <span className={`main-stat-badge ${r.main_eval.status}`} title={r.main_eval.status === 'wrong' ? (lang === 'ru' ? `Рекомендуется: ${r.main_eval.recommendedRu}` : `Recommended: ${r.main_eval.recommendedEn}`) : ''}>
+                {lang === 'ru' ? r.main_eval.labelRu : r.main_eval.labelEn}
+              </span>
             )}
-            {formatStatName(r.main_affix?.name, lang)}
-          </span>
+          </div>
           <span className="relic-main-val">{r.main_affix?.display}</span>
         </div>
 
