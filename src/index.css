@@ -582,15 +582,36 @@ main {
 
 .char-hero-left {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 12px;
   flex: 1;
   min-width: 320px;
 }
 
+.char-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.char-title-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.char-name-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0;
+  color: #fff;
+  line-height: 1.2;
+}
+
 .char-portrait-box {
-  width: 84px;
-  height: 84px;
+  width: 76px;
+  height: 76px;
   border-radius: 50% !important;
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
@@ -617,20 +638,11 @@ main {
   padding: 3px;
 }
 
-.char-details-primary h2 {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .char-stars {
   color: var(--gold);
   font-size: 14px;
   letter-spacing: 2px;
+  line-height: 1;
 }
 
 .char-tags-row {
@@ -1464,17 +1476,7 @@ main {
   }
 }
 
-@media (max-width: 768px) {
-  .char-hero-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .lightcone-box {
-    width: 100%;
-  }
-
-  /* RELIC GROUP HEADERS (Cavern Relics vs Planar Ornaments) */
+/* RELIC GROUP HEADERS (Cavern Relics vs Planar Ornaments) */
 .relic-group-header {
   display: flex;
   justify-content: space-between;
@@ -1559,16 +1561,178 @@ main {
   border-top: 1px dashed var(--border-subtle);
 }
 
-.relics-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 768px) {
+  /* Full 100% width on all cards and containers on mobile */
+  .char-hero-card,
+  .lightcone-box,
+  .relic-item-card,
+  .combat-attributes-card,
+  .audit-card,
+  .sets-card,
+  .planar-audit-box,
+  .roster-section,
+  .dashboard-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Character Hero Card on Mobile */
+  .char-hero-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 16px 14px !important;
+    gap: 16px !important;
+  }
+
+  .char-hero-left {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+
+  /* Upper-left avatar + Name and Stars in column to the right */
+  .char-header-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  .char-portrait-box {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+  }
+
+  .char-title-col {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+
+  .char-name-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+    line-height: 1.2 !important;
+    word-break: break-word !important;
+    margin: 0 !important;
+  }
+
+  .char-stars {
+    font-size: 13px !important;
+    color: var(--gold) !important;
+    letter-spacing: 2px !important;
+    line-height: 1 !important;
+  }
+
+  /* Characteristics (Pills) Centered */
+  .char-tags-row {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .char-pill {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+  }
+
+  /* Skills & Traces grid: 4 per row, perfectly centered and never overflowing */
+  .char-skills-row {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-items: center !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    padding: 4px 0 !important;
+    margin: 0 !important;
+  }
+
+  .skill-item {
+    width: 100% !important;
+    max-width: 68px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .skill-icon-wrap {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .skill-icon {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .skill-lvl-badge {
+    font-size: 9px !important;
+    padding: 1px 3px !important;
+    bottom: -3px !important;
+    right: -3px !important;
+  }
+
+  .skill-name-label {
+    font-size: 8px !important;
+    text-align: center !important;
+    letter-spacing: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Light Cone card full width */
+  .lightcone-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 4px !important;
+    padding: 12px 14px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+  }
+
+  .cone-img {
+    width: 56px !important;
+    height: 70px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .cone-name {
+    font-size: 13px !important;
+  }
+
+  .relics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .planar-grid {
+    grid-template-columns: 1fr !important;
   }
 
   .guide-steps {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
   
   .trophy-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 
