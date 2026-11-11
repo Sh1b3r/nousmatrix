@@ -65,7 +65,7 @@ export function calculateCharacterAudit(char, lang = 'en') {
       actions.push({
         title: isRu ? "Приоритет: Добрать 4000 Защиты" : "Priority: Reach 4,000 DEF threshold",
         desc: isRu
-          ? `Необходимо добрать ${Math.round(4000 - def)} защиты через соединительную веревку или сабстаты.`
+          ? `Необходимо добрать ${Math.round(4000 - def)} защиты через соединительную вервь или сабстаты.`
           : `Gain ${Math.round(4000 - def)} more DEF via link rope or substats to unlock maximum talent scaling.`
       });
     }

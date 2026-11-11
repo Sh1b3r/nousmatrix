@@ -16,7 +16,9 @@ export default function SetBonuses({ character, t }) {
           <div className="set-head">
             <img className="set-icon" src={iconUrl(set.icon)} alt={set.name} />
             <span className="set-name">{set.name}</span>
-            <span className="set-num-badge">{set.num} {t.pc}</span>
+            <span className="set-num-badge">
+              {set.num === 2 ? t.pc2 : (set.num === 4 ? t.pc4 : `${set.num} ${t.pc}`)}
+            </span>
           </div>
           <div className="set-desc">{set.desc}</div>
         </div>

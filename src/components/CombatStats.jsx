@@ -1,7 +1,8 @@
 import React from 'react';
 import { iconUrl } from '../utils/audit';
+import { formatStatName } from '../utils/i18n';
 
-export default function CombatStats({ character, t }) {
+export default function CombatStats({ character, t, lang = 'ru' }) {
   if (!character) return null;
 
   const baseMap = {};
@@ -43,27 +44,39 @@ export default function CombatStats({ character, t }) {
   // 7. Break Effect
   const beTotal = addMap['break_dmg'] ? (addMap['break_dmg'].value * 100).toFixed(1) + '%' : null;
 
-  // 8. Element DMG
+  // 8. Outgoing Healing Boost
+  const healTotal = addMap['heal_rate'] && addMap['heal_rate'].value > 0
+    ? (addMap['heal_rate'].value * 100).toFixed(1) + '%'
+    : null;
+
+  // 9. Element DMG
   const elementFields = [
-    { field: 'physical_dmg', icon: 'icon/property/IconPhysicalAddedRatio.png', defaultName: 'Physical DMG' },
-    { field: 'fire_dmg', icon: 'icon/property/IconFireAddedRatio.png', defaultName: 'Fire DMG' },
-    { field: 'ice_dmg', icon: 'icon/property/IconIceAddedRatio.png', defaultName: 'Ice DMG' },
-    { field: 'thunder_dmg', icon: 'icon/property/IconThunderAddedRatio.png', defaultName: 'Lightning DMG' },
-    { field: 'wind_dmg', icon: 'icon/property/IconWindAddedRatio.png', defaultName: 'Wind DMG' },
-    { field: 'quantum_dmg', icon: 'icon/property/IconQuantumAddedRatio.png', defaultName: 'Quantum DMG' },
-    { field: 'imaginary_dmg', icon: 'icon/property/IconImaginaryAddedRatio.png', defaultName: 'Imaginary DMG' }
+    { field: 'physical_dmg', icon: 'icon/property/IconPhysicalAddedRatio.png', rawName: 'Физический урон' },
+    { field: 'fire_dmg', icon: 'icon/property/IconFireAddedRatio.png', rawName: 'Огненный урон' },
+    { field: 'ice_dmg', icon: 'icon/property/IconIceAddedRatio.png', rawName: 'Ледяной урон' },
+    { field: 'thunder_dmg', icon: 'icon/property/IconThunderAddedRatio.png', rawName: 'Электрический урон' },
+    { field: 'wind_dmg', icon: 'icon/property/IconWindAddedRatio.png', rawName: 'Ветряной урон' },
+    { field: 'quantum_dmg', icon: 'icon/property/IconQuantumAddedRatio.png', rawName: 'Квантовый урон' },
+    { field: 'imaginary_dmg', icon: 'icon/property/IconImaginaryAddedRatio.png', rawName: 'Мнимый урон' }
   ];
 
   const activeElementDmgs = elementFields.filter(el => addMap[el.field] && addMap[el.field].value > 0);
 
-  // 9. ERR
+  // 10. ERR (Energy Regeneration Rate)
   const errTotal = addMap['sp_rate'] ? (100 + addMap['sp_rate'].value * 100).toFixed(1) + '%' : null;
 
-  // 10. EHR
-  const ehrTotal = addMap['effect_hit'] && addMap['effect_hit'].value > 0 ? (addMap['effect_hit'].value * 100).toFixed(1) + '%' : null;
+  // 11. EHR (Effect Hit Rate)
+  const ehrTotal = addMap['effect_hit'] && addMap['effect_hit'].value > 0
+    ? (addMap['effect_hit'].value * 100).toFixed(1) + '%'
+    : null;
 
-  // 11. Effect RES
-  const resTotal = addMap['effect_res'] && addMap['effect_res'].value > 0 ? (addMap['effect_res'].value * 100).toFixed(1) + '%' : null;
+  // 12. Effect RES
+  const resTotal = addMap['effect_res'] && addMap['effect_res'].value > 0
+    ? (addMap['effect_res'].value * 100).toFixed(1) + '%'
+    : null;
+
+  // 13. Max SP (Energy Limit)
+  const maxSp = baseMap['max_sp'] ? Math.round(baseMap['max_sp'].value) : null;
 
   return (
     <div className="combat-stat-table">
@@ -150,12 +163,25 @@ export default function CombatStats({ character, t }) {
         </div>
       )}
 
+      {/* OUTGOING HEALING */}
+      {healTotal && (
+        <div className="stat-entry">
+          <div className="stat-left">
+            <img className="stat-icon" src={iconUrl('icon/property/IconHealRatio.png')} alt="Heal" />
+            <span className="stat-name">{t.healRate}</span>
+          </div>
+          <div className="stat-values">
+            <span className="stat-total">{healTotal}</span>
+          </div>
+        </div>
+      )}
+
       {/* ELEMENTAL DMG */}
       {activeElementDmgs.map((el, i) => (
         <div className="stat-entry" key={i}>
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl(el.icon)} alt={el.defaultName} />
-            <span className="stat-name">{addMap[el.field].name || el.defaultName}</span>
+            <img className="stat-icon" src={iconUrl(el.icon)} alt="Element" />
+            <span className="stat-name">{formatStatName(addMap[el.field].name || el.rawName, lang)}</span>
           </div>
           <div className="stat-values">
             <span className="stat-total">{(addMap[el.field].value * 100).toFixed(1)}%</span>
@@ -198,6 +224,19 @@ export default function CombatStats({ character, t }) {
           </div>
           <div className="stat-values">
             <span className="stat-total">{resTotal}</span>
+          </div>
+        </div>
+      )}
+
+      {/* MAX ENERGY */}
+      {maxSp && (
+        <div className="stat-entry">
+          <div className="stat-left">
+            <img className="stat-icon" src={iconUrl('icon/property/IconEnergyLimit.png')} alt="Max SP" />
+            <span className="stat-name">{t.maxEnergy}</span>
+          </div>
+          <div className="stat-values">
+            <span className="stat-total">{maxSp}</span>
           </div>
         </div>
       )}

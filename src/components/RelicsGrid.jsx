@@ -1,7 +1,8 @@
 import React from 'react';
 import { iconUrl } from '../utils/audit';
+import { formatStatName } from '../utils/i18n';
 
-export default function RelicsGrid({ character, audit, t }) {
+export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
   if (!character) return null;
 
   const relics = character.relics || [];
@@ -11,7 +12,7 @@ export default function RelicsGrid({ character, audit, t }) {
     <div className="relics-grid">
       {relics.map((r, idx) => {
         const isWeak = idx === audit?.weakestRelicIndex;
-        const slotTitle = slots[idx] || `Slot ${idx + 1}`;
+        const slotTitle = slots[idx] || `Слот ${idx + 1}`;
 
         return (
           <div key={idx} className={`relic-item-card ${isWeak ? 'weak-piece' : ''}`}>
@@ -35,18 +36,22 @@ export default function RelicsGrid({ character, audit, t }) {
               )}
             </div>
 
+            {/* Main Stat */}
             <div className="relic-main-stat-box">
               <span className="relic-main-label">
-                <img
-                  style={{ width: '16px', height: '16px', objectFit: 'contain' }}
-                  src={iconUrl(r.main_affix?.icon)}
-                  alt=""
-                />
-                {r.main_affix?.name}
+                {r.main_affix?.icon && (
+                  <img
+                    style={{ width: '16px', height: '16px', objectFit: 'contain' }}
+                    src={iconUrl(r.main_affix?.icon)}
+                    alt=""
+                  />
+                )}
+                {formatStatName(r.main_affix?.name, lang)}
               </span>
               <span className="relic-main-val">{r.main_affix?.display}</span>
             </div>
 
+            {/* Sub Stats with Roll Counts */}
             <div className="relic-subs-list">
               {(r.sub_affix || []).map((sub, sIdx) => {
                 const rolls = sub.count || 1;
@@ -54,17 +59,19 @@ export default function RelicsGrid({ character, audit, t }) {
                 return (
                   <div key={sIdx} className="relic-sub-row">
                     <span className="relic-sub-name">
-                      <img
-                        style={{ width: '14px', height: '14px', objectFit: 'contain' }}
-                        src={iconUrl(sub.icon)}
-                        alt=""
-                      />
-                      {sub.name}
+                      {sub.icon && (
+                        <img
+                          style={{ width: '14px', height: '14px', objectFit: 'contain' }}
+                          src={iconUrl(sub.icon)}
+                          alt=""
+                        />
+                      )}
+                      {formatStatName(sub.name, lang)}
                     </span>
                     <span className="relic-sub-val">
                       {sub.display}
                       <span className={`roll-count-tag ${isHigh ? 'high' : ''}`}>
-                        {rolls > 1 ? t.rollsMulti(rolls) : t.rollSingle}
+                        {t.rollTag(rolls)}
                       </span>
                     </span>
                   </div>

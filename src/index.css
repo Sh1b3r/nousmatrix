@@ -219,6 +219,45 @@ main {
   border-color: var(--border-focus);
 }
 
+.error-banner {
+  background: rgba(255, 60, 60, 0.08);
+  border: 1px solid rgba(255, 60, 60, 0.35);
+  border-left: 3px solid var(--accent);
+  padding: 14px 18px;
+  border-radius: 2px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.error-text {
+  font-size: 13px;
+  color: #FFB3B3;
+  line-height: 1.45;
+  font-family: var(--font-sans);
+}
+
+.btn-demo-link {
+  align-self: flex-start;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 150ms ease;
+}
+
+.btn-demo-link:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
 .guide-banner {
   background: var(--surface-2);
   border-left: 3px solid var(--accent);

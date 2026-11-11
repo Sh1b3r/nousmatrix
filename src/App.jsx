@@ -18,6 +18,7 @@ export default function App() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Region-based automatic locale detection (Default: English 'en', Slavic: 'ru', NO manual switcher)
   const lang = getDetectedLanguage();
@@ -34,13 +35,13 @@ export default function App() {
 
   const handleBackToHome = () => {
     setCurrentProfile(null);
+    setErrorMsg('');
     window.history.replaceState({}, '', window.location.pathname);
   };
 
   // Keyboard navigation on PC: Left Arrow (ArrowLeft) or Escape returns to UID input
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Don't trigger if user is typing in an input
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
         return;
       }
@@ -59,8 +60,11 @@ export default function App() {
   }, [currentProfile, isTrophyOpen]);
 
   const fetchProfile = async (targetUid) => {
-    const uid = targetUid.trim() || '700142890';
+    const cleanUid = String(targetUid || '').trim().replace(/\D/g, '');
+    const uid = cleanUid || '700142890';
+
     setIsLoading(true);
+    setErrorMsg('');
 
     const localizedPresets = (presetProfiles && presetProfiles[lang])
       ? presetProfiles[lang]
@@ -68,53 +72,89 @@ export default function App() {
 
     try {
       let data = null;
+      let lastStatus = 0;
 
-      // 1. Try Vercel Serverless API first (works seamlessly on Vercel deployment with correct lang)
+      // 1. Try Vercel Serverless API / Local Vite Proxy
       try {
-        const apiRes = await fetch(`/api/mihomo?uid=${uid}&lang=${lang}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+        const apiRes = await fetch(`/api/mihomo?uid=${uid}&lang=${lang}`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        lastStatus = apiRes.status;
         if (apiRes.ok) {
           data = await apiRes.json();
         }
-      } catch {
-        // Local or standalone fallback
+      } catch (err) {
+        console.warn('API fetch warning:', err);
       }
 
-      // 2. Check local preset database
+      // 2. Check local presets (if offline or preset UID entered)
       if (!data && localizedPresets && localizedPresets[uid]) {
         data = localizedPresets[uid];
       }
 
-      // 3. Try direct Mihomo API
-      if (!data) {
+      // 3. Try direct Mihomo endpoint if not running through proxy
+      if (!data && lastStatus !== 404) {
         try {
-          const directRes = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${lang}`, { cache: 'no-cache' });
+          const directController = new AbortController();
+          const dTimeout = setTimeout(() => directController.abort(), 10000);
+          const directRes = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${lang}`, {
+            signal: directController.signal
+          });
+          clearTimeout(dTimeout);
           if (directRes.ok) {
             data = await directRes.json();
           }
         } catch {
-          // Direct fetch failed
+          // Direct fetch failed (CORS or network)
         }
       }
 
-      // 4. Offline fallback if UID not found
-      if (!data && localizedPresets) {
-        const fallbackUid = Object.keys(localizedPresets)[0] || '700142890';
-        data = localizedPresets[fallbackUid];
-        alert(t.fallbackAlert(uid, data.player?.nickname || '', fallbackUid));
+      // Process loaded data
+      if (data) {
+        if (data.characters && data.characters.length > 0) {
+          setCurrentProfile(data);
+          setActiveIndex(0);
+          setErrorMsg('');
+          window.history.replaceState({}, '', `?uid=${data.player?.uid || uid}`);
+          return;
+        } else if (data.player) {
+          // Profile exists on server, but characters showcase is hidden/empty
+          setErrorMsg(t.errHidden(data.player.nickname));
+          return;
+        }
       }
 
-      if (data && data.characters && data.characters.length > 0) {
-        setCurrentProfile(data);
-        setActiveIndex(0);
-        window.history.replaceState({}, '', `?uid=${data.player?.uid || uid}`);
+      // If we reached here, no valid character showcase was retrieved
+      if (lastStatus === 404) {
+        setErrorMsg(t.errNotFound(uid));
       } else {
-        alert(t.errorNoShowcase);
+        setErrorMsg(t.errGeneric);
       }
     } catch (err) {
       console.error('Fetch error:', err);
-      alert('Error: ' + err.message);
+      setErrorMsg(t.errGeneric);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleOpenDemo = () => {
+    const localizedPresets = (presetProfiles && presetProfiles[lang])
+      ? presetProfiles[lang]
+      : (presetProfiles?.en || presetProfiles?.ru || presetProfiles);
+    const demoUid = Object.keys(localizedPresets || {})[0] || '700142890';
+    if (localizedPresets && localizedPresets[demoUid]) {
+      setCurrentProfile(localizedPresets[demoUid]);
+      setActiveIndex(0);
+      setErrorMsg('');
+      window.history.replaceState({}, '', `?uid=${demoUid}`);
+    } else {
+      fetchProfile('700142890');
     }
   };
 
@@ -132,7 +172,13 @@ export default function App() {
 
       <main>
         {!currentProfile ? (
-          <HomeView onSearch={fetchProfile} isLoading={isLoading} t={t} />
+          <HomeView
+            onSearch={fetchProfile}
+            isLoading={isLoading}
+            errorMsg={errorMsg}
+            onOpenDemo={handleOpenDemo}
+            t={t}
+          />
         ) : (
           <section id="view-dashboard" style={{ display: 'block' }}>
             {/* Player Banner */}
@@ -193,7 +239,7 @@ export default function App() {
                     <span>{t.combatStatsTitle}</span>
                     <span style={{ color: 'var(--text-tertiary)', fontSize: '10px' }}>{t.basePlusBonus}</span>
                   </div>
-                  <CombatStats character={activeChar} t={t} />
+                  <CombatStats character={activeChar} t={t} lang={lang} />
                 </div>
 
                 {/* 2. Audit Benchmark & Bottleneck */}
@@ -210,7 +256,7 @@ export default function App() {
                     <span>{t.relicsTitle}</span>
                     <span style={{ color: 'var(--accent)' }}>{t.verifiedData}</span>
                   </div>
-                  <RelicsGrid character={activeChar} audit={audit} t={t} />
+                  <RelicsGrid character={activeChar} audit={audit} t={t} lang={lang} />
                 </div>
 
                 {/* 2. Active Set Bonuses */}

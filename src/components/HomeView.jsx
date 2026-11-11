@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 
-export default function HomeView({ onSearch, isLoading, t }) {
+export default function HomeView({ onSearch, isLoading, errorMsg, onOpenDemo, t }) {
   const [uid, setUid] = useState('');
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    onSearch(uid.trim() || '700142890');
+    const cleanUid = uid.trim().replace(/\D/g, '');
+    if (!cleanUid) {
+      onSearch('700142890');
+    } else {
+      onSearch(cleanUid);
+    }
   };
 
   return (
@@ -21,12 +26,30 @@ export default function HomeView({ onSearch, isLoading, t }) {
             placeholder={t.inputPlaceholder}
             value={uid}
             onChange={(e) => setUid(e.target.value)}
+            disabled={isLoading}
+            maxLength={11}
             autoFocus
           />
           <button type="submit" className="btn-submit" disabled={isLoading}>
             {isLoading ? t.btnAnalyzing : t.btnAnalyze}
           </button>
         </form>
+
+        {/* Inline Error / Notice Banner */}
+        {errorMsg && (
+          <div className="error-banner">
+            <div className="error-text">⚠️ {errorMsg}</div>
+            {onOpenDemo && (
+              <button
+                type="button"
+                className="btn-demo-link"
+                onClick={onOpenDemo}
+              >
+                {t.demoBtnText}
+              </button>
+            )}
+          </div>
+        )}
 
         <div className="guide-banner">
           <div className="guide-heading">{t.guideHeading}</div>

@@ -1,7 +1,9 @@
 export default async function handler(req, res) {
   const { uid, lang = 'en' } = req.query;
-  if (!uid) {
-    return res.status(400).json({ error: 'UID is required' });
+  const cleanUid = String(uid || '').trim().replace(/\D/g, '');
+
+  if (!cleanUid) {
+    return res.status(400).json({ error: 'Valid numerical UID is required' });
   }
 
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,8 +15,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const targetLang = (lang === 'ru' || lang === 'uk') ? 'ru' : 'en';
-    const response = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${targetLang}`, {
+    const targetLang = (lang === 'ru' || lang === 'uk' || lang === 'be') ? 'ru' : 'en';
+    const response = await fetch(`https://api.mihomo.me/sr_info_parsed/${cleanUid}?lang=${targetLang}`, {
       headers: {
         'User-Agent': 'NousMatrix/1.0'
       }
@@ -22,16 +24,16 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: `Mihomo API error (${response.status}): ${response.statusText}`
+        error: `Mihomo API status ${response.status}`,
+        statusCode: response.status
       });
     }
 
     const data = await response.json();
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
     return res.status(200).json(data);
   } catch (err) {
     console.error('Mihomo Serverless Error:', err);
     return res.status(500).json({ error: err.message });
   }
 }
-
