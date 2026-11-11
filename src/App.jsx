@@ -33,24 +33,62 @@ export default function App() {
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const hasInternalHomeRef = useRef(false);
 
   // Region-based automatic locale detection (Default: English 'en', Slavic: 'ru', NO manual switcher)
   const lang = getDetectedLanguage();
   const t = translations[lang] || translations.en;
 
-  // Read ?uid=... from URL on initial load
+  // Handle native browser Back / Forward navigation (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      setIsTrophyOpen(false);
+
+      const params = new URLSearchParams(window.location.search);
+      const urlUid = params.get('uid');
+
+      if (urlUid) {
+        // Browser navigated forward or back to a profile URL
+        fetchProfile(urlUid, false);
+      } else {
+        // Browser navigated back to home (no ?uid=)
+        hasInternalHomeRef.current = true;
+        setCurrentProfile(null);
+        setErrorMsg('');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [lang]);
+
+  // Read ?uid=... from URL on initial load & establish initial history state
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlUid = params.get('uid');
     if (urlUid) {
-      fetchProfile(urlUid);
+      window.history.replaceState({ view: 'profile', uid: urlUid }, '', window.location.href);
+      fetchProfile(urlUid, false);
+    } else {
+      hasInternalHomeRef.current = true;
+      window.history.replaceState({ view: 'home' }, '', window.location.pathname);
     }
   }, []);
 
   const handleBackToHome = () => {
+    if (isTrophyOpen) {
+      setIsTrophyOpen(false);
+    }
     setCurrentProfile(null);
     setErrorMsg('');
-    window.history.replaceState({}, '', window.location.pathname);
+
+    // If navigated from home in this session, history.back() seamlessly syncs browser buttons
+    if (hasInternalHomeRef.current && window.history.state?.view === 'profile') {
+      window.history.back();
+    } else {
+      hasInternalHomeRef.current = true;
+      window.history.pushState({ view: 'home' }, '', window.location.pathname);
+    }
   };
 
   // When profile is opened, blur any previous input and ensure window focus
@@ -63,13 +101,14 @@ export default function App() {
     }
   }, [currentProfile]);
 
-  // Robust PC keyboard navigation: Left Arrow (ArrowLeft) or Escape returns to UID input
+  // Robust PC navigation: Browser Back, Left Arrow (ArrowLeft), Escape, Alt+Left, or Mouse 4 returns to UID input
   useEffect(() => {
     const handleKeyDown = (e) => {
       const isLeft = e.key === 'ArrowLeft' || e.code === 'ArrowLeft' || e.key === 'Left' || e.keyCode === 37;
       const isEsc = e.key === 'Escape' || e.code === 'Escape' || e.key === 'Esc' || e.keyCode === 27;
+      const isBrowserBack = e.key === 'BrowserBack' || e.code === 'BrowserBack' || (e.altKey && isLeft);
 
-      if (!isLeft && !isEsc) return;
+      if (!isLeft && !isEsc && !isBrowserBack) return;
 
       if (isTrophyOpen) {
         setIsTrophyOpen(false);
@@ -89,11 +128,28 @@ export default function App() {
       }
     };
 
+    const handleMouseUp = (e) => {
+      // Mouse 4 (button 3) is standard Back button on gaming/desktop mice
+      if (e.button === 3) {
+        if (isTrophyOpen) {
+          e.preventDefault();
+          setIsTrophyOpen(false);
+        } else if (currentProfile) {
+          e.preventDefault();
+          handleBackToHome();
+        }
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown, true);
-    return () => window.removeEventListener('keydown', handleKeyDown, true);
+    window.addEventListener('mouseup', handleMouseUp, true);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+      window.removeEventListener('mouseup', handleMouseUp, true);
+    };
   }, [currentProfile, isTrophyOpen]);
 
-  const fetchProfile = async (targetUid) => {
+  const fetchProfile = async (targetUid, shouldPushHistory = true) => {
     const cleanUid = String(targetUid || '').trim().replace(/\D/g, '');
     const uid = cleanUid || '700142890';
 
@@ -153,7 +209,19 @@ export default function App() {
           setCurrentProfile(data);
           setActiveIndex(0);
           setErrorMsg('');
-          window.history.replaceState({}, '', `?uid=${data.player?.uid || uid}`);
+          const resolvedUid = String(data.player?.uid || uid);
+          const targetUrl = `?uid=${resolvedUid}`;
+
+          if (shouldPushHistory) {
+            const currentParams = new URLSearchParams(window.location.search);
+            if (currentParams.get('uid') !== resolvedUid) {
+              window.history.pushState({ view: 'profile', uid: resolvedUid }, '', targetUrl);
+            } else {
+              window.history.replaceState({ view: 'profile', uid: resolvedUid }, '', targetUrl);
+            }
+          } else {
+            window.history.replaceState({ view: 'profile', uid: resolvedUid }, '', targetUrl);
+          }
           return;
         } else if (data.player) {
           // Profile exists on server, but characters showcase is hidden/empty
@@ -185,12 +253,12 @@ export default function App() {
         setCurrentProfile(localizedPresets[demoUid]);
         setActiveIndex(0);
         setErrorMsg('');
-        window.history.replaceState({}, '', `?uid=${demoUid}`);
+        window.history.pushState({ view: 'profile', uid: demoUid }, '', `?uid=${demoUid}`);
       } else {
-        fetchProfile('700142890');
+        fetchProfile('700142890', true);
       }
     } catch {
-      fetchProfile('700142890');
+      fetchProfile('700142890', true);
     } finally {
       setIsLoading(false);
     }
@@ -245,7 +313,7 @@ export default function App() {
                 <button
                   className="btn-outline back-btn"
                   onClick={handleBackToHome}
-                  title={lang === 'ru' ? "Нажмите ← на клавиатуре или кнопку для смены UID" : "Press ← on keyboard or click to change UID"}
+                  title={lang === 'ru' ? "Вернуться к смене UID (← в браузере, мышь, стрелка клавиатуры)" : "Back to UID change (← Browser, Mouse, Keyboard Arrow)"}
                 >
                   <span className="arrow-icon">←</span> {t.btnBackUid}
                 </button>
