@@ -17,6 +17,12 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
 
     return (
       <div key={idx} className={`relic-item-card ${isWeak ? 'weak-piece' : ''}`}>
+        {isWeak && (
+          <div className="relic-worst-banner-top">
+            <span className="worst-warn-icon">⚠️</span>
+            <span>{t.weakPiece}</span>
+          </div>
+        )}
         <div className="relic-top-row">
           <div className="relic-left-meta">
             <div className="relic-icon-wrap">
@@ -33,13 +39,9 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
               <span className="relic-piece-title" title={r.name}>{r.name}</span>
             </div>
           </div>
-          {isWeak ? (
-            <span className="relic-cv-pill">{t.weakPiece}</span>
-          ) : (
-            <span className="relic-cv-pill" style={{ color: 'var(--text-secondary)', background: 'none' }}>
-              {t.goldRelic}
-            </span>
-          )}
+          <span className="relic-cv-pill" style={{ color: 'var(--text-secondary)', background: 'none' }}>
+            {idx >= 4 ? (lang === 'ru' ? '5★ ОРНАМЕНТ' : '5★ ORNAMENT') : t.goldRelic}
+          </span>
         </div>
 
         {/* Main Stat */}
@@ -103,7 +105,9 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
       <div className="relic-group-header">
         <span className="relic-group-title">{t.cavernRelicsTitle}</span>
         {cavernRelics.length > 0 && (
-          <span className="relic-group-tag">{cavernRelics[0].set_name}</span>
+          <span className={`relic-group-tag ${audit?.cavern?.isComplete ? 'accent' : (audit?.cavern ? 'broken' : '')}`}>
+            {audit?.cavern?.label || cavernRelics[0].set_name}
+          </span>
         )}
       </div>
       <div className="relics-grid" style={{ marginBottom: '24px' }}>

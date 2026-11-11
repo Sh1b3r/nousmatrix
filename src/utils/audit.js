@@ -78,8 +78,11 @@ export function evaluateRelicMainStat(relic, archetype, char) {
         };
 
       case 'HP_CRIT_DPS':
-        if (field === 'crit_rate' || field === 'crit_dmg' || field === 'hp') {
-          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        if (field === 'crit_rate' || field === 'crit_dmg') {
+          return { status: 'optimal', scoreBonus: 3.5, labelRu: 'ВЕРНЫЙ СТАТ (КРИТЫ)', labelEn: 'OPTIMAL (CRIT)' };
+        }
+        if (field === 'hp') {
+          return { status: 'optimal', scoreBonus: 2.5, labelRu: 'ВЕРНЫЙ СТАТ (HP%)', labelEn: 'OPTIMAL (HP%)' };
         }
         return {
           status: 'wrong',
@@ -678,32 +681,36 @@ export function calculateCharacterAudit(char, lang = 'ru') {
 
   // 1. Determine Archetype
   let archetype = 'CRIT_DPS';
-  if (name.includes('Авантюрин') || name.includes('Aventurine') || (path === 'Knight' && def > 2500)) {
+  const charId = String(char.id || '');
+  const lowerName = name.toLowerCase();
+
+  // EXPLICIT CHARACTER OVERRIDES FIRST (Guarantees Blade, Castorice, Firefly etc. are never misidentified)
+  if (charId === '1205' || lowerName.includes('блэйд') || lowerName.includes('blade')) {
+    archetype = 'HP_CRIT_DPS';
+  } else if (charId === '1304' || lowerName.includes('авантюрин') || lowerName.includes('aventurine') || (path === 'Knight' && def > 2500)) {
     archetype = 'PRESERVATION_DEF';
-  } else if (name.includes('Фу Сюань') || name.includes('Fu Xuan')) {
+  } else if (charId === '1208' || lowerName.includes('фу сюань') || lowerName.includes('fu xuan')) {
     archetype = 'PRESERVATION_HP';
-  } else if (name.includes('Лоча') || name.includes('Luocha')) {
+  } else if (charId === '1203' || lowerName.includes('лоча') || lowerName.includes('luocha')) {
     archetype = 'ABUNDANCE_ATK';
+  } else if (charId === '1313' || lowerName.includes('воскресенье') || lowerName.includes('sunday') || lowerName.includes('искорка') || lowerName.includes('sparkle') || lowerName.includes('броня') || lowerName.includes('bronya')) {
+    archetype = 'HARMONY_CRIT';
+  } else if (charId === '1309' || lowerName.includes('зарянка') || lowerName.includes('robin') || lowerName.includes('тинъюнь') || lowerName.includes('tingyun')) {
+    archetype = 'HARMONY_ATK';
+  } else if (charId === '1307' || lowerName.includes('жуань') || lowerName.includes('ruan mei')) {
+    archetype = 'HARMONY_BREAK';
+  } else if (charId === '1310' || lowerName.includes('светлячок') || lowerName.includes('firefly') || lowerName.includes('бутхилл') || lowerName.includes('boothill') || lowerName.includes('раппа') || lowerName.includes('rappa') || be > 180) {
+    archetype = 'BREAK_DPS';
+  } else if (charId === '1005' || lowerName.includes('кафка') || lowerName.includes('kafka') || lowerName.includes('лебедь') || lowerName.includes('black swan') || lowerName.includes('сампо') || lowerName.includes('sampo') || lowerName.includes('гуйнайфэнь') || lowerName.includes('guinaifen') || (path === 'Warlock' && cr < 40 && ehr > 40 && !lowerName.includes('blade') && charId !== '1205')) {
+    archetype = 'DOT_DPS';
+  } else if (path === 'Warlock' && (lowerName.includes('пела') || lowerName.includes('pela') || lowerName.includes('волк') || lowerName.includes('silver') || lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu'))) {
+    archetype = 'NIHILITY_DEBUFF';
   } else if (path === 'Priest' || heal > 0) {
-    if (name.includes('Галлахер') || name.includes('Gallagher') || name.includes('Линша') || name.includes('Lingsha') || be > 100) {
+    if (lowerName.includes('галлахер') || lowerName.includes('gallagher') || lowerName.includes('линша') || lowerName.includes('lingsha') || be > 100) {
       archetype = 'ABUNDANCE_BREAK';
     } else {
       archetype = 'ABUNDANCE_HP';
     }
-  } else if (name.includes('Воскресенье') || name.includes('Sunday') || name.includes('Искорка') || name.includes('Sparkle') || name.includes('Броня') || name.includes('Bronya')) {
-    archetype = 'HARMONY_CRIT';
-  } else if (name.includes('Зарянка') || name.includes('Robin') || name.includes('Тинъюнь') || name.includes('Tingyun')) {
-    archetype = 'HARMONY_ATK';
-  } else if (name.includes('Жуань') || name.includes('Ruan Mei')) {
-    archetype = 'HARMONY_BREAK';
-  } else if (name.includes('Светлячок') || name.includes('Firefly') || name.includes('Бутхилл') || name.includes('Boothill') || name.includes('Раппа') || name.includes('Rappa') || be > 180) {
-    archetype = 'BREAK_DPS';
-  } else if (name.includes('Кафка') || name.includes('Kafka') || name.includes('Лебедь') || name.includes('Black Swan') || name.includes('Сампо') || name.includes('Гуйнайфэнь') || (path === 'Warlock' && cr < 40 && ehr > 40)) {
-    archetype = 'DOT_DPS';
-  } else if (name.includes('Блэйд') || name.includes('Blade')) {
-    archetype = 'HP_CRIT_DPS';
-  } else if (path === 'Warlock' && (name.includes('Пела') || name.includes('Волк') || name.includes('Silver') || name.includes('Цзяоцю') || name.includes('Jiaoqiu'))) {
-    archetype = 'NIHILITY_DEBUFF';
   }
 
   // 2. Calculate Weighted Roll Efficiency for each relic
@@ -1088,10 +1095,10 @@ export function calculateCharacterAudit(char, lang = 'ru') {
       ? (isRu ? `120%+ КУ выполнено (${cd}% ✓) • +16% КУ и +60% КШ на первую атаку активны` : `120%+ CD achieved (${cd}% ✓) • +16% CD & +60% CR on 1st hit active`)
       : (isRu ? `Требуется 120% КУ (текущий: ${cd}% ⚠️)` : `Requires 120% CD (current: ${cd}% ⚠️)`);
   } else if (/Кост|Останков|Bone Collection/i.test(planarSet)) {
-    isConditionMet = maxHp >= 5000;
+    isConditionMet = hp >= 5000;
     planarCondition = isConditionMet
-      ? (isRu ? `5000+ HP выполнено (${maxHp} ✓) • +12% HP и +28% Крит. Урона владельцу и миньонам активно` : `5000+ HP achieved (${maxHp} ✓) • +12% HP & +28% CD active`)
-      : (isRu ? `Требуется 5000 HP (текущее: ${maxHp} ⚠️)` : `Requires 5000 HP (current: ${maxHp} ⚠️)`);
+      ? (isRu ? `5000+ HP выполнено (${hp} ✓) • +12% HP и +28% Крит. Урона владельцу и миньонам активно` : `5000+ HP achieved (${hp} ✓) • +12% HP & +28% CD active`)
+      : (isRu ? `Требуется 5000 HP (текущее: ${hp} ⚠️)` : `Requires 5000 HP (current: ${hp} ⚠️)`);
   } else if (/Древо|Giant Tree/i.test(planarSet)) {
     isConditionMet = spd >= 135;
     planarCondition = isConditionMet
@@ -1151,7 +1158,53 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     });
   }
 
-  statPoints = Math.max(15, statPoints + planarSynergyBonus);
+  // 4b. Cavern Relic Sets Calculation & Synergy Bonus (Подсчет пещерных сетов)
+  const cavernRelics = (char.relics || []).filter(r => r.type >= 1 && r.type <= 4);
+  const cavernSetCounts = {};
+  cavernRelics.forEach(r => {
+    const sId = r.set_id || r.set_name || 'unknown';
+    cavernSetCounts[sId] = cavernSetCounts[sId] || { count: 0, name: r.set_name || '' };
+    cavernSetCounts[sId].count += 1;
+  });
+
+  const cavernGroups = Object.values(cavernSetCounts).sort((a, b) => b.count - a.count);
+  let cavernSynergyBonus = 0;
+  let cavernSetLabel = '';
+  let isCavernComplete = false;
+
+  if (cavernGroups.length > 0 && cavernGroups[0].count >= 4) {
+    isCavernComplete = true;
+    cavernSynergyBonus = 4.0;
+    cavernSetLabel = `✓ 4/4 ${cavernGroups[0].name}`;
+  } else if (cavernGroups.length >= 2 && cavernGroups[0].count >= 2 && cavernGroups[1].count >= 2) {
+    isCavernComplete = true;
+    cavernSynergyBonus = 3.0;
+    cavernSetLabel = `✓ 2/4 ${cavernGroups[0].name} + 2/4 ${cavernGroups[1].name}`;
+  } else if (cavernGroups.length > 0 && cavernGroups[0].count >= 2) {
+    isCavernComplete = false;
+    cavernSynergyBonus = 0.5;
+    cavernSetLabel = isRu
+      ? `2/4 ${cavernGroups[0].name} (1/4 + 1/4 Разорван ⚠️)`
+      : `2/4 ${cavernGroups[0].name} (1/4 + 1/4 Broken ⚠️)`;
+    actions.push({
+      title: isRu ? 'Неполный пещерный комплект (2/4)' : 'Incomplete Cavern Set (2/4)',
+      desc: isRu
+        ? `Активирован только 2-Pc бонус («${cavernGroups[0].name}»). Соберите 4 предмета или второй 2-Pc сет для значительного усиления.`
+        : `Only 2-Pc bonus active. Equip 4 pieces or a second 2-Pc set for major stat amplification.`
+    });
+  } else if (cavernRelics.length === 4) {
+    isCavernComplete = false;
+    cavernSynergyBonus = -4.0;
+    cavernSetLabel = isRu ? 'РАЗОРВАННЫЙ ПЕЩЕРНЫЙ СЕТ ⚠️' : 'BROKEN CAVERN SET ⚠️';
+    actions.push({
+      title: isRu ? 'Разорванный пещерный сет (0 бонусов)' : 'Broken Cavern Relics (0 set bonuses)',
+      desc: isRu
+        ? 'Все 4 пещерные реликвии надеты из разных сетов без активных бонусов наборов. Соберите 4 предмета одного сета или 2+2.'
+        : 'All 4 cavern relics are from mismatched sets with 0 active set passives. Equip a full 4-Pc or 2+2 set.'
+    });
+  }
+
+  statPoints = Math.max(15, statPoints + planarSynergyBonus + cavernSynergyBonus);
 
   // 5. Combined Combat Score (0 - 100)
   const finalScore = Math.min(99.4, Math.max(45.0, (statPoints * 0.7) + (rollEfficiency * 0.3)));
@@ -1170,6 +1223,11 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     bottleneck,
     actions,
     weakestRelicIndex,
+    cavern: {
+      label: cavernSetLabel,
+      isComplete: isCavernComplete,
+      groups: cavernGroups
+    },
     planar: {
       setName: planarSet,
       isComplete: isPlanarSetComplete,
