@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCharHeadIcon, iconUrl, handleImageFallback } from '../utils/audit';
+import { getCharHeadIcon, getCharAvatarPath, iconUrl, handleImageFallback } from '../utils/audit';
 
 export default function CharacterOverview({ character, t, lang = 'ru' }) {
   if (!character) return null;
@@ -43,16 +43,8 @@ export default function CharacterOverview({ character, t, lang = 'ru' }) {
               className="char-portrait-img"
               src={getCharHeadIcon(character)}
               alt={character.name}
-              onError={(e) => handleImageFallback(e, character.icon)}
+              onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
             />
-            {character.element && (
-              <img
-                className="char-portrait-element"
-                src={iconUrl(character.element.icon)}
-                alt={character.element.name}
-                title={character.element.name}
-              />
-            )}
           </div>
 
           <div className="char-title-col">

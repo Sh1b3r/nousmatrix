@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getCharHeadIcon, iconUrl, handleImageFallback } from '../utils/audit';
+import { getCharHeadIcon, getCharAvatarPath, iconUrl, handleImageFallback } from '../utils/audit';
 
 export default function TrophyModal({ isOpen, onClose, character, audit, uid, t, lang = 'ru' }) {
   const [copied, setCopied] = useState(false);
@@ -88,7 +88,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
               className="trophy-avatar-img"
               src={getCharHeadIcon(character)}
               alt={character.name}
-              onError={(e) => handleImageFallback(e, character.icon)}
+              onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
             />
           </div>
           <div>

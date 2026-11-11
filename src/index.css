@@ -512,28 +512,6 @@ main {
   border-radius: 50% !important;
 }
 
-.roster-element-badge {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 18px;
-  height: 18px;
-  background: rgba(12, 8, 20, 0.85);
-  border-radius: 50%;
-  padding: 2px;
-}
-
-.roster-path-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 16px;
-  height: 16px;
-  background: rgba(12, 8, 20, 0.85);
-  border-radius: 50%;
-  padding: 2px;
-}
-
 .roster-char-name {
   font-weight: 700;
   font-size: 13px;
@@ -625,17 +603,6 @@ main {
   height: 100%;
   object-fit: cover;
   border-radius: 50% !important;
-}
-
-.char-portrait-element {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 22px;
-  height: 22px;
-  background: rgba(12, 8, 20, 0.85);
-  border-radius: 50%;
-  padding: 3px;
 }
 
 .char-stars {

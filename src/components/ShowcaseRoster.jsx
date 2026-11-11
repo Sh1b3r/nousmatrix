@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { getCharHeadIcon, iconUrl, calculateCharacterAudit } from '../utils/audit';
+import { getCharHeadIcon, getCharAvatarPath, iconUrl, handleImageFallback, calculateCharacterAudit } from '../utils/audit';
 
 export default function ShowcaseRoster({ characters, activeIndex, onSelect, t, lang }) {
   const trackRef = useRef(null);
@@ -32,27 +32,9 @@ export default function ShowcaseRoster({ characters, activeIndex, onSelect, t, l
                   className="roster-avatar-img"
                   src={getCharHeadIcon(char)}
                   alt={char.name}
-                  onError={(e) => {
-                    if (e.target.src !== iconUrl(char.icon)) {
-                      e.target.src = iconUrl(char.icon);
-                    }
-                  }}
+                  onError={(e) => handleImageFallback(e, getCharAvatarPath(char))}
                   loading="lazy"
                 />
-                {char.element && (
-                  <img
-                    className="roster-element-badge"
-                    src={iconUrl(char.element.icon)}
-                    alt={char.element.name}
-                  />
-                )}
-                {char.path && (
-                  <img
-                    className="roster-path-badge"
-                    src={iconUrl(char.path.icon)}
-                    alt={char.path.name}
-                  />
-                )}
               </div>
 
               <div className="roster-char-name" title={char.name}>

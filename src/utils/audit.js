@@ -24,12 +24,17 @@ export function handleImageFallback(e, originalPath) {
   }
 }
 
-export function getCharHeadIcon(char) {
+export function getCharAvatarPath(char) {
   if (!char) return '';
   if (char.id) {
-    return iconUrl(`icon/avatar/${char.id}.png`);
+    return `icon/avatar/${char.id}.png`;
   }
-  return iconUrl(char.icon);
+  return char.icon || '';
+}
+
+export function getCharHeadIcon(char) {
+  if (!char) return '';
+  return iconUrl(getCharAvatarPath(char));
 }
 
 // Archetype-aware main stat validation and scoring
