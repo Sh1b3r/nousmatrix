@@ -16,8 +16,7 @@ export default function HomeView({ onSearch, isLoading, errorMsg, onOpenDemo, t 
   return (
     <section id="view-home">
       <div className="home-card">
-        <span className="hero-label">{t.heroLabel}</span>
-        <h1 className="hero-title">{t.heroTitle}</h1>
+        <h1 className="hero-title">NousMatrix</h1>
 
         <form onSubmit={handleSubmit} className="input-box-wrapper">
           <input

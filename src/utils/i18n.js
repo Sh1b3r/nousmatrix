@@ -86,8 +86,7 @@ export function formatStatName(rawName, lang = 'en') {
 
 export const translations = {
   en: {
-    heroLabel: "Official In-Game Showcase Validator",
-    heroTitle: "Live Honkai: Star Rail Showcase & Combat Audit.",
+    heroTitle: "NousMatrix",
     inputPlaceholder: "Enter 9-digit account UID (e.g. 700142890)",
     btnAnalyze: "ANALYZE PROFILE",
     btnAnalyzing: "FETCHING GAME DATA...",
@@ -160,8 +159,7 @@ export const translations = {
     demoBtnText: "View Demo Profile (UID 700142890)"
   },
   ru: {
-    heroLabel: "Официальный аудит витрины персонажей",
-    heroTitle: "Прямой анализ сборки и боевых характеристик Honkai: Star Rail.",
+    heroTitle: "NousMatrix",
     inputPlaceholder: "Введите 9-значный UID аккаунта (например: 700142890)",
     btnAnalyze: "АНАЛИЗИРОВАТЬ",
     btnAnalyzing: "ЗАГРУЗКА ИЗ ИГРЫ...",
