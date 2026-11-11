@@ -277,6 +277,7 @@ export default function App() {
               audit={audit}
               uid={player?.uid}
               t={t}
+              lang={lang}
             />
           </section>
         )}

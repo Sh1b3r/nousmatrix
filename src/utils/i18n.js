@@ -167,7 +167,7 @@ export const translations = {
   },
   ru: {
     heroTitle: "NousMatrix",
-    inputPlaceholder: "Введите 9-значный UID аккаунта (например: 700142890)",
+    inputPlaceholder: "Введите 9-значный UID аккаунта",
     btnAnalyze: "АНАЛИЗИРОВАТЬ",
     btnAnalyzing: "ЗАГРУЗКА ИЗ ИГРЫ...",
     guideHeading: "Как работает внутриигровая витрина и как обновить сборку:",
@@ -184,7 +184,7 @@ export const translations = {
       return `${count} ПЕРСОНАЖЕЙ`;
     },
     rosterHint: "Выберите персонажа • Клавиша ← или Escape для смены UID",
-    btnBackUid: "СМЕНИТЬ UID (Стрелочка ←)",
+    btnBackUid: "СМЕНИТЬ UID",
     btnTrophy: "ТРОФЕЙНАЯ КАРТОЧКА",
     lvl: "Ур.",
     eidolons: "Эйдолон E",

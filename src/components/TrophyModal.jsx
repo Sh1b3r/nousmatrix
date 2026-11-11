@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { getCharHeadIcon, iconUrl } from '../utils/audit';
+import { getCharHeadIcon, iconUrl, handleImageFallback } from '../utils/audit';
 
-export default function TrophyModal({ isOpen, onClose, character, audit, uid, t }) {
+export default function TrophyModal({ isOpen, onClose, character, audit, uid, t, lang = 'ru' }) {
   const [copied, setCopied] = useState(false);
 
   if (!isOpen || !character || !audit) return null;
@@ -11,12 +11,57 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t 
   const addMap = {};
   (character.additions || []).forEach(a => { addMap[a.field] = a; });
 
-  const spd = ((baseMap['spd']?.value || 100) + (addMap['spd']?.value || 0)).toFixed(1);
-  const cr = (((baseMap['crit_rate']?.value || 0.05) + (addMap['crit_rate']?.value || 0)) * 100).toFixed(1) + '%';
-  const cd = (((baseMap['crit_dmg']?.value || 0.50) + (addMap['crit_dmg']?.value || 0)) * 100).toFixed(1) + '%';
-  const atk = Math.round((baseMap['atk']?.value || 0) + (addMap['atk']?.value || 0)).toLocaleString();
+  const getStatVal = (field) => (baseMap[field]?.value || 0) + (addMap[field]?.value || 0);
 
-  const rankNumber = Math.max(1, Math.floor(parseFloat(audit.topPercent) * 120));
+  const spd = getStatVal('spd').toFixed(1);
+  const cr = (getStatVal('crit_rate') * 100).toFixed(1) + '%';
+  const cd = (getStatVal('crit_dmg') * 100).toFixed(1) + '%';
+  const atk = Math.round(getStatVal('atk')).toLocaleString();
+  const def = Math.round(getStatVal('def')).toLocaleString();
+  const hp = Math.round(getStatVal('hp')).toLocaleString();
+  const be = ((addMap['break_dmg']?.value || 0) * 100).toFixed(1) + '%';
+  const eres = ((addMap['effect_res']?.value || 0) * 100).toFixed(1) + '%';
+
+  // Adaptive 4 highlight stats for the share trophy card
+  let statsToShow = [
+    { val: spd, lbl: t.spd },
+    { val: cr, lbl: t.critRate },
+    { val: cd, lbl: t.critDmg },
+    { val: atk, lbl: t.atk }
+  ];
+
+  const charName = character.name || '';
+  if (charName.includes('Авантюрин') || charName.includes('Aventurine') || def > 3000) {
+    statsToShow = [
+      { val: def, lbl: t.def },
+      { val: spd, lbl: t.spd },
+      { val: cr, lbl: t.critRate },
+      { val: cd, lbl: t.critDmg }
+    ];
+  } else if (charName.includes('Светлячок') || charName.includes('Firefly') || parseFloat(be) > 180) {
+    statsToShow = [
+      { val: be, lbl: t.breakEffect },
+      { val: spd, lbl: t.spd },
+      { val: atk, lbl: t.atk },
+      { val: hp, lbl: t.maxHp }
+    ];
+  } else if (charName.includes('Воскресенье') || charName.includes('Sunday') || charName.includes('Искорка') || charName.includes('Броня')) {
+    statsToShow = [
+      { val: cd, lbl: t.critDmg },
+      { val: spd, lbl: t.spd },
+      { val: eres, lbl: t.effectRes },
+      { val: hp, lbl: t.maxHp }
+    ];
+  } else if (charName.includes('Блэйд') || charName.includes('Blade')) {
+    statsToShow = [
+      { val: hp, lbl: t.maxHp },
+      { val: cr, lbl: t.critRate },
+      { val: cd, lbl: t.critDmg },
+      { val: spd, lbl: t.spd }
+    ];
+  }
+
+  const rankNumber = Math.max(1, Math.floor(parseFloat(audit.topPercent) * 142));
 
   const handleCopy = () => {
     const text = `NousMatrix // ${character.name.toUpperCase()} | TOP ${audit.topPercent}% GLOBAL | NOUS SCORE: ${audit.score} | UID: ${uid} | VERIFIED BUILD`;
@@ -43,11 +88,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t 
               className="trophy-avatar-img"
               src={getCharHeadIcon(character)}
               alt={character.name}
-              onError={(e) => {
-                if (e.target.src !== iconUrl(character.icon)) {
-                  e.target.src = iconUrl(character.icon);
-                }
-              }}
+              onError={(e) => handleImageFallback(e, character.icon)}
             />
           </div>
           <div>
@@ -61,22 +102,12 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t 
         </div>
 
         <div className="trophy-stats-grid">
-          <div className="trophy-stat-item">
-            <div className="val">{spd}</div>
-            <div className="lbl">Speed</div>
-          </div>
-          <div className="trophy-stat-item">
-            <div className="val">{cr}</div>
-            <div className="lbl">Crit Rate</div>
-          </div>
-          <div className="trophy-stat-item">
-            <div className="val">{cd}</div>
-            <div className="lbl">Crit Dmg</div>
-          </div>
-          <div className="trophy-stat-item">
-            <div className="val">{atk}</div>
-            <div className="lbl">Attack</div>
-          </div>
+          {statsToShow.map((st, i) => (
+            <div key={i} className="trophy-stat-item">
+              <div className="val">{st.val}</div>
+              <div className="lbl">{st.lbl}</div>
+            </div>
+          ))}
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -84,7 +115,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t 
             <img
               src="/media/NousMatrix-logo.png"
               alt=""
-              style={{ width: '18px', height: '18px', borderRadius: '3px' }}
+              style={{ width: '18px', height: '18px', objectFit: 'contain', border: 'none' }}
             />
             {t.verifiedBy}
           </span>
