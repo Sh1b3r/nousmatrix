@@ -1467,6 +1467,34 @@ main {
   color: var(--accent);
 }
 
+.trophy-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.trophy-verified-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trophy-logo-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  border: none !important;
+}
+
+.trophy-copy-btn {
+  white-space: nowrap;
+}
+
 /* ==========================================================================
    RESPONSIVE DESIGN
    ========================================================================== */
@@ -1733,6 +1761,38 @@ main {
   
   .trophy-stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Trophy Card on Mobile - Button in separate row */
+  .trophy-card {
+    padding: 24px 18px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .trophy-card-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    width: 100% !important;
+    margin-top: 16px !important;
+  }
+
+  .trophy-verified-tag {
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .trophy-copy-btn {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 12px 16px !important;
+    font-size: 13px !important;
+    white-space: normal !important;
   }
 }
 

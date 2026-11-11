@@ -110,17 +110,17 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
           ))}
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="trophy-card-footer">
+          <span className="trophy-verified-tag">
             <img
               src="/media/NousMatrix-logo.png"
               alt=""
-              style={{ width: '18px', height: '18px', objectFit: 'contain', border: 'none' }}
+              className="trophy-logo-img"
             />
             {t.verifiedBy}
           </span>
           <button
-            className="btn-submit"
+            className="btn-submit trophy-copy-btn"
             onClick={handleCopy}
             style={{
               background: copied ? 'var(--success)' : '',
