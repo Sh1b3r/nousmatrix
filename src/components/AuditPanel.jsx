@@ -49,8 +49,8 @@ export default function AuditPanel({ audit, t, lang = 'ru' }) {
       <div style={{ marginBottom: '18px' }}>
         <div className="metric-row">
           <div className="metric-label-line">
-            <span>{t.rollEfficiency}</span>
-            <span style={{ fontFamily: 'var(--font-mono)' }}>{audit.rollEfficiency}%</span>
+            <span className="metric-name">{t.rollEfficiency}</span>
+            <span className="metric-val">{audit.rollEfficiency}%</span>
           </div>
           <div className="metric-bar-bg">
             <div className="metric-bar-fill accent" style={{ width: `${audit.rollEfficiency}%` }} />
@@ -60,14 +60,14 @@ export default function AuditPanel({ audit, t, lang = 'ru' }) {
         {/* Metric 2: Primary Key Stat (Самый нужный стат персонажа вместо критмассы) */}
         <div className="metric-row">
           <div className="metric-label-line">
-            <span>{isRu ? (audit.primaryMetric?.labelRu || t.critValue) : (audit.primaryMetric?.labelEn || t.critValue)}</span>
-            <span style={{ fontFamily: 'var(--font-mono)' }}>
+            <span className="metric-name">{isRu ? (audit.primaryMetric?.labelRu || t.critValue) : (audit.primaryMetric?.labelEn || t.critValue)}</span>
+            <span className="metric-val">
               {audit.primaryMetric ? `${audit.primaryMetric.display} ${audit.primaryMetric.status || ''}`.trim() : audit.cv}
             </span>
           </div>
           <div className="metric-bar-bg">
             <div
-              className="metric-bar-fill"
+              className="metric-bar-fill accent"
               style={{ width: `${audit.primaryMetric ? audit.primaryMetric.percent : cvBarWidth}%` }}
             />
           </div>
@@ -76,8 +76,8 @@ export default function AuditPanel({ audit, t, lang = 'ru' }) {
         {/* Metric 3: Secondary Benchmark Stat (Скорость или профильный сабстат) */}
         <div className="metric-row">
           <div className="metric-label-line">
-            <span>{isRu ? (audit.secondaryMetric?.labelRu || t.speedThreshold) : (audit.secondaryMetric?.labelEn || t.speedThreshold)}</span>
-            <span style={{ fontFamily: 'var(--font-mono)' }}>
+            <span className="metric-name">{isRu ? (audit.secondaryMetric?.labelRu || t.speedThreshold) : (audit.secondaryMetric?.labelEn || t.speedThreshold)}</span>
+            <span className="metric-val">
               {audit.secondaryMetric ? `${audit.secondaryMetric.display} ${audit.secondaryMetric.status || ''}`.trim() : `${audit.spd} SPD ${isSpdOk ? '[OK]' : '[SLOW]'}`}
             </span>
           </div>
