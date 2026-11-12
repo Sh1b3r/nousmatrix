@@ -61,6 +61,7 @@ export default function App() {
   const [currentProfile, setCurrentProfile] = useState(initialData.initialProfile);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
+  const isTrophyOpenRef = useRef(false);
   const [isLoading, setIsLoading] = useState(() => Boolean(initialData.initialUrlUid && !initialData.initialProfile));
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -90,15 +91,42 @@ export default function App() {
     }
   };
 
+  const handleOpenTrophy = () => {
+    const currentUid = String(currentProfile?.player?.uid || '');
+    if (window.history.state?.view !== 'trophy') {
+      window.history.pushState({ view: 'trophy', uid: currentUid }, '', window.location.href);
+    }
+    setIsTrophyOpen(true);
+    isTrophyOpenRef.current = true;
+  };
+
+  const handleCloseTrophy = () => {
+    setIsTrophyOpen(false);
+    isTrophyOpenRef.current = false;
+    if (window.history.state?.view === 'trophy') {
+      window.history.back();
+    }
+  };
+
   // Handle native browser Back / Forward navigation (popstate)
   useEffect(() => {
     const handlePopState = (e) => {
-      setIsTrophyOpen(false);
+      // If modal was open, back gesture/arrow closes the modal and STAYS in the profile!
+      if (isTrophyOpenRef.current) {
+        setIsTrophyOpen(false);
+        isTrophyOpenRef.current = false;
+        return;
+      }
 
       const params = new URLSearchParams(window.location.search);
       const urlUid = params.get('uid') || e.state?.uid;
 
       if (urlUid) {
+        // If currentProfile is already loaded for this UID, stay right here!
+        if (currentProfile && String(currentProfile.player?.uid) === String(urlUid)) {
+          return;
+        }
+
         // Browser navigated forward or back to a profile URL!
         // Instant check in cache: if already loaded in this session, transition IMMEDIATELY without loading!
         let cached = profileCacheRef.current.get(String(urlUid));
@@ -131,7 +159,7 @@ export default function App() {
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [lang]);
+  }, [lang, currentProfile]);
 
   // Read ?uid=... from URL on initial load & establish initial history state
   useEffect(() => {
@@ -149,8 +177,9 @@ export default function App() {
   }, []);
 
   const handleBackToHome = () => {
-    if (isTrophyOpen) {
-      setIsTrophyOpen(false);
+    if (isTrophyOpenRef.current) {
+      handleCloseTrophy();
+      return;
     }
     if (currentProfile) {
       lastProfileRef.current = currentProfile;
@@ -208,8 +237,8 @@ export default function App() {
 
       // 1. Back navigation
       if (isLeft || isEsc || isBrowserBack) {
-        if (isTrophyOpen) {
-          setIsTrophyOpen(false);
+        if (isTrophyOpenRef.current) {
+          handleCloseTrophy();
           e.preventDefault();
           return;
         }
@@ -249,9 +278,9 @@ export default function App() {
     const handleMouseUp = (e) => {
       // Mouse 4 (button 3): standard Back button on gaming/desktop mice
       if (e.button === 3) {
-        if (isTrophyOpen) {
+        if (isTrophyOpenRef.current) {
           e.preventDefault();
-          setIsTrophyOpen(false);
+          handleCloseTrophy();
         } else if (currentProfile) {
           e.preventDefault();
           handleBackToHome();
@@ -587,7 +616,7 @@ export default function App() {
                 >
                   <span className="arrow-icon">←</span> {t.btnBackUid}
                 </button>
-                <button className="btn-outline" onClick={() => setIsTrophyOpen(true)}>
+                <button className="btn-outline" onClick={handleOpenTrophy}>
                   {t.btnTrophy}
                 </button>
               </div>
@@ -678,7 +707,7 @@ export default function App() {
             {/* Trophy Modal */}
             <TrophyModal
               isOpen={isTrophyOpen}
-              onClose={() => setIsTrophyOpen(false)}
+              onClose={handleCloseTrophy}
               character={activeChar}
               audit={audit}
               uid={player?.uid}
