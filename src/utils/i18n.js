@@ -126,10 +126,7 @@ export const translations = {
     verifiedData: "OFFICIAL LIVE DATA",
     weakPiece: "WORST RELIC",
     goldRelic: "5★ GOLD",
-    rollTag: (upgrades) => {
-      if (!upgrades || upgrades <= 0) return null;
-      return `+${upgrades} roll${upgrades === 1 ? '' : 's'}`;
-    },
+    rollTag: (upgrades) => `+${upgrades || 0}`,
     setsTitle: "ACTIVE RELIC SETS",
     setsEmpty: "No 2-Pc or 4-Pc bonuses active",
     pc2: "2-Pc",
@@ -217,12 +214,7 @@ export const translations = {
     planarCv: "Крит. масса планарок (Planar CV)",
     weakPiece: "ХУДШИЙ АРТЕФАКТ",
     goldRelic: "5★ РЕЛИКВИЯ",
-    rollTag: (upgrades) => {
-      if (!upgrades || upgrades <= 0) return null;
-      if (upgrades === 1) return '+1 ролл';
-      if (upgrades >= 2 && upgrades <= 4) return `+${upgrades} ролла`;
-      return `+${upgrades} роллов`;
-    },
+    rollTag: (upgrades) => `+${upgrades || 0}`,
     setsTitle: "АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ",
     setsEmpty: "Нет активных бонусов 2 или 4 предметов",
     pc2: "2 предм.",
