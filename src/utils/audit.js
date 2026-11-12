@@ -50,7 +50,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
   const charId = String(char.id || '');
   const path = char.path?.id || '';
 
-  const { hp = 0, atk = 0, def = 0, spd = 0, cr = 0, cd = 0, cv = 0, be = 0, ehr = 0, eres = 0, err = 0 } = stats || {};
+  const { hp = 0, atk = 0, def = 0, spd = 0, cr = 0, cd = 0, cv = 0, be = 0, ehr = 0, eres = 0, err = 0, heal = 0 } = stats || {};
 
   // Inspect equipped sets and main stats
   const resolvedSets = relics.map(r => resolveRelicSetInfo(r, 'ru'));
@@ -1519,6 +1519,13 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const eres = parseFloat(((addMap['effect_res']?.value || 0) * 100).toFixed(1));
   const heal = parseFloat(((addMap['heal_rate']?.value || 0) * 100).toFixed(1));
   const err = parseFloat((((addMap['sp_rate']?.value || 0)) * 100).toFixed(1));
+  const dmgFields = ['fire_dmg', 'physical_dmg', 'quantum_dmg', 'thunder_dmg', 'wind_dmg', 'ice_dmg', 'imaginary_dmg', 'all_dmg'];
+  let dmg_boost = 0;
+  dmgFields.forEach(f => {
+    if (addMap[f]?.value) {
+      dmg_boost = Math.max(dmg_boost, parseFloat((addMap[f].value * 100).toFixed(1)));
+    }
+  });
   const ropeRelic = (char.relics || []).find(r => {
     if (!r) return false;
     const num = Number(r.type ?? r.pos);
@@ -2374,6 +2381,21 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     spd: spd.toFixed(1),
     archetype,
     detectedRole,
+    stats: {
+      hp,
+      atk,
+      def,
+      spd,
+      cr,
+      cd,
+      cv,
+      be,
+      ehr,
+      eres,
+      heal,
+      err,
+      dmg_boost
+    },
     primaryMetric: characterMetrics.primary,
     secondaryMetric: characterMetrics.secondary,
     bottleneck,

@@ -10,23 +10,47 @@
  */
 
 export function runCombatSimulation(char, stats, archetype, lang = 'ru') {
-  if (!char || !stats) return null;
+  if (!char) return null;
   const isRu = lang === 'ru';
   const name = (char.name || '').toLowerCase();
   const charId = String(char.id || '');
 
-  const {
-    hp = 0,
-    atk = 0,
-    def = 0,
-    spd = 100,
-    cr = 5,
-    cd = 50,
-    be = 0,
-    ehr = 0,
-    err = 0,
-    dmg_boost = 0
-  } = stats;
+  let hp = Number(stats?.hp || 0);
+  let atk = Number(stats?.atk || 0);
+  let def = Number(stats?.def || 0);
+  let spd = Number(stats?.spd || 0);
+  let cr = Number(stats?.cr || 0);
+  let cd = Number(stats?.cd || 0);
+  let be = Number(stats?.be || 0);
+  let ehr = Number(stats?.ehr || 0);
+  let err = Number(stats?.err || 0);
+  let dmg_boost = Number(stats?.dmg_boost || 0);
+
+  // Robust Fallback: If stats was empty or missing fields, extract directly from character attributes & additions!
+  if ((!atk && !hp) && char) {
+    const baseMap = {};
+    (char.attributes || []).forEach(a => { baseMap[a.field] = a; });
+    const addMap = {};
+    (char.additions || []).forEach(a => { addMap[a.field] = a; });
+    const getStat = (field) => (baseMap[field]?.value || 0) + (addMap[field]?.value || 0);
+
+    hp = Math.round(getStat('hp')) || 0;
+    atk = Math.round(getStat('atk')) || 0;
+    def = Math.round(getStat('def')) || 0;
+    spd = parseFloat(getStat('spd').toFixed(1)) || 100;
+    cr = parseFloat((getStat('crit_rate') * 100).toFixed(1)) || 5;
+    cd = parseFloat((getStat('crit_dmg') * 100).toFixed(1)) || 50;
+    be = parseFloat(((addMap['break_dmg']?.value || 0) * 100).toFixed(1)) || 0;
+    ehr = parseFloat(((addMap['effect_hit']?.value || 0) * 100).toFixed(1)) || 0;
+    err = parseFloat(((addMap['sp_rate']?.value || 0) * 100).toFixed(1)) || 0;
+
+    const dmgFields = ['fire_dmg', 'physical_dmg', 'quantum_dmg', 'thunder_dmg', 'wind_dmg', 'ice_dmg', 'imaginary_dmg', 'all_dmg'];
+    dmgFields.forEach(f => {
+      if (addMap[f]?.value) {
+        dmg_boost = Math.max(dmg_boost, parseFloat((addMap[f].value * 100).toFixed(1)));
+      }
+    });
+  }
 
   // 1. Core Mathematical Constants
   const baseDefFactor = 1000 / (1100 + 1000); // 0.47619
@@ -34,11 +58,13 @@ export function runCombatSimulation(char, stats, archetype, lang = 'ru') {
   const baseDmgCoeff = baseDefFactor * baseResMult; // ~0.38095
 
   // Cycle Action Value frequencies
-  const actionsPerCycle0 = Math.floor((150 * spd) / 10000) + (((150 * spd) % 10000) / 10000);
-  const actionsPerCycle = Math.floor((100 * spd) / 10000) + (((100 * spd) % 10000) / 10000);
+  const effectiveSpd = Math.max(90, spd);
+  const actionsPerCycle0 = Math.floor((150 * effectiveSpd) / 10000) + (((150 * effectiveSpd) % 10000) / 10000);
+  const actionsPerCycle = Math.floor((100 * effectiveSpd) / 10000) + (((100 * effectiveSpd) % 10000) / 10000);
 
   // 2. Character Special Identifier Checks
   const isMortenax = charId === '1507' || name.includes('мортенакс') || name.includes('mortenax');
+  const isHimeko = charId === '1003' || name.includes('химеко') || name.includes('himeko') || name.includes('нова') || name.includes('nova');
   const isSunday = charId === '1313' || name.includes('воскресенье') || name.includes('sunday');
   const isYaoGuang = charId === '1408' || name.includes('яо') || name.includes('yao') || name.includes('гуан') || name.includes('爻光');
   const isRobin = charId === '1309' || name.includes('робин') || name.includes('robin');
@@ -823,22 +849,31 @@ export function runCombatSimulation(char, stats, archetype, lang = 'ru') {
       };
     }
 
-    case 'ABUNDANCE_HEAL': {
-      const healPerTurn = Math.round(hp * 0.12 + 180);
-      const teamCleanseRate = spd >= 145 ? '100% (КАЖДЫЙ ХОД)' : '80% (ПО ТРЕБОВАНИЮ)';
+    case 'ABUNDANCE_HEAL':
+    case 'ABUNDANCE_HP':
+    case 'ABUNDANCE_BREAK': {
+      const isLuochaChar = charId === '1203' || name.includes('лоча') || name.includes('luocha');
+      const healPerTurn = isLuochaChar
+        ? Math.round(atk * 0.60 + 800)
+        : Math.round(hp * 0.12 + 180);
+      const teamCleanseRate = isLuochaChar ? '100% (АВТОМАТИЧЕСКИ)' : (spd >= 145 ? '100% (КАЖДЫЙ ХОД)' : '80% (ПО ТРЕБОВАНИЮ)');
 
       return {
         type: 'SUSTAIN',
         hasDualOutput: false,
         metric1Label: isRu ? 'ЛЕЧЕНИЕ ЗА ДЕЙСТВИЕ' : 'HEAL PER ACTION',
         metric1Value: `+${healPerTurn.toLocaleString('ru-RU')} HP`,
-        metric2Label: isRu ? 'ГОТОВНОСТЬ СНЯТИЯ ОСЛАБЛЕНИЙ' : 'CLEANSE READINESS',
+        metric2Label: isRu ? (isLuochaChar ? 'АВТОМАТИЧЕСКИЙ ОТХИЛ И СНЯТИЕ' : 'ГОТОВНОСТЬ СНЯТИЯ ОСЛАБЛЕНИЙ') : (isLuochaChar ? 'AUTO-HEAL & CLEANSE' : 'CLEANSE READINESS'),
         metric2Value: teamCleanseRate,
-        metric3Label: isRu ? 'СКОРОСТЬ ВОССТАНОВЛЕНИЯ' : 'RECOVERY FREQUENCY',
-        metric3Value: `${actionsPerCycle.toFixed(2)}x ходов в цикл (${spd.toFixed(1)} SPD)`,
-        summaryRu: `Исцеление: восстанавливает ~${healPerTurn.toLocaleString('ru-RU')} HP за действие и надёжно удерживает здоровье отряда выше 90%.`,
-        summaryEn: `Sustain Healing: restores ~${healPerTurn.toLocaleString('en-US')} HP per turn, maintaining team above 90% HP.`,
-        benchmarkTier: spd >= 145 && hp >= 5500 ? 'SSS' : (spd >= 134 ? 'SS' : 'S')
+        metric3Label: isRu ? (isLuochaChar ? 'ГЕНЕРАЦИЯ SP В ЦИКЛЕ' : 'СКОРОСТЬ ВОССТАНОВЛЕНИЯ') : (isLuochaChar ? 'SP GENERATION IN CYCLE' : 'RECOVERY FREQUENCY'),
+        metric3Value: isLuochaChar ? `+${actionsPerCycle.toFixed(2)} SP / цикл (${spd.toFixed(1)} SPD)` : `${actionsPerCycle.toFixed(2)}x ходов в цикл (${spd.toFixed(1)} SPD)`,
+        summaryRu: isLuochaChar
+          ? `Лоча (Изобилие) против босса MoC 12: мгновенно лечит союзников с HP < 50% без расхода очков навыков (~${healPerTurn.toLocaleString('ru-RU')} HP за срабатывание), снимает баффы с противников ультимейтом и генерирует стабильные +SP.`
+          : `Исцеление: восстанавливает ~${healPerTurn.toLocaleString('ru-RU')} HP за действие и надёжно удерживает здоровье отряда выше 90%.`,
+        summaryEn: isLuochaChar
+          ? `Luocha (Abundance) vs MoC 12 Boss: auto-heals allies below 50% HP without SP cost (~${healPerTurn.toLocaleString('en-US')} HP per proc), strips boss buffs with ultimate and remains fully SP positive.`
+          : `Sustain Healing: restores ~${healPerTurn.toLocaleString('en-US')} HP per turn, maintaining team above 90% HP.`,
+        benchmarkTier: (isLuochaChar ? atk >= 2800 : hp >= 5500) && spd >= 134 ? 'SSS' : (spd >= 120 ? 'SS' : 'S')
       };
     }
 
@@ -846,25 +881,42 @@ export function runCombatSimulation(char, stats, archetype, lang = 'ru') {
     case 'CRIT_DPS':
     default: {
       const isHpScale = archetype === 'HP_CRIT_DPS';
-      const scalingStat = isHpScale ? hp : atk;
-      const motionValue = 2.40;
-      const totalDmgBonus = 1 + (dmg_boost / 100);
+      const scalingStat = Math.max(1200, isHpScale ? hp : atk);
+      const isHimekoChar = charId === '1003' || name.includes('химеко') || name.includes('himeko') || name.includes('нова') || name.includes('nova');
 
-      const dpa = Math.round(scalingStat * motionValue * totalDmgBonus * critMultiplier * baseDmgCoeff);
-      const dpc = Math.round(dpa * actionsPerCycle);
+      // Himeko gets +15% CR passive (The Flow of Magma) when above 80% HP and frequent Victory Rush FUA
+      const effectiveCr = isHimekoChar ? Math.min(1.0, (simCr + 0.15)) : simCr;
+      const effectiveCritMult = 1 + (effectiveCr * simCd);
+      const motionValue = isHimekoChar ? 2.80 : 2.40;
+      const totalDmgBonus = 1 + ((dmg_boost + (isHimekoChar ? 20 : 0)) / 100);
+
+      const dpa = Math.round(scalingStat * motionValue * totalDmgBonus * effectiveCritMult * baseDmgCoeff);
+      // Himeko triggers ~1.2 Victory Rush follow-up attacks per cycle alongside normal actions
+      const effectiveActions = isHimekoChar ? (actionsPerCycle + 1.2) : actionsPerCycle;
+      const dpc = Math.round(dpa * effectiveActions);
 
       return {
         type: 'DAMAGE',
         hasDualOutput: false,
-        metric1Label: isRu ? 'СРЕДНИЙ УРОН ЗА УДАР (DPA)' : 'AVG DAMAGE PER HIT (DPA)',
+        metric1Label: isRu
+          ? (isHimekoChar ? 'УРОН НАВЫКА / УЛЬТЫ (DPA)' : 'СРЕДНИЙ УРОН ЗА УДАР (DPA)')
+          : (isHimekoChar ? 'SKILL / ULT BURST (DPA)' : 'AVG DAMAGE PER HIT (DPA)'),
         metric1Value: `${dpa.toLocaleString('ru-RU')}`,
-        metric2Label: isRu ? 'DPS ЗА ЦИКЛ (100 AV)' : 'CYCLE DPS (100 AV)',
+        metric2Label: isRu
+          ? (isHimekoChar ? 'DPS ЗА ЦИКЛ (С ПОБЕДНЫМ КУРАЖОМ)' : 'DPS ЗА ЦИКЛ (100 AV)')
+          : (isHimekoChar ? 'CYCLE DPS (W/ VICTORY RUSH)' : 'CYCLE DPS (100 AV)'),
         metric2Value: `${dpc.toLocaleString('ru-RU')}`,
-        metric3Label: isRu ? 'ОЖИДАЕМЫЙ МНОЖИТЕЛЬ КРИТА' : 'EXPECTED CRIT MULTIPLIER',
-        metric3Value: `${critMultiplier.toFixed(2)}x (${(simCr * 100).toFixed(0)}% / ${(simCd * 100).toFixed(0)}%)`,
-        summaryRu: `Симуляция боя против босса MoC 12: средний удар наносит ~${dpa.toLocaleString('ru-RU')}, суммарный урон за цикл ~${dpc.toLocaleString('ru-RU')} при множителе крита ${critMultiplier.toFixed(2)}x.`,
-        summaryEn: `Simulated vs MoC 12 Boss: average attack delivers ~${dpa.toLocaleString('en-US')}, totaling ~${dpc.toLocaleString('en-US')} per cycle at ${critMultiplier.toFixed(2)}x crit expectation.`,
-        benchmarkTier: dpc >= 260000 ? 'SSS' : (dpc >= 190000 ? 'SS' : (dpc >= 130000 ? 'S' : (dpc >= 85000 ? 'A' : 'B')))
+        metric3Label: isRu
+          ? (isHimekoChar ? 'КРИТ. МНОЖИТЕЛЬ (+15% КШ ПАССИВКА)' : 'ОЖИДАЕМЫЙ МНОЖИТЕЛЬ КРИТА')
+          : (isHimekoChar ? 'CRIT MULTIPLIER (+15% CR PASSIVE)' : 'EXPECTED CRIT MULTIPLIER'),
+        metric3Value: `${effectiveCritMult.toFixed(2)}x (${(effectiveCr * 100).toFixed(0)}% / ${(simCd * 100).toFixed(0)}%)`,
+        summaryRu: isHimekoChar
+          ? `Химеко (включая Нову) против босса MoC 12: наносит ~${dpa.toLocaleString('ru-RU')} с навыка и сверхспособности, а с учётом бонус-атак Победного куража (Victory Rush) суммарный урон за цикл достигает ~${dpc.toLocaleString('ru-RU')} при боевом множителе крита ${effectiveCritMult.toFixed(2)}x.`
+          : `Симуляция боя против босса MoC 12: средний удар наносит ~${dpa.toLocaleString('ru-RU')}, суммарный урон за цикл ~${dpc.toLocaleString('ru-RU')} при множителе крита ${critMultiplier.toFixed(2)}x.`,
+        summaryEn: isHimekoChar
+          ? `Himeko (including Nova) vs MoC 12 Boss: deals ~${dpa.toLocaleString('en-US')} per skill/ultimate, scaling to ~${dpc.toLocaleString('en-US')} cycle output including Victory Rush follow-up attacks at ${effectiveCritMult.toFixed(2)}x crit expectation.`
+          : `Simulated vs MoC 12 Boss: average attack delivers ~${dpa.toLocaleString('en-US')}, totaling ~${dpc.toLocaleString('en-US')} per cycle at ${critMultiplier.toFixed(2)}x crit expectation.`,
+        benchmarkTier: dpc >= 50000 ? 'SSS' : (dpc >= 35000 ? 'SS' : (dpc >= 22000 ? 'S' : (dpc >= 14000 ? 'A' : 'B')))
       };
     }
   }

@@ -510,35 +510,7 @@ export default function App() {
     fetchProfile('700142890', true);
   };
 
-  const [optimizedRelicsMap, setOptimizedRelicsMap] = useState({});
-
-  const rawActiveChar = currentProfile?.characters?.[activeIndex] || null;
-  const activeChar = useMemo(() => {
-    if (!rawActiveChar) return null;
-    const overridden = optimizedRelicsMap[rawActiveChar.id];
-    if (overridden) {
-      return { ...rawActiveChar, relics: overridden, isOptimizedVirtual: true };
-    }
-    return rawActiveChar;
-  }, [rawActiveChar, optimizedRelicsMap]);
-
-  const handleApplyOptimizedBuild = (newPieces) => {
-    if (!rawActiveChar) return;
-    setOptimizedRelicsMap(prev => ({
-      ...prev,
-      [rawActiveChar.id]: newPieces
-    }));
-  };
-
-  const handleResetOptimizedBuild = () => {
-    if (!rawActiveChar) return;
-    setOptimizedRelicsMap(prev => {
-      const copy = { ...prev };
-      delete copy[rawActiveChar.id];
-      return copy;
-    });
-  };
-
+  const activeChar = currentProfile?.characters?.[activeIndex] || null;
   const audit = activeChar ? calculateCharacterAudit(activeChar, lang) : null;
   const player = currentProfile?.player || null;
 
@@ -661,34 +633,12 @@ export default function App() {
                 {/* 1. 6 Relic Slots Grid */}
                 <div className="panel panel-relics" style={{ marginBottom: '24px' }}>
                   <div className="panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>
-                      {t.relicsTitle}
-                      {activeChar?.isOptimizedVirtual && (
-                        <span style={{ marginLeft: '8px', color: '#00E676', fontFamily: 'var(--font-mono)', fontSize: '10.5px' }}>
-                          [ПРИМЕРКА ОПТИМИЗАЦИИ]
-                        </span>
-                      )}
-                    </span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {activeChar?.isOptimizedVirtual && (
-                        <button
-                          type="button"
-                          className="btn-outline"
-                          onClick={handleResetOptimizedBuild}
-                          style={{ fontSize: '10px', padding: '2px 8px', color: 'var(--accent)', borderColor: 'var(--accent)' }}
-                          title={lang === 'ru' ? 'Сбросить примерку к исходным артефактам' : 'Reset to original relics'}
-                        >
-                          {lang === 'ru' ? 'СБРОСИТЬ' : 'RESET'}
-                        </button>
-                      )}
-                      <span style={{ color: 'var(--accent)' }}>{t.verifiedData}</span>
-                    </div>
+                    <span>{t.relicsTitle}</span>
+                    <span style={{ color: 'var(--accent)' }}>{t.verifiedData}</span>
                   </div>
                   <RelicsGrid
                     character={activeChar}
                     audit={audit}
-                    profile={currentProfile}
-                    onApplyOptimizedBuild={handleApplyOptimizedBuild}
                     t={t}
                     lang={lang}
                   />
