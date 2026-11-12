@@ -1607,7 +1607,7 @@ main {
   }
 
   .home-card {
-    width: 100%;
+    max-width: 1024px;
   }
 
   .mobile-only {
