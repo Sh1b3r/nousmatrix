@@ -377,6 +377,17 @@ export default function App() {
               });
               c.relics = merged;
             }
+
+            const cName = (c.name || '').toLowerCase();
+            const isSW999 = (cName.includes('волк') || cName.includes('silver')) && (cName.includes('999') || cName.includes('ур') || cName.includes('lv'));
+            if (isSW999 && (!c.element || c.element.id !== 'Imaginary')) {
+              c.element = {
+                id: 'Imaginary',
+                name: (lang === 'ru' || lang === 'uk' || lang === 'be') ? 'Мнимый' : 'Imaginary',
+                color: '#F4D258',
+                icon: 'icon/element/Imaginary.png'
+              };
+            }
           });
         }
 

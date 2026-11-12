@@ -179,9 +179,38 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     };
   }
 
-  // 3. SILVER WOLF (Серебряный Волк / 1006)
+  // 3. SILVER WOLF (Серебряный Волк / 1006) & SILVER WOLF LV 999 (Мнимый элемент)
   const isWolf = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
+  const isSW999 = isWolf && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
   if (isWolf) {
+    if (isSW999) {
+      if (cv >= 150 || (isCritBody && sphereStat.includes('imaginary'))) {
+        return {
+          type: 'DPS',
+          role: 'DPS',
+          icon: 'dps',
+          labelRu: 'МНИМЫЙ САБ-ДПС (КРИТЫ)',
+          labelEn: 'IMAGINARY CRIT SUB-DPS',
+          descRu: 'Критовая сборка Волчиска 999 ур: нанесение высокого личного мнимого урона в дополнение к наложению дебаффов.',
+          descEn: 'Silver Wolf Lv.999 Crit Sub-DPS build: outputs massive personal Imaginary damage alongside debuffs.',
+          confidence: 90,
+          targetArchetype: 'CRIT_DPS'
+        };
+      }
+      return {
+        type: 'SUPPORT',
+        role: 'SUPPORT',
+        icon: 'support',
+        labelRu: 'МНИМЫЙ ДЕБАФФЕР (САППОРТ)',
+        labelEn: 'IMAGINARY DEBUFFER SUPPORT',
+        descRu: 'Классический саппорт Волчиска 999 ур: приоритет ШПЭ (96%+ / 67% с сигной) и высокой скорости (145-160+) для гарантированного внедрения уязвимостей.',
+        descEn: 'Silver Wolf Lv.999 debuffer support: prioritized EHR (96%+ / 67% with sig) and high SPD (145-160+) for 100% weakness implant.',
+        confidence: 95,
+        targetArchetype: 'NIHILITY_DEBUFF'
+      };
+    }
+
+    // Обычный Серебряный Волк (Квантовый элемент)
     if (cv >= 150 || (isCritBody && sphereStat.includes('quantum'))) {
       return {
         type: 'DPS',
@@ -360,7 +389,12 @@ export function evaluateRelicMainStat(relic, archetype, char) {
 
   const slotType = Number(relic.type);
   const field = relic.main_affix.field || '';
-  const charElemId = (char?.element?.id || '').toLowerCase(); // 'physical', 'fire', 'ice', 'thunder', 'wind', 'quantum', 'imaginary'
+  const charLowerName = (char?.name || '').toLowerCase();
+  const isSW999Char = (charLowerName.includes('волк') || charLowerName.includes('silver')) && (charLowerName.includes('999') || charLowerName.includes('ур') || charLowerName.includes('lv'));
+  let charElemId = (char?.element?.id || '').toLowerCase(); // 'physical', 'fire', 'ice', 'thunder', 'wind', 'quantum', 'imaginary'
+  if (isSW999Char) {
+    charElemId = 'imaginary';
+  }
   const charElemField = charElemId ? `${charElemId}_dmg` : '';
 
   // Slot 1 (Head) & Slot 2 (Hands) are fixed main stats in HSR (Flat HP and Flat ATK)
@@ -1512,9 +1546,18 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const lowerName = name.toLowerCase();
 
   // Explicit Fallbacks if role wasn't custom-detected
+  const isWolfChar = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
+  const isWolf999 = isWolfChar && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
+  if (isWolf999 && (!char.element || char.element.id !== 'Imaginary')) {
+    char.element = {
+      id: 'Imaginary',
+      name: isRu ? 'Мнимый' : 'Imaginary',
+      color: '#F4D258',
+      icon: 'icon/element/Imaginary.png'
+    };
+  }
+
   if (!detectedRole || detectedRole.role === 'DPS') {
-    const isWolfChar = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
-    const isWolf999 = isWolfChar && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
     const isYaoGuang = lowerName.includes('яо') || lowerName.includes('yao') || lowerName.includes('гуан') || lowerName.includes('guang') || lowerName.includes('爻光');
 
     if ((charId === '1205' || lowerName.includes('блэйд') || lowerName.includes('blade')) && charId !== '1507') {
