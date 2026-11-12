@@ -811,7 +811,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         }
       };
     }
-    // Robin
+    // Robin does not need speed (remains at ~120 SPD for Vonwacq). Primary is ATK, Secondary is ERR!
     return {
       primary: {
         labelRu: 'СИЛА АТАКИ (ATK)',
@@ -821,11 +821,11 @@ export function determineCharacterMetrics(char, archetype, stats) {
         status: atk >= 4000 ? '[4000+ CAP ✓]' : (atk >= 3500 ? '[3500+ OK]' : '[LOW]')
       },
       secondary: {
-        labelRu: 'ПОРОГ СКОРОСТИ',
-        labelEn: 'SPEED BREAKPOINT',
-        display: `${spd.toFixed(1)} SPD`,
-        percent: Math.min(100, (spd / 140) * 100),
-        status: spd >= 120 ? '[VONWACQ OK]' : '[SLOW]'
+        labelRu: 'ВОССТАНОВЛЕНИЕ ЭНЕРГИИ',
+        labelEn: 'ENERGY REGENERATION (ERR)',
+        display: err > 0 ? `+${err.toFixed(1)}% ERR` : '100% (БАЗА)',
+        percent: Math.min(100, Math.max(20, (err / 24.4) * 100)),
+        status: err >= 19.4 ? '[ВЕРВЬ ВЭ ✓]' : '[НУЖНА ВЭ]'
       }
     };
   }
@@ -994,7 +994,41 @@ export function determineCharacterMetrics(char, archetype, stats) {
     };
   }
 
-  // 14. Standard CRIT_DPS (Acheron, Feixiao, Seele, Jingliu, Dan Heng IL, Ratio, etc.)
+  // 14. CRIT_DPS: Distinguish characters who do NOT need speed (Acheron, Himeko, Himeko Nova, Clara, Yunli, or ATK boots hypercarries)
+  // For them, the two critical stats are strictly CRITS and ATK! Speed is not needed.
+  const isNoSpeedDps =
+    lowerName.includes('ахерон') || lowerName.includes('acheron') || charId === '1308' ||
+    lowerName.includes('химеко') || lowerName.includes('himeko') || lowerName.includes('нова') || lowerName.includes('nova') ||
+    lowerName.includes('клара') || lowerName.includes('clara') ||
+    lowerName.includes('юньли') || lowerName.includes('yunli') ||
+    spd < 115; // Any DPS running ATK boots with uninvested base speed (< 115)
+
+  if (isNoSpeedDps) {
+    const isAcheron = lowerName.includes('ахерон') || lowerName.includes('acheron') || charId === '1308';
+    const isHimeko = lowerName.includes('химеко') || lowerName.includes('himeko') || lowerName.includes('нова') || lowerName.includes('nova');
+    const atkTarget = isAcheron ? 3800 : (isHimeko ? 3200 : 3400);
+    const atkStatus = atk >= atkTarget ? `[${atkTarget}+ TOP ✓]` : (atk >= (atkTarget - 400) ? '[OK]' : '[LOW]');
+    const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 160 ? '[OK]' : '[LOW]'));
+
+    return {
+      primary: {
+        labelRu: 'КРИТ. МАССА (CV)',
+        labelEn: 'CRIT VALUE (CV)',
+        display: `${cv.toFixed(1)} CV`,
+        percent: Math.min(100, Math.max(10, (cv / 260) * 100)),
+        status: cvStatus
+      },
+      secondary: {
+        labelRu: 'СИЛА АТАКИ (ATK)',
+        labelEn: 'ATTACK POWER (ATK)',
+        display: `${Math.round(atk)} ATK`,
+        percent: Math.min(100, (atk / atkTarget) * 100),
+        status: atkStatus
+      }
+    };
+  }
+
+  // Speed-scaling Crit DPS who explicitly build and need 134+ SPD (Feixiao, Seele, etc.)
   return {
     primary: {
       labelRu: 'КРИТ. МАССА (CV)',
@@ -1008,7 +1042,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
       labelEn: 'SPEED BREAKPOINT',
       display: `${spd.toFixed(1)} SPD`,
       percent: Math.min(100, (spd / 160) * 100),
-      status: spd >= 134 ? '[134+ OK]' : (lowerName.includes('ахерон') || lowerName.includes('acheron') ? '[101 ATK BOOTS]' : '[SLOW]')
+      status: spd >= 134 ? '[134+ OK]' : '[SLOW]'
     }
   };
 }
@@ -1362,8 +1396,15 @@ export function calculateCharacterAudit(char, lang = 'ru') {
       break;
     }
     default: { // CRIT_DPS, HP_CRIT_DPS & general
+      const isSlowDps =
+        lowerName.includes('ахерон') || lowerName.includes('acheron') || charId === '1308' ||
+        lowerName.includes('химеко') || lowerName.includes('himeko') || lowerName.includes('нова') || lowerName.includes('nova') ||
+        lowerName.includes('клара') || lowerName.includes('clara') ||
+        lowerName.includes('юньли') || lowerName.includes('yunli') ||
+        archetype === 'HP_CRIT_DPS' || spd < 115;
+
       const cvRatio = Math.min(1.0, cv / 260);
-      const spdRatio = spd >= 134 ? 20 : (spd / 134) * 15;
+      const spdRatio = isSlowDps ? 20 : (spd >= 134 ? 20 : (spd / 134) * 15);
       const atkRatio = archetype === 'HP_CRIT_DPS'
         ? Math.min(15, (hp / 7500) * 15)
         : Math.min(15, (atk / 2800) * 15);
@@ -1377,7 +1418,7 @@ export function calculateCharacterAudit(char, lang = 'ru') {
           title: isRu ? 'Приоритет: Стабилизация Крит. Шанса' : 'Priority: Stabilize CRIT Rate',
           desc: isRu ? 'Соотношение 1:2 дает наибольшую среднюю ротацию урона.' : 'Target 1:2 ratio to maximize expected damage per rotation.'
         });
-      } else if (spd < 134) {
+      } else if (!isSlowDps && spd < 134) {
         bottleneck = isRu
           ? `Скорость (${spd}) ниже порога 134.0 SPD. Теряется 1 действие в Цикле 0 Зала Забвения.`
           : `Speed (${spd}) is below 134.0 SPD. The character misses an extra turn in Cycle 0.`;
@@ -1385,10 +1426,18 @@ export function calculateCharacterAudit(char, lang = 'ru') {
           title: isRu ? 'Приоритет: 134.0 Скорости' : 'Priority: Reach 134.0 SPD',
           desc: isRu ? 'Доберите 1-2 сабстата скорости для получения 2 действий в первом цикле.' : 'Gain 1-2 speed substats to unlock 2 actions in Cycle 0.'
         });
+      } else if (isSlowDps && archetype !== 'HP_CRIT_DPS' && atk < 3000) {
+        bottleneck = isRu
+          ? `Сила атаки (${atk}) ниже рекомендуемой для гиперкерри (3200+ АТК). Сборка ориентирована на чистый урон без затрат на скорость.`
+          : `ATK (${atk}) is below recommended hypercarry benchmark (3200+ ATK). Focus on pure damage without speed investment.`;
+        actions.push({
+          title: isRu ? 'Приоритет: Сила Атаки%' : 'Priority: Scale ATK%',
+          desc: isRu ? 'Сапоги на Силу атаки% максимизируют урон атак и ультимейта.' : 'ATK% boots maximize skill and ultimate damage.'
+        });
       } else {
         bottleneck = isRu
-          ? `Сбалансированная боевая сборка (CV ${cv}, SPD ${spd}).`
-          : `Solid balanced build (CV ${cv}, SPD ${spd}).`;
+          ? (isSlowDps ? `Сбалансированная сборка на максимальный урон (CV ${cv}, ${archetype === 'HP_CRIT_DPS' ? `${hp} HP` : `${atk} АТК`}). Скорость не требуется.` : `Сбалансированная боевая сборка (CV ${cv}, SPD ${spd}).`)
+          : (isSlowDps ? `Optimal max-damage build (CV ${cv}, ${archetype === 'HP_CRIT_DPS' ? `${hp} HP` : `${atk} ATK`}). No speed required.` : `Solid balanced build (CV ${cv}, SPD ${spd}).`);
         actions.push({
           title: isRu ? 'Оптимизация: Замена худшего артефакта' : 'Optimization: Replace Worst Relic',
           desc: isRu ? `Замените слот ${weakestRelicIndex + 1} на реликвию с большим количеством роллов в криты.` : `Upgrade slot ${weakestRelicIndex + 1} with offensive rolls.`
