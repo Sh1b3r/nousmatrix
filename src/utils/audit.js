@@ -1096,6 +1096,19 @@ export function determineCharacterMetrics(char, archetype, stats) {
 export function calculateCharacterAudit(char, lang = 'ru') {
   if (!char) return null;
 
+  // Normalize ornaments if returned separately by Mihomo or Hoyo API
+  if (Array.isArray(char.ornaments) && char.ornaments.length > 0) {
+    const currentRelics = Array.isArray(char.relics) ? char.relics : [];
+    const existingIds = new Set(currentRelics.map(r => r.id || `${r.type}_${r.name}`));
+    const merged = [...currentRelics];
+    char.ornaments.forEach(orn => {
+      if (!existingIds.has(orn.id || `${orn.type}_${orn.name}`)) {
+        merged.push(orn);
+      }
+    });
+    char.relics = merged;
+  }
+
   const isRu = lang === 'ru';
   const name = char.name || '';
   const path = char.path?.id || '';
@@ -1532,7 +1545,7 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   statPoints = Math.max(15, statPoints - mainStatPenalty);
 
   // 4. Planar Ornaments Calculation & Synergy Bonus (Подсчет планарок)
-  const planarRelics = (char.relics || []).filter(r => r.type === 5 || r.type === 6);
+  const planarRelics = (char.relics || []).filter((r, idx) => r.type == 5 || r.type == 6 || r.pos == 5 || r.pos == 6 || (char.relics.length >= 6 && idx >= 4));
   let planarRollsTotal = 0;
   let planarUsefulRolls = 0;
   let planarCv = 0;

@@ -293,6 +293,9 @@ export default function App() {
         }
         return;
       }
+    } else {
+      // Force refresh requested: clear in-memory cache for this UID
+      profileCacheRef.current.delete(uid);
     }
 
     setIsLoading(true);
@@ -307,7 +310,8 @@ export default function App() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-        const apiRes = await fetch(`/api/mihomo?uid=${uid}&lang=${lang}`, {
+        const cacheBuster = forceRefresh ? `&force=1&_t=${Date.now()}` : '';
+        const apiRes = await fetch(`/api/mihomo?uid=${uid}&lang=${lang}${cacheBuster}`, {
           signal: controller.signal
         });
         clearTimeout(timeoutId);
@@ -320,8 +324,8 @@ export default function App() {
         console.warn('API fetch warning:', err);
       }
 
-      // 2. Check local presets (if offline or preset UID entered)
-      if (!data) {
+      // 2. Check local presets (if offline or preset UID entered and not force refreshing)
+      if (!data && !forceRefresh) {
         const localizedPresets = await getLocalizedPresets(lang);
         if (localizedPresets && localizedPresets[uid]) {
           data = localizedPresets[uid];
@@ -333,7 +337,8 @@ export default function App() {
         try {
           const directController = new AbortController();
           const dTimeout = setTimeout(() => directController.abort(), 10000);
-          const directRes = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${lang}`, {
+          const cacheBuster = forceRefresh ? `&_t=${Date.now()}` : '';
+          const directRes = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${lang}${cacheBuster}`, {
             signal: directController.signal
           });
           clearTimeout(dTimeout);
@@ -347,6 +352,23 @@ export default function App() {
 
       // Process loaded data
       if (data) {
+        // Ensure ornaments are merged into relics across all characters
+        if (Array.isArray(data.characters)) {
+          data.characters.forEach(c => {
+            if (Array.isArray(c.ornaments) && c.ornaments.length > 0) {
+              const currentRelics = Array.isArray(c.relics) ? c.relics : [];
+              const existingIds = new Set(currentRelics.map(r => r.id || `${r.type}_${r.name}`));
+              const merged = [...currentRelics];
+              c.ornaments.forEach(orn => {
+                if (!existingIds.has(orn.id || `${orn.type}_${orn.name}`)) {
+                  merged.push(orn);
+                }
+              });
+              c.relics = merged;
+            }
+          });
+        }
+
         if (data.characters && data.characters.length > 0) {
           saveToCache(uid, data);
           if (data.player?.uid) {
@@ -460,6 +482,13 @@ export default function App() {
               </div>
 
               <div className="player-actions">
+                <button
+                  className="btn-outline refresh-btn"
+                  onClick={() => fetchProfile(player?.uid, false, true)}
+                  title={lang === 'ru' ? "Обновить данные из игры (обойти кэш)" : "Refresh data from game (bypass cache)"}
+                >
+                  <span className="refresh-icon">🔄</span> {lang === 'ru' ? 'ОБНОВИТЬ' : 'REFRESH'}
+                </button>
                 <button
                   className="btn-outline back-btn"
                   onClick={handleBackToHome}

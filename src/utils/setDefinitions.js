@@ -32,7 +32,7 @@ export const SET_DEFINITIONS = [
   // 3. «Миг радости бога» / Moment of Joy (HSR 3.x Planar Set)
   {
     ids: ['319', '320', '321', '322', '323', '324', '325', '326'],
-    keywords: ['миг радости бога', 'радости бога', 'миг радости', 'радост', 'moment of joy', 'joy', "god's moment", 'gods moment'],
+    keywords: ['миг радости бога', 'радости бога', 'миг радости', 'радост', 'вечная сцена', 'магический реквизит', 'moment of joy', 'joy', "god's moment", 'gods moment', 'eternal stage', 'magic prop'],
     nameRu: 'Миг радости бога',
     nameEn: 'Moment of Joy',
     isPlanar: true,

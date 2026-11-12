@@ -12,8 +12,43 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
   const relics = character.relics || [];
   const slots = t.relicSlots || [];
 
-  const cavernRelics = relics.filter(r => r.type === 1 || r.type === 2 || r.type === 3 || r.type === 4);
-  const planarRelics = relics.filter(r => r.type === 5 || r.type === 6);
+  const cavernRelics = relics.filter(r => r.type === 1 || r.type === 2 || r.type === 3 || r.type === 4 || (!r.type && relics.indexOf(r) < 4));
+  const spherePiece = relics.find(r => r.type === 5 || r.pos === 5) || (relics.length >= 5 ? relics[4] : null);
+  const ropePiece = relics.find(r => r.type === 6 || r.pos === 6) || (relics.length >= 6 ? relics[5] : null);
+  const planarRelics = [spherePiece, ropePiece].filter(Boolean);
+
+  const renderPlaceholderCard = (slotIdx, defaultTitle) => {
+    const slotTitle = slots[slotIdx] || defaultTitle;
+    const isSphere = slotIdx === 4;
+    return (
+      <div key={`placeholder-${slotIdx}`} className="relic-item-card relic-placeholder-card">
+        <div className="relic-top-row">
+          <div className="relic-left-meta">
+            <div className="relic-icon-wrap placeholder">
+              <span className="placeholder-icon">{isSphere ? '🔮' : '🔗'}</span>
+              <span className="relic-lvl-badge" style={{ opacity: 0.5 }}>+0</span>
+            </div>
+            <div className="relic-name-col">
+              <span className="relic-slot-name">{slotTitle}</span>
+              <span className="relic-piece-title" style={{ opacity: 0.65, fontStyle: 'italic' }}>
+                {isRu ? 'Ожидает синхронизации' : 'Awaiting sync'}
+              </span>
+            </div>
+          </div>
+          <span className="relic-cv-pill" style={{ color: 'var(--text-tertiary)', background: 'none' }}>
+            {isRu ? '5★ ОРНАМЕНТ' : '5★ ORNAMENT'}
+          </span>
+        </div>
+        <div className="relic-placeholder-body">
+          <p className="relic-placeholder-hint">
+            {isRu
+              ? 'Если предмет надет в игре, пересохраните витрину в профиле HSR или перезайдите в игру, затем нажмите кнопку «ОБНОВИТЬ» вверху.'
+              : 'If equipped in-game, re-save your showcase or relog in HSR, then click "REFRESH" above.'}
+          </p>
+        </div>
+      </div>
+    );
+  };
 
   const renderCard = (r, idx) => {
     const isWeak = idx === audit?.weakestRelicIndex;
@@ -35,6 +70,7 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
                 className="relic-icon-img"
                 src={iconUrl(r.icon)}
                 alt={r.name}
+                crossOrigin="anonymous"
                 onError={(e) => handleImageFallback(e, r.icon)}
               />
               <span className="relic-lvl-badge">+{r.level}</span>
@@ -71,6 +107,7 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
                   className="relic-affix-icon main"
                   src={iconUrl(r.main_affix?.icon)}
                   alt=""
+                  crossOrigin="anonymous"
                   onError={(e) => handleImageFallback(e, r.main_affix?.icon)}
                 />
               )}
@@ -101,6 +138,7 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
                       className="relic-affix-icon sub"
                       src={iconUrl(sub.icon)}
                       alt=""
+                      crossOrigin="anonymous"
                       onError={(e) => handleImageFallback(e, sub.icon)}
                     />
                   )}
@@ -167,14 +205,23 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
           {/* 2. Planar Ornaments Section */}
           <div className="relic-group-header planar">
             <span className="relic-group-title">{t.planarRelicsTitle}</span>
-            {(audit?.planar?.setName || planarRelics.length > 0) && (
+            {audit?.planar?.setName || planarRelics.length === 2 ? (
               <span className={`relic-group-tag ${audit?.planar?.isComplete ? 'accent' : 'broken'}`}>
                 {planarTagLabel}
+              </span>
+            ) : planarRelics.length === 1 ? (
+              <span className="relic-group-tag broken">
+                {isRu ? '1/2 ЭКИПИРОВАН • ВТОРОЙ СЛОТ ОЖИДАЕТ СИНХРОНИЗАЦИИ ⚠️' : '1/2 EQUIPPED • 2ND SLOT PENDING SYNC ⚠️'}
+              </span>
+            ) : (
+              <span className="relic-group-tag" style={{ borderStyle: 'dashed', color: 'var(--text-secondary)' }}>
+                {isRu ? '⏳ 0/2 ОЖИДАЕТ СИНХРОНИЗАЦИИ В ИГРЕ' : '⏳ 0/2 AWAITING GAME SYNC'}
               </span>
             )}
           </div>
           <div className="relics-grid planar-grid">
-            {relics.slice(4, 6).map((r, i) => renderCard(r, i + 4))}
+            {spherePiece ? renderCard(spherePiece, 4) : renderPlaceholderCard(4, isRu ? 'Планарная сфера' : 'Planar Sphere')}
+            {ropePiece ? renderCard(ropePiece, 5) : renderPlaceholderCard(5, isRu ? 'Соединительная вервь' : 'Link Rope')}
           </div>
         </div>
       ) : (
@@ -195,7 +242,9 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
             </div>
           )}
           <div className="relics-grid">
-            {relics.map((r, i) => renderCard(r, i))}
+            {relics.slice(0, 4).map((r, i) => renderCard(r, i))}
+            {spherePiece ? renderCard(spherePiece, 4) : renderPlaceholderCard(4, isRu ? 'Планарная сфера' : 'Planar Sphere')}
+            {ropePiece ? renderCard(ropePiece, 5) : renderPlaceholderCard(5, isRu ? 'Соединительная вервь' : 'Link Rope')}
           </div>
         </div>
       )}

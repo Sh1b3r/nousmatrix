@@ -50,7 +50,6 @@ body {
 
 .app-container {
   min-height: 100vh;
-  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -109,8 +108,6 @@ main {
   padding: 28px 20px 80px;
   position: relative;
   z-index: 10;
-  display: flex;
-  flex-direction: column;
 }
 
 /* BUTTONS */
@@ -170,19 +167,24 @@ main {
   transform: translateX(-3px);
 }
 
+.refresh-btn .refresh-icon {
+  font-size: 13px;
+  display: inline-block;
+  transition: transform 300ms ease;
+}
+
+.refresh-btn:hover .refresh-icon {
+  transform: rotate(180deg);
+}
+
 /* ==========================================================================
    SCREEN 1: HERO VIEW
    ========================================================================== */
 #view-home {
-  flex: 1;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  min-height: calc(100vh - 140px);
-  padding: 32px 0;
-  box-sizing: border-box;
+  padding: 40px 0 60px;
 }
 
 .home-card {
@@ -190,7 +192,7 @@ main {
   max-width: 800px;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
-  padding: 36px 36px;
+  padding: 44px 36px;
   border-radius: 4px;
   backdrop-filter: blur(10px);
 }
@@ -327,35 +329,30 @@ main {
 .guide-banner {
   background: var(--surface-2);
   border-left: 3px solid var(--accent);
-  padding: 20px 22px;
-  border-radius: 0 4px 4px 0;
+  padding: 18px 22px;
+  border-radius: 0 2px 2px 0;
 }
 
 .guide-heading {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   letter-spacing: -0.01em;
-  line-height: 1.35;
 }
 
 .guide-steps {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  font-size: 13.5px;
-  color: #C3BCCE;
-  line-height: 1.6;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .guide-step b {
-  color: #FFFFFF;
-  font-size: 14px;
-  font-weight: 700;
+  color: var(--text-primary);
   display: block;
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
+  margin-bottom: 4px;
 }
 
 .guide-step code {
@@ -364,7 +361,7 @@ main {
   padding: 2px 4px;
   border-radius: 2px;
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 /* ==========================================================================
@@ -1170,6 +1167,46 @@ main {
   box-shadow: 0 0 12px rgba(255, 60, 60, 0.12);
 }
 
+.relic-item-card.relic-placeholder-card {
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  background: rgba(18, 16, 26, 0.35);
+  opacity: 0.85;
+  transition: all 180ms ease;
+}
+
+.relic-item-card.relic-placeholder-card:hover {
+  border-color: rgba(230, 126, 34, 0.45);
+  opacity: 1;
+}
+
+.relic-icon-wrap.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+}
+
+.placeholder-icon {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.relic-placeholder-body {
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 6px;
+  margin-top: 6px;
+  border-left: 2px solid rgba(230, 126, 34, 0.5);
+}
+
+.relic-placeholder-hint {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
 .relic-worst-banner-top {
   display: flex;
   align-items: center;
@@ -1504,46 +1541,193 @@ main {
 }
 
 /* ==========================================================================
-   MODAL: 1% TROPHY CARD (FLEX CARD)
+   MODAL: FULL BUILD CARD (SHOWCASE & BENCHMARK)
    ========================================================================== */
 #modal-trophy {
   position: fixed;
   inset: 0;
-  background: rgba(12, 8, 20, 0.88);
-  backdrop-filter: blur(8px);
+  background: rgba(10, 6, 18, 0.94);
+  backdrop-filter: blur(12px);
   z-index: 200;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 24px 80px;
+  overflow-y: auto;
+}
+
+.trophy-modal-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.trophy-controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(29, 20, 50, 0.95);
+  border: 1px solid var(--border-strong);
+  padding: 14px 20px;
+  border-radius: 6px;
+  gap: 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.trophy-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.trophy-controls-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.trophy-controls-hint {
+  font-size: 12.5px;
+  color: #C3BCCE;
+}
+
+.trophy-controls-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trophy-action-btn {
+  font-size: 13.5px;
+  padding: 10px 18px;
+  white-space: nowrap;
+  border-radius: 3px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 150ms ease;
+  padding: 0 4px;
+}
+
+.btn-close-modal:hover {
+  color: var(--accent);
+}
+
+.trophy-image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.6);
+}
+
+.trophy-card-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 40px rgba(255, 60, 60, 0.25);
+  background: var(--surface-1);
+  cursor: pointer;
+}
+
+.trophy-loading-box {
+  width: 100%;
+  min-height: 480px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 20px;
+}
+
+.trophy-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 60, 60, 0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.trophy-loading-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.trophy-loading-desc {
+  font-size: 13.5px;
+  color: #C3BCCE;
 }
 
 .trophy-card {
   width: 100%;
-  max-width: 580px;
+  max-width: 1200px;
   background: var(--surface-1);
   border: 1px solid var(--accent);
-  padding: 36px;
-  border-radius: 4px;
+  padding: 28px 32px;
+  border-radius: 6px;
   position: relative;
-  box-shadow: 0 0 40px var(--accent-dim);
+  box-shadow: 0 0 50px rgba(255, 60, 60, 0.22);
+  display: flex;
+  flex-direction: column;
 }
 
+.trophy-card.trophy-card-render-source {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* 1. Header Row */
 .trophy-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.trophy-char-identity {
   display: flex;
   align-items: center;
   gap: 18px;
-  margin-bottom: 16px;
 }
 
 .trophy-avatar-box {
-  width: 68px;
-  height: 68px;
+  width: 76px;
+  height: 76px;
   border-radius: 50% !important;
   border: 2px solid var(--accent);
   background: var(--surface-2);
   overflow: hidden;
   flex-shrink: 0;
-  box-shadow: 0 0 12px var(--accent-glow);
+  box-shadow: 0 0 16px var(--accent-glow);
 }
 
 .trophy-avatar-img {
@@ -1553,10 +1737,96 @@ main {
   border-radius: 50% !important;
 }
 
-.trophy-avatar-img {
-  width: 100%;
-  height: 100%;
+.trophy-char-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.trophy-char-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.trophy-char {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #FFFFFF;
+}
+
+.trophy-stars {
+  color: var(--gold);
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+.trophy-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.trophy-pills-row .char-pill {
+  font-size: 12.5px;
+  padding: 3px 8px;
+}
+
+/* Light Cone in Header */
+.trophy-cone-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 10px 16px;
+  max-width: 340px;
+}
+
+.trophy-cone-img {
+  width: 52px;
+  height: 66px;
   object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--gold);
+  background: var(--surface-3);
+  flex-shrink: 0;
+}
+
+.trophy-cone-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.trophy-cone-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trophy-cone-rank {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* Score Box in Header */
+.trophy-score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .trophy-badge {
@@ -1565,94 +1835,121 @@ main {
   color: #FFFFFF;
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 12px;
-  padding: 3px 10px;
+  font-size: 12.5px;
+  padding: 4px 10px;
   letter-spacing: 0.08em;
-  margin-bottom: 6px;
+  border-radius: 2px;
 }
 
-.trophy-char {
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  margin-bottom: 4px;
-}
-
-.trophy-rank {
+.trophy-score-val {
   font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1;
 }
 
-.trophy-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  border-top: 1px solid var(--border-subtle);
-  border-bottom: 1px solid var(--border-subtle);
-  padding: 16px 0;
-  margin-bottom: 24px;
-}
-
-.trophy-stat-item .val {
-  font-family: var(--font-mono);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.trophy-stat-item .lbl {
-  font-size: 11px;
+.trophy-score-val span {
+  font-size: 16px;
   color: var(--text-tertiary);
-  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.trophy-uid-tag {
   font-family: var(--font-mono);
+  font-size: 12px;
+  color: #C3BCCE;
+  letter-spacing: 0.05em;
+}
+
+/* 2. Main 2-Column Dashboard Grid inside Build Card */
+.trophy-dashboard-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  margin-top: 22px;
+}
+
+.trophy-col-left,
+.trophy-col-right {
+  min-width: 0;
+}
+
+.trophy-dashboard-grid .panel {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 18px 20px;
+}
+
+.trophy-dashboard-grid .panel-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 12px;
 }
 
 .btn-close {
   position: absolute;
-  top: 20px;
+  top: 18px;
   right: 20px;
   background: none;
   border: none;
   color: var(--text-tertiary);
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
   transition: color 150ms ease;
   line-height: 1;
+  z-index: 10;
 }
 
 .btn-close:hover {
   color: var(--accent);
 }
 
+/* 3. Footer */
 .trophy-card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-subtle);
 }
 
 .trophy-verified-tag {
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-tertiary);
+  font-size: 13px;
+  color: #C3BCCE;
   display: flex;
   align-items: center;
   gap: 8px;
+  letter-spacing: 0.04em;
 }
 
 .trophy-logo-img {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   border: none !important;
 }
 
+.trophy-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .trophy-copy-btn {
+  font-size: 13.5px;
+  padding: 10px 18px;
   white-space: nowrap;
+}
+
+.trophy-close-bottom-btn {
+  font-size: 13.5px;
+  padding: 10px 18px;
 }
 
 /* ==========================================================================
@@ -1761,26 +2058,6 @@ main {
     padding: 16px 0 60px !important;
     width: 100% !important;
     max-width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  main:has(#view-home) {
-    padding: 0 !important;
-  }
-
-  #view-home {
-    flex: 1;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-    min-height: calc(100vh - 60px) !important;
-    min-height: calc(100dvh - 60px) !important;
-    padding: 24px 0 !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
   }
 
   #view-dashboard {
@@ -2091,33 +2368,63 @@ main {
     grid-template-columns: 1fr !important;
   }
 
-  .guide-heading {
-    font-size: 14.5px !important;
-    margin-bottom: 12px !important;
-  }
-
   .guide-steps {
     grid-template-columns: 1fr !important;
-    font-size: 13px !important;
-    line-height: 1.55 !important;
+  }
+
+  /* Build Card on Mobile */
+  #modal-trophy {
+    padding: 30px 12px 60px !important;
+  }
+
+  .trophy-controls-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 12px 14px !important;
+  }
+
+  .trophy-controls-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .trophy-action-btn {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  .trophy-header-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
     gap: 14px !important;
   }
 
-  .guide-step b {
-    font-size: 13.5px !important;
-    margin-bottom: 4px !important;
+  .trophy-char-identity {
+    gap: 14px !important;
   }
 
-  .trophy-stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+  .trophy-char {
+    font-size: 22px !important;
   }
 
-  /* Trophy Card on Mobile - Button in separate row */
-  .trophy-card {
-    padding: 24px 18px !important;
-    width: 100% !important;
+  .trophy-cone-box {
     max-width: 100% !important;
-    box-sizing: border-box !important;
+  }
+
+  .trophy-score-box {
+    align-items: flex-start !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    border-top: 1px dashed var(--border-subtle) !important;
+    padding-top: 12px !important;
+  }
+
+  .trophy-dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
 
   .trophy-card-footer {
@@ -2129,13 +2436,22 @@ main {
     margin-top: 16px !important;
   }
 
+  .trophy-footer-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
   .trophy-verified-tag {
     justify-content: center !important;
     text-align: center !important;
     width: 100% !important;
+    font-size: 12px !important;
   }
 
-  .trophy-copy-btn {
+  .trophy-copy-btn,
+  .trophy-close-bottom-btn {
     width: 100% !important;
     text-align: center !important;
     justify-content: center !important;
@@ -2171,10 +2487,6 @@ main {
     padding: 10px 0 50px !important;
   }
 
-  main:has(#view-home) {
-    padding: 0 !important;
-  }
-
   /* Home View (Search & Guide) */
   .home-card {
     padding: 20px 10px !important;
@@ -2199,14 +2511,9 @@ main {
     padding: 14px 12px !important;
   }
 
-  .guide-heading {
-    font-size: 13.5px !important;
-  }
-
   .guide-steps {
-    gap: 12px !important;
-    font-size: 12.5px !important;
-    line-height: 1.5 !important;
+    gap: 10px !important;
+    font-size: 11px !important;
   }
 
   /* Player Banner */

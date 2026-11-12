@@ -87,7 +87,7 @@ export default function SetBonuses({ character, t, lang = 'ru' }) {
       {finalSets.map((set, i) => (
         <div key={i} className="set-box">
           <div className="set-head">
-            <img className="set-icon" src={iconUrl(set.icon)} alt={set.name} />
+            <img className="set-icon" src={iconUrl(set.icon)} alt={set.name} crossOrigin="anonymous" />
             <span className="set-name">{set.name}</span>
             <span className="set-num-badge">
               {set.num === 2 ? t.pc2 : (set.num === 4 ? t.pc4 : `${set.num} ${t.pc}`)}

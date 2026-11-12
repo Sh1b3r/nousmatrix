@@ -30,7 +30,29 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
+
+    // Ensure ornaments are merged into relics if Mihomo returned them in separate arrays
+    if (data && Array.isArray(data.characters)) {
+      data.characters.forEach(c => {
+        if (Array.isArray(c.ornaments) && c.ornaments.length > 0) {
+          const currentRelics = Array.isArray(c.relics) ? c.relics : [];
+          const existingIds = new Set(currentRelics.map(r => r.id || `${r.type}_${r.name}`));
+          const merged = [...currentRelics];
+          c.ornaments.forEach(orn => {
+            if (!existingIds.has(orn.id || `${orn.type}_${orn.name}`)) {
+              merged.push(orn);
+            }
+          });
+          c.relics = merged;
+        }
+      });
+    }
+
+    if (req.query.force || req.query._t) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    } else {
+      res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
+    }
     return res.status(200).json(data);
   } catch (err) {
     console.error('Mihomo Serverless Error:', err);

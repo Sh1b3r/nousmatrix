@@ -83,7 +83,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {/* HP */}
       <div className="stat-entry">
         <div className="stat-left">
-          <img className="stat-icon" src={iconUrl('icon/property/IconMaxHP.png')} alt="HP" />
+          <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconMaxHP.png')} alt="HP" />
           <span className="stat-name">{t.maxHp}</span>
         </div>
         <div className="stat-values">
@@ -95,7 +95,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {/* ATK */}
       <div className="stat-entry">
         <div className="stat-left">
-          <img className="stat-icon" src={iconUrl('icon/property/IconAttack.png')} alt="ATK" />
+          <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconAttack.png')} alt="ATK" />
           <span className="stat-name">{t.atk}</span>
         </div>
         <div className="stat-values">
@@ -107,7 +107,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {/* DEF */}
       <div className="stat-entry">
         <div className="stat-left">
-          <img className="stat-icon" src={iconUrl('icon/property/IconDefence.png')} alt="DEF" />
+          <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconDefence.png')} alt="DEF" />
           <span className="stat-name">{t.def}</span>
         </div>
         <div className="stat-values">
@@ -119,7 +119,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {/* SPD */}
       <div className="stat-entry">
         <div className="stat-left">
-          <img className="stat-icon" src={iconUrl('icon/property/IconSpeed.png')} alt="SPD" />
+          <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconSpeed.png')} alt="SPD" />
           <span className="stat-name">{t.spd}</span>
         </div>
         <div className="stat-values">
@@ -131,7 +131,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {/* CRIT RATE */}
       <div className="stat-entry">
         <div className="stat-left">
-          <img className="stat-icon" src={iconUrl('icon/property/IconCriticalChance.png')} alt="CR" />
+          <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconCriticalChance.png')} alt="CR" />
           <span className="stat-name">{t.critRate}</span>
         </div>
         <div className="stat-values">
@@ -142,7 +142,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {/* CRIT DMG */}
       <div className="stat-entry">
         <div className="stat-left">
-          <img className="stat-icon" src={iconUrl('icon/property/IconCriticalDamage.png')} alt="CD" />
+          <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconCriticalDamage.png')} alt="CD" />
           <span className="stat-name">{t.critDmg}</span>
         </div>
         <div className="stat-values">
@@ -154,7 +154,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {beTotal && (
         <div className="stat-entry">
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl('icon/property/IconBreakUp.png')} alt="BE" />
+            <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconBreakUp.png')} alt="BE" />
             <span className="stat-name">{t.breakEffect}</span>
           </div>
           <div className="stat-values">
@@ -167,7 +167,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {healTotal && (
         <div className="stat-entry">
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl('icon/property/IconHealRatio.png')} alt="Heal" />
+            <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconHealRatio.png')} alt="Heal" />
             <span className="stat-name">{t.healRate}</span>
           </div>
           <div className="stat-values">
@@ -180,7 +180,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {activeElementDmgs.map((el, i) => (
         <div className="stat-entry" key={i}>
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl(el.icon)} alt="Element" />
+            <img className="stat-icon" crossOrigin="anonymous" src={iconUrl(el.icon)} alt="Element" />
             <span className="stat-name">{formatStatName(addMap[el.field].name || el.rawName, lang)}</span>
           </div>
           <div className="stat-values">
@@ -193,7 +193,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {errTotal && (
         <div className="stat-entry">
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl('icon/property/IconEnergyRecovery.png')} alt="ERR" />
+            <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconEnergyRecovery.png')} alt="ERR" />
             <span className="stat-name">{t.err}</span>
           </div>
           <div className="stat-values">
@@ -206,7 +206,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {ehrTotal && (
         <div className="stat-entry">
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl('icon/property/IconStatusProbability.png')} alt="EHR" />
+            <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconStatusProbability.png')} alt="EHR" />
             <span className="stat-name">{t.ehr}</span>
           </div>
           <div className="stat-values">
@@ -219,7 +219,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {resTotal && (
         <div className="stat-entry">
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl('icon/property/IconStatusResistance.png')} alt="RES" />
+            <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconStatusResistance.png')} alt="RES" />
             <span className="stat-name">{t.effectRes}</span>
           </div>
           <div className="stat-values">
@@ -232,7 +232,7 @@ export default function CombatStats({ character, t, lang = 'ru' }) {
       {maxSp && (
         <div className="stat-entry">
           <div className="stat-left">
-            <img className="stat-icon" src={iconUrl('icon/property/IconEnergyLimit.png')} alt="Max SP" />
+            <img className="stat-icon" crossOrigin="anonymous" src={iconUrl('icon/property/IconEnergyLimit.png')} alt="Max SP" />
             <span className="stat-name">{t.maxEnergy}</span>
           </div>
           <div className="stat-values">
