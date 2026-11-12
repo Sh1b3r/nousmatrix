@@ -1,3 +1,5 @@
+import { resolveRelicSetInfo } from './setDefinitions.js';
+
 export const CDN_MIRRORS = [
   'https://fastly.jsdelivr.net/gh/Mar-7th/StarRailRes@master/',
   'https://cdn.jsdelivr.net/gh/Mar-7th/StarRailRes@master/',
@@ -698,10 +700,11 @@ export function determineCharacterMetrics(char, archetype, stats) {
     };
   }
 
-  // 2. Yao Guang / HARMONY_SPD - Speed is primary, ERR is secondary
-  if (archetype === 'HARMONY_SPD' || lowerName.includes('яо гуан') || lowerName.includes('яогуан') || lowerName.includes('yaoguang') || lowerName.includes('yao guang') || lowerName.includes('爻光')) {
-    const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : '[SLOW]');
-    const errStatus = err >= 19.4 ? '[ВЕРВЬ ВЭ ✓]' : '[НУЖНА ВЭ]';
+  // 2. Yao Guang / HARMONY_SPD - Speed is primary, Crits/ERR are secondary
+  const isYaoGuang = lowerName.includes('яо') || lowerName.includes('yao') || lowerName.includes('гуан') || lowerName.includes('guang') || lowerName.includes('爻光');
+  if (archetype === 'HARMONY_SPD' || isYaoGuang) {
+    const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const crStatus = cr >= 50 ? `[${cr.toFixed(1)}% CR ✓]` : `[${cr.toFixed(1)}% CR]`;
 
     return {
       primary: {
@@ -712,11 +715,11 @@ export function determineCharacterMetrics(char, archetype, stats) {
         status: spdStatus
       },
       secondary: {
-        labelRu: 'ВОССТАНОВЛЕНИЕ ЭНЕРГИИ',
-        labelEn: 'ENERGY REGENERATION (ERR)',
-        display: err > 0 ? `+${err.toFixed(1)}% ERR` : '100% (БАЗА)',
-        percent: Math.min(100, Math.max(20, (err / 24.4) * 100)),
-        status: errStatus
+        labelRu: isYaoGuang ? 'КРИТ. ШАНС (ПАССИВКА 160+ СКОР)' : 'ВОССТАНОВЛЕНИЕ ЭНЕРГИИ',
+        labelEn: isYaoGuang ? 'CRIT RATE (160+ SPD PASSIVE)' : 'ENERGY REGENERATION (ERR)',
+        display: isYaoGuang ? `${cr.toFixed(1)}% CR` : (err > 0 ? `+${err.toFixed(1)}% ERR` : '100% (БАЗА)'),
+        percent: isYaoGuang ? Math.min(100, (cr / 70) * 100) : Math.min(100, Math.max(20, (err / 24.4) * 100)),
+        status: isYaoGuang ? crStatus : (err >= 19.4 ? '[ВЕРВЬ ВЭ ✓]' : '[НУЖНА ВЭ]')
       }
     };
   }
@@ -1098,12 +1101,13 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   // EXPLICIT CHARACTER OVERRIDES FIRST (Guarantees Blade, Castorice, Wolf 999, Yao Guang, Silver Wolf, Acheron, etc. are never misidentified)
   const isWolfChar = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
   const isWolf999 = isWolfChar && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
+  const isYaoGuang = lowerName.includes('яо') || lowerName.includes('yao') || lowerName.includes('гуан') || lowerName.includes('guang') || lowerName.includes('爻光');
 
   if (charId === '1205' || lowerName.includes('блэйд') || lowerName.includes('blade') || charId === '1407' || lowerName.includes('касторице') || lowerName.includes('castorice')) {
     archetype = 'HP_CRIT_DPS';
   } else if (isWolf999 || (isWolfChar && cv >= 150)) {
     archetype = 'CRIT_DPS';
-  } else if (lowerName.includes('яо гуан') || lowerName.includes('яогуан') || lowerName.includes('yaoguang') || lowerName.includes('yao guang') || lowerName.includes('爻光')) {
+  } else if (isYaoGuang) {
     archetype = 'HARMONY_SPD';
   } else if (isWolfChar) {
     archetype = 'NIHILITY_DEBUFF';
@@ -1499,8 +1503,13 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     });
   });
 
-  const planarSet = planarRelics.length > 0 ? (planarRelics[0].set_name || '') : '';
-  const isPlanarSetComplete = planarRelics.length === 2 && planarRelics[0].set_id === planarRelics[1].set_id;
+  const pInfo0 = planarRelics.length > 0 ? resolveRelicSetInfo(planarRelics[0], isRu ? 'ru' : 'en') : null;
+  const pInfo1 = planarRelics.length > 1 ? resolveRelicSetInfo(planarRelics[1], isRu ? 'ru' : 'en') : null;
+  const planarSet = pInfo0?.name || (planarRelics.length > 0 ? (planarRelics[0].set_name || '') : '');
+  const isPlanarSetComplete = planarRelics.length === 2 && (
+    planarRelics[0].set_id === planarRelics[1].set_id ||
+    (pInfo0?.name && pInfo0.name === pInfo1?.name)
+  );
   const planarEfficiency = planarRollsTotal > 0 ? Math.round((planarUsefulRolls / planarRollsTotal) * 100) : 75;
 
   let planarCondition = "";
@@ -1718,8 +1727,10 @@ export function calculateCharacterAudit(char, lang = 'ru') {
 
   const cavernSetCounts = {};
   cavernRelics.forEach(r => {
-    const sId = r.set_id || r.set_name || 'unknown';
-    cavernSetCounts[sId] = cavernSetCounts[sId] || { count: 0, name: r.set_name || '' };
+    const info = resolveRelicSetInfo(r, isRu ? 'ru' : 'en');
+    const sId = info?.def?.ids?.[0] || info?.name || r.set_id || r.set_name || 'unknown';
+    const sName = info?.name || r.set_name || (isRu ? `Сет #${sId}` : `Set #${sId}`);
+    cavernSetCounts[sId] = cavernSetCounts[sId] || { count: 0, name: sName };
     cavernSetCounts[sId].count += 1;
   });
 

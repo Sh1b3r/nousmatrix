@@ -50,6 +50,7 @@ body {
 
 .app-container {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -108,6 +109,8 @@ main {
   padding: 28px 20px 80px;
   position: relative;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
 }
 
 /* BUTTONS */
@@ -171,10 +174,15 @@ main {
    SCREEN 1: HERO VIEW
    ========================================================================== */
 #view-home {
+  flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 40px 0 60px;
+  width: 100%;
+  min-height: calc(100vh - 140px);
+  padding: 32px 0;
+  box-sizing: border-box;
 }
 
 .home-card {
@@ -182,7 +190,7 @@ main {
   max-width: 800px;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
-  padding: 44px 36px;
+  padding: 36px 36px;
   border-radius: 4px;
   backdrop-filter: blur(10px);
 }
@@ -272,30 +280,35 @@ main {
 .guide-banner {
   background: var(--surface-2);
   border-left: 3px solid var(--accent);
-  padding: 18px 22px;
-  border-radius: 0 2px 2px 0;
+  padding: 20px 22px;
+  border-radius: 0 4px 4px 0;
 }
 
 .guide-heading {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
-  margin-bottom: 12px;
+  color: #FFFFFF;
+  margin-bottom: 14px;
   letter-spacing: -0.01em;
+  line-height: 1.35;
 }
 
 .guide-steps {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.5;
+  gap: 18px;
+  font-size: 13.5px;
+  color: #C3BCCE;
+  line-height: 1.6;
 }
 
 .guide-step b {
-  color: var(--text-primary);
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
 }
 
 .guide-step code {
@@ -304,7 +317,7 @@ main {
   padding: 2px 4px;
   border-radius: 2px;
   color: var(--text-primary);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 /* ==========================================================================
@@ -1701,6 +1714,26 @@ main {
     padding: 16px 0 60px !important;
     width: 100% !important;
     max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  main:has(#view-home) {
+    padding: 0 !important;
+  }
+
+  #view-home {
+    flex: 1;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: calc(100vh - 60px) !important;
+    min-height: calc(100dvh - 60px) !important;
+    padding: 24px 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
   }
 
   #view-dashboard {
@@ -2011,8 +2044,21 @@ main {
     grid-template-columns: 1fr !important;
   }
 
+  .guide-heading {
+    font-size: 14.5px !important;
+    margin-bottom: 12px !important;
+  }
+
   .guide-steps {
     grid-template-columns: 1fr !important;
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+    gap: 14px !important;
+  }
+
+  .guide-step b {
+    font-size: 13.5px !important;
+    margin-bottom: 4px !important;
   }
 
   .trophy-stats-grid {
@@ -2078,6 +2124,10 @@ main {
     padding: 10px 0 50px !important;
   }
 
+  main:has(#view-home) {
+    padding: 0 !important;
+  }
+
   /* Home View (Search & Guide) */
   .home-card {
     padding: 20px 10px !important;
@@ -2102,9 +2152,14 @@ main {
     padding: 14px 12px !important;
   }
 
+  .guide-heading {
+    font-size: 13.5px !important;
+  }
+
   .guide-steps {
-    gap: 10px !important;
-    font-size: 11px !important;
+    gap: 12px !important;
+    font-size: 12.5px !important;
+    line-height: 1.5 !important;
   }
 
   /* Player Banner */

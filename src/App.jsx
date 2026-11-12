@@ -370,7 +370,7 @@ export default function App() {
                   <div className="panel-title">
                     <span>{t.setsTitle}</span>
                   </div>
-                  <SetBonuses character={activeChar} t={t} />
+                  <SetBonuses character={activeChar} t={t} lang={lang} />
                 </div>
               </div>
             </div>
