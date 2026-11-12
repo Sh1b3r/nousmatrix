@@ -1660,7 +1660,7 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   } else if (/Дуран|Duran/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu ? 'До 5 стаков: +25% к бонус-атакам и +25% Крит. Урона' : 'Up to 5 stacks: +25% FUA DMG & +25% CD';
-  } else if (/Миг радости бога|радости бога|Moment of Joy/i.test(planarSet)) {
+  } else if (/Миг радости бога|радости бога|миг радости|радост|Moment of Joy|Joy/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu
       ? '+6% Скорости активно • Действие продвигается вперёд на 40% при входе в бой с Радостью ✓'

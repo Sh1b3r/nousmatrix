@@ -58,17 +58,20 @@ export default function SetBonuses({ character, t, lang = 'ru' }) {
   const seenKeys = new Set();
 
   rawSets.forEach((s) => {
-    const sName = (s.name || '').toLowerCase();
-    const key = `${sName}-${s.num}`;
-    seenKeys.add(key);
-    finalSets.push(s);
+    const sName = (s.name || '').trim().toLowerCase();
+    if (sName) {
+      const key = `${sName}-${s.num}`;
+      seenKeys.add(key);
+      finalSets.push(s);
+    }
   });
 
   synthesizedSets.forEach((s) => {
-    const sName = (s.name || '').toLowerCase();
+    const sName = (s.name || '').trim().toLowerCase();
+    if (!sName) return;
     const key = `${sName}-${s.num}`;
     // Also check if any raw set already covers this set name
-    const alreadyPresent = Array.from(seenKeys).some(k => k.startsWith(sName) || k.includes(sName));
+    const alreadyPresent = Array.from(seenKeys).some(k => k && (k.startsWith(sName) || k.includes(sName)));
     if (!alreadyPresent) {
       seenKeys.add(key);
       finalSets.push(s);
