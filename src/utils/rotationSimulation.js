@@ -2,6 +2,7 @@
  * NousMatrix Full Team Rotation Simulation Engine
  * Simulates chronological step-by-step ability sequences, buff application,
  * and exact damage output down to a single digit against MoC 12 Lv.90 Boss.
+ * Supports all characters, archetypes, and dynamic carry/support interactions.
  */
 
 export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matchedTeammates = [], lang = 'ru') {
@@ -9,8 +10,10 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const isRu = lang === 'ru';
   const name = (mainChar.name || '').toLowerCase();
   const charId = String(mainChar.id || '');
+  const pathId = String(mainChar.path?.id || '').toLowerCase();
+  const pathName = String(mainChar.path?.name || '').toLowerCase();
 
-  // 1. Base Stats of Main DPS
+  // 1. Base Stats of Main Character
   let baseAtk = Number(mainStats.atk || 0);
   let baseHp = Number(mainStats.hp || 0);
   let baseDef = Number(mainStats.def || 0);
@@ -58,58 +61,76 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
 
   // Cap DEF shred at 100% max
   const totalDefShred = Math.min(1.0, teamDefShred / 100);
-  // MoC 12 Boss Lv.90 DEF multiplier: 1000 / (1100 * (1 - defShred) + 1000)
-  const defMult = 1000 / (1100 * (1 - totalDefShred) + 1000);
 
-  // Elemental Resistance multiplier: Base 20% RES (0.80) + RES PEN
-  const resMult = 0.80 + (teamResPen / 100);
+  // 3. MoC 12 Lv.90 Boss Multipliers
+  // Defense Multiplier: (charLv + 20) / ((charLv + 20) + (enemyLv + 20) * (1 - defShred))
+  const charLv = Number(mainChar.level || 80);
+  const enemyLv = 90;
+  const defMult = (charLv + 20) / ((charLv + 20) + (enemyLv + 20) * (1 - totalDefShred));
 
-  // Vulnerability multiplier: 1 + Total Vulnerability
+  // Resistance Multiplier: 1 - (baseRes - resPen)
+  const baseEnemyRes = 0.20; // 20% Base RES
+  const effectiveRes = Math.max(-1.0, baseEnemyRes - (teamResPen / 100));
+  const resMult = 1 - effectiveRes;
+
+  // Vulnerability Multiplier
   const vulnMult = 1 + (teamVuln / 100);
 
-  // Total Combat Crit Stats with team buffs
-  const combatCr = Math.min(1.0, (baseCr + teamCrGrant + (name.includes('химеко') ? 15 : 0)) / 100);
-  const combatCd = (baseCd + teamCdGrant) / 100;
-  const critMultiplier = 1 + (combatCr * combatCd);
-
-  // Total Scaling Stat with team buffs
+  // Combat Stats
   const combatAtk = baseAtk + teamAtkGrant;
   const combatHp = baseHp;
+  const combatCr = Math.min(1.0, (baseCr + teamCrGrant) / 100);
+  const combatCd = (baseCd + teamCdGrant) / 100;
+  const critMultiplier = 1 + (combatCr * combatCd);
   const combatDmgBonus = 1 + ((baseDmgBoost + teamDmgBoost) / 100);
 
-  // -------------------------------------------------------------------------
-  // 3. Chronological Step-by-Step Action Rotation
-  // -------------------------------------------------------------------------
+  // Chronological Sequence Construction
   const steps = [];
   let rotationTotalDamage = 0;
   let peakHitDamage = 0;
 
-  // Step 1: Buffers Pre-cast Phase
-  matchedTeammates.forEach((tm, idx) => {
+  // Step 1: Buffers Pre-cast & Debuffs Setup Phase
+  matchedTeammates.forEach((tm) => {
     steps.push({
       stepNumber: steps.length + 1,
-      charName: tm.matchedChar?.name || (isRu ? tm.names[0] : tm.names[1] || tm.names[0]),
-      avatar: tm.matchedChar?.avatar?.icon || null,
+      charName: tm.characterName || (isRu ? tm.nameRu || tm.names[0] : tm.nameEn || tm.names[1] || tm.names[0]),
+      avatar: tm.characterIcon || null,
       phase: isRu ? 'ФАЗА ПОДГОТОВКИ (БУФФЫ И ДЕБАФФЫ)' : 'SETUP PHASE (BUFFS & DEBUFFS)',
       actionNameRu: `${tm.roleRu}: Активация навыка и сверхспособности`,
       actionNameEn: `${tm.roleEn}: Skill & Ultimate Activation`,
-      descRu: tm.dynamicBuffDescRu,
-      descEn: tm.dynamicBuffDescEn,
+      descRu: tm.dynamicBuffDescRu || tm.buffDescRu,
+      descEn: tm.dynamicBuffDescEn || tm.buffDescEn,
       damage: 0,
       isDamageAction: false,
       isEquipped: tm.isEquippedInShowcase
     });
   });
 
-  // Step 2: Main DPS Execution Phase
+  // Step 2: Main Character Execution Phase
   const isHimeko = charId === '1003' || name.includes('химеко') || name.includes('himeko') || name.includes('нова');
   const isAcheron = charId === '1308' || name.includes('ахерон') || name.includes('acheron');
   const isFirefly = charId === '1310' || name.includes('светлячок') || name.includes('firefly');
   const isFeixiao = charId === '1220' || name.includes('фэйсяо') || name.includes('feixiao');
   const isMortenax = charId === '1507' || name.includes('мортенакс') || name.includes('mortenax');
+  const isJingliu = charId === '1212' || name.includes('цзинлю') || name.includes('jingliu');
+  const isDHIL = charId === '1213' || name.includes('пожиратель') || name.includes('imbibitor');
+  const isKafka = charId === '1005' || name.includes('кафка') || name.includes('kafka');
+  const isBlackSwan = charId === '1307' || name.includes('лебедь') || name.includes('swan');
+  const isBoothill = charId === '1315' || name.includes('бутхилл') || name.includes('boothill');
+  const isRappa = charId === '1317' || name.includes('раппа') || name.includes('rappa');
+  const isSeele = charId === '1102' || name.includes('зеле') || name.includes('seele');
+  const isRatio = charId === '1305' || name.includes('рацио') || name.includes('ratio');
+  const isYunli = charId === '1221' || name.includes('юньли') || name.includes('yunli');
+  const isBlade = charId === '1205' || (name.includes('блейд') && !isMortenax) || (name.includes('blade') && !isMortenax);
+  const isJingYuan = charId === '1204' || name.includes('цзин юань') || name.includes('jing yuan');
+  const isArgenti = charId === '1302' || name.includes('аргенти') || name.includes('argenti');
+
+  // Support / Sustain active character detection
+  const isSupportRole = pathId === 'shaman' || pathName.includes('harmony') || pathName.includes('гармон');
+  const isSustainRole = pathId === 'knight' || pathId === 'priest' || pathName.includes('preservation') || pathName.includes('abundance') || pathName.includes('сохран') || pathName.includes('изобил');
 
   if (isHimeko) {
-    // Button 1: Himeko Enhanced Skill "Molten Detonation" (200% primary + 2x 80% blast = 360% total)
+    // 1. Skill
     const skillDmg = Math.round(combatAtk * 3.60 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += skillDmg;
     peakHitDamage = Math.max(peakHitDamage, skillDmg);
@@ -126,7 +147,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       isDamageAction: true
     });
 
-    // Button 2: Himeko Ultimate "Heavenly Flare" (230% AoE to all targets)
+    // 2. Ultimate
     const ultDmg = Math.round(combatAtk * 4.60 * (combatDmgBonus + 0.20) * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += ultDmg;
     peakHitDamage = Math.max(peakHitDamage, ultDmg);
@@ -143,7 +164,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       isDamageAction: true
     });
 
-    // Button 3: Talent "Victory Rush" (140% ATK x 3 procs on broken targets)
+    // 3. Talent Follow-up
     const fuaDmg = Math.round(combatAtk * 1.40 * 3 * (combatDmgBonus + 0.25) * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += fuaDmg;
     peakHitDamage = Math.max(peakHitDamage, fuaDmg);
@@ -160,7 +181,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       isDamageAction: true
     });
 
-    // Button 4: Super Break proc (if Super Break squad)
+    // 4. Super Break
     if (hasSuperBreak) {
       const baseBreakLv80 = 3767.55;
       const beMultiplier = 1 + ((baseBe + teamBeBoost) / 100);
@@ -180,7 +201,6 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       });
     }
   } else if (isAcheron) {
-    // Acheron: Skill (160% ATK) + 9-hit Ultimate "Slashed Dream: Crying Red" (372% ST + 300% Crimson Knot + 120% AoE)
     const skillDmg = Math.round(combatAtk * 1.60 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     const ultDmg = Math.round(combatAtk * 7.92 * (combatDmgBonus + 0.90) * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += skillDmg + ultDmg;
@@ -206,7 +226,6 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       isDamageAction: true
     });
   } else if (isFirefly) {
-    // Firefly: Enhanced Skill (200% ATK + Super Break burst)
     const baseBreakLv80 = 3767.55;
     const beMultiplier = 1 + ((baseBe + teamBeBoost) / 100);
     const sbDmg = Math.round(baseBreakLv80 * (60 / 30) * beMultiplier * defMult * resMult * (1 + teamBreakVuln / 100) * 2.5);
@@ -222,19 +241,44 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       damage: sbDmg,
       isDamageAction: true
     });
-  } else if (isMortenax) {
-    // Mortenax Blade: Skill (168% HP AoE & Bounce) + Ult inside Zone
-    const skillDmg = Math.round(combatHp * 1.68 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
-    const ultDmg = Math.round(combatHp * 1.80 * (combatDmgBonus + 0.30) * critMultiplier * defMult * resMult * vulnMult);
-    rotationTotalDamage += skillDmg + ultDmg;
-    peakHitDamage = Math.max(skillDmg, ultDmg);
+  } else if (isFeixiao) {
+    const skillDmg = Math.round(combatAtk * 2.00 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+    const fuaDmg = Math.round(combatAtk * 1.10 * 3 * (combatDmgBonus + 0.30) * critMultiplier * defMult * resMult * vulnMult);
+    const ultDmg = Math.round(combatAtk * 7.00 * (combatDmgBonus + 0.60) * critMultiplier * defMult * resMult * vulnMult);
+    rotationTotalDamage += skillDmg + fuaDmg + ultDmg;
+    peakHitDamage = ultDmg;
 
     steps.push({
       stepNumber: steps.length + 1,
       charName: mainChar.name,
-      phase: isRu ? 'НАВЫК В ЗОНЕ' : 'ZONE SKILL',
-      actionNameRu: 'Навык «Дождь клинков вершит судьбу» (168% Макс. HP)',
-      actionNameEn: 'Skill: Rain of Blades (168% Max HP)',
+      phase: isRu ? 'НАВЫК И БОНУС-АТАКИ' : 'SKILL & FUA',
+      actionNameRu: 'Навык «Рассечение вихря» + Совместные бонус-атаки',
+      actionNameEn: 'Skill: Waraxe Cleave + Follow-up Strikes',
+      damage: skillDmg + fuaDmg,
+      isDamageAction: true
+    });
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? 'СВЕРХСПОСОБНОСТЬ' : 'ULTIMATE BURST',
+      actionNameRu: 'Сверхспособность «Великое сияние Небес» (6-12 зарядов ауреуса)',
+      actionNameEn: 'Ultimate: Terrasplit (Flying Aureus Finisher)',
+      damage: ultDmg,
+      isDamageAction: true
+    });
+  } else if (isJingliu) {
+    const skillDmg = Math.round(combatAtk * 2.50 * (combatDmgBonus + 0.50) * (critMultiplier * 1.25) * defMult * resMult * vulnMult);
+    const ultDmg = Math.round(combatAtk * 3.00 * (combatDmgBonus + 0.70) * (critMultiplier * 1.25) * defMult * resMult * vulnMult);
+    rotationTotalDamage += skillDmg + ultDmg;
+    peakHitDamage = ultDmg;
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? 'ТРАНСМИГРАЦИЯ (НАВЫК)' : 'TRANSMIGRATION SKILL',
+      actionNameRu: 'Усиленный навык «Лунный покров» (Взрыв по площади)',
+      actionNameEn: 'Enhanced Skill: Moon on Glacial River',
       damage: skillDmg,
       isDamageAction: true
     });
@@ -242,14 +286,145 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     steps.push({
       stepNumber: steps.length + 1,
       charName: mainChar.name,
-      phase: isRu ? 'СВЕРХСПОСОБНОСТЬ В ЗОНЕ' : 'ZONE ULTIMATE',
-      actionNameRu: 'Сверхспособность «Неукротимый сквозь огонь» (Огненный взрыв)',
-      actionNameEn: 'Ultimate: Tenax Per Ignem',
+      phase: isRu ? 'СВЕРХСПОСОБНОСТЬ' : 'ULTIMATE BURST',
+      actionNameRu: 'Сверхспособность «Быстротечные мгновения снегопада»',
+      actionNameEn: 'Ultimate: Florephemeral Dreamflux',
       damage: ultDmg,
       isDamageAction: true
     });
+  } else if (isDHIL) {
+    const leapDmg = Math.round(combatAtk * 5.00 * (combatDmgBonus + 0.60) * critMultiplier * defMult * resMult * vulnMult);
+    const ultDmg = Math.round(combatAtk * 3.00 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+    rotationTotalDamage += leapDmg + ultDmg;
+    peakHitDamage = leapDmg;
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? '3-SP УСИЛЕННЫЙ НАВЫК' : '3-SP FULGURANT LEAP',
+      actionNameRu: 'Удар 3-SP «Сверкающий скачок» (7 ударов с нарастающим КУ)',
+      actionNameEn: 'Enhanced Attack: Fulgurant Leap (7-hit blast)',
+      damage: leapDmg,
+      isDamageAction: true
+    });
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? 'СВЕРХСПОСОБНОСТЬ' : 'ULTIMATE BURST',
+      actionNameRu: 'Сверхспособность «Очищение дракона» (+2 Чешуи дракона)',
+      actionNameEn: 'Ultimate: Azure' + 's Cleansing (Dragon Scales)',
+      damage: ultDmg,
+      isDamageAction: true
+    });
+  } else if (isKafka) {
+    const skillDmg = Math.round(combatAtk * 1.60 * combatDmgBonus * defMult * resMult * vulnMult);
+    const detonateDmg = Math.round(combatAtk * 3.20 * combatDmgBonus * defMult * resMult * vulnMult);
+    const ultDmg = Math.round(combatAtk * 4.50 * combatDmgBonus * defMult * resMult * vulnMult);
+    rotationTotalDamage += skillDmg + detonateDmg + ultDmg;
+    peakHitDamage = ultDmg;
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? 'НАВЫК И ДЕТОНАЦИЯ' : 'SKILL & DETONATION',
+      actionNameRu: 'Навык «Ласковый полумрак» (Взрыв 75% всех ДоТов)',
+      actionNameEn: 'Skill: Caressing Moonlight (DoT Trigger)',
+      damage: skillDmg + detonateDmg,
+      isDamageAction: true
+    });
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? 'СВЕРХСПОСОБНОСТЬ' : 'ULTIMATE BURST',
+      actionNameRu: 'Сверхспособность «Сумеречная трель» (100% детонация ДоТов + Шок)',
+      actionNameEn: 'Ultimate: Twilight Trill (AoE DoT Cascade)',
+      damage: ultDmg,
+      isDamageAction: true
+    });
+  } else if (isMortenax || isBlade) {
+    const hpStat = combatHp || baseHp || 7000;
+    const skillDmg = Math.round(hpStat * 1.68 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+    const ultDmg = Math.round(hpStat * 2.20 * (combatDmgBonus + 0.30) * critMultiplier * defMult * resMult * vulnMult);
+    rotationTotalDamage += skillDmg + ultDmg;
+    peakHitDamage = Math.max(skillDmg, ultDmg);
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? 'ХОД ДПС (НАВЫК HP)' : 'HP SKILL TURN',
+      actionNameRu: 'Усиленный боевой навык расхода HP',
+      actionNameEn: 'Enhanced HP-Draining Combat Strike',
+      damage: skillDmg,
+      isDamageAction: true
+    });
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? 'СВЕРХСПОСОБНОСТЬ' : 'ULTIMATE BURST',
+      actionNameRu: 'Сверхспособность (Масштабирование от потерянного HP)',
+      actionNameEn: 'Ultimate Burst (HP Scaling)',
+      damage: ultDmg,
+      isDamageAction: true
+    });
+  } else if (isSupportRole) {
+    // When viewing a Support character (Sunday, Robin, Sparkle, Ruan Mei, Tingyun, etc.)
+    const carryBenchmarkDmg = Math.round(3500 * 5.20 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+    const personalImpact = Math.round(combatAtk * 1.80 * combatDmgBonus * defMult * resMult * vulnMult);
+    rotationTotalDamage = carryBenchmarkDmg + personalImpact;
+    peakHitDamage = carryBenchmarkDmg;
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: isRu ? 'Поддерживаемый Керри' : 'Empowered Carry',
+      phase: isRu ? 'УДАР КЕРРИ ПОД ВАШИМИ БАФФАМИ' : 'BUFFED CARRY STRIKE',
+      actionNameRu: 'Полный прокаст основного керри с переданными баффами',
+      actionNameEn: 'Carry Full Cast with Transferred Buffs',
+      damage: carryBenchmarkDmg,
+      isDamageAction: true
+    });
+
+    if (personalImpact > 0) {
+      steps.push({
+        stepNumber: steps.length + 1,
+        charName: mainChar.name,
+        phase: isRu ? 'ЛИЧНЫЙ ВКЛАД САППОРТА' : 'PERSONAL OUTPUT',
+        actionNameRu: 'Дополнительный урон (Концерт / Командная синергия)',
+        actionNameEn: 'Additional Co-op Damage Trigger',
+        damage: personalImpact,
+        isDamageAction: true
+      });
+    }
+  } else if (isSustainRole) {
+    // When viewing a Sustain character (Aventurine, Luocha, Fu Xuan, Lingsha, etc.)
+    const personalDmg = Math.round(Math.max(baseAtk, baseDef, baseHp * 0.4) * 2.80 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+    const teamCoverDmg = Math.round(3200 * 4.40 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+    rotationTotalDamage = teamCoverDmg + personalDmg;
+    peakHitDamage = teamCoverDmg;
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? 'САБ-ДПС ВКЛАД СУСТЕЙНА' : 'SUSTAIN SUB-DPS HIT',
+      actionNameRu: 'Бонус-атака / Контрудар / Ультимейт выживания',
+      actionNameEn: 'Sustain Sub-DPS / Counter / Ultimate Impact',
+      damage: personalDmg,
+      isDamageAction: true
+    });
+
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: isRu ? 'Отряд под защитой' : 'Protected Team',
+      phase: isRu ? 'УРОН ОТРЯДА ПОД ДЕБАФФАМИ' : 'TEAM DAMAGE UNDER PROTECTION',
+      actionNameRu: 'Урон отряда с учётом крит-уязвимости и щитов',
+      actionNameEn: 'Team Output Enabled by Mitigation & Vulnerability',
+      damage: teamCoverDmg,
+      isDamageAction: true
+    });
   } else {
-    // Generic Crit DPS: Skill + Ultimate
+    // Default Crit DPS: Skill + Ultimate
     const scalingStat = Math.max(1200, combatAtk || combatHp);
     const skillDmg = Math.round(scalingStat * 2.20 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     const ultDmg = Math.round(scalingStat * 3.40 * (combatDmgBonus + 0.30) * critMultiplier * defMult * resMult * vulnMult);

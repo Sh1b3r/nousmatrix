@@ -56,8 +56,13 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   };
 
   return (
-    <div className="combat-sim-card">
-      {/* 1. Header with Role & Tier */}
+    <div className="panel panel-combat-sim">
+      {/* 1. Panel Header in exact site style */}
+      <div className="panel-title">
+        <span>{isRu ? 'БОЕВАЯ СИМУЛЯЦИЯ И РОТАЦИЯ' : 'COMBAT SIMULATION & ROTATION'}</span>
+        <span style={{ color: 'var(--accent)' }}>{isRu ? 'MOC 12 // БОСС 90 УР.' : 'MOC 12 // LV.90 BOSS'}</span>
+      </div>
+
       <div className="combat-sim-header">
         <div className="combat-sim-title-group">
           <div className="combat-sim-badge-row">
@@ -65,12 +70,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               {sim.type === 'HYBRID_SUBDPS' ? <SparklesIcon size={12} /> : isSupport ? <ShieldIcon size={12} /> : <SwordIcon size={12} />}
               <span>{roleBadgeLabel()}</span>
             </span>
-            <span className="combat-sim-subtag">
-              {isRu ? 'MOC 12 • БОСС 90 УР.' : 'MOC 12 • LV.90 BOSS'}
-            </span>
           </div>
           <h3 className="combat-sim-heading">
-            {isRu ? 'Боевая симуляция ротации отряда' : 'Full Team Rotation Combat Simulation'}
+            {isRu ? 'Математический расчёт боевой ротации отряда' : 'Mathematical Squad Combat Simulation'}
           </h3>
         </div>
         <div className="combat-sim-tier-box">
