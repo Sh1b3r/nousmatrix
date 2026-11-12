@@ -1837,17 +1837,325 @@ main {
   line-height: 1.4;
 }
 
-/* Relics & Planars Audit Specifics */
+/* ==========================================================================
+   OVERALL BUILD EVALUATION (ИНДЕКС ДЕЕСПОСОБНОСТИ) STYLES
+   ========================================================================== */
+
+.overall-score-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.overall-panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.overall-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.overall-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.overall-heading-text {
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+}
+
+.overall-matrix-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 2px 7px;
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+}
+
+/* Stylized Hero Score Container */
+.score-hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.04) 0%, rgba(10, 11, 14, 0.7) 100%);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.score-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.score-number-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  line-height: 1;
+}
+
+.score-number-main {
+  font-family: var(--font-mono);
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+  text-shadow: 0 0 24px rgba(0, 229, 255, 0.25);
+}
+
+.score-number-denom {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.score-grade-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.4);
+  width: fit-content;
+}
+
+.score-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.score-tier-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.tier-prefix {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  letter-spacing: 0.08em;
+}
+
+.tier-percent {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+
+.score-verified-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #00FF88;
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.25);
+  padding: 3px 7px;
+  border-radius: 2px;
+}
+
+/* Bottleneck Panel */
+.bottleneck-panel-box {
+  padding: 12px 14px;
+  background: rgba(255, 183, 77, 0.05);
+  border: 1px solid rgba(255, 183, 77, 0.25);
+  border-left: 3px solid #FFB74D;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bottleneck-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bottleneck-warn-icon {
+  color: #FFB74D;
+  display: flex;
+  align-items: center;
+}
+
+.bottleneck-title-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #FFB74D;
+  letter-spacing: 0.06em;
+}
+
+.bottleneck-desc-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Actions Section */
+.audit-actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.actions-count-pill {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  padding: 1px 6px;
+  background: var(--surface-2);
+  border-radius: 2px;
+}
+
+.audit-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.audit-action-box {
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.audit-action-box:hover {
+  border-color: var(--text-tertiary);
+}
+
+.action-box-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-bullet {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.action-title-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.action-box-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+/* ==========================================================================
+   RELICS & PLANARS AUDIT STYLES
+   ========================================================================== */
+
 .relics-audit-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+}
+
+.relics-audit-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.relics-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.relics-audit-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00E5FF;
+  box-shadow: 0 0 8px #00E5FF;
+}
+
+.relics-audit-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #00E5FF;
+  padding: 2px 7px;
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 2px;
+  letter-spacing: 0.04em;
+}
+
+.relics-audit-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .relic-audit-block {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+}
+
+.relic-audit-block.cavern-block {
+  border-left: 3px solid var(--accent);
+}
+
+.relic-audit-block.planar-block {
+  border-left: 3px solid #00E5FF;
 }
 
 .relic-audit-head {
@@ -1856,7 +2164,6 @@ main {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 2px;
 }
 
 .relic-audit-tag {
@@ -1899,7 +2206,7 @@ main {
 }
 
 .relic-audit-empty {
-  padding: 12px;
+  padding: 14px;
   background: var(--surface-2);
   border: 1px dashed var(--border-subtle);
   border-radius: 3px;

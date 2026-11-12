@@ -610,20 +610,20 @@ export default function App() {
 
             {/* Main Content Grid */}
             <div className="dashboard-grid">
-              {/* Left Column: Real Combat Stats, Overall Evaluation & Relics Roll Breakdown */}
+              {/* Left Column: Overall Build Score, Real Combat Stats & Relics Roll Breakdown */}
               <div className="dashboard-col-left">
-                {/* 1. Real In-Game Combat Attributes Table */}
+                {/* 1. БЛОК 1: ИНДЕКС ДЕЕСПОСОБНОСТИ / БОЕСПОСОБНОСТИ (Overall Score, Role, Bottleneck, Action Plan) */}
+                <div className="panel panel-overall-score" style={{ marginBottom: '24px' }}>
+                  <OverallScorePanel audit={audit} t={t} lang={lang} />
+                </div>
+
+                {/* 2. Real In-Game Combat Attributes Table */}
                 <div className="panel panel-combat-stats" style={{ marginBottom: '24px' }}>
                   <div className="panel-title combat-stats-title">
                     <span className="combat-title-main">{t.combatStatsTitle}</span>
                     <span className="combat-title-sub">{t.basePlusBonus}</span>
                   </div>
                   <CombatStats character={activeChar} t={t} lang={lang} />
-                </div>
-
-                {/* 2. БЛОК 1: ОБЩАЯ ОЦЕНКА БИЛДА (Overall Score, Role, Bottleneck, Action Plan) */}
-                <div className="panel panel-overall-score" style={{ marginBottom: '24px' }}>
-                  <OverallScorePanel audit={audit} t={t} lang={lang} />
                 </div>
 
                 {/* 3. БЛОК 2: ПОДСЧЁТ РЕЛИКВИЙ И ПЛАНАРОК (Cavern & Planar Rolls Audit) */}
