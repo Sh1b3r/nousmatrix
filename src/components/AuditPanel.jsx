@@ -32,27 +32,34 @@ export default function AuditPanel({ audit, t, lang = 'ru' }) {
           </div>
         </div>
 
+        {/* Metric 2: Primary Key Stat (Самый нужный стат персонажа вместо критмассы) */}
         <div className="metric-row">
           <div className="metric-label-line">
-            <span>{t.critValue}</span>
-            <span style={{ fontFamily: 'var(--font-mono)' }}>{audit.cv}</span>
+            <span>{isRu ? (audit.primaryMetric?.labelRu || t.critValue) : (audit.primaryMetric?.labelEn || t.critValue)}</span>
+            <span style={{ fontFamily: 'var(--font-mono)' }}>
+              {audit.primaryMetric ? `${audit.primaryMetric.display} ${audit.primaryMetric.status || ''}`.trim() : audit.cv}
+            </span>
           </div>
           <div className="metric-bar-bg">
-            <div className="metric-bar-fill" style={{ width: `${cvBarWidth}%` }} />
+            <div
+              className="metric-bar-fill"
+              style={{ width: `${audit.primaryMetric ? audit.primaryMetric.percent : cvBarWidth}%` }}
+            />
           </div>
         </div>
 
+        {/* Metric 3: Secondary Benchmark Stat (Скорость или профильный сабстат) */}
         <div className="metric-row">
           <div className="metric-label-line">
-            <span>{t.speedThreshold}</span>
+            <span>{isRu ? (audit.secondaryMetric?.labelRu || t.speedThreshold) : (audit.secondaryMetric?.labelEn || t.speedThreshold)}</span>
             <span style={{ fontFamily: 'var(--font-mono)' }}>
-              {audit.spd} SPD {isSpdOk ? '[OK]' : '[SLOW]'}
+              {audit.secondaryMetric ? `${audit.secondaryMetric.display} ${audit.secondaryMetric.status || ''}`.trim() : `${audit.spd} SPD ${isSpdOk ? '[OK]' : '[SLOW]'}`}
             </span>
           </div>
           <div className="metric-bar-bg">
             <div
               className="metric-bar-fill accent"
-              style={{ width: `${Math.min(100, (parseFloat(audit.spd) / 160) * 100)}%` }}
+              style={{ width: `${audit.secondaryMetric ? audit.secondaryMetric.percent : Math.min(100, (parseFloat(audit.spd) / 160) * 100)}%` }}
             />
           </div>
         </div>

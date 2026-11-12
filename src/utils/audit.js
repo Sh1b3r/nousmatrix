@@ -637,6 +637,358 @@ function zScoreToTopPercent(z) {
 }
 
 /**
+ * Determine the exact character-specific key benchmark metrics
+ * replacing the rigid crit mass (CV) with the most essential stat for the character
+ * (e.g., Speed for Yao Guang & Silver Wolf, Crits for Acheron, Break Effect for Firefly, DEF for Aventurine, etc.)
+ */
+export function determineCharacterMetrics(char, archetype, stats) {
+  const { hp, atk, def, spd, cr, cd, cv, be, ehr, eres, heal, err } = stats;
+  const name = char?.name || '';
+  const lowerName = name.toLowerCase();
+  const charId = String(char?.id || '');
+
+  // 1. Silver Wolf / Pela / Jiaoqiu (NIHILITY_DEBUFF) - Speed is primary, EHR is secondary
+  if (archetype === 'NIHILITY_DEBUFF' || charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver')) {
+    const isSW = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
+    const isJiaoqiu = lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu');
+    const targetEhr = isJiaoqiu ? 140 : (isSW ? 96 : 67);
+    const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const ehrStatus = ehr >= targetEhr ? `[${targetEhr}% CAP ✓]` : `[${ehr.toFixed(0)}% / ${targetEhr}%]`;
+
+    return {
+      primary: {
+        labelRu: 'СКОРОСТЬ (SPD)',
+        labelEn: 'SPEED (SPD)',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spdStatus
+      },
+      secondary: {
+        labelRu: 'ШАНС ПОПАДАНИЯ ЭФФЕКТОВ',
+        labelEn: 'EFFECT HIT RATE (EHR)',
+        display: `${ehr.toFixed(1)}% EHR`,
+        percent: Math.min(100, (ehr / targetEhr) * 100),
+        status: ehrStatus
+      }
+    };
+  }
+
+  // 2. Yao Guang / HARMONY_SPD - Speed is primary, ERR is secondary
+  if (archetype === 'HARMONY_SPD' || lowerName.includes('яо гуан') || lowerName.includes('яогуан') || lowerName.includes('yaoguang') || lowerName.includes('yao guang') || lowerName.includes('爻光')) {
+    const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : '[SLOW]');
+    const errStatus = err >= 19.4 ? '[ВЕРВЬ ВЭ ✓]' : '[НУЖНА ВЭ]';
+
+    return {
+      primary: {
+        labelRu: 'СКОРОСТЬ (SPD)',
+        labelEn: 'SPEED (SPD)',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spdStatus
+      },
+      secondary: {
+        labelRu: 'ВОССТАНОВЛЕНИЕ ЭНЕРГИИ',
+        labelEn: 'ENERGY REGENERATION (ERR)',
+        display: err > 0 ? `+${err.toFixed(1)}% ERR` : '100% (БАЗА)',
+        percent: Math.min(100, Math.max(20, (err / 24.4) * 100)),
+        status: errStatus
+      }
+    };
+  }
+
+  // 3. Sparkle / Sunday / Bronya (HARMONY_CRIT) - Speed is primary, Crit DMG is secondary
+  if (archetype === 'HARMONY_CRIT') {
+    const spdStatus = spd >= 160 ? '[160+ HYPER]' : (spd >= 134 ? '[134+ TUNED]' : '[SLOW]');
+    const cdStatus = cd >= 200 ? '[200%+ ELITE]' : (cd >= 160 ? '[160%+ OK]' : '[LOW]');
+
+    return {
+      primary: {
+        labelRu: 'СКОРОСТЬ (SPD)',
+        labelEn: 'SPEED (SPD)',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spdStatus
+      },
+      secondary: {
+        labelRu: 'КРИТ. УРОН (СКАЛЕЙЛЕР)',
+        labelEn: 'CRIT DMG (BUFF SCALE)',
+        display: `${cd.toFixed(1)}% CD`,
+        percent: Math.min(100, (cd / 220) * 100),
+        status: cdStatus
+      }
+    };
+  }
+
+  // 4. Firefly / Boothill / Rappa (BREAK_DPS) - Break Effect is primary, Speed is secondary
+  if (archetype === 'BREAK_DPS') {
+    const beStatus = be >= 360 ? '[360%+ ELITE]' : (be >= 250 ? '[250%+ READY]' : '[LOW]');
+    const spdStatus = spd >= 154 ? '[154+ OK]' : (spd >= 145 ? '[145+ OK]' : '[SLOW]');
+
+    return {
+      primary: {
+        labelRu: 'ЭФФЕКТ ПРОБИТИЯ (BE)',
+        labelEn: 'BREAK EFFECT (BE)',
+        display: `${be.toFixed(1)}% BE`,
+        percent: Math.min(100, (be / 360) * 100),
+        status: beStatus
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spdStatus
+      }
+    };
+  }
+
+  // 5. Ruan Mei (HARMONY_BREAK) - Break Effect (180% cap) is primary, Speed is secondary
+  if (archetype === 'HARMONY_BREAK') {
+    const beStatus = be >= 180 ? '[180% CAP ✓]' : `[-${Math.max(0, Math.round(180 - be))}% ДО КАПА]`;
+    const spdStatus = spd >= 145 ? '[145+ TALIA]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]');
+
+    return {
+      primary: {
+        labelRu: 'ЭФФЕКТ ПРОБИТИЯ (BE)',
+        labelEn: 'BREAK EFFECT (BE)',
+        display: `${be.toFixed(1)}% BE`,
+        percent: Math.min(100, (be / 180) * 100),
+        status: beStatus
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spdStatus
+      }
+    };
+  }
+
+  // 6. Robin / Tingyun (HARMONY_ATK)
+  if (archetype === 'HARMONY_ATK') {
+    const isTingyun = lowerName.includes('тинъюнь') || lowerName.includes('tingyun');
+    if (isTingyun) {
+      return {
+        primary: {
+          labelRu: 'СКОРОСТЬ (SPD)',
+          labelEn: 'SPEED (SPD)',
+          display: `${spd.toFixed(1)} SPD`,
+          percent: Math.min(100, (spd / 160) * 100),
+          status: spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : '[SLOW]')
+        },
+        secondary: {
+          labelRu: 'СИЛА АТАКИ (ATK)',
+          labelEn: 'ATTACK (ATK CAP)',
+          display: `${Math.round(atk)} ATK`,
+          percent: Math.min(100, (atk / 2600) * 100),
+          status: atk >= 2600 ? '[2600 CAP ✓]' : `[-${Math.max(0, Math.round(2600 - atk))} ДО КАПА]`
+        }
+      };
+    }
+    // Robin
+    return {
+      primary: {
+        labelRu: 'СИЛА АТАКИ (ATK)',
+        labelEn: 'ATTACK POWER (ATK)',
+        display: `${Math.round(atk)} ATK`,
+        percent: Math.min(100, (atk / 4200) * 100),
+        status: atk >= 4000 ? '[4000+ CAP ✓]' : (atk >= 3500 ? '[3500+ OK]' : '[LOW]')
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 140) * 100),
+        status: spd >= 120 ? '[VONWACQ OK]' : '[SLOW]'
+      }
+    };
+  }
+
+  // 7. Black Swan / Kafka (DOT_DPS)
+  if (archetype === 'DOT_DPS') {
+    const isBlackSwan = lowerName.includes('лебедь') || lowerName.includes('black swan');
+    if (isBlackSwan) {
+      return {
+        primary: {
+          labelRu: 'ШАНС ПОПАДАНИЯ ЭФФЕКТОВ',
+          labelEn: 'EFFECT HIT RATE (EHR)',
+          display: `${ehr.toFixed(1)}% EHR`,
+          percent: Math.min(100, (ehr / 120) * 100),
+          status: ehr >= 120 ? '[120% CAP ✓]' : `[-${Math.max(0, (120 - ehr)).toFixed(1)}% ДО КАПА]`
+        },
+        secondary: {
+          labelRu: 'ПОРОГ СКОРОСТИ',
+          labelEn: 'SPEED BREAKPOINT',
+          display: `${spd.toFixed(1)} SPD`,
+          percent: Math.min(100, (spd / 160) * 100),
+          status: spd >= 134 ? '[134+ OK]' : '[SLOW]'
+        }
+      };
+    }
+    // Kafka / DoT
+    return {
+      primary: {
+        labelRu: 'СИЛА АТАКИ (ATK)',
+        labelEn: 'ATTACK POWER (ATK)',
+        display: `${Math.round(atk)} ATK`,
+        percent: Math.min(100, (atk / 4000) * 100),
+        status: atk >= 3800 ? '[3800+ TOP]' : (atk >= 3400 ? '[3400+ OK]' : '[LOW]')
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spd >= 146 ? '[146+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]')
+      }
+    };
+  }
+
+  // 8. Aventurine / Gepard (PRESERVATION_DEF) - DEF (4000 cap) is primary
+  if (archetype === 'PRESERVATION_DEF') {
+    return {
+      primary: {
+        labelRu: 'ЗАЩИТА (DEF)',
+        labelEn: 'DEFENCE (DEF)',
+        display: `${Math.round(def)} DEF`,
+        percent: Math.min(100, (def / 4000) * 100),
+        status: def >= 4000 ? '[4000 CAP ✓]' : `[-${Math.max(0, 4000 - Math.round(def))} ДО КАПА]`
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spd >= 134 ? '[134+ OK]' : '[SLOW]'
+      }
+    };
+  }
+
+  // 9. Fu Xuan (PRESERVATION_HP) - HP is primary
+  if (archetype === 'PRESERVATION_HP') {
+    return {
+      primary: {
+        labelRu: 'МАКС. HP',
+        labelEn: 'MAX HP',
+        display: `${Math.round(hp)} HP`,
+        percent: Math.min(100, (hp / 8500) * 100),
+        status: hp >= 7500 ? '[7500+ OK]' : '[LOW]'
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spd >= 134 ? '[134+ OK]' : '[SLOW]'
+      }
+    };
+  }
+
+  // 10. Gallagher / Lingsha (ABUNDANCE_BREAK) - BE is primary
+  if (archetype === 'ABUNDANCE_BREAK') {
+    return {
+      primary: {
+        labelRu: 'ЭФФЕКТ ПРОБИТИЯ (BE)',
+        labelEn: 'BREAK EFFECT (BE)',
+        display: `${be.toFixed(1)}% BE`,
+        percent: Math.min(100, (be / 150) * 100),
+        status: be >= 150 ? '[150% CAP ✓]' : `[-${Math.max(0, Math.round(150 - be))}% ДО КАПА]`
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]')
+      }
+    };
+  }
+
+  // 11. Luocha (ABUNDANCE_ATK) - ATK is primary
+  if (archetype === 'ABUNDANCE_ATK') {
+    return {
+      primary: {
+        labelRu: 'СИЛА АТАКИ (ATK)',
+        labelEn: 'ATTACK POWER (ATK)',
+        display: `${Math.round(atk)} ATK`,
+        percent: Math.min(100, (atk / 3000) * 100),
+        status: atk >= 2800 ? '[2800+ OK]' : '[LOW]'
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spd >= 134 ? '[134+ OK]' : '[SLOW]'
+      }
+    };
+  }
+
+  // 12. Huohuo / Bailu / Lynx (ABUNDANCE_HP) - HP is primary
+  if (archetype === 'ABUNDANCE_HP') {
+    return {
+      primary: {
+        labelRu: 'МАКС. HP',
+        labelEn: 'MAX HP',
+        display: `${Math.round(hp)} HP`,
+        percent: Math.min(100, (hp / 7500) * 100),
+        status: hp >= 6500 ? '[6500+ OK]' : '[LOW]'
+      },
+      secondary: {
+        labelRu: 'ПОРОГ СКОРОСТИ',
+        labelEn: 'SPEED BREAKPOINT',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spd >= 134 ? '[134+ OK]' : '[SLOW]'
+      }
+    };
+  }
+
+  // 13. Blade / Castorice (HP_CRIT_DPS) - Crits & HP scaling
+  if (archetype === 'HP_CRIT_DPS') {
+    const isCastorice = lowerName.includes('castorice') || lowerName.includes('касторице') || charId === '1407';
+    const hpTarget = isCastorice ? 9500 : 7500;
+    const hpMinOk = isCastorice ? 8500 : 7000;
+
+    return {
+      primary: {
+        labelRu: 'КРИТ. МАССА (CV)',
+        labelEn: 'CRIT VALUE (CV)',
+        display: `${cv.toFixed(1)} CV`,
+        percent: Math.min(100, Math.max(10, (cv / 260) * 100)),
+        status: cv >= 230 ? '[ELITE]' : (cv >= 180 ? '[TOP]' : '[LOW]')
+      },
+      secondary: {
+        labelRu: 'МАКС. HP (СКАЛЕЙЛЕР)',
+        labelEn: 'MAX HP (SCALING)',
+        display: `${Math.round(hp)} HP`,
+        percent: Math.min(100, (hp / hpTarget) * 100),
+        status: hp >= hpMinOk ? '[OK]' : '[LOW]'
+      }
+    };
+  }
+
+  // 14. Standard CRIT_DPS (Acheron, Feixiao, Seele, Jingliu, Dan Heng IL, Ratio, etc.)
+  return {
+    primary: {
+      labelRu: 'КРИТ. МАССА (CV)',
+      labelEn: 'CRIT VALUE (CV)',
+      display: `${cv.toFixed(1)} CV`,
+      percent: Math.min(100, Math.max(10, (cv / 260) * 100)),
+      status: cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 160 ? '[OK]' : '[LOW]'))
+    },
+    secondary: {
+      labelRu: 'ПОРОГ СКОРОСТИ',
+      labelEn: 'SPEED BREAKPOINT',
+      display: `${spd.toFixed(1)} SPD`,
+      percent: Math.min(100, (spd / 160) * 100),
+      status: spd >= 134 ? '[134+ OK]' : (lowerName.includes('ахерон') || lowerName.includes('acheron') ? '[101 ATK BOOTS]' : '[SLOW]')
+    }
+  };
+}
+
+/**
  * Mathematically rigorous character audit & percentile ranking.
  * Differentiates 12 kit archetypes:
  * - Crit DPS / Hypercarry
@@ -684,9 +1036,15 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const charId = String(char.id || '');
   const lowerName = name.toLowerCase();
 
-  // EXPLICIT CHARACTER OVERRIDES FIRST (Guarantees Blade, Castorice, Firefly etc. are never misidentified)
-  if (charId === '1205' || lowerName.includes('блэйд') || lowerName.includes('blade')) {
+  // EXPLICIT CHARACTER OVERRIDES FIRST (Guarantees Blade, Castorice, Yao Guang, Silver Wolf, Acheron, etc. are never misidentified)
+  if (charId === '1205' || lowerName.includes('блэйд') || lowerName.includes('blade') || charId === '1407' || lowerName.includes('касторице') || lowerName.includes('castorice')) {
     archetype = 'HP_CRIT_DPS';
+  } else if (lowerName.includes('яо гуан') || lowerName.includes('яогуан') || lowerName.includes('yaoguang') || lowerName.includes('yao guang') || lowerName.includes('爻光')) {
+    archetype = 'HARMONY_SPD';
+  } else if (charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver wolf') || lowerName.includes('silver')) {
+    archetype = 'NIHILITY_DEBUFF';
+  } else if (charId === '1308' || lowerName.includes('ахерон') || lowerName.includes('acheron')) {
+    archetype = 'CRIT_DPS';
   } else if (charId === '1304' || lowerName.includes('авантюрин') || lowerName.includes('aventurine') || (path === 'Knight' && def > 2500)) {
     archetype = 'PRESERVATION_DEF';
   } else if (charId === '1208' || lowerName.includes('фу сюань') || lowerName.includes('fu xuan')) {
@@ -759,6 +1117,11 @@ export function calculateCharacterAudit(char, lang = 'ru') {
           if (f === 'crit_dmg' || f === 'spd') weight = 1.0;
           else if (f === 'effect_res') weight = 0.7;
           else if (f === 'hp' || f === 'def') weight = 0.5;
+          break;
+        case 'HARMONY_SPD':
+          if (f === 'spd') weight = 1.0;
+          else if (f === 'effect_res') weight = 0.85;
+          else if (f === 'hp' || f === 'def') weight = 0.7;
           break;
         case 'HARMONY_ATK':
           if (f === 'atk' || f === 'spd') weight = 1.0;
@@ -875,6 +1238,38 @@ export function calculateCharacterAudit(char, lang = 'ru') {
         actions.push({
           title: isRu ? 'Оптимизация: Замена худшего артефакта' : 'Optimization: Replace Worst Relic',
           desc: isRu ? `Замените слот ${weakestRelicIndex + 1} на реликвию с большим количеством полезных роллов.` : `Replace slot ${weakestRelicIndex + 1} with higher roll value.`
+        });
+      }
+      break;
+    }
+    case 'HARMONY_SPD': {
+      const spdRatio = spd >= 160 ? 55 : (spd >= 145 ? 45 : (spd / 145) * 35);
+      const errBonus = err >= 19.4 ? 25 : (err > 0 ? 15 : 5);
+      const survBonus = Math.min(20, (hp / 4500) * 10 + (def / 1200) * 10);
+      statPoints = spdRatio + errBonus + survBonus;
+      if (spd < 145) {
+        bottleneck = isRu
+          ? `Скорость (${spd}) ниже ключевого брейкпоинта 145-160 SPD. Саппорту необходима максимальная скорость для ротации.`
+          : `Speed (${spd}) is below the key 145-160 SPD breakpoint. High SPD is essential for turn advance.`;
+        actions.push({
+          title: isRu ? 'Приоритет: 160.0 Скорости' : 'Priority: Push to 160.0 SPD',
+          desc: isRu ? 'Установите сапоги на Скорость и доберите сабстаты скорости.' : 'Equip SPD boots and prioritize speed substats.'
+        });
+      } else if (err < 19.4) {
+        bottleneck = isRu
+          ? `Отсутствует вервь на Восстановление энергии (+19.4% ВЭ). Ультимейт заряжается медленнее.`
+          : `Missing Energy Regeneration Rate rope (+19.4% ERR). Ultimate uptime is delayed.`;
+        actions.push({
+          title: isRu ? 'Приоритет: Вервь ВЭ' : 'Priority: ERR Link Rope',
+          desc: isRu ? 'Используйте вервь со статом Восстановление энергии.' : 'Equip an Energy Regeneration Rate main stat rope.'
+        });
+      } else {
+        bottleneck = isRu
+          ? `Отличная скоростная сборка саппорта (${spd} СКОР, +${err}% ВЭ). Закрывает все ротации.`
+          : `High-speed support build (${spd} SPD, +${err}% ERR). Full rotation capability.`;
+        actions.push({
+          title: isRu ? 'Сборка готова к эндгейму' : 'Endgame Ready',
+          desc: isRu ? 'Скорость и ротации полностью оптимизированы.' : 'Speed and rotations are fully optimized.'
         });
       }
       break;
@@ -1309,12 +1704,31 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const zScore = (finalScore - 68.0) / 11.5;
   const topPercent = zScoreToTopPercent(zScore);
 
+  // Dynamic Key Benchmark Metrics (Самый нужный стат у персонажа вместо критмассы)
+  const characterMetrics = determineCharacterMetrics(char, archetype, {
+    hp,
+    atk,
+    def,
+    spd,
+    cr,
+    cd,
+    cv,
+    be,
+    ehr,
+    eres,
+    heal,
+    err
+  });
+
   return {
     score: finalScore.toFixed(1),
     topPercent: topPercent.toFixed(1),
     rollEfficiency: rollEfficiency.toFixed(1),
     cv: cv.toFixed(1),
     spd: spd.toFixed(1),
+    archetype,
+    primaryMetric: characterMetrics.primary,
+    secondaryMetric: characterMetrics.secondary,
     bottleneck,
     actions,
     weakestRelicIndex,
