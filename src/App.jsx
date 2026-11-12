@@ -24,7 +24,7 @@ async function getLocalizedPresets(lang) {
       return null;
     }
   }
-  return (cachedPresets && cachedPresets[lang])
+  return (cachedPresets && cachedPresets[lang] && Object.keys(cachedPresets[lang]).length > 0)
     ? cachedPresets[lang]
     : (cachedPresets?.en || cachedPresets?.ru || cachedPresets);
 }
@@ -625,7 +625,13 @@ export default function App() {
                 </div>
 
                 {/* 3. Mathematical Combat Simulation Card (MoC 12 Boss) */}
-                <CombatSimulationCard character={activeChar} audit={audit} stats={audit?.stats} lang={lang} />
+                <CombatSimulationCard
+                  character={activeChar}
+                  audit={audit}
+                  stats={audit?.stats}
+                  showcase={currentProfile?.characters || []}
+                  lang={lang}
+                />
               </div>
 
               {/* Right Column: 6 Relic Slots & Set Bonuses */}
