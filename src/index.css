@@ -178,8 +178,8 @@ main {
 }
 
 .home-card {
-  width: 100%;
-  max-width: 760px;
+  width: 95%;
+  max-width: 800px;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
   padding: 44px 36px;
@@ -1085,12 +1085,15 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .relic-left-meta {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .relic-icon-wrap {
@@ -1129,6 +1132,8 @@ main {
 .relic-name-col {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .relic-slot-name {
@@ -1136,6 +1141,9 @@ main {
   font-size: 10px;
   color: var(--text-tertiary);
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .relic-piece-title {
@@ -1145,7 +1153,7 @@ main {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 170px;
+  max-width: 100%;
 }
 
 .relic-cv-pill {
@@ -1165,6 +1173,7 @@ main {
   background: rgba(255, 60, 60, 0.15);
   border: 1px solid rgba(255, 60, 60, 0.4);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .desktop-only {
