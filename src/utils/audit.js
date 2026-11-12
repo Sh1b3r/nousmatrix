@@ -1584,7 +1584,7 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     planarCondition = isConditionMet
       ? (isRu ? `50%+ КШ выполнено (${cr}% ✓) • Бонус +15% к ульту/бонус-атаке активен` : `50%+ CR achieved (${cr}% ✓) • +15% Ult/FUA DMG active`)
       : (isRu ? `Требуется 50% КШ (текущий: ${cr}% ⚠️) • Бонус сета не активирован!` : `Requires 50% CR (current: ${cr}% ⚠️) • Inactive!`);
-  } else if (/Гламот|Glamoth/i.test(planarSet)) {
+  } else if (/Гламот|Глатирамер|Glamoth/i.test(planarSet)) {
     if (spd >= 160) {
       isConditionMet = true;
       planarCondition = isRu ? `160+ СКОР выполнено (${spd} ✓) • Максимальный бонус +18% урона активен` : `160+ SPD achieved (${spd} ✓) • Max +18% DMG active`;
@@ -1615,7 +1615,7 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     planarCondition = isConditionMet
       ? (isRu ? `120+ СКОР выполнено (${spd} ✓) • Бонус отряда +8% Силы Атаки активен` : `120+ SPD achieved (${spd} ✓) • Team +8% ATK active`)
       : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ⚠️) • Бафф отряда не активирован!` : `Requires 120 SPD (current: ${spd} ⚠️) • Inactive!`);
-  } else if (/Калпаги|Kalpagni/i.test(planarSet)) {
+  } else if (/Калпаги|Лотосовый фонарь|Kalpagni/i.test(planarSet)) {
     isConditionMet = spd >= 145;
     planarCondition = isConditionMet
       ? (isRu ? `145+ СКОР выполнено (${spd} ✓) • +40% Эффекта Пробития по огненной уязвимости` : `145+ SPD achieved (${spd} ✓) • +40% BE on Fire weakness`)
@@ -1640,7 +1640,7 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     planarCondition = isConditionMet
       ? (isRu ? `120%+ КУ выполнено (${cd}% ✓) • +16% КУ и +60% КШ на первую атаку активны` : `120%+ CD achieved (${cd}% ✓) • +16% CD & +60% CR on 1st hit active`)
       : (isRu ? `Требуется 120% КУ (текущий: ${cd}% ⚠️)` : `Requires 120% CD (current: ${cd}% ⚠️)`);
-  } else if (/Кост|Останков|Bone Collection/i.test(planarSet)) {
+  } else if (/Безмолвная страна костей|Кост|Останков|Bone Collection/i.test(planarSet)) {
     isConditionMet = hp >= 5000;
     planarCondition = isConditionMet
       ? (isRu ? `5000+ HP выполнено (${hp} ✓) • +12% HP и +28% Крит. Урона владельцу и миньонам активно` : `5000+ HP achieved (${hp} ✓) • +12% HP & +28% CD active`)
