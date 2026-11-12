@@ -787,8 +787,14 @@ main {
    ========================================================================== */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 400px minmax(0, 1fr);
   gap: 24px;
+}
+
+.dashboard-col-left,
+.dashboard-col-right {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .panel {
@@ -1026,9 +1032,17 @@ main {
   border-top: 1px dashed var(--border-subtle);
 }
 
+.relics-sets-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .relics-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -1042,6 +1056,9 @@ main {
   gap: 8px;
   position: relative;
   transition: all 150ms ease;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .relic-item-card:hover {
@@ -1294,6 +1311,10 @@ main {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .relic-sub-val {
@@ -1302,6 +1323,8 @@ main {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .roll-count-tag {
