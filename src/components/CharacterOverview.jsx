@@ -6,9 +6,16 @@ export default function CharacterOverview({ character, t, lang = 'ru' }) {
   const isRu = lang === 'ru';
 
   // 1. Core Combat Skills (Normal, Skill, Ultimate, Talent, Technique)
-  const coreSkills = (character.skills || []).filter(s =>
-    ['Normal', 'BPSkill', 'Ultra', 'Talent', 'Maze'].includes(s.type)
-  );
+  // Deduplicate by skill type to ensure each core ability appears exactly once
+  const targetTypes = ['Normal', 'BPSkill', 'Ultra', 'Talent', 'Maze'];
+  const seenTypes = new Set();
+  const coreSkills = [];
+  for (const s of character.skills || []) {
+    if (targetTypes.includes(s.type) && !seenTypes.has(s.type)) {
+      seenTypes.add(s.type);
+      coreSkills.push(s);
+    }
+  }
 
   // 2. Major Traces (A2, A4, A6 Ascension passives)
   const majorTraces = (character.skill_trees || []).filter(tr =>
@@ -36,72 +43,70 @@ export default function CharacterOverview({ character, t, lang = 'ru' }) {
   return (
     <div className="char-hero-card">
       <div className="char-hero-left">
-        {/* Top row: Round avatar in upper-left corner, Name & Stars in column to the right */}
-        <div className="char-header-row">
-          <div className="char-portrait-box">
-            <img
-              className="char-portrait-img"
-              src={getCharHeadIcon(character)}
-              alt={character.name}
-              onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
-            />
-          </div>
-
-          <div className="char-title-col">
-            <h2 className="char-name-title">{character.name}</h2>
-            <div className="char-stars">{'★'.repeat(character.rarity || 5)}</div>
-          </div>
+        <div className="char-portrait-box">
+          <img
+            className="char-portrait-img"
+            src={getCharHeadIcon(character)}
+            alt={character.name}
+            onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
+          />
         </div>
 
-        {/* Characteristics (Pills): Centered on mobile */}
-        <div className="char-tags-row">
-          <span className="char-pill">{t.lvl} {character.level}/80</span>
-          <span className="char-pill accent">{t.eidolons}{character.rank}</span>
-          <span className="char-pill">{t.path}{character.path?.name || '—'}</span>
-          <span className="char-pill">{t.combatType}{character.element?.name || '—'}</span>
-        </div>
+        <div className="char-details-primary">
+          <h2>
+            <span>{character.name}</span>
+            <span className="char-stars">{'★'.repeat(character.rarity || 5)}</span>
+          </h2>
 
-        {/* Full Skills & Ascension Traces: Responsive grid/wrap, no overflow */}
-        <div className="char-skills-row">
-          {/* 5 Core Skills */}
-          {coreSkills.map((s) => (
-            <div
-              key={s.id}
-              className="skill-item"
-              title={`${s.type_text || s.type}: ${s.name}\n${s.simple_desc || s.desc || ''}\n(${t.lvl} ${s.level}/${s.max_level})`}
-            >
-              <div className="skill-icon-wrap">
-                <img
-                  className="skill-icon"
-                  src={iconUrl(s.icon)}
-                  alt={s.name}
-                  onError={(e) => handleImageFallback(e, s.icon)}
-                />
-                <span className="skill-lvl-badge">{s.level}</span>
-              </div>
-              <span className="skill-name-label">{getSkillTypeShort(s.type)}</span>
-            </div>
-          ))}
+          <div className="char-tags-row">
+            <span className="char-pill">{t.lvl} {character.level}/80</span>
+            <span className="char-pill accent">{t.eidolons}{character.rank}</span>
+            <span className="char-pill">{t.path}{character.path?.name || '—'}</span>
+            <span className="char-pill">{t.combatType}{character.element?.name || '—'}</span>
+          </div>
 
-          {/* 3 Major Ascension Traces (A2, A4, A6) */}
-          {majorTraces.map((tr) => (
-            <div
-              key={tr.id}
-              className={`skill-item trace-item ${tr.level > 0 ? 'unlocked' : 'locked'}`}
-              title={`${getTraceLabel(tr.anchor)}: ${isRu ? 'Ключевой след возвышения' : 'Major Ascension Trace'} (${tr.level > 0 ? (isRu ? 'Разблокирован' : 'Unlocked') : (isRu ? 'Заблокирован' : 'Locked')})`}
-            >
-              <div className="skill-icon-wrap">
-                <img
-                  className="skill-icon"
-                  src={iconUrl(tr.icon)}
-                  alt={tr.anchor}
-                  onError={(e) => handleImageFallback(e, tr.icon)}
-                />
-                <span className="skill-lvl-badge trace">{getTraceLabel(tr.anchor)}</span>
+          {/* Full Skills & Ascension Traces Row */}
+          <div className="char-skills-row">
+            {/* 5 Core Skills */}
+            {coreSkills.map((s) => (
+              <div
+                key={s.id}
+                className="skill-item"
+                title={`${s.type_text || s.type}: ${s.name}\n${s.simple_desc || s.desc || ''}\n(${t.lvl} ${s.level}/${s.max_level})`}
+              >
+                <div className="skill-icon-wrap">
+                  <img
+                    className="skill-icon"
+                    src={iconUrl(s.icon)}
+                    alt={s.name}
+                    onError={(e) => handleImageFallback(e, s.icon)}
+                  />
+                  <span className="skill-lvl-badge">{s.level}</span>
+                </div>
+                <span className="skill-name-label">{getSkillTypeShort(s.type)}</span>
               </div>
-              <span className="skill-name-label">{getTraceLabel(tr.anchor)}</span>
-            </div>
-          ))}
+            ))}
+
+            {/* 3 Major Ascension Traces (A2, A4, A6) */}
+            {majorTraces.map((tr) => (
+              <div
+                key={tr.id}
+                className={`skill-item trace-item ${tr.level > 0 ? 'unlocked' : 'locked'}`}
+                title={`${getTraceLabel(tr.anchor)}: ${isRu ? 'Ключевой след возвышения' : 'Major Ascension Trace'} (${tr.level > 0 ? (isRu ? 'Разблокирован' : 'Unlocked') : (isRu ? 'Заблокирован' : 'Locked')})`}
+              >
+                <div className="skill-icon-wrap">
+                  <img
+                    className="skill-icon"
+                    src={iconUrl(tr.icon)}
+                    alt={tr.anchor}
+                    onError={(e) => handleImageFallback(e, tr.icon)}
+                  />
+                  <span className="skill-lvl-badge trace">{getTraceLabel(tr.anchor)}</span>
+                </div>
+                <span className="skill-name-label">{getTraceLabel(tr.anchor)}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
