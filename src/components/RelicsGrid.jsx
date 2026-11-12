@@ -125,11 +125,14 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
           <span className="relic-main-val">{r.main_affix?.display}</span>
         </div>
 
-        {/* Sub Stats with Roll Counts */}
+        {/* Sub Stats with Roll Counts (Excluding base roll: counts pure upgrade procs) */}
         <div className="relic-subs-list">
           {(r.sub_affix || []).map((sub, sIdx) => {
-            const rolls = sub.count || 1;
-            const isHigh = rolls >= 3;
+            const upgrades = Math.max(0, (sub.count || 1) - 1);
+            const isEpic = upgrades >= 3;
+            const isHigh = upgrades === 2;
+            const tagClass = isEpic ? 'epic' : (isHigh ? 'high' : '');
+            const tagText = t.rollTag ? t.rollTag(upgrades) : (upgrades > 0 ? `+${upgrades} ролл` : null);
             return (
               <div key={sIdx} className="relic-sub-row">
                 <span className="relic-sub-name">
@@ -146,9 +149,11 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
                 </span>
                 <span className="relic-sub-val">
                   {sub.display}
-                  <span className={`roll-count-tag ${isHigh ? 'high' : ''}`}>
-                    {t.rollTag(rolls)}
-                  </span>
+                  {tagText && (
+                    <span className={`roll-count-tag ${tagClass}`}>
+                      {tagText}
+                    </span>
+                  )}
                 </span>
               </div>
             );

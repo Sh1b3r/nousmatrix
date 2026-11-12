@@ -39,6 +39,319 @@ export function getCharHeadIcon(char) {
   return iconUrl(getCharAvatarPath(char));
 }
 
+// ==========================================================================
+// DUAL / HYBRID ROLE DETECTION SYSTEM (Support vs DPS vs Hybrid)
+// ==========================================================================
+export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') {
+  if (!char) return null;
+  const isRu = lang === 'ru';
+  const name = char.name || '';
+  const lowerName = name.toLowerCase();
+  const charId = String(char.id || '');
+  const path = char.path?.id || '';
+
+  const { hp = 0, atk = 0, def = 0, spd = 0, cr = 0, cd = 0, cv = 0, be = 0, ehr = 0, eres = 0, err = 0 } = stats || {};
+
+  // Inspect equipped sets and main stats
+  const resolvedSets = relics.map(r => resolveRelicSetInfo(r, 'ru'));
+  const setNames = resolvedSets.map(s => s?.name || '').join(' ').toLowerCase();
+  const setIds = relics.map(r => String(r.set_id || '')).concat(resolvedSets.map(s => String(s?.def?.id || '')));
+
+  // Check main stats on body (slot 3), boots (slot 4), sphere (slot 5), rope (slot 6)
+  const bodyRelic = relics.find(r => r.type === 3 || r.pos === 3);
+  const bootsRelic = relics.find(r => r.type === 4 || r.pos === 4);
+  const sphereRelic = relics.find(r => r.type === 5 || r.pos === 5);
+  const ropeRelic = relics.find(r => r.type === 6 || r.pos === 6);
+
+  const bodyStat = bodyRelic?.main_affix?.field || '';
+  const bootsStat = bootsRelic?.main_affix?.field || '';
+  const sphereStat = sphereRelic?.main_affix?.field || '';
+  const ropeStat = ropeRelic?.main_affix?.field || '';
+
+  const isCritBody = bodyStat === 'crit_rate' || bodyStat === 'crit_dmg';
+  const isEhrBody = bodyStat === 'effect_hit';
+  const isErrRope = ropeStat === 'sp_rate' || err >= 15;
+
+  const hasSupportPlanar = setIds.some(id => ['308', '317', '310', '302', '312'].includes(id)) ||
+    /вонвак|русалк|киль|флот|пенакони/i.test(setNames);
+  const hasDpsPlanar = setIds.some(id => ['306', '311', '309', '315', '314', '313'].includes(id)) ||
+    /салсотто|глатирамер|арена|дуран|идзумо|сигони/i.test(setNames);
+
+  // 1. MORTENAX BLADE (Мортенакс Блэйд / 1507)
+  const isMortenax = charId === '1507' || lowerName.includes('мортенакс') || lowerName.includes('mortenax');
+  if (isMortenax) {
+    let supportScore = 0;
+    let dpsScore = 0;
+
+    if (hasSupportPlanar) supportScore += 35;
+    if (isErrRope) supportScore += 30;
+    if (setNames.includes('кузнец')) supportScore += 20; // 4-pc Master Smith Kindle Flame buffs allies +15%
+    if (spd >= 145) supportScore += 20;
+    else if (spd >= 134) supportScore += 10;
+
+    if (hasDpsPlanar) dpsScore += 35;
+    if (isCritBody) dpsScore += 25;
+    if (sphereStat.includes('fire') || sphereStat.includes('dmg')) dpsScore += 20;
+    if (cv >= 150) dpsScore += 20;
+
+    if (dpsScore > supportScore && (hasDpsPlanar || isCritBody) && !isErrRope && !hasSupportPlanar) {
+      return {
+        type: 'DPS',
+        role: 'DPS',
+        icon: '⚔️',
+        labelRu: 'ОГНЕННЫЙ ГИПЕРКЕРРИ (ДПС)',
+        labelEn: 'FIRE HYPERCARRY DPS',
+        descRu: 'Сборка под личный урон: упор на Крит. массу (+100 CV в Зоне) и максимальное HP для взрывных атак под баффами гармонии.',
+        descEn: 'Personal hypercarry build: prioritizing Crit Value (+100 CV inside Zone) and Max HP for massive offensive scaling.',
+        confidence: Math.min(99, Math.max(80, Math.round(dpsScore))),
+        targetArchetype: 'HP_CRIT_DPS'
+      };
+    }
+
+    if (supportScore >= 40 && dpsScore >= 40) {
+      return {
+        type: 'HYBRID',
+        role: 'HYBRID',
+        icon: '⚖️',
+        labelRu: 'ГИБРИД (ДЕБАФФЕР + САБ-ДПС)',
+        labelEn: 'HYBRID DEBUFFER & SUB-DPS',
+        descRu: 'Сбалансированная гибридная сборка: быстрый перезапуск Зоны (таймер 70 SPD) и бафф отряда через Кузнеца/Вонвак в связке с личными критами.',
+        descEn: 'Balanced hybrid build: fast Zone timer cycle (70 SPD) and team buffs via Master Smith/Vonwacq paired with personal crit damage.',
+        confidence: Math.min(98, Math.round(50 + (supportScore + dpsScore) / 2.5)),
+        targetArchetype: 'MORTENAX_HYBRID'
+      };
+    }
+
+    return {
+      type: 'SUPPORT',
+      role: 'SUPPORT',
+      icon: '🛡️',
+      labelRu: 'САППОРТ-ДЕБАФФЕР (ТАЙМЕР ЗОНЫ / БАФФ ОТРЯДА)',
+      labelEn: 'ZONE DEBUFFER & TEAM SUPPORT',
+      descRu: 'Персонаж собран как саппорт: упор на скорость (для опережения таймера Зоны 70 SPD), ВЭ и баффы отряда («Поддержание огня» +15% урона союзникам от 4-pc Кузнеца).',
+      descEn: 'Built as Team Support Debuffer: prioritized Speed (lapping 70 SPD zone countdown), ERR, and team buffs (Master Smith 4-pc Kindle Flame).',
+      confidence: Math.min(99, Math.max(82, Math.round(supportScore))),
+      targetArchetype: 'MORTENAX_SUPPORT'
+    };
+  }
+
+  // 2. WELT (Вельт / 1004)
+  const isWelt = charId === '1004' || lowerName.includes('вельт') || lowerName.includes('welt');
+  if (isWelt) {
+    let supportScore = 0;
+    let dpsScore = 0;
+
+    if (isEhrBody) supportScore += 35;
+    if (ehr >= 50) supportScore += 25;
+    if (isErrRope) supportScore += 25;
+    if (hasSupportPlanar || setNames.includes('пангалакти')) supportScore += 20;
+    if (spd >= 134) supportScore += 15;
+
+    if (isCritBody) dpsScore += 35;
+    if (sphereStat.includes('imaginary') || sphereStat.includes('dmg')) dpsScore += 25;
+    if (cv >= 130) dpsScore += 25;
+    if (hasDpsPlanar || setNames.includes('пустыни') || setNames.includes('первооткрыватель')) dpsScore += 25;
+
+    if (supportScore > dpsScore || isEhrBody || ehr >= 60) {
+      return {
+        type: 'SUPPORT',
+        role: 'SUPPORT',
+        icon: '🛡️',
+        labelRu: 'САППОРТ-ДЕБАФФЕР (КОНТРОЛЬ И ЗАМЕДЛЕНИЕ)',
+        labelEn: 'CROWD CONTROL & VULNERABILITY SUPPORT',
+        descRu: 'Сборка на контроль поля боя: высокий ШПЭ (67%+) для гарантированного Заключения и 100% аптайма уязвимости (+12% урона от ульты).',
+        descEn: 'Crowd control & debuff build: high EHR (67%+) to guarantee Imprisonment, Slow, and 100% Vulnerability uptime.',
+        confidence: Math.min(99, Math.max(82, Math.round(supportScore))),
+        targetArchetype: 'NIHILITY_DEBUFF'
+      };
+    }
+
+    return {
+      type: 'DPS',
+      role: 'DPS',
+      icon: '⚔️',
+      labelRu: 'МНИМЫЙ ДПС / САБ-ДПС (КРИТЫ)',
+      labelEn: 'IMAGINARY CRIT DPS',
+      descRu: 'Сборка под личный урон: высокий КШ/КУ и мнимый урон для реализации высоких множителей навыка и ультимейта.',
+      descEn: 'Personal damage build: prioritized Crit Rate/DMG and Imaginary DMG to maximize skill and ultimate bounce multipliers.',
+      confidence: Math.min(99, Math.max(80, Math.round(dpsScore))),
+      targetArchetype: 'CRIT_DPS'
+    };
+  }
+
+  // 3. SILVER WOLF (Серебряный Волк / 1006)
+  const isWolf = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
+  if (isWolf) {
+    if (cv >= 150 || (isCritBody && sphereStat.includes('quantum'))) {
+      return {
+        type: 'DPS',
+        role: 'DPS',
+        icon: '⚔️',
+        labelRu: 'КВАНТОВЫЙ САБ-ДПС (КРИТЫ)',
+        labelEn: 'QUANTUM CRIT SUB-DPS',
+        descRu: 'Критовая сборка (E2+ / Саб-ДПС): нанесение высокого личного квантового урона в дополнение к наложению дебаффов.',
+        descEn: 'Crit Sub-DPS build (E2+ optimized): outputs significant personal Quantum damage alongside debuffs.',
+        confidence: 90,
+        targetArchetype: 'CRIT_DPS'
+      };
+    }
+    return {
+      type: 'SUPPORT',
+      role: 'SUPPORT',
+      icon: '🛡️',
+      labelRu: 'КВАНТОВЫЙ ДЕБАФФЕР (САППОРТ)',
+      labelEn: 'QUANTUM DEBUFFER SUPPORT',
+      descRu: 'Классический саппорт: приоритет ШПЭ (96%+ / 67% с сигной) и высокой скорости (145-160+) для гарантированного внедрения уязвимостей.',
+      descEn: 'Classic debuffer support: prioritized EHR (96%+ / 67% with sig) and high SPD (145-160+) for 100% weakness implant.',
+      confidence: 95,
+      targetArchetype: 'NIHILITY_DEBUFF'
+    };
+  }
+
+  // 4. AVENTURINE (Авантюрин / 1304)
+  const isAven = charId === '1304' || lowerName.includes('авантюрин') || lowerName.includes('aventurine');
+  if (isAven) {
+    if (cv >= 120 || bodyStat === 'crit_dmg' || hasDpsPlanar) {
+      return {
+        type: 'HYBRID',
+        role: 'HYBRID',
+        icon: '⚖️',
+        labelRu: 'ГИБРИДНЫЙ САБ-ДПС (КРИТЫ + ЩИТ)',
+        labelEn: 'HYBRID SUB-DPS (CRIT & SHIELD)',
+        descRu: 'Гибридная сборка: тело на Крит. Урон и бонус-атаки при сохранении базового порога 4000 защиты для пассивного бонуса +48% КШ.',
+        descEn: 'Hybrid build: Crit DMG body and offensive planar sets while maintaining 4000 DEF for the talent +48% CR bonus.',
+        confidence: 92,
+        targetArchetype: 'PRESERVATION_DEF'
+      };
+    }
+    return {
+      type: 'SUPPORT',
+      role: 'SUPPORT',
+      icon: '🛡️',
+      labelRu: 'ЩИТОВИК-САСТЕЙН (МАКС. ЗАЩИТА)',
+      labelEn: 'PURE SHIELDER / SUSTAIN',
+      descRu: 'Классический састейн: максимизация Защиты (4000+ DEF) для непробиваемого щита всей команды.',
+      descEn: 'Pure shielder: maximized DEF (4000+ DEF) for impenetrable teamwide shield uptime.',
+      confidence: 96,
+      targetArchetype: 'PRESERVATION_DEF'
+    };
+  }
+
+  // 5. JIAOQIU (Цзяоцю / 1218)
+  const isJiaoqiu = charId === '1218' || lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu');
+  if (isJiaoqiu) {
+    if (sphereStat.includes('fire') && cv >= 110) {
+      return {
+        type: 'DPS',
+        role: 'DPS',
+        icon: '⚔️',
+        labelRu: 'ОГНЕННЫЙ DOT САБ-ДПС',
+        labelEn: 'FIRE DOT SUB-DPS',
+        descRu: 'Сборка с уклоном в личный периодический урон (Огненная сфера + АТК%).',
+        descEn: 'Sub-DPS build focused on personal Burn DoT damage scaling.',
+        confidence: 88,
+        targetArchetype: 'DOT_DPS'
+      };
+    }
+    return {
+      type: 'SUPPORT',
+      role: 'SUPPORT',
+      icon: '🛡️',
+      labelRu: 'ДЕБАФФЕР-САППОРТ (ГЕНЕРАТОР СТАКОВ)',
+      labelEn: 'ULTIMATE ENHANCER & STACK BUFFER',
+      descRu: 'Сборка под генерацию стаков (Ахерон/отряд): максимальная скорость (160+) и 140%+ ШПЭ для мгновенного наложения Посола.',
+      descEn: 'Built for stack generation and Ult vulnerability: maximum speed (160+) and 140%+ EHR.',
+      confidence: 96,
+      targetArchetype: 'NIHILITY_DEBUFF'
+    };
+  }
+
+  // 6. MARCH 7TH HUNT (Март 7 Охота / 1224)
+  const isMarchHunt = (charId === '1224' || lowerName.includes('март')) && (path === 'Rogue' || path === 'Hunt');
+  if (isMarchHunt) {
+    if (be >= 100 || ropeStat === 'break_dmg') {
+      return {
+        type: 'SUPPORT',
+        role: 'SUPPORT',
+        icon: '🛡️',
+        labelRu: 'ПРОБИВНОЙ САППОРТ (СУПЕР-ПРОБИТИЕ)',
+        labelEn: 'SUPER BREAK SPEED ENABLER',
+        descRu: 'Сборка в отряды пробития (Светлячок/Бутхилл): упор на Эффект Пробития и скорость.',
+        descEn: 'Built for Super Break teams: prioritized Break Effect and high Speed.',
+        confidence: 90,
+        targetArchetype: 'BREAK_DPS'
+      };
+    }
+    return {
+      type: 'DPS',
+      role: 'DPS',
+      icon: '⚔️',
+      labelRu: 'КРИТОВЫЙ ДПС (БОНУС-АТАКИ)',
+      labelEn: 'FOLLOW-UP CRIT DPS',
+      descRu: 'Сборка в отряды бонус-атак (Фэйсяо/Рацио): упор на КШ, КУ и Силу атаки.',
+      descEn: 'Built for follow-up attack teams (Feixiao/Ratio): prioritized CR, CD, and ATK.',
+      confidence: 92,
+      targetArchetype: 'CRIT_DPS'
+    };
+  }
+
+  // 7. General Paths
+  if (path === 'Priest' || path === 'Abundance') {
+    return {
+      type: 'SUPPORT',
+      role: 'SUPPORT',
+      icon: '💚',
+      labelRu: 'ЦЕЛИТЕЛЬ-САСТЕЙН (ИЗОБИЛИЕ)',
+      labelEn: 'HEALER / SUSTAIN (ABUNDANCE)',
+      descRu: 'Сборка на эффективное лечение, снятие ослаблений и выживание команды.',
+      descEn: 'Built for team healing, cleanse, and survival.',
+      confidence: 98,
+      targetArchetype: heal > 0 ? (be > 100 ? 'ABUNDANCE_BREAK' : 'ABUNDANCE_HP') : 'ABUNDANCE_HP'
+    };
+  }
+
+  if (path === 'Knight' || path === 'Preservation') {
+    return {
+      type: 'SUPPORT',
+      role: 'SUPPORT',
+      icon: '🛡️',
+      labelRu: 'ЩИТОВИК-САСТЕЙН (СОХРАНЕНИЕ)',
+      labelEn: 'SHIELDER / SUSTAIN (PRESERVATION)',
+      descRu: 'Сборка на прочность щитов и командное снижение урона.',
+      descEn: 'Built for maximum team shielding and damage reduction.',
+      confidence: 98,
+      targetArchetype: def > hp ? 'PRESERVATION_DEF' : 'PRESERVATION_HP'
+    };
+  }
+
+  if (path === 'Shaman' || path === 'Harmony') {
+    return {
+      type: 'SUPPORT',
+      role: 'SUPPORT',
+      icon: '✨',
+      labelRu: 'БУФФЕР-САППОРТ (ГАРМОНИЯ)',
+      labelEn: 'BUFFER / ENABLER (HARMONY)',
+      descRu: 'Сборка на усиление урона, продвижение ходов и генерацию очков действий команды.',
+      descEn: 'Built for amplifying team damage, action advance, and buff uptime.',
+      confidence: 98,
+      targetArchetype: lowerName.includes('яо') ? 'HARMONY_SPD' : (lowerName.includes('жуань') ? 'HARMONY_BREAK' : (cd >= 150 ? 'HARMONY_CRIT' : 'HARMONY_ATK'))
+    };
+  }
+
+  // Standard DPS
+  return {
+    type: 'DPS',
+    role: 'DPS',
+    icon: '⚔️',
+    labelRu: 'БОЕВОЙ ДПС (УРОН ОТРЯДА)',
+    labelEn: 'MAIN DPS (DAMAGE DEALER)',
+    descRu: 'Сборка на нанесение максимального урона.',
+    descEn: 'Built for maximizing offensive damage output.',
+    confidence: 95,
+    targetArchetype: be >= 180 ? 'BREAK_DPS' : (cr < 40 && ehr > 40 ? 'DOT_DPS' : (hp > 5500 ? 'HP_CRIT_DPS' : 'CRIT_DPS'))
+  };
+}
+
 // Archetype-aware main stat validation and scoring
 export function evaluateRelicMainStat(relic, archetype, char) {
   if (!relic || !relic.main_affix) {
@@ -85,6 +398,35 @@ export function evaluateRelicMainStat(relic, archetype, char) {
         }
         if (field === 'hp') {
           return { status: 'optimal', scoreBonus: 2.5, labelRu: 'ВЕРНЫЙ СТАТ (HP%)', labelEn: 'OPTIMAL (HP%)' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'Крит. Шанс, Крит. Урон или HP%',
+          recommendedEn: 'CRIT Rate, CRIT DMG or HP%'
+        };
+
+      case 'MORTENAX_SUPPORT':
+        if (field === 'hp' || field === 'crit_rate' || field === 'crit_dmg') {
+          return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        }
+        if (field === 'def' || field === 'effect_hit') {
+          return { status: 'viable', scoreBonus: 1, labelRu: 'ДОПУСТИМЫЙ', labelEn: 'VIABLE' };
+        }
+        return {
+          status: 'wrong',
+          scoreBonus: -18,
+          labelRu: 'НЕПОДХОДЯЩИЙ СТАТ',
+          labelEn: 'WRONG MAIN STAT',
+          recommendedRu: 'HP%, Крит. Шанс или Крит. Урон',
+          recommendedEn: 'HP%, CRIT Rate or CRIT DMG'
+        };
+
+      case 'MORTENAX_HYBRID':
+        if (field === 'crit_rate' || field === 'crit_dmg' || field === 'hp') {
+          return { status: 'optimal', scoreBonus: 3.5, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
         }
         return {
           status: 'wrong',
@@ -275,7 +617,7 @@ export function evaluateRelicMainStat(relic, archetype, char) {
       };
     }
 
-    if (archetype === 'HP_CRIT_DPS') {
+    if (archetype === 'HP_CRIT_DPS' || archetype === 'MORTENAX_SUPPORT' || archetype === 'MORTENAX_HYBRID') {
       if (field === 'hp') {
         return { status: 'optimal', scoreBonus: 2, labelRu: 'ВЕРНЫЙ СТАТ (HP%)', labelEn: 'OPTIMAL (HP%)' };
       }
@@ -377,7 +719,7 @@ export function evaluateRelicMainStat(relic, archetype, char) {
       };
     }
 
-    if (archetype === 'HP_CRIT_DPS') {
+    if (archetype === 'HP_CRIT_DPS' || archetype === 'MORTENAX_SUPPORT' || archetype === 'MORTENAX_HYBRID') {
       if (isMatchingElement || field === 'hp') {
         return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
       }
@@ -564,9 +906,9 @@ export function evaluateRelicMainStat(relic, archetype, char) {
       };
     }
 
-    if (archetype === 'HP_CRIT_DPS') {
+    if (archetype === 'HP_CRIT_DPS' || archetype === 'MORTENAX_SUPPORT' || archetype === 'MORTENAX_HYBRID') {
       if (field === 'hp' || field === 'sp_rate') {
-        return { status: 'optimal', scoreBonus: 3, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
+        return { status: 'optimal', scoreBonus: 3.5, labelRu: 'ВЕРНЫЙ СТАТ', labelEn: 'OPTIMAL' };
       }
       return {
         status: 'wrong',
@@ -680,6 +1022,28 @@ export function determineCharacterMetrics(char, archetype, stats) {
   // Crits are secondary because his Ultimate grants free +20% CR / +60% CD (+100 CV)!
   const isMortenax = charId === '1507' || lowerName.includes('мортенакс') || lowerName.includes('mortenax');
   if (isMortenax) {
+    if (archetype === 'MORTENAX_SUPPORT') {
+      const spdStatus = spd >= 160 ? '[160+ HYPER ✓]' : (spd >= 145 ? '[145+ ZONE TUNED ✓]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ⚠️]'));
+      const hpStatus = hp >= 7000 ? '[7000+ TANK ✓]' : (hp >= 6000 ? '[6000+ OK]' : '[LOW]');
+
+      return {
+        primary: {
+          labelRu: 'СКОРОСТЬ (ТАЙМЕР ЗОНЫ 70 SPD)',
+          labelEn: 'SPEED (70 SPD ZONE TIMER)',
+          display: `${spd.toFixed(1)} SPD`,
+          percent: Math.min(100, (spd / 160) * 100),
+          status: spdStatus
+        },
+        secondary: {
+          labelRu: 'ВЭ И ВЫЖИВАЕМОСТЬ (ВЭ + HP)',
+          labelEn: 'ERR & TEAM SURVIVAL',
+          display: `${(err > 0 ? (100 + err).toFixed(1) + '% ВЭ / ' : '')}${hp} HP`,
+          percent: Math.min(100, Math.max(10, (hp / 7500) * 100)),
+          status: hpStatus
+        }
+      };
+    }
+
     const spdStatus = spd >= 160 ? '[160+ HYPER ✓]' : (spd >= 145 ? '[145+ ZONE TUNED ✓]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ⚠️]'));
     const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 150 ? '[OK]' : '[LOW]'));
 
@@ -701,10 +1065,11 @@ export function determineCharacterMetrics(char, archetype, stats) {
     };
   }
 
-  // Standard Debuffer Silver Wolf / Pela / Jiaoqiu (NIHILITY_DEBUFF) - Speed is primary, EHR is secondary
+  // Standard Debuffer Silver Wolf / Welt / Pela / Jiaoqiu (NIHILITY_DEBUFF) - Speed is primary, EHR is secondary
   if (archetype === 'NIHILITY_DEBUFF' || isWolf) {
     const isJiaoqiu = lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu');
-    const targetEhr = isJiaoqiu ? 140 : (isWolf ? 96 : 67);
+    const isWelt = charId === '1004' || lowerName.includes('вельт') || lowerName.includes('welt');
+    const targetEhr = isJiaoqiu ? 140 : (isWolf ? 96 : (isWelt ? 67 : 67));
     const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
     const ehrStatus = ehr >= targetEhr ? `[${targetEhr}% CAP ✓]` : `[${ehr.toFixed(0)}% / ${targetEhr}%]`;
 
@@ -1131,50 +1496,63 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const eres = parseFloat(((addMap['effect_res']?.value || 0) * 100).toFixed(1));
   const heal = parseFloat(((addMap['heal_rate']?.value || 0) * 100).toFixed(1));
   const err = parseFloat((((addMap['sp_rate']?.value || 0)) * 100).toFixed(1));
+  const ropeRelic = (char.relics || []).find(r => r.type === 6 || r.pos === 6);
+  const ropeStat = ropeRelic?.main_affix?.field || '';
 
-  // 1. Determine Archetype
-  let archetype = 'CRIT_DPS';
+  // 1. Determine Archetype & Detect Dual/Hybrid Role
+  const detectedRole = detectCharacterBuildRole(
+    char,
+    { hp, atk, def, spd, cr, cd, cv, be, ehr, eres, heal, err },
+    char.relics || [],
+    isRu ? 'ru' : 'en'
+  );
+
+  let archetype = detectedRole?.targetArchetype || 'CRIT_DPS';
   const charId = String(char.id || '');
   const lowerName = name.toLowerCase();
 
-  // EXPLICIT CHARACTER OVERRIDES FIRST (Guarantees Blade, Castorice, Wolf 999, Yao Guang, Silver Wolf, Acheron, etc. are never misidentified)
-  const isWolfChar = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
-  const isWolf999 = isWolfChar && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
-  const isYaoGuang = lowerName.includes('яо') || lowerName.includes('yao') || lowerName.includes('гуан') || lowerName.includes('guang') || lowerName.includes('爻光');
+  // Explicit Fallbacks if role wasn't custom-detected
+  if (!detectedRole || detectedRole.role === 'DPS') {
+    const isWolfChar = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
+    const isWolf999 = isWolfChar && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
+    const isYaoGuang = lowerName.includes('яо') || lowerName.includes('yao') || lowerName.includes('гуан') || lowerName.includes('guang') || lowerName.includes('爻光');
 
-  if (charId === '1205' || lowerName.includes('блэйд') || lowerName.includes('blade') || charId === '1407' || lowerName.includes('касторице') || lowerName.includes('castorice')) {
-    archetype = 'HP_CRIT_DPS';
-  } else if (isWolf999 || (isWolfChar && cv >= 150)) {
-    archetype = 'CRIT_DPS';
-  } else if (isYaoGuang) {
-    archetype = 'HARMONY_SPD';
-  } else if (isWolfChar) {
-    archetype = 'NIHILITY_DEBUFF';
-  } else if (charId === '1308' || lowerName.includes('ахерон') || lowerName.includes('acheron')) {
-    archetype = 'CRIT_DPS';
-  } else if (charId === '1304' || lowerName.includes('авантюрин') || lowerName.includes('aventurine') || (path === 'Knight' && def > 2500)) {
-    archetype = 'PRESERVATION_DEF';
-  } else if (charId === '1208' || lowerName.includes('фу сюань') || lowerName.includes('fu xuan')) {
-    archetype = 'PRESERVATION_HP';
-  } else if (charId === '1203' || lowerName.includes('лоча') || lowerName.includes('luocha')) {
-    archetype = 'ABUNDANCE_ATK';
-  } else if (charId === '1313' || lowerName.includes('воскресенье') || lowerName.includes('sunday') || lowerName.includes('искорка') || lowerName.includes('sparkle') || lowerName.includes('броня') || lowerName.includes('bronya')) {
-    archetype = 'HARMONY_CRIT';
-  } else if (charId === '1309' || lowerName.includes('зарянка') || lowerName.includes('robin') || lowerName.includes('тинъюнь') || lowerName.includes('tingyun')) {
-    archetype = 'HARMONY_ATK';
-  } else if (charId === '1307' || lowerName.includes('жуань') || lowerName.includes('ruan mei')) {
-    archetype = 'HARMONY_BREAK';
-  } else if (charId === '1310' || lowerName.includes('светлячок') || lowerName.includes('firefly') || lowerName.includes('бутхилл') || lowerName.includes('boothill') || lowerName.includes('раппа') || lowerName.includes('rappa') || be > 180) {
-    archetype = 'BREAK_DPS';
-  } else if (charId === '1005' || lowerName.includes('кафка') || lowerName.includes('kafka') || lowerName.includes('лебедь') || lowerName.includes('black swan') || lowerName.includes('сампо') || lowerName.includes('sampo') || lowerName.includes('гуйнайфэнь') || lowerName.includes('guinaifen') || (path === 'Warlock' && cr < 40 && ehr > 40 && !lowerName.includes('blade') && charId !== '1205')) {
-    archetype = 'DOT_DPS';
-  } else if (path === 'Warlock' && (lowerName.includes('пела') || lowerName.includes('pela') || lowerName.includes('волк') || lowerName.includes('silver') || lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu'))) {
-    archetype = 'NIHILITY_DEBUFF';
-  } else if (path === 'Priest' || heal > 0) {
-    if (lowerName.includes('галлахер') || lowerName.includes('gallagher') || lowerName.includes('линша') || lowerName.includes('lingsha') || be > 100) {
-      archetype = 'ABUNDANCE_BREAK';
-    } else {
-      archetype = 'ABUNDANCE_HP';
+    if ((charId === '1205' || lowerName.includes('блэйд') || lowerName.includes('blade')) && charId !== '1507') {
+      archetype = 'HP_CRIT_DPS';
+    } else if (charId === '1407' || lowerName.includes('касторице') || lowerName.includes('castorice')) {
+      archetype = 'HP_CRIT_DPS';
+    } else if (isWolf999 || (isWolfChar && cv >= 150)) {
+      archetype = 'CRIT_DPS';
+    } else if (isYaoGuang) {
+      archetype = 'HARMONY_SPD';
+    } else if (isWolfChar) {
+      archetype = 'NIHILITY_DEBUFF';
+    } else if (charId === '1308' || lowerName.includes('ахерон') || lowerName.includes('acheron')) {
+      archetype = 'CRIT_DPS';
+    } else if (charId === '1304' || lowerName.includes('авантюрин') || lowerName.includes('aventurine') || (path === 'Knight' && def > 2500)) {
+      archetype = 'PRESERVATION_DEF';
+    } else if (charId === '1208' || lowerName.includes('фу сюань') || lowerName.includes('fu xuan')) {
+      archetype = 'PRESERVATION_HP';
+    } else if (charId === '1203' || lowerName.includes('лоча') || lowerName.includes('luocha')) {
+      archetype = 'ABUNDANCE_ATK';
+    } else if (charId === '1313' || lowerName.includes('воскресенье') || lowerName.includes('sunday') || lowerName.includes('искорка') || lowerName.includes('sparkle') || lowerName.includes('броня') || lowerName.includes('bronya')) {
+      archetype = 'HARMONY_CRIT';
+    } else if (charId === '1309' || lowerName.includes('зарянка') || lowerName.includes('robin') || lowerName.includes('тинъюнь') || lowerName.includes('tingyun')) {
+      archetype = 'HARMONY_ATK';
+    } else if (charId === '1307' || lowerName.includes('жуань') || lowerName.includes('ruan mei')) {
+      archetype = 'HARMONY_BREAK';
+    } else if (charId === '1310' || lowerName.includes('светлячок') || lowerName.includes('firefly') || lowerName.includes('бутхилл') || lowerName.includes('boothill') || lowerName.includes('раппа') || lowerName.includes('rappa') || be > 180) {
+      archetype = 'BREAK_DPS';
+    } else if (charId === '1005' || lowerName.includes('кафка') || lowerName.includes('kafka') || lowerName.includes('лебедь') || lowerName.includes('black swan') || lowerName.includes('сампо') || lowerName.includes('sampo') || lowerName.includes('гуйнайфэнь') || lowerName.includes('guinaifen') || (path === 'Warlock' && cr < 40 && ehr > 40 && !lowerName.includes('blade') && charId !== '1205')) {
+      archetype = 'DOT_DPS';
+    } else if (path === 'Warlock' && (lowerName.includes('пела') || lowerName.includes('pela') || lowerName.includes('волк') || lowerName.includes('silver') || lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu'))) {
+      archetype = 'NIHILITY_DEBUFF';
+    } else if (path === 'Priest' || heal > 0) {
+      if (lowerName.includes('галлахер') || lowerName.includes('gallagher') || lowerName.includes('линша') || lowerName.includes('lingsha') || be > 100) {
+        archetype = 'ABUNDANCE_BREAK';
+      } else {
+        archetype = 'ABUNDANCE_HP';
+      }
     }
   }
 
@@ -1187,9 +1565,10 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     let pScore = 0;
     let pTotal = 0;
     (rel.sub_affix || []).forEach(sub => {
-      const cnt = sub.count || 1;
-      pTotal += cnt;
-      totalRollsCount += cnt;
+      // Exclude base roll: count pure upgrade procs (0 to 5)
+      const upgrades = Math.max(0, (sub.count || 1) - 1);
+      pTotal += upgrades;
+      totalRollsCount += upgrades;
       const f = sub.field || '';
 
       let weight = 0;
@@ -1252,6 +1631,19 @@ export function calculateCharacterAudit(char, lang = 'ru') {
           else if (f === 'hp') weight = 0.95;
           else if (f === 'spd') weight = 0.8;
           break;
+        case 'MORTENAX_SUPPORT':
+          if (f === 'spd') weight = 1.0;
+          else if (f === 'hp') weight = 0.95;
+          else if (f === 'effect_res') weight = 0.8;
+          else if (f === 'def') weight = 0.7;
+          else if (f === 'crit_rate' || f === 'crit_dmg') weight = 0.5;
+          break;
+        case 'MORTENAX_HYBRID':
+          if (f === 'spd' || f === 'crit_rate' || f === 'crit_dmg') weight = 1.0;
+          else if (f === 'hp') weight = 0.95;
+          else if (f === 'effect_res') weight = 0.7;
+          else if (f === 'def') weight = 0.5;
+          break;
         case 'NIHILITY_DEBUFF':
           if (f === 'effect_hit' || f === 'spd') weight = 1.0;
           else if (f === 'effect_res' || f === 'hp' || f === 'def') weight = 0.6;
@@ -1262,8 +1654,8 @@ export function calculateCharacterAudit(char, lang = 'ru') {
           else if (f === 'break_dmg') weight = 0.3;
           break;
       }
-      pScore += cnt * weight;
-      usefulRollsSum += cnt * weight;
+      pScore += upgrades * weight;
+      usefulRollsSum += upgrades * weight;
     });
 
     // Archetype-aware Main Stat Evaluation
@@ -1438,6 +1830,56 @@ export function calculateCharacterAudit(char, lang = 'ru') {
       }
       break;
     }
+    case 'MORTENAX_SUPPORT': {
+      const spdRatio = spd >= 160 ? 45 : (spd >= 145 ? 40 : (spd >= 134 ? 35 : (spd / 134) * 25));
+      const hpRatio = Math.min(30, (hp / 7000) * 30);
+      const errRatio = (err >= 15 || (ropeStat === 'sp_rate')) ? 25 : 12;
+      statPoints = spdRatio + hpRatio + errRatio;
+
+      if (spd < 134) {
+        bottleneck = isRu
+          ? `Скорость (${spd}) ниже порога 134.0 SPD. Саппорт-сборка требует высокой скорости для опережения таймера Зоны (70 SPD) и генерации очков действий/ультимейта.`
+          : `Speed (${spd}) is below 134.0 SPD. Support build requires high speed to cycle the 70 SPD Zone timer.`;
+        actions.push({
+          title: isRu ? 'Приоритет: 134-145+ Скорости' : 'Priority: 134-145+ Speed',
+          desc: isRu ? 'Сапоги на Скорость (+25 SPD) обязательны для быстрой перезарядки Зоны и обновления баффа Кузнеца.' : 'Speed boots are mandatory for cycling Zone and refreshing Master Smith buff.'
+        });
+      } else {
+        bottleneck = isRu
+          ? `Отличная сборка Саппорта-Дебаффера (${spd} SPD, ${hp} HP). Успевает накладывать срез защиты и поддерживать бафф +15% урона отряду до сброса Зоны.`
+          : `Optimized Support Debuffer build (${spd} SPD, ${hp} HP). Reliably refreshes team buffs within the 70 SPD countdown.`;
+        actions.push({
+          title: isRu ? 'Сборка Саппорта оптимизирована' : 'Support Build Optimized',
+          desc: isRu ? 'Высокая скорость опережает таймер Зоны, а вервь на ВЭ/сет Кузнеца усиливают весь отряд.' : 'High speed laps the zone timer while Master Smith & ERR support the team.'
+        });
+      }
+      break;
+    }
+    case 'MORTENAX_HYBRID': {
+      const spdRatio = spd >= 145 ? 35 : (spd >= 134 ? 30 : (spd / 134) * 20);
+      const cvRatio = Math.min(35, (cv / 220) * 35);
+      const hpRatio = Math.min(30, (hp / 7000) * 30);
+      statPoints = spdRatio + cvRatio + hpRatio;
+
+      if (spd < 134) {
+        bottleneck = isRu
+          ? `Скорость (${spd}) ниже порога 134.0 SPD. Для гибридной сборки важно успевать реализовать криты и баффы внутри Зоны 70 SPD.`
+          : `Speed (${spd}) is below 134.0 SPD. Hybrid build must lap the 70 SPD zone countdown.`;
+        actions.push({
+          title: isRu ? 'Приоритет: 134-145+ Скорости' : 'Priority: 134-145+ Speed',
+          desc: isRu ? 'Сапоги на Скорость (+25 SPD) максимизируют число атак внутри Зоны.' : 'Speed boots maximize actions inside the Zone.'
+        });
+      } else {
+        bottleneck = isRu
+          ? `Сбалансированная гибридная сборка (${spd} SPD, ${cv} CV, ${hp} HP). Сочетает командный бафф с высоким личным уроном.`
+          : `Balanced hybrid build (${spd} SPD, ${cv} CV, ${hp} HP). Combines team buffing with personal damage.`;
+        actions.push({
+          title: isRu ? 'Гибридный билд сбалансирован' : 'Hybrid Build Balanced',
+          desc: isRu ? 'Успешное опережение таймера Зоны в связке с бонусом +100 CV в стойке «Infinite Fury».' : 'Successfully laps the zone timer paired with +100 CV inside "Infinite Fury".'
+        });
+      }
+      break;
+    }
     default: { // CRIT_DPS, HP_CRIT_DPS & general
       const isMortenax = charId === '1507' || lowerName.includes('мортенакс') || lowerName.includes('mortenax');
       const isSlowDps = !isMortenax && (
@@ -1552,16 +1994,17 @@ export function calculateCharacterAudit(char, lang = 'ru') {
 
   planarRelics.forEach(r => {
     (r.sub_affix || []).forEach(sub => {
-      const cnt = sub.count || 1;
-      planarRollsTotal += cnt;
+      // Exclude base roll: pure upgrade procs (0 to 5 per relic)
+      const upgrades = Math.max(0, (sub.count || 1) - 1);
+      planarRollsTotal += upgrades;
       if (sub.field === 'crit_rate') {
         planarCv += (sub.value || 0) * 200;
-        planarUsefulRolls += cnt;
+        planarUsefulRolls += upgrades;
       } else if (sub.field === 'crit_dmg') {
         planarCv += (sub.value || 0) * 100;
-        planarUsefulRolls += cnt;
+        planarUsefulRolls += upgrades;
       } else if (['spd', 'atk', 'def', 'hp', 'break_dmg', 'effect_hit', 'effect_res'].includes(sub.field)) {
-        planarUsefulRolls += cnt * 0.9;
+        planarUsefulRolls += upgrades * 0.9;
       }
     });
   });
@@ -1772,16 +2215,17 @@ export function calculateCharacterAudit(char, lang = 'ru') {
 
   cavernRelics.forEach(r => {
     (r.sub_affix || []).forEach(sub => {
-      const cnt = sub.count || 1;
-      cavernRollsTotal += cnt;
+      // Exclude base roll: pure upgrade procs (0 to 5 per relic)
+      const upgrades = Math.max(0, (sub.count || 1) - 1);
+      cavernRollsTotal += upgrades;
       if (sub.field === 'crit_rate') {
         cavernCv += (sub.value || 0) * 200;
-        cavernUsefulRolls += cnt;
+        cavernUsefulRolls += upgrades;
       } else if (sub.field === 'crit_dmg') {
         cavernCv += (sub.value || 0) * 100;
-        cavernUsefulRolls += cnt;
+        cavernUsefulRolls += upgrades;
       } else if (['spd', 'atk', 'def', 'hp', 'break_dmg', 'effect_hit', 'effect_res'].includes(sub.field)) {
-        cavernUsefulRolls += cnt * 0.9;
+        cavernUsefulRolls += upgrades * 0.9;
       }
     });
   });
@@ -1880,6 +2324,7 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     cv: cv.toFixed(1),
     spd: spd.toFixed(1),
     archetype,
+    detectedRole,
     primaryMetric: characterMetrics.primary,
     secondaryMetric: characterMetrics.secondary,
     bottleneck,

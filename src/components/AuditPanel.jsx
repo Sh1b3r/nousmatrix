@@ -21,6 +21,28 @@ export default function AuditPanel({ audit, t, lang = 'ru' }) {
         <div className="score-tier">TOP {audit.topPercent}% GLOBAL</div>
       </div>
 
+      {/* Dynamic Role Classification Badge (Support vs DPS vs Hybrid) */}
+      {audit.detectedRole && (
+        <div className={`role-badge-card role-${(audit.detectedRole.role || 'dps').toLowerCase()}`}>
+          <div className="role-badge-head">
+            <span className="role-badge-pill">
+              <span className="role-badge-icon">{audit.detectedRole.icon || '⚔️'}</span>
+              <span className="role-badge-name">
+                {isRu ? audit.detectedRole.labelRu : audit.detectedRole.labelEn}
+              </span>
+            </span>
+            {audit.detectedRole.confidence && (
+              <span className="role-confidence-tag">
+                {isRu ? `Совпадение: ${audit.detectedRole.confidence}%` : `Match: ${audit.detectedRole.confidence}%`}
+              </span>
+            )}
+          </div>
+          <div className="role-badge-desc">
+            {isRu ? audit.detectedRole.descRu : audit.detectedRole.descEn}
+          </div>
+        </div>
+      )}
+
       <div style={{ marginBottom: '18px' }}>
         <div className="metric-row">
           <div className="metric-label-line">

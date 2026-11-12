@@ -888,15 +888,17 @@ main {
 }
 
 .combat-stats-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  flex-wrap: wrap !important;
 }
 
 .combat-stats-title .combat-title-main {
-  white-space: nowrap;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
   font-weight: 700;
   font-size: 11px;
   letter-spacing: 0.05em;
@@ -904,10 +906,12 @@ main {
 }
 
 .combat-stats-title .combat-title-sub {
-  white-space: nowrap;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
   font-size: 10px;
   letter-spacing: 0.04em;
   color: var(--text-tertiary);
+  margin-left: auto;
 }
 
 /* TOTAL SCORE GAUGE */
@@ -939,6 +943,86 @@ main {
   color: var(--accent);
   margin-top: 6px;
   font-weight: 700;
+}
+
+/* DYNAMIC ROLE BADGE CARD (SUPPORT vs DPS vs HYBRID) */
+.role-badge-card {
+  margin: 0 0 16px 0;
+  padding: 12px 14px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
+}
+
+.role-badge-card.role-support {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.06);
+}
+
+.role-badge-card.role-dps {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.06);
+}
+
+.role-badge-card.role-hybrid {
+  background: rgba(168, 85, 247, 0.09);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.08);
+}
+
+.role-badge-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.role-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.role-badge-card.role-support .role-badge-pill {
+  color: #38bdf8;
+}
+
+.role-badge-card.role-dps .role-badge-pill {
+  color: #f87171;
+}
+
+.role-badge-card.role-hybrid .role-badge-pill {
+  color: #c084fc;
+}
+
+.role-badge-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.role-confidence-tag {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border-subtle);
+}
+
+.role-badge-desc {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
 }
 
 /* METRICS BARS */
@@ -1502,15 +1586,25 @@ main {
 .roll-count-tag {
   font-size: 9px;
   background: var(--surface-3);
-  color: var(--text-tertiary);
-  padding: 1px 4px;
-  border-radius: 2px;
+  color: var(--text-secondary);
+  padding: 1px 5px;
+  border-radius: 3px;
   border: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .roll-count-tag.high {
-  color: var(--success);
-  border-color: rgba(0, 255, 136, 0.4);
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.roll-count-tag.epic {
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.14);
+  border-color: rgba(168, 85, 247, 0.45);
 }
 
 /* SET BONUSES */
@@ -1928,24 +2022,28 @@ main {
     margin-bottom: 24px !important;
   }
 
-  /* Mobile: combat stats header in two rows (в два ряда) so text is never broken */
+  /* Mobile: combat stats header strictly in two rows (в два ряда) so text is never broken */
   .combat-stats-title {
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 4px !important;
     margin-bottom: 12px !important;
+    width: 100% !important;
   }
 
   .combat-stats-title .combat-title-main {
     font-size: 11px !important;
     white-space: nowrap !important;
+    word-break: keep-all !important;
     line-height: 1.3 !important;
+    text-align: left !important;
   }
 
   .combat-stats-title .combat-title-sub {
-    font-size: 9.5px !important;
+    font-size: 10px !important;
     white-space: nowrap !important;
+    word-break: keep-all !important;
     text-align: right !important;
     align-self: flex-end !important;
     color: var(--text-tertiary) !important;
