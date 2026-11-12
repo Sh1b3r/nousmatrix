@@ -16,10 +16,18 @@ export default async function handler(req, res) {
 
   try {
     const targetLang = (lang === 'ru' || lang === 'uk' || lang === 'be') ? 'ru' : 'en';
-    const response = await fetch(`https://api.mihomo.me/sr_info_parsed/${cleanUid}?lang=${targetLang}`, {
-      headers: {
-        'User-Agent': 'NousMatrix/1.0'
-      }
+    const isForce = Boolean(req.query.force || req.query._t);
+    const cacheBuster = isForce ? `&_t=${Date.now()}` : '';
+    const outgoingHeaders = {
+      'User-Agent': 'NousMatrix/1.0'
+    };
+    if (isForce) {
+      outgoingHeaders['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+      outgoingHeaders['Pragma'] = 'no-cache';
+    }
+
+    const response = await fetch(`https://api.mihomo.me/sr_info_parsed/${cleanUid}?lang=${targetLang}${cacheBuster}`, {
+      headers: outgoingHeaders
     });
 
     if (!response.ok) {

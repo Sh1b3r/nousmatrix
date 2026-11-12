@@ -295,8 +295,18 @@ export default function App() {
         return;
       }
     } else {
-      // Force refresh requested: clear in-memory cache for this UID
+      // Force refresh requested: clear in-memory and session cache for this UID
       profileCacheRef.current.delete(uid);
+      try {
+        const stored = sessionStorage.getItem('nousmatrix_cached_profiles');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          delete parsed[uid];
+          sessionStorage.setItem('nousmatrix_cached_profiles', JSON.stringify(parsed));
+        }
+      } catch {
+        // ignore
+      }
     }
 
     setIsLoading(true);

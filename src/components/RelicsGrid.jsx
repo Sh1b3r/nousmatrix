@@ -13,9 +13,36 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
   const relics = character.relics || [];
   const slots = t.relicSlots || [];
 
-  const cavernRelics = relics.filter(r => r.type === 1 || r.type === 2 || r.type === 3 || r.type === 4 || (!r.type && relics.indexOf(r) < 4));
-  const spherePiece = relics.find(r => r.type === 5 || r.pos === 5) || (relics.length >= 5 ? relics[4] : null);
-  const ropePiece = relics.find(r => r.type === 6 || r.pos === 6) || (relics.length >= 6 ? relics[5] : null);
+  const isSphere = (r) => {
+    if (!r) return false;
+    const num = Number(r.type ?? r.pos);
+    if (num === 5) return true;
+    const typeStr = String(r.type || r.type_name || '').toUpperCase();
+    if (typeStr === 'NECK' || typeStr === 'SPHERE' || typeStr.includes('СФЕР')) return true;
+    const idStr = String(r.id || r.tid || '');
+    if (idStr.length === 5 && idStr.endsWith('5')) return true;
+    return false;
+  };
+
+  const isRope = (r) => {
+    if (!r) return false;
+    const num = Number(r.type ?? r.pos);
+    if (num === 6) return true;
+    const typeStr = String(r.type || r.type_name || '').toUpperCase();
+    if (typeStr === 'OBJECT' || typeStr === 'ROPE' || typeStr.includes('ВЕРВ')) return true;
+    const idStr = String(r.id || r.tid || '');
+    if (idStr.length === 5 && idStr.endsWith('6')) return true;
+    return false;
+  };
+
+  const cavernRelics = relics.filter(r => {
+    const num = Number(r.type ?? r.pos);
+    if (num >= 1 && num <= 4) return true;
+    if (!isSphere(r) && !isRope(r) && relics.indexOf(r) < 4) return true;
+    return false;
+  });
+  const spherePiece = relics.find(isSphere) || relics.find((r, i) => i === 4 && relics.length >= 5);
+  const ropePiece = relics.find(isRope) || relics.find((r, i) => i === 5 && relics.length >= 6);
   const planarRelics = [spherePiece, ropePiece].filter(Boolean);
 
   const renderPlaceholderCard = (slotIdx, defaultTitle) => {
