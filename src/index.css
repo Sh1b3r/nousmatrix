@@ -1,24 +1,33 @@
 :root {
   /* ANTI-SLOP PALETTE (60-30-10 RULE) */
-  --bg-base: #0C0814;          /* 60% - Ночной фиолет */
-  --surface-1: rgba(20, 14, 34, 0.85); /* 30% - Основные контейнеры с легкой прозрачностью */
-  --surface-2: #1D1432;        /* 30% - Карточки реликвий, поля */
-  --surface-3: #281D45;        /* 30% - Выделенные элементы */
-  
-  --border-subtle: #291D42;    /* 1px четкая граница без мыла */
+  --bg-base: #0C0814;
+  /* 60% - Ночной фиолет */
+  --surface-1: rgba(20, 14, 34, 0.85);
+  /* 30% - Основные контейнеры с легкой прозрачностью */
+  --surface-2: #1D1432;
+  /* 30% - Карточки реликвий, поля */
+  --surface-3: #281D45;
+  /* 30% - Выделенные элементы */
+
+  --border-subtle: #291D42;
+  /* 1px четкая граница без мыла */
   --border-strong: #3F2E64;
   --border-focus: #FF3C3C;
-  
-  --text-primary: #EDEDF2;     /* Чистый контрастный текст */
-  --text-secondary: #9B93B3;   /* Приглушенный вторичный */
-  --text-tertiary: #675E80;    /* Метаданные */
-  
-  --accent: #FF3C3C;           /* 10% - Аркадный красный */
+
+  --text-primary: #EDEDF2;
+  /* Чистый контрастный текст */
+  --text-secondary: #9B93B3;
+  /* Приглушенный вторичный */
+  --text-tertiary: #675E80;
+  /* Метаданные */
+
+  --accent: #FF3C3C;
+  /* 10% - Аркадный красный */
   --accent-dim: rgba(255, 60, 60, 0.12);
   --accent-glow: rgba(255, 60, 60, 0.25);
   --success: #00FF88;
   --gold: #FFB800;
-  
+
   --font-grotesk: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -442,14 +451,17 @@ main {
 .roster-track::-webkit-scrollbar {
   height: 6px;
 }
+
 .roster-track::-webkit-scrollbar-track {
   background: var(--surface-2);
   border-radius: 3px;
 }
+
 .roster-track::-webkit-scrollbar-thumb {
   background: var(--border-strong);
   border-radius: 3px;
 }
+
 .roster-track::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
 }
@@ -1192,8 +1204,17 @@ main {
 }
 
 @keyframes pulse-danger {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(0.98); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: scale(0.98);
+  }
 }
 
 .relic-main-label {
@@ -1579,9 +1600,14 @@ main {
 }
 
 @media (max-width: 768px) {
+
   /* Full 100% width on all cards and containers on mobile */
   .desktop-only {
     display: none !important;
+  }
+
+  .home-card {
+    width: 100%;
   }
 
   .mobile-only {
@@ -1799,7 +1825,7 @@ main {
   .guide-steps {
     grid-template-columns: 1fr !important;
   }
-  
+
   .trophy-stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
@@ -1836,4 +1862,3 @@ main {
     white-space: normal !important;
   }
 }
-

@@ -58,6 +58,53 @@ export default function AuditPanel({ audit, t, lang = 'ru' }) {
         </div>
       </div>
 
+      {/* Cavern Relics Audit Section (Подсчет пещерных реликвий) */}
+      {audit.cavern && audit.cavern.label && (
+        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
+          <div className="panel-title">
+            <span>{t.cavernAuditTitle || (isRu ? 'ПОДСЧЁТ ПЕЩЕРНЫХ РЕЛИКВИЙ' : 'CAVERN RELICS BREAKDOWN')}</span>
+            <span style={{ color: audit.cavern.isComplete ? 'var(--accent)' : 'var(--text-tertiary)', fontSize: '10px' }}>
+              {audit.cavern.isComplete ? (t.cavernSetComplete || (isRu ? 'КОМПЛЕКТ АКТИВЕН' : 'SET ACTIVE')) : (t.cavernSetBroken || (isRu ? 'РАЗОРВАННЫЙ СЕТ' : 'BROKEN SET'))}
+            </span>
+          </div>
+
+          <div className="planar-audit-box">
+            <div className="planar-audit-name">
+              <span>{audit.cavern.label}</span>
+              <span className="planar-rolls-badge">
+                {audit.cavern.usefulRolls}/{audit.cavern.rollsTotal} {isRu ? 'роллов' : 'rolls'}
+              </span>
+            </div>
+
+            <div className="metric-row" style={{ marginTop: '8px' }}>
+              <div className="metric-label-line">
+                <span>{t.cavernRollQuality || (isRu ? 'Качество роллов пещерных сетов' : 'Cavern Relics Roll Quality')}</span>
+                <span style={{ fontFamily: 'var(--font-mono)' }}>{audit.cavern.efficiency}%</span>
+              </div>
+              <div className="metric-bar-bg">
+                <div
+                  className="metric-bar-fill accent"
+                  style={{ width: `${audit.cavern.efficiency}%` }}
+                />
+              </div>
+            </div>
+
+            {parseFloat(audit.cavern.cv) > 0 && (
+              <div className="metric-row">
+                <div className="metric-label-line">
+                  <span>{t.cavernCv || (isRu ? 'Крит. масса пещерных сетов (Cavern CV)' : 'Cavern Crit Value (CV)')}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)' }}>{audit.cavern.cv}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="planar-condition-line">
+              {audit.cavern.condition}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Planar Ornaments Audit Section (Подсчет планарок) */}
       {audit.planar && audit.planar.setName && (
         <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>

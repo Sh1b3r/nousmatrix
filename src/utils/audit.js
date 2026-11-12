@@ -1127,12 +1127,62 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   } else if (/Дуран|Duran/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu ? 'До 5 стаков: +25% к бонус-атакам и +25% Крит. Урона' : 'Up to 5 stacks: +25% FUA DMG & +25% CD';
+  } else if (/Tengoku|Тэнгоку|Стрим/i.test(planarSet)) {
+    isConditionMet = true;
+    planarCondition = isRu ? '+8% КШ активно • Дополнительно +24% Крит. Урона при наличии спутника/призыва ✓' : '+8% CR active • +24% CRIT DMG with summon/servant ✓';
+  } else if (/Amphoreus|Амфореус/i.test(planarSet)) {
+    isConditionMet = true;
+    planarCondition = isRu ? '+12% HP и усиление урона союзников активно ✓' : '+12% HP & team DMG amplification active ✓';
+  } else if (/Punklorde|Панклорд/i.test(planarSet)) {
+    isConditionMet = true;
+    planarCondition = isRu ? '+6% Скорости и бонус атаки от ШПЭ активны ✓' : '+6% SPD & ATK bonus from EHR active ✓';
   } else {
     // Universal Smart Fallback for any future or unlisted planar set
-    isConditionMet = true;
-    planarCondition = isRu
-      ? (isPlanarSetComplete ? `Сет «${planarSet}» активен (2/2) ✓` : `Разорванный планарный сет ⚠️`)
-      : (isPlanarSetComplete ? `Set "${planarSet}" active (2/2) ✓` : `Broken planar set ⚠️`);
+    // Check if the set bonus description has a speed, HP, CR, or EHR threshold
+    const matchingSet = (char.relic_sets || []).find(s => s.name === planarSet || (planarSet && s.name && planarSet.includes(s.name)));
+    const setDesc = matchingSet?.desc || '';
+
+    if (/\b160\b/.test(setDesc)) {
+      isConditionMet = spd >= 160;
+      planarCondition = isConditionMet
+        ? (isRu ? `160+ СКОР выполнено (${spd} ✓) • Полный бонус сета активен` : `160+ SPD achieved (${spd} ✓) • Full set bonus active`)
+        : (isRu ? `Требуется 160 СКОР (текущая: ${spd} ⚠️)` : `Requires 160 SPD (current: ${spd} ⚠️)`);
+    } else if (/\b145\b/.test(setDesc)) {
+      isConditionMet = spd >= 145;
+      planarCondition = isConditionMet
+        ? (isRu ? `145+ СКОР выполнено (${spd} ✓) • Бонус сета активен` : `145+ SPD achieved (${spd} ✓) • Set bonus active`)
+        : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ⚠️)` : `Requires 145 SPD (current: ${spd} ⚠️)`);
+    } else if (/\b135\b/.test(setDesc)) {
+      isConditionMet = spd >= 135;
+      planarCondition = isConditionMet
+        ? (isRu ? `135+ СКОР выполнено (${spd} ✓) • Бонус сета активен` : `135+ SPD achieved (${spd} ✓) • Set bonus active`)
+        : (isRu ? `Требуется 135 СКОР (текущая: ${spd} ⚠️)` : `Requires 135 SPD (current: ${spd} ⚠️)`);
+    } else if (/\b120\b/.test(setDesc)) {
+      isConditionMet = spd >= 120;
+      planarCondition = isConditionMet
+        ? (isRu ? `120+ СКОР выполнено (${spd} ✓) • Бонус сета активен` : `120+ SPD achieved (${spd} ✓) • Set bonus active`)
+        : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ⚠️)` : `Requires 120 SPD (current: ${spd} ⚠️)`);
+    } else if (/\b5000\b/.test(setDesc)) {
+      isConditionMet = hp >= 5000;
+      planarCondition = isConditionMet
+        ? (isRu ? `5000+ HP выполнено (${hp} ✓) • Бонус сета активен` : `5000+ HP achieved (${hp} ✓) • Set bonus active`)
+        : (isRu ? `Требуется 5000 HP (текущее: ${hp} ⚠️)` : `Requires 5000 HP (current: ${hp} ⚠️)`);
+    } else if (/\b70%\b/.test(setDesc) && /крит|crit/i.test(setDesc)) {
+      isConditionMet = cr >= 70;
+      planarCondition = isConditionMet
+        ? (isRu ? `70%+ КШ выполнено (${cr}% ✓) • Бонус сета активен` : `70%+ CR achieved (${cr}% ✓) • Set bonus active`)
+        : (isRu ? `Требуется 70% КШ (текущий: ${cr}% ⚠️)` : `Requires 70% CR (current: ${cr}% ⚠️)`);
+    } else if (/\b50%\b/.test(setDesc) && /крит|crit/i.test(setDesc)) {
+      isConditionMet = cr >= 50;
+      planarCondition = isConditionMet
+        ? (isRu ? `50%+ КШ выполнено (${cr}% ✓) • Бонус сета активен` : `50%+ CR achieved (${cr}% ✓) • Set bonus active`)
+        : (isRu ? `Требуется 50% КШ (текущий: ${cr}% ⚠️)` : `Requires 50% CR (current: ${cr}% ⚠️)`);
+    } else {
+      isConditionMet = true;
+      planarCondition = isRu
+        ? (isPlanarSetComplete ? `Сет «${planarSet}» активен (2/2) ✓` : `Разорванный планарный сет ⚠️`)
+        : (isPlanarSetComplete ? `Set "${planarSet}" active (2/2) ✓` : `Broken planar set ⚠️`);
+    }
   }
 
   // Calculate Planar Synergy Bonus to factor directly into Gaussian Global Top
@@ -1160,6 +1210,28 @@ export function calculateCharacterAudit(char, lang = 'ru') {
 
   // 4b. Cavern Relic Sets Calculation & Synergy Bonus (Подсчет пещерных сетов)
   const cavernRelics = (char.relics || []).filter(r => r.type >= 1 && r.type <= 4);
+  let cavernRollsTotal = 0;
+  let cavernUsefulRolls = 0;
+  let cavernCv = 0;
+
+  cavernRelics.forEach(r => {
+    (r.sub_affix || []).forEach(sub => {
+      const cnt = sub.count || 1;
+      cavernRollsTotal += cnt;
+      if (sub.field === 'crit_rate') {
+        cavernCv += (sub.value || 0) * 200;
+        cavernUsefulRolls += cnt;
+      } else if (sub.field === 'crit_dmg') {
+        cavernCv += (sub.value || 0) * 100;
+        cavernUsefulRolls += cnt;
+      } else if (['spd', 'atk', 'def', 'hp', 'break_dmg', 'effect_hit', 'effect_res'].includes(sub.field)) {
+        cavernUsefulRolls += cnt * 0.9;
+      }
+    });
+  });
+
+  const cavernEfficiency = cavernRollsTotal > 0 ? Math.round((cavernUsefulRolls / cavernRollsTotal) * 100) : 75;
+
   const cavernSetCounts = {};
   cavernRelics.forEach(r => {
     const sId = r.set_id || r.set_name || 'unknown';
@@ -1170,22 +1242,32 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const cavernGroups = Object.values(cavernSetCounts).sort((a, b) => b.count - a.count);
   let cavernSynergyBonus = 0;
   let cavernSetLabel = '';
+  let cavernStatusText = '';
   let isCavernComplete = false;
 
   if (cavernGroups.length > 0 && cavernGroups[0].count >= 4) {
     isCavernComplete = true;
     cavernSynergyBonus = 4.0;
     cavernSetLabel = `✓ 4/4 ${cavernGroups[0].name}`;
+    cavernStatusText = isRu
+      ? `Полный комплект 4/4 активен («${cavernGroups[0].name}») • Бонус сета активирован ✓`
+      : `Full 4/4 set active ("${cavernGroups[0].name}") • Set passive unlocked ✓`;
   } else if (cavernGroups.length >= 2 && cavernGroups[0].count >= 2 && cavernGroups[1].count >= 2) {
     isCavernComplete = true;
     cavernSynergyBonus = 3.0;
     cavernSetLabel = `✓ 2/4 ${cavernGroups[0].name} + 2/4 ${cavernGroups[1].name}`;
+    cavernStatusText = isRu
+      ? `Комбинация 2/4 + 2/4 активна • Получены два 2-Pc бонуса сетов ✓`
+      : `Combination 2/4 + 2/4 active • Two 2-Pc set bonuses unlocked ✓`;
   } else if (cavernGroups.length > 0 && cavernGroups[0].count >= 2) {
     isCavernComplete = false;
     cavernSynergyBonus = 0.5;
     cavernSetLabel = isRu
       ? `2/4 ${cavernGroups[0].name} (1/4 + 1/4 Разорван ⚠️)`
       : `2/4 ${cavernGroups[0].name} (1/4 + 1/4 Broken ⚠️)`;
+    cavernStatusText = isRu
+      ? `Активирован только 2-Pc бонус («${cavernGroups[0].name}»). Две реликвии надеты без сета ⚠️`
+      : `Only 2-Pc bonus active ("${cavernGroups[0].name}"). 2 pieces are off-set ⚠️`;
     actions.push({
       title: isRu ? 'Неполный пещерный комплект (2/4)' : 'Incomplete Cavern Set (2/4)',
       desc: isRu
@@ -1196,6 +1278,9 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     isCavernComplete = false;
     cavernSynergyBonus = -4.0;
     cavernSetLabel = isRu ? 'РАЗОРВАННЫЙ ПЕЩЕРНЫЙ СЕТ ⚠️' : 'BROKEN CAVERN SET ⚠️';
+    cavernStatusText = isRu
+      ? `Все 4 пещерные реликвии надеты из разных наборов. Бонусы сетов не действуют ⚠️`
+      : `All 4 cavern relics are from mismatched sets with 0 active set passives ⚠️`;
     actions.push({
       title: isRu ? 'Разорванный пещерный сет (0 бонусов)' : 'Broken Cavern Relics (0 set bonuses)',
       desc: isRu
@@ -1225,7 +1310,13 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     weakestRelicIndex,
     cavern: {
       label: cavernSetLabel,
+      setName: cavernGroups.length > 0 ? cavernGroups[0].name : '',
       isComplete: isCavernComplete,
+      efficiency: cavernEfficiency,
+      cv: cavernCv.toFixed(1),
+      condition: cavernStatusText,
+      rollsTotal: cavernRollsTotal,
+      usefulRolls: Math.round(cavernUsefulRolls),
       groups: cavernGroups
     },
     planar: {
