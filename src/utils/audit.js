@@ -1642,9 +1642,9 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     planarCondition = isRu
       ? '+16% Крит. Урона активно • Дополнительно +32% КУ при наличии призванного существа ✓'
       : '+16% CRIT DMG active • +32% extra CD when summons present ✓';
-  } else if (/Лушака|Русалка|Lushaka/i.test(planarSet)) {
+  } else if (/Русалка|затопленные берега|Лушака|Lushaka/i.test(planarSet)) {
     isConditionMet = true;
-    planarCondition = isRu ? '+5% ВЭ и +12% Силы Атаки первому союзнику в отряде ✓' : '+5% ERR & +12% ATK to 1st slot ally ✓';
+    planarCondition = isRu ? '+5% ВЭ и +12% Силы Атаки первому союзнику в отряде (если владелец не на 1 слоте) ✓' : '+5% ERR & +12% ATK to 1st slot ally (if wearer not in slot 1) ✓';
   } else if (/Пенакони|Penacony/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu ? '+5% ВЭ и +10% урона союзникам той же стихии ✓' : '+5% ERR & +10% DMG to same-element allies ✓';

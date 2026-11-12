@@ -149,16 +149,16 @@ export const SET_DEFINITIONS = [
     desc2En: 'Increases wearer\'s ERR by 5%. If SPD is 120 or higher, advances action forward by 40% at battle start.'
   },
 
-  // 12. «Лушака, затонувшие моря» / Lushaka, the Sunken Seas (Planar)
+  // 12. «Русалка, затопленные берега» / Lushaka, the Sunken Seas (Planar)
   {
     ids: ['317', '318'],
-    keywords: ['лушака', 'lushaka', 'русалка'],
-    nameRu: 'Лушака, затонувшие моря',
+    keywords: ['русалка', 'русалк', 'затопленные берега', 'лушака', 'lushaka', 'sunken seas'],
+    nameRu: 'Русалка, затопленные берега',
     nameEn: 'Lushaka, the Sunken Seas',
     isPlanar: true,
     icon: 'icon/relic/317.png',
-    desc2Ru: 'Повышает скорость восстановления энергии на 5%. Повышает силу атаки первого персонажа в отряде на 12%.',
-    desc2En: 'Increases wearer\'s ERR by 5%. Increases ATK of the first character in the team by 12%.'
+    desc2Ru: 'Повышает скорость восстановления энергии владельца на 5%. Если владелец не является первым персонажем в отряде, повышает силу атаки первого персонажа в отряде на 12%.',
+    desc2En: 'Increases wearer\'s ERR by 5%. If the wearer is not the first character in the team, increases ATK of the first character in the team by 12%.'
   },
 
   // 13. «Сломанный киль» / Broken Keel (Planar)
