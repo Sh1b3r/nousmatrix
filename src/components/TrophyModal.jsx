@@ -228,9 +228,9 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
         {/* Left Column: Combat Attributes & Set Bonuses */}
         <div className="trophy-col-left">
           <div className="panel" style={{ marginBottom: '20px' }}>
-            <div className="panel-title">
-              <span>{t.combatStatsTitle}</span>
-              <span style={{ color: 'var(--text-tertiary)', fontSize: '11px' }}>{t.basePlusBonus}</span>
+            <div className="panel-title combat-stats-title">
+              <span className="combat-title-main">{t.combatStatsTitle}</span>
+              <span className="combat-title-sub">{t.basePlusBonus}</span>
             </div>
             <CombatStats character={character} t={t} lang={lang} />
           </div>

@@ -520,9 +520,9 @@ export default function App() {
               <div className="dashboard-col-left">
                 {/* 1. Real In-Game Combat Attributes Table */}
                 <div className="panel panel-combat-stats" style={{ marginBottom: '24px' }}>
-                  <div className="panel-title">
-                    <span>{t.combatStatsTitle}</span>
-                    <span style={{ color: 'var(--text-tertiary)', fontSize: '10px' }}>{t.basePlusBonus}</span>
+                  <div className="panel-title combat-stats-title">
+                    <span className="combat-title-main">{t.combatStatsTitle}</span>
+                    <span className="combat-title-sub">{t.basePlusBonus}</span>
                   </div>
                   <CombatStats character={activeChar} t={t} lang={lang} />
                 </div>
