@@ -996,7 +996,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
   const isSW999 = isWolf && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
 
   if (isSW999 || (isWolf && cv >= 140)) {
-    const spdStatus = spd >= 160 ? '[160+ CAP ]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const spdStatus = spd >= 160 ? '[160+ CAP]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
     const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 160 ? '[OK]' : '[LOW]'));
 
     return {
@@ -1023,8 +1023,8 @@ export function determineCharacterMetrics(char, archetype, stats) {
   const isMortenax = charId === '1507' || lowerName.includes('мортенакс') || lowerName.includes('mortenax');
   if (isMortenax) {
     if (archetype === 'MORTENAX_SUPPORT') {
-      const spdStatus = spd >= 160 ? '[160+ HYPER ]' : (spd >= 145 ? '[145+ ZONE TUNED ]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ]'));
-      const hpStatus = hp >= 7000 ? '[7000+ TANK ]' : (hp >= 6000 ? '[6000+ OK]' : '[LOW]');
+      const spdStatus = spd >= 160 ? '[160+ HYPER]' : (spd >= 145 ? '[145+ ZONE TUNED]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+      const hpStatus = hp >= 7000 ? '[7000+ TANK]' : (hp >= 6000 ? '[6000+ OK]' : '[LOW]');
 
       return {
         primary: {
@@ -1044,7 +1044,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
       };
     }
 
-    const spdStatus = spd >= 160 ? '[160+ HYPER ]' : (spd >= 145 ? '[145+ ZONE TUNED ]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ]'));
+    const spdStatus = spd >= 160 ? '[160+ HYPER]' : (spd >= 145 ? '[145+ ZONE TUNED]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
     const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 150 ? '[OK]' : '[LOW]'));
 
     return {
@@ -1070,8 +1070,8 @@ export function determineCharacterMetrics(char, archetype, stats) {
     const isJiaoqiu = lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu');
     const isWelt = charId === '1004' || lowerName.includes('вельт') || lowerName.includes('welt');
     const targetEhr = isJiaoqiu ? 140 : (isWolf ? 96 : (isWelt ? 67 : 67));
-    const spdStatus = spd >= 160 ? '[160+ CAP ]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
-    const ehrStatus = ehr >= targetEhr ? `[${targetEhr}% CAP ]` : `[${ehr.toFixed(0)}% / ${targetEhr}%]`;
+    const spdStatus = spd >= 160 ? '[160+ CAP]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const ehrStatus = ehr >= targetEhr ? `[${targetEhr}% CAP]` : `[${ehr.toFixed(0)}% / ${targetEhr}%]`;
 
     return {
       primary: {
@@ -1094,8 +1094,8 @@ export function determineCharacterMetrics(char, archetype, stats) {
   // 2. Yao Guang / HARMONY_SPD - Speed is primary, Crits/ERR are secondary
   const isYaoGuang = lowerName.includes('яо') || lowerName.includes('yao') || lowerName.includes('гуан') || lowerName.includes('guang') || lowerName.includes('爻光');
   if (archetype === 'HARMONY_SPD' || isYaoGuang) {
-    const spdStatus = spd >= 160 ? '[160+ CAP ]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
-    const crStatus = cr >= 50 ? `[${cr.toFixed(1)}% CR ]` : `[${cr.toFixed(1)}% CR]`;
+    const spdStatus = spd >= 160 ? '[160+ CAP]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const crStatus = cr >= 70 ? '[70%+ ELITE]' : (cr >= 50 ? '[50%+ TARGET]' : '[<50% LOW]');
 
     return {
       primary: {
@@ -1110,7 +1110,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelEn: isYaoGuang ? 'CRIT RATE (160+ SPD PASSIVE)' : 'ENERGY REGENERATION (ERR)',
         display: isYaoGuang ? `${cr.toFixed(1)}% CR` : (err > 0 ? `+${err.toFixed(1)}% ERR` : '100% (БАЗА)'),
         percent: isYaoGuang ? Math.min(100, (cr / 70) * 100) : Math.min(100, Math.max(20, (err / 24.4) * 100)),
-        status: isYaoGuang ? crStatus : (err >= 19.4 ? '[ВЕРВЬ ВЭ ]' : '[НУЖНА ВЭ]')
+        status: isYaoGuang ? crStatus : (err >= 19.4 ? '[ВЕРВЬ ВЭ]' : '[НУЖНА ВЭ]')
       }
     };
   }
@@ -1163,7 +1163,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
 
   // 5. Ruan Mei (HARMONY_BREAK) - Break Effect (180% cap) is primary, Speed is secondary
   if (archetype === 'HARMONY_BREAK') {
-    const beStatus = be >= 180 ? '[180% CAP ]' : `[-${Math.max(0, Math.round(180 - be))}% ДО КАПА]`;
+    const beStatus = be >= 180 ? '[180% CAP]' : `[-${Math.max(0, Math.round(180 - be))}% ДО КАПА]`;
     const spdStatus = spd >= 145 ? '[145+ TALIA]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]');
 
     return {
@@ -1194,14 +1194,14 @@ export function determineCharacterMetrics(char, archetype, stats) {
           labelEn: 'SPEED (SPD)',
           display: `${spd.toFixed(1)} SPD`,
           percent: Math.min(100, (spd / 160) * 100),
-          status: spd >= 160 ? '[160+ CAP ]' : (spd >= 145 ? '[145+ OK]' : '[SLOW]')
+          status: spd >= 160 ? '[160+ CAP]' : (spd >= 145 ? '[145+ OK]' : '[SLOW]')
         },
         secondary: {
           labelRu: 'СИЛА АТАКИ (ATK)',
           labelEn: 'ATTACK (ATK CAP)',
           display: `${Math.round(atk)} ATK`,
           percent: Math.min(100, (atk / 2600) * 100),
-          status: atk >= 2600 ? '[2600 CAP ]' : `[-${Math.max(0, Math.round(2600 - atk))} ДО КАПА]`
+          status: atk >= 2600 ? '[2600 CAP]' : `[-${Math.max(0, Math.round(2600 - atk))} ДО КАПА]`
         }
       };
     }
@@ -1212,14 +1212,14 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelEn: 'ATTACK POWER (ATK)',
         display: `${Math.round(atk)} ATK`,
         percent: Math.min(100, (atk / 4200) * 100),
-        status: atk >= 4000 ? '[4000+ CAP ]' : (atk >= 3500 ? '[3500+ OK]' : '[LOW]')
+        status: atk >= 4000 ? '[4000+ CAP]' : (atk >= 3500 ? '[3500+ OK]' : '[LOW]')
       },
       secondary: {
         labelRu: 'ВОССТАНОВЛЕНИЕ ЭНЕРГИИ',
         labelEn: 'ENERGY REGENERATION (ERR)',
         display: err > 0 ? `+${err.toFixed(1)}% ERR` : '100% (БАЗА)',
         percent: Math.min(100, Math.max(20, (err / 24.4) * 100)),
-        status: err >= 19.4 ? '[ВЕРВЬ ВЭ ]' : '[НУЖНА ВЭ]'
+        status: err >= 19.4 ? '[ВЕРВЬ ВЭ]' : '[НУЖНА ВЭ]'
       }
     };
   }
@@ -1234,7 +1234,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
           labelEn: 'EFFECT HIT RATE (EHR)',
           display: `${ehr.toFixed(1)}% EHR`,
           percent: Math.min(100, (ehr / 120) * 100),
-          status: ehr >= 120 ? '[120% CAP ]' : `[-${Math.max(0, (120 - ehr)).toFixed(1)}% ДО КАПА]`
+          status: ehr >= 120 ? '[120% CAP]' : `[-${Math.max(0, (120 - ehr)).toFixed(1)}% ДО КАПА]`
         },
         secondary: {
           labelRu: 'ПОРОГ СКОРОСТИ',
@@ -1272,7 +1272,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelEn: 'DEFENCE (DEF)',
         display: `${Math.round(def)} DEF`,
         percent: Math.min(100, (def / 4000) * 100),
-        status: def >= 4000 ? '[4000 CAP ]' : `[-${Math.max(0, 4000 - Math.round(def))} ДО КАПА]`
+        status: def >= 4000 ? '[4000 CAP]' : `[-${Math.max(0, 4000 - Math.round(def))} ДО КАПА]`
       },
       secondary: {
         labelRu: 'ПОРОГ СКОРОСТИ',
@@ -1312,7 +1312,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelEn: 'BREAK EFFECT (BE)',
         display: `${be.toFixed(1)}% BE`,
         percent: Math.min(100, (be / 150) * 100),
-        status: be >= 150 ? '[150% CAP ]' : `[-${Math.max(0, Math.round(150 - be))}% ДО КАПА]`
+        status: be >= 150 ? '[150% CAP]' : `[-${Math.max(0, Math.round(150 - be))}% ДО КАПА]`
       },
       secondary: {
         labelRu: 'ПОРОГ СКОРОСТИ',
@@ -1401,7 +1401,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
     const isAcheron = lowerName.includes('ахерон') || lowerName.includes('acheron') || charId === '1308';
     const isHimeko = lowerName.includes('химеко') || lowerName.includes('himeko') || lowerName.includes('нова') || lowerName.includes('nova');
     const atkTarget = isAcheron ? 3800 : (isHimeko ? 3200 : 3400);
-    const atkStatus = atk >= atkTarget ? `[${atkTarget}+ TOP ]` : (atk >= (atkTarget - 400) ? '[OK]' : '[LOW]');
+    const atkStatus = atk >= atkTarget ? `[${atkTarget}+ TOP]` : (atk >= (atkTarget - 400) ? '[OK]' : '[LOW]');
     const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 160 ? '[OK]' : '[LOW]'));
 
     return {
