@@ -34,27 +34,82 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const hasInternalHomeRef = useRef(false);
+  const profileCacheRef = useRef(new Map());
+  const lastProfileRef = useRef(null);
 
   // Region-based automatic locale detection (Default: English 'en', Slavic: 'ru', NO manual switcher)
   const lang = getDetectedLanguage();
   const t = translations[lang] || translations.en;
 
+  // Restore cached profiles from sessionStorage on initial mount
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem('nousmatrix_cached_profiles');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        Object.entries(parsed).forEach(([k, v]) => {
+          profileCacheRef.current.set(String(k), v);
+        });
+      }
+    } catch (e) {
+      console.warn('Session cache load error:', e);
+    }
+  }, []);
+
+  const saveToCache = (uid, data) => {
+    if (!uid || !data) return;
+    const strUid = String(uid);
+    profileCacheRef.current.set(strUid, data);
+    lastProfileRef.current = data;
+    try {
+      const cacheObj = {};
+      let count = 0;
+      for (const [k, v] of profileCacheRef.current.entries()) {
+        if (count++ > 10) break;
+        cacheObj[k] = v;
+      }
+      sessionStorage.setItem('nousmatrix_cached_profiles', JSON.stringify(cacheObj));
+    } catch {
+      // quota or private mode
+    }
+  };
+
   // Handle native browser Back / Forward navigation (popstate)
   useEffect(() => {
-    const handlePopState = () => {
+    const handlePopState = (e) => {
       setIsTrophyOpen(false);
 
       const params = new URLSearchParams(window.location.search);
-      const urlUid = params.get('uid');
+      const urlUid = params.get('uid') || e.state?.uid;
 
       if (urlUid) {
-        // Browser navigated forward or back to a profile URL
+        // Browser navigated forward or back to a profile URL!
+        // Instant check in cache: if already loaded in this session, transition IMMEDIATELY without loading!
+        let cached = profileCacheRef.current.get(String(urlUid));
+        if (!cached && lastProfileRef.current && String(lastProfileRef.current.player?.uid) === String(urlUid)) {
+          cached = lastProfileRef.current;
+        }
+
+        if (cached && cached.characters && cached.characters.length > 0) {
+          setCurrentProfile(cached);
+          lastProfileRef.current = cached;
+          setActiveIndex(0);
+          setErrorMsg('');
+          setIsLoading(false);
+          return;
+        }
+
+        // If not in cache yet, fetch it
         fetchProfile(urlUid, false);
       } else {
         // Browser navigated back to home (no ?uid=)
         hasInternalHomeRef.current = true;
+        if (currentProfile) {
+          lastProfileRef.current = currentProfile;
+        }
         setCurrentProfile(null);
         setErrorMsg('');
+        setIsLoading(false);
       }
     };
 
@@ -79,8 +134,15 @@ export default function App() {
     if (isTrophyOpen) {
       setIsTrophyOpen(false);
     }
+    if (currentProfile) {
+      lastProfileRef.current = currentProfile;
+      if (currentProfile.player?.uid) {
+        saveToCache(currentProfile.player.uid, currentProfile);
+      }
+    }
     setCurrentProfile(null);
     setErrorMsg('');
+    setIsLoading(false);
 
     // If navigated from home in this session, history.back() seamlessly syncs browser buttons
     if (hasInternalHomeRef.current && window.history.state?.view === 'profile') {
@@ -88,6 +150,20 @@ export default function App() {
     } else {
       hasInternalHomeRef.current = true;
       window.history.pushState({ view: 'home' }, '', window.location.pathname);
+    }
+  };
+
+  const handleRestoreProfile = () => {
+    const profileToRestore = lastProfileRef.current || Array.from(profileCacheRef.current.values())[0];
+    if (profileToRestore) {
+      const targetUid = String(profileToRestore.player?.uid || '');
+      setCurrentProfile(profileToRestore);
+      lastProfileRef.current = profileToRestore;
+      setActiveIndex(0);
+      setErrorMsg('');
+      setIsLoading(false);
+      const targetUrl = targetUid ? `?uid=${targetUid}` : '';
+      window.history.pushState({ view: 'profile', uid: targetUid }, '', targetUrl);
     }
   };
 
@@ -101,35 +177,59 @@ export default function App() {
     }
   }, [currentProfile]);
 
-  // Robust PC navigation: Browser Back, Left Arrow (ArrowLeft), Escape, Alt+Left, or Mouse 4 returns to UID input
+  // Robust PC & Mobile navigation:
+  // - Back: ArrowLeft, Escape, BrowserBack, Alt+Left, Mouse 4 returns to Home
+  // - Forward: ArrowRight, BrowserForward, Alt+Right, Mouse 5 instantly restores Profile with 0 loading!
   useEffect(() => {
     const handleKeyDown = (e) => {
       const isLeft = e.key === 'ArrowLeft' || e.code === 'ArrowLeft' || e.key === 'Left' || e.keyCode === 37;
+      const isRight = e.key === 'ArrowRight' || e.code === 'ArrowRight' || e.key === 'Right' || e.keyCode === 39;
       const isEsc = e.key === 'Escape' || e.code === 'Escape' || e.key === 'Esc' || e.keyCode === 27;
       const isBrowserBack = e.key === 'BrowserBack' || e.code === 'BrowserBack' || (e.altKey && isLeft);
+      const isBrowserForward = e.key === 'BrowserForward' || e.code === 'BrowserForward' || (e.altKey && isRight);
 
-      if (!isLeft && !isEsc && !isBrowserBack) return;
+      // 1. Back navigation
+      if (isLeft || isEsc || isBrowserBack) {
+        if (isTrophyOpen) {
+          setIsTrophyOpen(false);
+          e.preventDefault();
+          return;
+        }
 
-      if (isTrophyOpen) {
-        setIsTrophyOpen(false);
-        e.preventDefault();
+        if (currentProfile) {
+          const isTyping = document.activeElement &&
+            ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) &&
+            document.body.contains(document.activeElement);
+
+          if (!isTyping) {
+            e.preventDefault();
+            handleBackToHome();
+          }
+        }
         return;
       }
 
-      if (currentProfile) {
-        const isTyping = document.activeElement &&
-          ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) &&
-          document.body.contains(document.activeElement);
+      // 2. Forward navigation (when on home screen, instantly restores profile without loading!)
+      if (isRight || isBrowserForward) {
+        if (!currentProfile) {
+          const isTyping = document.activeElement &&
+            ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) &&
+            document.body.contains(document.activeElement) &&
+            document.activeElement.value && document.activeElement.value.trim().length > 0;
 
-        if (!isTyping) {
-          e.preventDefault();
-          handleBackToHome();
+          if (!isTyping) {
+            const profileToRestore = lastProfileRef.current || Array.from(profileCacheRef.current.values())[0];
+            if (profileToRestore) {
+              e.preventDefault();
+              handleRestoreProfile();
+            }
+          }
         }
       }
     };
 
     const handleMouseUp = (e) => {
-      // Mouse 4 (button 3) is standard Back button on gaming/desktop mice
+      // Mouse 4 (button 3): standard Back button on gaming/desktop mice
       if (e.button === 3) {
         if (isTrophyOpen) {
           e.preventDefault();
@@ -137,6 +237,17 @@ export default function App() {
         } else if (currentProfile) {
           e.preventDefault();
           handleBackToHome();
+        }
+      }
+
+      // Mouse 5 (button 4): standard Forward button on gaming/desktop mice
+      if (e.button === 4) {
+        if (!currentProfile) {
+          const profileToRestore = lastProfileRef.current || Array.from(profileCacheRef.current.values())[0];
+          if (profileToRestore) {
+            e.preventDefault();
+            handleRestoreProfile();
+          }
         }
       }
     };
@@ -149,9 +260,40 @@ export default function App() {
     };
   }, [currentProfile, isTrophyOpen]);
 
-  const fetchProfile = async (targetUid, shouldPushHistory = true) => {
+  const fetchProfile = async (targetUid, shouldPushHistory = true, forceRefresh = false) => {
     const cleanUid = String(targetUid || '').trim().replace(/\D/g, '');
     const uid = cleanUid || '700142890';
+
+    // 0. INSTANT CACHE CHECK: If profile was already loaded in this session, transition IMMEDIATELY without loading!
+    if (!forceRefresh) {
+      let cached = profileCacheRef.current.get(uid);
+      if (!cached && lastProfileRef.current && String(lastProfileRef.current.player?.uid) === uid) {
+        cached = lastProfileRef.current;
+      }
+
+      if (cached && cached.characters && cached.characters.length > 0) {
+        setCurrentProfile(cached);
+        lastProfileRef.current = cached;
+        setActiveIndex(0);
+        setErrorMsg('');
+        setIsLoading(false); // NO LOADING!
+
+        const resolvedUid = String(cached.player?.uid || uid);
+        const targetUrl = `?uid=${resolvedUid}`;
+
+        if (shouldPushHistory) {
+          const currentParams = new URLSearchParams(window.location.search);
+          if (currentParams.get('uid') !== resolvedUid) {
+            window.history.pushState({ view: 'profile', uid: resolvedUid }, '', targetUrl);
+          } else {
+            window.history.replaceState({ view: 'profile', uid: resolvedUid }, '', targetUrl);
+          }
+        } else {
+          window.history.replaceState({ view: 'profile', uid: resolvedUid }, '', targetUrl);
+        }
+        return;
+      }
+    }
 
     setIsLoading(true);
     setErrorMsg('');
@@ -206,9 +348,15 @@ export default function App() {
       // Process loaded data
       if (data) {
         if (data.characters && data.characters.length > 0) {
+          saveToCache(uid, data);
+          if (data.player?.uid) {
+            saveToCache(String(data.player.uid), data);
+          }
           setCurrentProfile(data);
+          lastProfileRef.current = data;
           setActiveIndex(0);
           setErrorMsg('');
+          setIsLoading(false);
           const resolvedUid = String(data.player?.uid || uid);
           const targetUrl = `?uid=${resolvedUid}`;
 
@@ -245,23 +393,22 @@ export default function App() {
   };
 
   const handleOpenDemo = async () => {
-    setIsLoading(true);
     try {
       const localizedPresets = await getLocalizedPresets(lang);
       const demoUid = Object.keys(localizedPresets || {})[0] || '700142890';
       if (localizedPresets && localizedPresets[demoUid]) {
-        setCurrentProfile(localizedPresets[demoUid]);
+        const demoData = localizedPresets[demoUid];
+        saveToCache(demoUid, demoData);
+        setCurrentProfile(demoData);
+        lastProfileRef.current = demoData;
         setActiveIndex(0);
         setErrorMsg('');
+        setIsLoading(false);
         window.history.pushState({ view: 'profile', uid: demoUid }, '', `?uid=${demoUid}`);
-      } else {
-        fetchProfile('700142890', true);
+        return;
       }
-    } catch {
-      fetchProfile('700142890', true);
-    } finally {
-      setIsLoading(false);
-    }
+    } catch {}
+    fetchProfile('700142890', true);
   };
 
   const activeChar = currentProfile?.characters?.[activeIndex] || null;
@@ -283,7 +430,10 @@ export default function App() {
             isLoading={isLoading}
             errorMsg={errorMsg}
             onOpenDemo={handleOpenDemo}
+            recentProfile={lastProfileRef.current}
+            onRestoreProfile={handleRestoreProfile}
             t={t}
+            lang={lang}
           />
         ) : (
           <section id="view-dashboard" style={{ display: 'block' }}>

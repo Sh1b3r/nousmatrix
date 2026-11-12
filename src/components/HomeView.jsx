@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-export default function HomeView({ onSearch, isLoading, errorMsg, onOpenDemo, t }) {
+export default function HomeView({ onSearch, isLoading, errorMsg, onOpenDemo, recentProfile, onRestoreProfile, t, lang = 'ru' }) {
   const [uid, setUid] = useState('');
+  const isRu = (lang || (t?.lvl === 'Ур.' ? 'ru' : 'en')) === 'ru';
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
@@ -33,6 +34,30 @@ export default function HomeView({ onSearch, isLoading, errorMsg, onOpenDemo, t 
             {isLoading ? t.btnAnalyzing : t.btnAnalyze}
           </button>
         </form>
+
+        {/* Quick Return to Profile button (instantaneous with 0 loading) */}
+        {recentProfile && !isLoading && (
+          <div style={{ marginBottom: '16px' }}>
+            <button
+              type="button"
+              className="btn-quick-return"
+              onClick={onRestoreProfile}
+              title={isRu ? 'Мгновенно открыть профиль без загрузки (Вперёд / ArrowRight / Mouse 5)' : 'Instantly restore profile without loading (Forward / ArrowRight / Mouse 5)'}
+            >
+              <span className="btn-quick-return-left">
+                <span className="return-arrow-icon">➔</span>
+                <span>
+                  {isRu ? 'Вернуться к профилю: ' : 'Return to profile: '}
+                  <strong style={{ color: 'var(--text-primary)' }}>{recentProfile.player?.nickname || 'Trailblazer'}</strong>
+                  <span style={{ opacity: 0.65, marginLeft: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
+                    (UID: {recentProfile.player?.uid})
+                  </span>
+                </span>
+              </span>
+              <span className="quick-return-tag">{isRu ? 'Вперёд →' : 'Forward →'}</span>
+            </button>
+          </div>
+        )}
 
         {/* Inline Error / Notice Banner */}
         {errorMsg && (

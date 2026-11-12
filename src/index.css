@@ -277,6 +277,53 @@ main {
   color: #fff;
 }
 
+/* Quick Return to Profile Button */
+.btn-quick-return {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 77, 106, 0.06);
+  border: 1px solid rgba(255, 77, 106, 0.35);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.btn-quick-return:hover {
+  background: rgba(255, 77, 106, 0.14);
+  border-color: var(--accent);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-quick-return-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.return-arrow-icon {
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.quick-return-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  padding: 3px 8px;
+  border-radius: 2px;
+  background: rgba(255, 77, 106, 0.12);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
 .guide-banner {
   background: var(--surface-2);
   border-left: 3px solid var(--accent);

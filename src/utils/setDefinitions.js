@@ -228,3 +228,4 @@ export function resolveRelicSetInfo(r, lang = 'ru') {
     icon: r.icon
   };
 }
+
