@@ -1630,6 +1630,38 @@ main {
 }
 
 @media (max-width: 768px) {
+  /* On mobile phones: place Audit Panel (Индекс боеспособности) at the very bottom of the page */
+  .dashboard-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  .dashboard-col-left,
+  .dashboard-col-right {
+    display: contents !important;
+  }
+
+  .panel-combat-stats {
+    order: 1 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .panel-relics {
+    order: 2 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .panel-sets {
+    order: 3 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .panel-audit {
+    order: 10 !important;
+    margin-bottom: 24px !important;
+  }
+
   .desktop-only {
     display: none !important;
   }
@@ -1639,6 +1671,8 @@ main {
     max-width: none !important;
     margin-left: -20px !important;
     margin-right: -20px !important;
+    margin-top: -50px !important;
+    margin-bottom: -120px !important;
     border-left: none !important;
     border-right: none !important;
     border-radius: 0 !important;

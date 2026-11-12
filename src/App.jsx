@@ -340,7 +340,7 @@ export default function App() {
               {/* Left Column: Real Combat Stats & NousMatrix Audit */}
               <div className="dashboard-col-left">
                 {/* 1. Real In-Game Combat Attributes Table */}
-                <div className="panel" style={{ marginBottom: '24px' }}>
+                <div className="panel panel-combat-stats" style={{ marginBottom: '24px' }}>
                   <div className="panel-title">
                     <span>{t.combatStatsTitle}</span>
                     <span style={{ color: 'var(--text-tertiary)', fontSize: '10px' }}>{t.basePlusBonus}</span>
@@ -349,7 +349,7 @@ export default function App() {
                 </div>
 
                 {/* 2. Audit Benchmark & Bottleneck */}
-                <div className="panel">
+                <div className="panel panel-audit">
                   <AuditPanel audit={audit} t={t} lang={lang} />
                 </div>
               </div>
@@ -357,7 +357,7 @@ export default function App() {
               {/* Right Column: 6 Relic Slots & Set Bonuses */}
               <div className="dashboard-col-right">
                 {/* 1. 6 Relic Slots Grid */}
-                <div className="panel" style={{ marginBottom: '24px' }}>
+                <div className="panel panel-relics" style={{ marginBottom: '24px' }}>
                   <div className="panel-title">
                     <span>{t.relicsTitle}</span>
                     <span style={{ color: 'var(--accent)' }}>{t.verifiedData}</span>
@@ -366,7 +366,7 @@ export default function App() {
                 </div>
 
                 {/* 2. Active Set Bonuses */}
-                <div className="panel">
+                <div className="panel panel-sets">
                   <div className="panel-title">
                     <span>{t.setsTitle}</span>
                   </div>
