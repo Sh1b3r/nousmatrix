@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { iconUrl, handleImageFallback } from '../utils/audit';
 import { formatStatName } from '../utils/i18n';
+import { SphereIcon, RopeIcon, WarnIcon, CheckIcon } from './Icons.jsx';
 
 export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
   if (!character) return null;
@@ -25,7 +26,9 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
         <div className="relic-top-row">
           <div className="relic-left-meta">
             <div className="relic-icon-wrap placeholder">
-              <span className="placeholder-icon">{isSphere ? '🔮' : '🔗'}</span>
+              <span className="placeholder-icon">
+                {isSphere ? <SphereIcon size={20} /> : <RopeIcon size={20} />}
+              </span>
               <span className="relic-lvl-badge" style={{ opacity: 0.5 }}>+0</span>
             </div>
             <div className="relic-name-col">
@@ -59,7 +62,9 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
         {/* On mobile: banner written on top */}
         {isWeak && (
           <div className="relic-worst-banner-top mobile-only">
-            <span className="worst-warn-icon">⚠️</span>
+            <span className="worst-warn-icon">
+              <WarnIcon size={12} />
+            </span>
             <span>{t.weakPiece}</span>
           </div>
         )}
@@ -162,9 +167,22 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
     );
   };
 
-  const planarTagLabel = audit?.planar?.isComplete
-    ? `✓ 2/2 ${audit.planar.setName || planarRelics[0]?.set_name}`
-    : (isRu ? '1/2 + 1/2 РАЗОРВАННЫЙ СЕТ ⚠️' : '1/2 + 1/2 BROKEN SET ⚠️');
+  const renderPlanarTag = () => {
+    if (audit?.planar?.isComplete) {
+      return (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+          <CheckIcon size={12} />
+          <span>2/2 {audit.planar.setName || planarRelics[0]?.set_name}</span>
+        </span>
+      );
+    }
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+        <WarnIcon size={12} />
+        <span>{isRu ? '1/2 + 1/2 РАЗОРВАННЫЙ СЕТ' : '1/2 + 1/2 BROKEN SET'}</span>
+      </span>
+    );
+  };
 
   return (
     <div>
@@ -211,15 +229,16 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
             <span className="relic-group-title">{t.planarRelicsTitle}</span>
             {audit?.planar?.setName || planarRelics.length === 2 ? (
               <span className={`relic-group-tag ${audit?.planar?.isComplete ? 'accent' : 'broken'}`}>
-                {planarTagLabel}
+                {renderPlanarTag()}
               </span>
             ) : planarRelics.length === 1 ? (
-              <span className="relic-group-tag broken">
-                {isRu ? '1/2 ЭКИПИРОВАН • ВТОРОЙ СЛОТ ОЖИДАЕТ СИНХРОНИЗАЦИИ ⚠️' : '1/2 EQUIPPED • 2ND SLOT PENDING SYNC ⚠️'}
+              <span className="relic-group-tag broken" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <WarnIcon size={12} />
+                <span>{isRu ? '1/2 ЭКИПИРОВАН • ВТОРОЙ СЛОТ ОЖИДАЕТ СИНХРОНИЗАЦИИ' : '1/2 EQUIPPED • 2ND SLOT PENDING SYNC'}</span>
               </span>
             ) : (
               <span className="relic-group-tag" style={{ borderStyle: 'dashed', color: 'var(--text-secondary)' }}>
-                {isRu ? '⏳ 0/2 ОЖИДАЕТ СИНХРОНИЗАЦИИ В ИГРЕ' : '⏳ 0/2 AWAITING GAME SYNC'}
+                {isRu ? '0/2 ОЖИДАЕТ СИНХРОНИЗАЦИИ В ИГРЕ' : '0/2 AWAITING GAME SYNC'}
               </span>
             )}
           </div>

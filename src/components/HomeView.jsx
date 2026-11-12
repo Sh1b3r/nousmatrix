@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ArrowRightIcon, WarnIcon } from './Icons.jsx';
 
 export default function HomeView({ onSearch, isLoading, errorMsg, onOpenDemo, recentProfile, onRestoreProfile, t, lang = 'ru' }) {
   const [uid, setUid] = useState('');
@@ -45,7 +46,7 @@ export default function HomeView({ onSearch, isLoading, errorMsg, onOpenDemo, re
               title={isRu ? 'Мгновенно открыть профиль без загрузки (Вперёд / ArrowRight / Mouse 5)' : 'Instantly restore profile without loading (Forward / ArrowRight / Mouse 5)'}
             >
               <span className="btn-quick-return-left">
-                <span className="return-arrow-icon">➔</span>
+                <ArrowRightIcon size={14} className="return-arrow-icon" />
                 <span>
                   {isRu ? 'Вернуться к профилю: ' : 'Return to profile: '}
                   <strong style={{ color: 'var(--text-primary)' }}>{recentProfile.player?.nickname || 'Trailblazer'}</strong>
@@ -62,7 +63,10 @@ export default function HomeView({ onSearch, isLoading, errorMsg, onOpenDemo, re
         {/* Inline Error / Notice Banner */}
         {errorMsg && (
           <div className="error-banner">
-            <div className="error-text">⚠️ {errorMsg}</div>
+            <div className="error-text">
+              <WarnIcon size={14} className="error-svg-icon" />
+              <span>{errorMsg}</span>
+            </div>
             {onOpenDemo && (
               <button
                 type="button"

@@ -9,6 +9,7 @@ import RelicsGrid from './components/RelicsGrid';
 import SetBonuses from './components/SetBonuses';
 import AuditPanel from './components/AuditPanel';
 import TrophyModal from './components/TrophyModal';
+import { RefreshIcon } from './components/Icons.jsx';
 import { iconUrl, calculateCharacterAudit } from './utils/audit';
 import { getDetectedLanguage, translations } from './utils/i18n';
 
@@ -487,7 +488,7 @@ export default function App() {
                   onClick={() => fetchProfile(player?.uid, false, true)}
                   title={lang === 'ru' ? "Обновить данные из игры (обойти кэш)" : "Refresh data from game (bypass cache)"}
                 >
-                  <span className="refresh-icon">🔄</span> {lang === 'ru' ? 'ОБНОВИТЬ' : 'REFRESH'}
+                  <RefreshIcon size={12} className="refresh-icon" /> {lang === 'ru' ? 'ОБНОВИТЬ' : 'REFRESH'}
                 </button>
                 <button
                   className="btn-outline back-btn"

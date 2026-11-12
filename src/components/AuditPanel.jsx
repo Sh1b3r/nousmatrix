@@ -1,4 +1,5 @@
 import React from 'react';
+import { RoleSvgIcon } from './Icons.jsx';
 
 export default function AuditPanel({ audit, t, lang = 'ru' }) {
   if (!audit) return null;
@@ -26,7 +27,9 @@ export default function AuditPanel({ audit, t, lang = 'ru' }) {
         <div className={`role-badge-card role-${(audit.detectedRole.role || 'dps').toLowerCase()}`}>
           <div className="role-badge-head">
             <span className="role-badge-pill">
-              <span className="role-badge-icon">{audit.detectedRole.icon || '⚔️'}</span>
+              <span className="role-badge-icon">
+                <RoleSvgIcon role={audit.detectedRole.role} iconType={audit.detectedRole.icon} size={15} />
+              </span>
               <span className="role-badge-name">
                 {isRu ? audit.detectedRole.labelRu : audit.detectedRole.labelEn}
               </span>

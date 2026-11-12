@@ -171,9 +171,11 @@ main {
 }
 
 .refresh-btn .refresh-icon {
-  font-size: 13px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 300ms ease;
+  vertical-align: middle;
 }
 
 .refresh-btn:hover .refresh-icon {
@@ -1005,8 +1007,14 @@ main {
 }
 
 .role-badge-icon {
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
+}
+
+.role-badge-icon svg {
+  display: block;
 }
 
 .role-confidence-tag {

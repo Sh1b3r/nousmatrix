@@ -5,6 +5,7 @@ import { getCharHeadIcon, getCharAvatarPath, iconUrl, handleImageFallback } from
 import CombatStats from './CombatStats';
 import SetBonuses from './SetBonuses';
 import RelicsGrid from './RelicsGrid';
+import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon } from './Icons.jsx';
 
 function waitForImages(element) {
   if (!element) return Promise.resolve();
@@ -283,8 +284,9 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
         {/* Floating Top Controls Bar */}
         <div className="trophy-controls-bar">
           <div className="trophy-controls-left">
-            <span className="trophy-controls-title">
-              {isRu ? '🏆 БИЛД-КАРТА' : '🏆 BUILD CARD'}
+            <span className="trophy-controls-title" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <TrophyIcon size={16} />
+              <span>{isRu ? 'БИЛД-КАРТА' : 'BUILD CARD'}</span>
             </span>
             <span className="trophy-controls-hint">
               {isRu ? 'Картинку можно скопировать кнопкой или через ПКМ' : 'Click button or right-click image to copy'}
@@ -298,22 +300,27 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
               disabled={isGenerating || isCopying}
               style={{
                 background: copied ? 'var(--success)' : '',
-                color: copied ? '#0C0814' : ''
+                color: copied ? '#0C0814' : '',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
               }}
             >
               {copied
-                ? (isRu ? '✓ КАРТИНКА СКОПИРОВАНА!' : '✓ IMAGE COPIED!')
+                ? (<><CheckIcon size={14} /> <span>{isRu ? 'КАРТИНКА СКОПИРОВАНА!' : 'IMAGE COPIED!'}</span></>)
                 : (isCopying
-                  ? (isRu ? 'КОПИРОВАНИЕ...' : 'COPYING...')
-                  : (isRu ? '📋 СКОПИРОВАТЬ КАРТИНКУ' : '📋 COPY IMAGE')
+                  ? <span>{isRu ? 'КОПИРОВАНИЕ...' : 'COPYING...'}</span>
+                  : (<><CopyIcon size={14} /> <span>{isRu ? 'СКОПИРОВАТЬ КАРТИНКУ' : 'COPY IMAGE'}</span></>)
                 )}
             </button>
             <button
               className="btn-outline trophy-action-btn download-btn"
               onClick={handleDownloadImage}
               disabled={isGenerating}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
-              {isRu ? '💾 СКАЧАТЬ PNG' : '💾 DOWNLOAD PNG'}
+              <DownloadIcon size={14} />
+              <span>{isRu ? 'СКАЧАТЬ PNG' : 'DOWNLOAD PNG'}</span>
             </button>
             <button className="btn-close-modal" onClick={onClose} title={isRu ? 'Закрыть' : 'Close'}>
               &times;

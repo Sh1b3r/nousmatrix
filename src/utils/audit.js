@@ -98,7 +98,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       return {
         type: 'DPS',
         role: 'DPS',
-        icon: '⚔️',
+        icon: 'dps',
         labelRu: 'ОГНЕННЫЙ ГИПЕРКЕРРИ (ДПС)',
         labelEn: 'FIRE HYPERCARRY DPS',
         descRu: 'Сборка под личный урон: упор на Крит. массу (+100 CV в Зоне) и максимальное HP для взрывных атак под баффами гармонии.',
@@ -112,7 +112,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       return {
         type: 'HYBRID',
         role: 'HYBRID',
-        icon: '⚖️',
+        icon: 'hybrid',
         labelRu: 'ГИБРИД (ДЕБАФФЕР + САБ-ДПС)',
         labelEn: 'HYBRID DEBUFFER & SUB-DPS',
         descRu: 'Сбалансированная гибридная сборка: быстрый перезапуск Зоны (таймер 70 SPD) и бафф отряда через Кузнеца/Вонвак в связке с личными критами.',
@@ -125,7 +125,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'SUPPORT',
       role: 'SUPPORT',
-      icon: '🛡️',
+      icon: 'support',
       labelRu: 'САППОРТ-ДЕБАФФЕР (ТАЙМЕР ЗОНЫ / БАФФ ОТРЯДА)',
       labelEn: 'ZONE DEBUFFER & TEAM SUPPORT',
       descRu: 'Персонаж собран как саппорт: упор на скорость (для опережения таймера Зоны 70 SPD), ВЭ и баффы отряда («Поддержание огня» +15% урона союзникам от 4-pc Кузнеца).',
@@ -156,7 +156,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       return {
         type: 'SUPPORT',
         role: 'SUPPORT',
-        icon: '🛡️',
+        icon: 'support',
         labelRu: 'САППОРТ-ДЕБАФФЕР (КОНТРОЛЬ И ЗАМЕДЛЕНИЕ)',
         labelEn: 'CROWD CONTROL & VULNERABILITY SUPPORT',
         descRu: 'Сборка на контроль поля боя: высокий ШПЭ (67%+) для гарантированного Заключения и 100% аптайма уязвимости (+12% урона от ульты).',
@@ -169,7 +169,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'DPS',
       role: 'DPS',
-      icon: '⚔️',
+      icon: 'dps',
       labelRu: 'МНИМЫЙ ДПС / САБ-ДПС (КРИТЫ)',
       labelEn: 'IMAGINARY CRIT DPS',
       descRu: 'Сборка под личный урон: высокий КШ/КУ и мнимый урон для реализации высоких множителей навыка и ультимейта.',
@@ -186,7 +186,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       return {
         type: 'DPS',
         role: 'DPS',
-        icon: '⚔️',
+        icon: 'dps',
         labelRu: 'КВАНТОВЫЙ САБ-ДПС (КРИТЫ)',
         labelEn: 'QUANTUM CRIT SUB-DPS',
         descRu: 'Критовая сборка (E2+ / Саб-ДПС): нанесение высокого личного квантового урона в дополнение к наложению дебаффов.',
@@ -198,7 +198,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'SUPPORT',
       role: 'SUPPORT',
-      icon: '🛡️',
+      icon: 'support',
       labelRu: 'КВАНТОВЫЙ ДЕБАФФЕР (САППОРТ)',
       labelEn: 'QUANTUM DEBUFFER SUPPORT',
       descRu: 'Классический саппорт: приоритет ШПЭ (96%+ / 67% с сигной) и высокой скорости (145-160+) для гарантированного внедрения уязвимостей.',
@@ -215,7 +215,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       return {
         type: 'HYBRID',
         role: 'HYBRID',
-        icon: '⚖️',
+        icon: 'hybrid',
         labelRu: 'ГИБРИДНЫЙ САБ-ДПС (КРИТЫ + ЩИТ)',
         labelEn: 'HYBRID SUB-DPS (CRIT & SHIELD)',
         descRu: 'Гибридная сборка: тело на Крит. Урон и бонус-атаки при сохранении базового порога 4000 защиты для пассивного бонуса +48% КШ.',
@@ -227,7 +227,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'SUPPORT',
       role: 'SUPPORT',
-      icon: '🛡️',
+      icon: 'support',
       labelRu: 'ЩИТОВИК-САСТЕЙН (МАКС. ЗАЩИТА)',
       labelEn: 'PURE SHIELDER / SUSTAIN',
       descRu: 'Классический састейн: максимизация Защиты (4000+ DEF) для непробиваемого щита всей команды.',
@@ -244,7 +244,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       return {
         type: 'DPS',
         role: 'DPS',
-        icon: '⚔️',
+        icon: 'dps',
         labelRu: 'ОГНЕННЫЙ DOT САБ-ДПС',
         labelEn: 'FIRE DOT SUB-DPS',
         descRu: 'Сборка с уклоном в личный периодический урон (Огненная сфера + АТК%).',
@@ -256,7 +256,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'SUPPORT',
       role: 'SUPPORT',
-      icon: '🛡️',
+      icon: 'support',
       labelRu: 'ДЕБАФФЕР-САППОРТ (ГЕНЕРАТОР СТАКОВ)',
       labelEn: 'ULTIMATE ENHANCER & STACK BUFFER',
       descRu: 'Сборка под генерацию стаков (Ахерон/отряд): максимальная скорость (160+) и 140%+ ШПЭ для мгновенного наложения Посола.',
@@ -273,7 +273,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       return {
         type: 'SUPPORT',
         role: 'SUPPORT',
-        icon: '🛡️',
+        icon: 'support',
         labelRu: 'ПРОБИВНОЙ САППОРТ (СУПЕР-ПРОБИТИЕ)',
         labelEn: 'SUPER BREAK SPEED ENABLER',
         descRu: 'Сборка в отряды пробития (Светлячок/Бутхилл): упор на Эффект Пробития и скорость.',
@@ -285,7 +285,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'DPS',
       role: 'DPS',
-      icon: '⚔️',
+      icon: 'dps',
       labelRu: 'КРИТОВЫЙ ДПС (БОНУС-АТАКИ)',
       labelEn: 'FOLLOW-UP CRIT DPS',
       descRu: 'Сборка в отряды бонус-атак (Фэйсяо/Рацио): упор на КШ, КУ и Силу атаки.',
@@ -300,7 +300,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'SUPPORT',
       role: 'SUPPORT',
-      icon: '💚',
+      icon: 'heal',
       labelRu: 'ЦЕЛИТЕЛЬ-САСТЕЙН (ИЗОБИЛИЕ)',
       labelEn: 'HEALER / SUSTAIN (ABUNDANCE)',
       descRu: 'Сборка на эффективное лечение, снятие ослаблений и выживание команды.',
@@ -314,7 +314,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'SUPPORT',
       role: 'SUPPORT',
-      icon: '🛡️',
+      icon: 'support',
       labelRu: 'ЩИТОВИК-САСТЕЙН (СОХРАНЕНИЕ)',
       labelEn: 'SHIELDER / SUSTAIN (PRESERVATION)',
       descRu: 'Сборка на прочность щитов и командное снижение урона.',
@@ -328,8 +328,8 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
     return {
       type: 'SUPPORT',
       role: 'SUPPORT',
-      icon: '✨',
-      labelRu: 'БУФФЕР-САППОРТ (ГАРМОНИЯ)',
+      icon: 'buffer',
+      labelRu: 'БАФФЕР-САППОРТ (ГАРМОНИЯ)',
       labelEn: 'BUFFER / ENABLER (HARMONY)',
       descRu: 'Сборка на усиление урона, продвижение ходов и генерацию очков действий команды.',
       descEn: 'Built for amplifying team damage, action advance, and buff uptime.',
@@ -342,7 +342,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
   return {
     type: 'DPS',
     role: 'DPS',
-    icon: '⚔️',
+    icon: 'dps',
     labelRu: 'БОЕВОЙ ДПС (УРОН ОТРЯДА)',
     labelEn: 'MAIN DPS (DAMAGE DEALER)',
     descRu: 'Сборка на нанесение максимального урона.',
@@ -996,7 +996,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
   const isSW999 = isWolf && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
 
   if (isSW999 || (isWolf && cv >= 140)) {
-    const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const spdStatus = spd >= 160 ? '[160+ CAP ]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
     const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 160 ? '[OK]' : '[LOW]'));
 
     return {
@@ -1023,8 +1023,8 @@ export function determineCharacterMetrics(char, archetype, stats) {
   const isMortenax = charId === '1507' || lowerName.includes('мортенакс') || lowerName.includes('mortenax');
   if (isMortenax) {
     if (archetype === 'MORTENAX_SUPPORT') {
-      const spdStatus = spd >= 160 ? '[160+ HYPER ✓]' : (spd >= 145 ? '[145+ ZONE TUNED ✓]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ⚠️]'));
-      const hpStatus = hp >= 7000 ? '[7000+ TANK ✓]' : (hp >= 6000 ? '[6000+ OK]' : '[LOW]');
+      const spdStatus = spd >= 160 ? '[160+ HYPER ]' : (spd >= 145 ? '[145+ ZONE TUNED ]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ]'));
+      const hpStatus = hp >= 7000 ? '[7000+ TANK ]' : (hp >= 6000 ? '[6000+ OK]' : '[LOW]');
 
       return {
         primary: {
@@ -1044,7 +1044,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
       };
     }
 
-    const spdStatus = spd >= 160 ? '[160+ HYPER ✓]' : (spd >= 145 ? '[145+ ZONE TUNED ✓]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ⚠️]'));
+    const spdStatus = spd >= 160 ? '[160+ HYPER ]' : (spd >= 145 ? '[145+ ZONE TUNED ]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ]'));
     const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 150 ? '[OK]' : '[LOW]'));
 
     return {
@@ -1070,8 +1070,8 @@ export function determineCharacterMetrics(char, archetype, stats) {
     const isJiaoqiu = lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu');
     const isWelt = charId === '1004' || lowerName.includes('вельт') || lowerName.includes('welt');
     const targetEhr = isJiaoqiu ? 140 : (isWolf ? 96 : (isWelt ? 67 : 67));
-    const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
-    const ehrStatus = ehr >= targetEhr ? `[${targetEhr}% CAP ✓]` : `[${ehr.toFixed(0)}% / ${targetEhr}%]`;
+    const spdStatus = spd >= 160 ? '[160+ CAP ]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const ehrStatus = ehr >= targetEhr ? `[${targetEhr}% CAP ]` : `[${ehr.toFixed(0)}% / ${targetEhr}%]`;
 
     return {
       primary: {
@@ -1094,8 +1094,8 @@ export function determineCharacterMetrics(char, archetype, stats) {
   // 2. Yao Guang / HARMONY_SPD - Speed is primary, Crits/ERR are secondary
   const isYaoGuang = lowerName.includes('яо') || lowerName.includes('yao') || lowerName.includes('гуан') || lowerName.includes('guang') || lowerName.includes('爻光');
   if (archetype === 'HARMONY_SPD' || isYaoGuang) {
-    const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
-    const crStatus = cr >= 50 ? `[${cr.toFixed(1)}% CR ✓]` : `[${cr.toFixed(1)}% CR]`;
+    const spdStatus = spd >= 160 ? '[160+ CAP ]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const crStatus = cr >= 50 ? `[${cr.toFixed(1)}% CR ]` : `[${cr.toFixed(1)}% CR]`;
 
     return {
       primary: {
@@ -1110,7 +1110,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelEn: isYaoGuang ? 'CRIT RATE (160+ SPD PASSIVE)' : 'ENERGY REGENERATION (ERR)',
         display: isYaoGuang ? `${cr.toFixed(1)}% CR` : (err > 0 ? `+${err.toFixed(1)}% ERR` : '100% (БАЗА)'),
         percent: isYaoGuang ? Math.min(100, (cr / 70) * 100) : Math.min(100, Math.max(20, (err / 24.4) * 100)),
-        status: isYaoGuang ? crStatus : (err >= 19.4 ? '[ВЕРВЬ ВЭ ✓]' : '[НУЖНА ВЭ]')
+        status: isYaoGuang ? crStatus : (err >= 19.4 ? '[ВЕРВЬ ВЭ ]' : '[НУЖНА ВЭ]')
       }
     };
   }
@@ -1163,7 +1163,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
 
   // 5. Ruan Mei (HARMONY_BREAK) - Break Effect (180% cap) is primary, Speed is secondary
   if (archetype === 'HARMONY_BREAK') {
-    const beStatus = be >= 180 ? '[180% CAP ✓]' : `[-${Math.max(0, Math.round(180 - be))}% ДО КАПА]`;
+    const beStatus = be >= 180 ? '[180% CAP ]' : `[-${Math.max(0, Math.round(180 - be))}% ДО КАПА]`;
     const spdStatus = spd >= 145 ? '[145+ TALIA]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]');
 
     return {
@@ -1194,14 +1194,14 @@ export function determineCharacterMetrics(char, archetype, stats) {
           labelEn: 'SPEED (SPD)',
           display: `${spd.toFixed(1)} SPD`,
           percent: Math.min(100, (spd / 160) * 100),
-          status: spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : '[SLOW]')
+          status: spd >= 160 ? '[160+ CAP ]' : (spd >= 145 ? '[145+ OK]' : '[SLOW]')
         },
         secondary: {
           labelRu: 'СИЛА АТАКИ (ATK)',
           labelEn: 'ATTACK (ATK CAP)',
           display: `${Math.round(atk)} ATK`,
           percent: Math.min(100, (atk / 2600) * 100),
-          status: atk >= 2600 ? '[2600 CAP ✓]' : `[-${Math.max(0, Math.round(2600 - atk))} ДО КАПА]`
+          status: atk >= 2600 ? '[2600 CAP ]' : `[-${Math.max(0, Math.round(2600 - atk))} ДО КАПА]`
         }
       };
     }
@@ -1212,14 +1212,14 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelEn: 'ATTACK POWER (ATK)',
         display: `${Math.round(atk)} ATK`,
         percent: Math.min(100, (atk / 4200) * 100),
-        status: atk >= 4000 ? '[4000+ CAP ✓]' : (atk >= 3500 ? '[3500+ OK]' : '[LOW]')
+        status: atk >= 4000 ? '[4000+ CAP ]' : (atk >= 3500 ? '[3500+ OK]' : '[LOW]')
       },
       secondary: {
         labelRu: 'ВОССТАНОВЛЕНИЕ ЭНЕРГИИ',
         labelEn: 'ENERGY REGENERATION (ERR)',
         display: err > 0 ? `+${err.toFixed(1)}% ERR` : '100% (БАЗА)',
         percent: Math.min(100, Math.max(20, (err / 24.4) * 100)),
-        status: err >= 19.4 ? '[ВЕРВЬ ВЭ ✓]' : '[НУЖНА ВЭ]'
+        status: err >= 19.4 ? '[ВЕРВЬ ВЭ ]' : '[НУЖНА ВЭ]'
       }
     };
   }
@@ -1234,7 +1234,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
           labelEn: 'EFFECT HIT RATE (EHR)',
           display: `${ehr.toFixed(1)}% EHR`,
           percent: Math.min(100, (ehr / 120) * 100),
-          status: ehr >= 120 ? '[120% CAP ✓]' : `[-${Math.max(0, (120 - ehr)).toFixed(1)}% ДО КАПА]`
+          status: ehr >= 120 ? '[120% CAP ]' : `[-${Math.max(0, (120 - ehr)).toFixed(1)}% ДО КАПА]`
         },
         secondary: {
           labelRu: 'ПОРОГ СКОРОСТИ',
@@ -1272,7 +1272,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelEn: 'DEFENCE (DEF)',
         display: `${Math.round(def)} DEF`,
         percent: Math.min(100, (def / 4000) * 100),
-        status: def >= 4000 ? '[4000 CAP ✓]' : `[-${Math.max(0, 4000 - Math.round(def))} ДО КАПА]`
+        status: def >= 4000 ? '[4000 CAP ]' : `[-${Math.max(0, 4000 - Math.round(def))} ДО КАПА]`
       },
       secondary: {
         labelRu: 'ПОРОГ СКОРОСТИ',
@@ -1312,7 +1312,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelEn: 'BREAK EFFECT (BE)',
         display: `${be.toFixed(1)}% BE`,
         percent: Math.min(100, (be / 150) * 100),
-        status: be >= 150 ? '[150% CAP ✓]' : `[-${Math.max(0, Math.round(150 - be))}% ДО КАПА]`
+        status: be >= 150 ? '[150% CAP ]' : `[-${Math.max(0, Math.round(150 - be))}% ДО КАПА]`
       },
       secondary: {
         labelRu: 'ПОРОГ СКОРОСТИ',
@@ -1401,7 +1401,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
     const isAcheron = lowerName.includes('ахерон') || lowerName.includes('acheron') || charId === '1308';
     const isHimeko = lowerName.includes('химеко') || lowerName.includes('himeko') || lowerName.includes('нова') || lowerName.includes('nova');
     const atkTarget = isAcheron ? 3800 : (isHimeko ? 3200 : 3400);
-    const atkStatus = atk >= atkTarget ? `[${atkTarget}+ TOP ✓]` : (atk >= (atkTarget - 400) ? '[OK]' : '[LOW]');
+    const atkStatus = atk >= atkTarget ? `[${atkTarget}+ TOP ]` : (atk >= (atkTarget - 400) ? '[OK]' : '[LOW]');
     const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 160 ? '[OK]' : '[LOW]'));
 
     return {
@@ -2025,88 +2025,88 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   if (/Салсотто|Salsotto/i.test(planarSet)) {
     isConditionMet = cr >= 50;
     planarCondition = isConditionMet
-      ? (isRu ? `50%+ КШ выполнено (${cr}% ✓) • Бонус +15% к ульту/бонус-атаке активен` : `50%+ CR achieved (${cr}% ✓) • +15% Ult/FUA DMG active`)
-      : (isRu ? `Требуется 50% КШ (текущий: ${cr}% ⚠️) • Бонус сета не активирован!` : `Requires 50% CR (current: ${cr}% ⚠️) • Inactive!`);
+      ? (isRu ? `50%+ КШ выполнено (${cr}% ) • Бонус +15% к ульту/бонус-атаке активен` : `50%+ CR achieved (${cr}% ) • +15% Ult/FUA DMG active`)
+      : (isRu ? `Требуется 50% КШ (текущий: ${cr}% ) • Бонус сета не активирован!` : `Requires 50% CR (current: ${cr}% ) • Inactive!`);
   } else if (/Гламот|Глатирамер|Glamoth/i.test(planarSet)) {
     if (spd >= 160) {
       isConditionMet = true;
-      planarCondition = isRu ? `160+ СКОР выполнено (${spd} ✓) • Максимальный бонус +18% урона активен` : `160+ SPD achieved (${spd} ✓) • Max +18% DMG active`;
+      planarCondition = isRu ? `160+ СКОР выполнено (${spd} ) • Максимальный бонус +18% урона активен` : `160+ SPD achieved (${spd} ) • Max +18% DMG active`;
     } else if (spd >= 135) {
       isConditionMet = true;
-      planarCondition = isRu ? `135+ СКОР выполнено (${spd} ✓) • Бонус +12% урона активен` : `135+ SPD achieved (${spd} ✓) • +12% DMG active`;
+      planarCondition = isRu ? `135+ СКОР выполнено (${spd} ) • Бонус +12% урона активен` : `135+ SPD achieved (${spd} ) • +12% DMG active`;
     } else {
       isConditionMet = false;
-      planarCondition = isRu ? `Требуется 135 СКОР (текущая: ${spd} ⚠️) • Бонус урона не активирован!` : `Requires 135 SPD (current: ${spd} ⚠️) • Inactive!`;
+      planarCondition = isRu ? `Требуется 135 СКОР (текущая: ${spd} ) • Бонус урона не активирован!` : `Requires 135 SPD (current: ${spd} ) • Inactive!`;
     }
   } else if (/Арена|Rutilant/i.test(planarSet)) {
     isConditionMet = cr >= 70;
     planarCondition = isConditionMet
-      ? (isRu ? `70%+ КШ выполнено (${cr}% ✓) • Бонус +20% к базовой атаке и навыку активен` : `70%+ CR achieved (${cr}% ✓) • +20% Basic/Skill DMG active`)
-      : (isRu ? `Требуется 70% КШ (текущий: ${cr}% ⚠️) • Бонус урона не активирован!` : `Requires 70% CR (current: ${cr}% ⚠️) • Inactive!`);
+      ? (isRu ? `70%+ КШ выполнено (${cr}% ) • Бонус +20% к базовой атаке и навыку активен` : `70%+ CR achieved (${cr}% ) • +20% Basic/Skill DMG active`)
+      : (isRu ? `Требуется 70% КШ (текущий: ${cr}% ) • Бонус урона не активирован!` : `Requires 70% CR (current: ${cr}% ) • Inactive!`);
   } else if (/Киль|Keel/i.test(planarSet)) {
     isConditionMet = eres >= 30;
     planarCondition = isConditionMet
-      ? (isRu ? `30%+ СЭ выполнено (${eres}% ✓) • Бонус отряда +10% Крит. Урона активен` : `30%+ E-RES achieved (${eres}% ✓) • Team +10% CD active`)
-      : (isRu ? `Требуется 30% СЭ (текущее: ${eres}% ⚠️) • Бонус критов не активирован!` : `Requires 30% E-RES (current: ${eres}% ⚠️) • Inactive!`);
+      ? (isRu ? `30%+ СЭ выполнено (${eres}% ) • Бонус отряда +10% Крит. Урона активен` : `30%+ E-RES achieved (${eres}% ) • Team +10% CD active`)
+      : (isRu ? `Требуется 30% СЭ (текущее: ${eres}% ) • Бонус критов не активирован!` : `Requires 30% E-RES (current: ${eres}% ) • Inactive!`);
   } else if (/Герта|Space Sealing|Запечатывающ/i.test(planarSet)) {
     isConditionMet = spd >= 120;
     planarCondition = isConditionMet
-      ? (isRu ? `120+ СКОР выполнено (${spd} ✓) • Дополнительные +12% Силы Атаки активны` : `120+ SPD achieved (${spd} ✓) • Extra +12% ATK active`)
-      : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ⚠️) • Доп. атака не активирована!` : `Requires 120 SPD (current: ${spd} ⚠️) • Inactive!`);
+      ? (isRu ? `120+ СКОР выполнено (${spd} ) • Дополнительные +12% Силы Атаки активны` : `120+ SPD achieved (${spd} ) • Extra +12% ATK active`)
+      : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ) • Доп. атака не активирована!` : `Requires 120 SPD (current: ${spd} ) • Inactive!`);
   } else if (/Флот|Ageless/i.test(planarSet)) {
     isConditionMet = spd >= 120;
     planarCondition = isConditionMet
-      ? (isRu ? `120+ СКОР выполнено (${spd} ✓) • Бонус отряда +8% Силы Атаки активен` : `120+ SPD achieved (${spd} ✓) • Team +8% ATK active`)
-      : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ⚠️) • Бафф отряда не активирован!` : `Requires 120 SPD (current: ${spd} ⚠️) • Inactive!`);
+      ? (isRu ? `120+ СКОР выполнено (${spd} ) • Бонус отряда +8% Силы Атаки активен` : `120+ SPD achieved (${spd} ) • Team +8% ATK active`)
+      : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ) • Бафф отряда не активирован!` : `Requires 120 SPD (current: ${spd} ) • Inactive!`);
   } else if (/Калпаги|Лотосовый фонарь|Kalpagni/i.test(planarSet)) {
     isConditionMet = spd >= 145;
     planarCondition = isConditionMet
-      ? (isRu ? `145+ СКОР выполнено (${spd} ✓) • +40% Эффекта Пробития по огненной уязвимости` : `145+ SPD achieved (${spd} ✓) • +40% BE on Fire weakness`)
-      : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ⚠️)` : `Requires 145 SPD (current: ${spd} ⚠️)`);
+      ? (isRu ? `145+ СКОР выполнено (${spd} ) • +40% Эффекта Пробития по огненной уязвимости` : `145+ SPD achieved (${spd} ) • +40% BE on Fire weakness`)
+      : (isRu ? `Требуется 145 СКОР (текущая: ${spd} )` : `Requires 145 SPD (current: ${spd} )`);
   } else if (/Талия|Talia/i.test(planarSet)) {
     isConditionMet = spd >= 145;
     planarCondition = isConditionMet
-      ? (isRu ? `145+ СКОР выполнено (${spd} ✓) • Максимальный бонус +36% Эффекта Пробития активен` : `145+ SPD achieved (${spd} ✓) • Max +36% Break Effect active`)
-      : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ⚠️) • Доп. +20% ЭП не активированы!` : `Requires 145 SPD (current: ${spd} ⚠️) • Inactive!`);
+      ? (isRu ? `145+ СКОР выполнено (${spd} ) • Максимальный бонус +36% Эффекта Пробития активен` : `145+ SPD achieved (${spd} ) • Max +36% Break Effect active`)
+      : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ) • Доп. +20% ЭП не активированы!` : `Requires 145 SPD (current: ${spd} ) • Inactive!`);
   } else if (/Вонвак|Vonwacq/i.test(planarSet)) {
     isConditionMet = spd >= 120;
     planarCondition = isConditionMet
-      ? (isRu ? `120+ СКОР выполнено (${spd} ✓) • +5% ВЭ и продвижение действия на 40% активно` : `120+ SPD achieved (${spd} ✓) • +5% ERR & 40% Action Advance active`)
-      : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ⚠️)` : `Requires 120 SPD (current: ${spd} ⚠️)`);
+      ? (isRu ? `120+ СКОР выполнено (${spd} ) • +5% ВЭ и продвижение действия на 40% активно` : `120+ SPD achieved (${spd} ) • +5% ERR & 40% Action Advance active`)
+      : (isRu ? `Требуется 120 СКОР (текущая: ${spd} )` : `Requires 120 SPD (current: ${spd} )`);
   } else if (/Белобог|Belobog/i.test(planarSet)) {
     isConditionMet = ehr >= 50;
     planarCondition = isConditionMet
-      ? (isRu ? `50%+ ШПЭ выполнено (${ehr}% ✓) • Максимальный бонус +30% Защиты активен` : `50%+ EHR achieved (${ehr}% ✓) • Max +30% DEF active`)
-      : (isRu ? `Требуется 50% ШПЭ (текущий: ${ehr}% ⚠️) • Доп. +15% ЗАЩ не активированы!` : `Requires 50% EHR (current: ${ehr}% ⚠️) • Inactive!`);
+      ? (isRu ? `50%+ ШПЭ выполнено (${ehr}% ) • Максимальный бонус +30% Защиты активен` : `50%+ EHR achieved (${ehr}% ) • Max +30% DEF active`)
+      : (isRu ? `Требуется 50% ШПЭ (текущий: ${ehr}% ) • Доп. +15% ЗАЩ не активированы!` : `Requires 50% EHR (current: ${ehr}% ) • Inactive!`);
   } else if (/Дифференциатор|Differentiator/i.test(planarSet)) {
     isConditionMet = cd >= 120;
     planarCondition = isConditionMet
-      ? (isRu ? `120%+ КУ выполнено (${cd}% ✓) • +16% КУ и +60% КШ на первую атаку активны` : `120%+ CD achieved (${cd}% ✓) • +16% CD & +60% CR on 1st hit active`)
-      : (isRu ? `Требуется 120% КУ (текущий: ${cd}% ⚠️)` : `Requires 120% CD (current: ${cd}% ⚠️)`);
+      ? (isRu ? `120%+ КУ выполнено (${cd}% ) • +16% КУ и +60% КШ на первую атаку активны` : `120%+ CD achieved (${cd}% ) • +16% CD & +60% CR on 1st hit active`)
+      : (isRu ? `Требуется 120% КУ (текущий: ${cd}% )` : `Requires 120% CD (current: ${cd}% )`);
   } else if (/Безмолвная страна костей|Кост|Останков|Bone Collection/i.test(planarSet)) {
     isConditionMet = hp >= 5000;
     planarCondition = isConditionMet
-      ? (isRu ? `5000+ HP выполнено (${hp} ✓) • +12% HP и +28% Крит. Урона владельцу и миньонам активно` : `5000+ HP achieved (${hp} ✓) • +12% HP & +28% CD active`)
-      : (isRu ? `Требуется 5000 HP (текущее: ${hp} ⚠️)` : `Requires 5000 HP (current: ${hp} ⚠️)`);
+      ? (isRu ? `5000+ HP выполнено (${hp} ) • +12% HP и +28% Крит. Урона владельцу и миньонам активно` : `5000+ HP achieved (${hp} ) • +12% HP & +28% CD active`)
+      : (isRu ? `Требуется 5000 HP (текущее: ${hp} )` : `Requires 5000 HP (current: ${hp} )`);
   } else if (/Древо|Giant Tree/i.test(planarSet)) {
     isConditionMet = spd >= 135;
     planarCondition = isConditionMet
-      ? (isRu ? `135+ СКОР выполнено (${spd} ✓) • +6% СКОР и максимальный бафф активен` : `135+ SPD achieved (${spd} ✓) • +6% SPD & max buff active`)
-      : (isRu ? `Требуется 135 СКОР (текущая: ${spd} ⚠️)` : `Requires 135 SPD (current: ${spd} ⚠️)`);
+      ? (isRu ? `135+ СКОР выполнено (${spd} ) • +6% СКОР и максимальный бафф активен` : `135+ SPD achieved (${spd} ) • +6% SPD & max buff active`)
+      : (isRu ? `Требуется 135 СКОР (текущая: ${spd} )` : `Requires 135 SPD (current: ${spd} )`);
   } else if (/Банан|Banan/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu
-      ? '+16% Крит. Урона активно • Дополнительно +32% КУ при наличии призванного существа ✓'
-      : '+16% CRIT DMG active • +32% extra CD when summons present ✓';
+      ? '+16% Крит. Урона активно • Дополнительно +32% КУ при наличии призванного существа '
+      : '+16% CRIT DMG active • +32% extra CD when summons present ';
   } else if (/Русалка|затопленные берега|Лушака|Lushaka/i.test(planarSet)) {
     isConditionMet = true;
-    planarCondition = isRu ? '+5% ВЭ и +12% Силы Атаки первому союзнику в отряде (если владелец не на 1 слоте) ✓' : '+5% ERR & +12% ATK to 1st slot ally (if wearer not in slot 1) ✓';
+    planarCondition = isRu ? '+5% ВЭ и +12% Силы Атаки первому союзнику в отряде (если владелец не на 1 слоте) ' : '+5% ERR & +12% ATK to 1st slot ally (if wearer not in slot 1) ';
   } else if (/Пенакони|Penacony/i.test(planarSet)) {
     isConditionMet = true;
-    planarCondition = isRu ? '+5% ВЭ и +10% урона союзникам той же стихии ✓' : '+5% ERR & +10% DMG to same-element allies ✓';
+    planarCondition = isRu ? '+5% ВЭ и +10% урона союзникам той же стихии ' : '+5% ERR & +10% DMG to same-element allies ';
   } else if (/Пангалакти|Pan-Cosmic/i.test(planarSet)) {
     isConditionMet = true;
-    planarCondition = isRu ? `+10% ШПЭ и +${Math.min(25, Math.round(ehr * 0.25))}% Силы Атаки от ШПЭ ✓` : `+10% EHR & +${Math.min(25, Math.round(ehr * 0.25))}% ATK from EHR ✓`;
+    planarCondition = isRu ? `+10% ШПЭ и +${Math.min(25, Math.round(ehr * 0.25))}% Силы Атаки от ШПЭ ` : `+10% EHR & +${Math.min(25, Math.round(ehr * 0.25))}% ATK from EHR `;
   } else if (/Сигони|Sigonia/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu ? '+4% КШ и до +40% Крит. Урона за поверженных врагов' : '+4% CR & up to +40% CD on enemy defeated';
@@ -2119,22 +2119,22 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   } else if (/Миг радости бога|радости бога|миг радости|радост|Moment of Joy|Joy/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu
-      ? '+6% Скорости активно • Действие продвигается вперёд на 40% при входе в бой с Радостью ✓'
-      : '+6% SPD active • 40% Action Advance at battle start with Elation ✓';
+      ? '+6% Скорости активно • Действие продвигается вперёд на 40% при входе в бой с Радостью '
+      : '+6% SPD active • 40% Action Advance at battle start with Elation ';
   } else if (/Подпространственный центр|контроля аномалий|Subspace ASC Center/i.test(planarSet)) {
     isConditionMet = spd >= 145;
     planarCondition = isConditionMet
-      ? (isRu ? `145+ СКОР выполнено (${spd} ✓) • +6% СКОР и +15% Эффекта Пробития всем союзникам активны ✓` : `145+ SPD achieved (${spd} ✓) • +6% SPD & +15% Break Effect for all allies active ✓`)
-      : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ⚠️) • Бонус команды не активирован!` : `Requires 145 SPD (current: ${spd} ⚠️) • Team bonus inactive!`);
+      ? (isRu ? `145+ СКОР выполнено (${spd} ) • +6% СКОР и +15% Эффекта Пробития всем союзникам активны ` : `145+ SPD achieved (${spd} ) • +6% SPD & +15% Break Effect for all allies active `)
+      : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ) • Бонус команды не активирован!` : `Requires 145 SPD (current: ${spd} ) • Team bonus inactive!`);
   } else if (/Tengoku|Тэнгоку|Стрим/i.test(planarSet)) {
     isConditionMet = true;
-    planarCondition = isRu ? '+8% КШ активно • Дополнительно +24% Крит. Урона при наличии спутника/призыва ✓' : '+8% CR active • +24% CRIT DMG with summon/servant ✓';
+    planarCondition = isRu ? '+8% КШ активно • Дополнительно +24% Крит. Урона при наличии спутника/призыва ' : '+8% CR active • +24% CRIT DMG with summon/servant ';
   } else if (/Amphoreus|Амфореус/i.test(planarSet)) {
     isConditionMet = true;
-    planarCondition = isRu ? '+12% HP и усиление урона союзников активно ✓' : '+12% HP & team DMG amplification active ✓';
+    planarCondition = isRu ? '+12% HP и усиление урона союзников активно ' : '+12% HP & team DMG amplification active ';
   } else if (/Punklorde|Панклорд/i.test(planarSet)) {
     isConditionMet = true;
-    planarCondition = isRu ? '+6% Скорости и бонус атаки от ШПЭ активны ✓' : '+6% SPD & ATK bonus from EHR active ✓';
+    planarCondition = isRu ? '+6% Скорости и бонус атаки от ШПЭ активны ' : '+6% SPD & ATK bonus from EHR active ';
   } else {
     // Universal Smart Fallback for any future or unlisted planar set
     // Check if the set bonus description has a speed, HP, CR, or EHR threshold
@@ -2144,43 +2144,43 @@ export function calculateCharacterAudit(char, lang = 'ru') {
     if (/\b160\b/.test(setDesc)) {
       isConditionMet = spd >= 160;
       planarCondition = isConditionMet
-        ? (isRu ? `160+ СКОР выполнено (${spd} ✓) • Полный бонус сета активен` : `160+ SPD achieved (${spd} ✓) • Full set bonus active`)
-        : (isRu ? `Требуется 160 СКОР (текущая: ${spd} ⚠️)` : `Requires 160 SPD (current: ${spd} ⚠️)`);
+        ? (isRu ? `160+ СКОР выполнено (${spd} ) • Полный бонус сета активен` : `160+ SPD achieved (${spd} ) • Full set bonus active`)
+        : (isRu ? `Требуется 160 СКОР (текущая: ${spd} )` : `Requires 160 SPD (current: ${spd} )`);
     } else if (/\b145\b/.test(setDesc)) {
       isConditionMet = spd >= 145;
       planarCondition = isConditionMet
-        ? (isRu ? `145+ СКОР выполнено (${spd} ✓) • Бонус сета активен` : `145+ SPD achieved (${spd} ✓) • Set bonus active`)
-        : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ⚠️)` : `Requires 145 SPD (current: ${spd} ⚠️)`);
+        ? (isRu ? `145+ СКОР выполнено (${spd} ) • Бонус сета активен` : `145+ SPD achieved (${spd} ) • Set bonus active`)
+        : (isRu ? `Требуется 145 СКОР (текущая: ${spd} )` : `Requires 145 SPD (current: ${spd} )`);
     } else if (/\b135\b/.test(setDesc)) {
       isConditionMet = spd >= 135;
       planarCondition = isConditionMet
-        ? (isRu ? `135+ СКОР выполнено (${spd} ✓) • Бонус сета активен` : `135+ SPD achieved (${spd} ✓) • Set bonus active`)
-        : (isRu ? `Требуется 135 СКОР (текущая: ${spd} ⚠️)` : `Requires 135 SPD (current: ${spd} ⚠️)`);
+        ? (isRu ? `135+ СКОР выполнено (${spd} ) • Бонус сета активен` : `135+ SPD achieved (${spd} ) • Set bonus active`)
+        : (isRu ? `Требуется 135 СКОР (текущая: ${spd} )` : `Requires 135 SPD (current: ${spd} )`);
     } else if (/\b120\b/.test(setDesc)) {
       isConditionMet = spd >= 120;
       planarCondition = isConditionMet
-        ? (isRu ? `120+ СКОР выполнено (${spd} ✓) • Бонус сета активен` : `120+ SPD achieved (${spd} ✓) • Set bonus active`)
-        : (isRu ? `Требуется 120 СКОР (текущая: ${spd} ⚠️)` : `Requires 120 SPD (current: ${spd} ⚠️)`);
+        ? (isRu ? `120+ СКОР выполнено (${spd} ) • Бонус сета активен` : `120+ SPD achieved (${spd} ) • Set bonus active`)
+        : (isRu ? `Требуется 120 СКОР (текущая: ${spd} )` : `Requires 120 SPD (current: ${spd} )`);
     } else if (/\b5000\b/.test(setDesc)) {
       isConditionMet = hp >= 5000;
       planarCondition = isConditionMet
-        ? (isRu ? `5000+ HP выполнено (${hp} ✓) • Бонус сета активен` : `5000+ HP achieved (${hp} ✓) • Set bonus active`)
-        : (isRu ? `Требуется 5000 HP (текущее: ${hp} ⚠️)` : `Requires 5000 HP (current: ${hp} ⚠️)`);
+        ? (isRu ? `5000+ HP выполнено (${hp} ) • Бонус сета активен` : `5000+ HP achieved (${hp} ) • Set bonus active`)
+        : (isRu ? `Требуется 5000 HP (текущее: ${hp} )` : `Requires 5000 HP (current: ${hp} )`);
     } else if (/\b70%\b/.test(setDesc) && /крит|crit/i.test(setDesc)) {
       isConditionMet = cr >= 70;
       planarCondition = isConditionMet
-        ? (isRu ? `70%+ КШ выполнено (${cr}% ✓) • Бонус сета активен` : `70%+ CR achieved (${cr}% ✓) • Set bonus active`)
-        : (isRu ? `Требуется 70% КШ (текущий: ${cr}% ⚠️)` : `Requires 70% CR (current: ${cr}% ⚠️)`);
+        ? (isRu ? `70%+ КШ выполнено (${cr}% ) • Бонус сета активен` : `70%+ CR achieved (${cr}% ) • Set bonus active`)
+        : (isRu ? `Требуется 70% КШ (текущий: ${cr}% )` : `Requires 70% CR (current: ${cr}% )`);
     } else if (/\b50%\b/.test(setDesc) && /крит|crit/i.test(setDesc)) {
       isConditionMet = cr >= 50;
       planarCondition = isConditionMet
-        ? (isRu ? `50%+ КШ выполнено (${cr}% ✓) • Бонус сета активен` : `50%+ CR achieved (${cr}% ✓) • Set bonus active`)
-        : (isRu ? `Требуется 50% КШ (текущий: ${cr}% ⚠️)` : `Requires 50% CR (current: ${cr}% ⚠️)`);
+        ? (isRu ? `50%+ КШ выполнено (${cr}% ) • Бонус сета активен` : `50%+ CR achieved (${cr}% ) • Set bonus active`)
+        : (isRu ? `Требуется 50% КШ (текущий: ${cr}% )` : `Requires 50% CR (current: ${cr}% )`);
     } else {
       isConditionMet = true;
       planarCondition = isRu
-        ? (isPlanarSetComplete ? `Сет «${planarSet}» активен (2/2) ✓` : `Разорванный планарный сет ⚠️`)
-        : (isPlanarSetComplete ? `Set "${planarSet}" active (2/2) ✓` : `Broken planar set ⚠️`);
+        ? (isPlanarSetComplete ? `Сет «${planarSet}» активен (2/2) ` : `Разорванный планарный сет `)
+        : (isPlanarSetComplete ? `Set "${planarSet}" active (2/2) ` : `Broken planar set `);
     }
   }
 
@@ -2250,26 +2250,26 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   if (cavernGroups.length > 0 && cavernGroups[0].count >= 4) {
     isCavernComplete = true;
     cavernSynergyBonus = 4.0;
-    cavernSetLabel = `✓ 4/4 ${cavernGroups[0].name}`;
+    cavernSetLabel = ` 4/4 ${cavernGroups[0].name}`;
     cavernStatusText = isRu
-      ? `Полный комплект 4/4 активен («${cavernGroups[0].name}») • Бонус сета активирован ✓`
-      : `Full 4/4 set active ("${cavernGroups[0].name}") • Set passive unlocked ✓`;
+      ? `Полный комплект 4/4 активен («${cavernGroups[0].name}») • Бонус сета активирован `
+      : `Full 4/4 set active ("${cavernGroups[0].name}") • Set passive unlocked `;
   } else if (cavernGroups.length >= 2 && cavernGroups[0].count >= 2 && cavernGroups[1].count >= 2) {
     isCavernComplete = true;
     cavernSynergyBonus = 3.0;
-    cavernSetLabel = `✓ 2/4 ${cavernGroups[0].name} + 2/4 ${cavernGroups[1].name}`;
+    cavernSetLabel = ` 2/4 ${cavernGroups[0].name} + 2/4 ${cavernGroups[1].name}`;
     cavernStatusText = isRu
-      ? `Комбинация 2/4 + 2/4 активна • Получены два 2-Pc бонуса сетов ✓`
-      : `Combination 2/4 + 2/4 active • Two 2-Pc set bonuses unlocked ✓`;
+      ? `Комбинация 2/4 + 2/4 активна • Получены два 2-Pc бонуса сетов `
+      : `Combination 2/4 + 2/4 active • Two 2-Pc set bonuses unlocked `;
   } else if (cavernGroups.length > 0 && cavernGroups[0].count >= 2) {
     isCavernComplete = false;
     cavernSynergyBonus = 0.5;
     cavernSetLabel = isRu
-      ? `2/4 ${cavernGroups[0].name} (1/4 + 1/4 Разорван ⚠️)`
-      : `2/4 ${cavernGroups[0].name} (1/4 + 1/4 Broken ⚠️)`;
+      ? `2/4 ${cavernGroups[0].name} (1/4 + 1/4 Разорван )`
+      : `2/4 ${cavernGroups[0].name} (1/4 + 1/4 Broken )`;
     cavernStatusText = isRu
-      ? `Активирован только 2-Pc бонус («${cavernGroups[0].name}»). Две реликвии надеты без сета ⚠️`
-      : `Only 2-Pc bonus active ("${cavernGroups[0].name}"). 2 pieces are off-set ⚠️`;
+      ? `Активирован только 2-Pc бонус («${cavernGroups[0].name}»). Две реликвии надеты без сета `
+      : `Only 2-Pc bonus active ("${cavernGroups[0].name}"). 2 pieces are off-set `;
     actions.push({
       title: isRu ? 'Неполный пещерный комплект (2/4)' : 'Incomplete Cavern Set (2/4)',
       desc: isRu
@@ -2279,10 +2279,10 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   } else if (cavernRelics.length === 4) {
     isCavernComplete = false;
     cavernSynergyBonus = -4.0;
-    cavernSetLabel = isRu ? 'РАЗОРВАННЫЙ ПЕЩЕРНЫЙ СЕТ ⚠️' : 'BROKEN CAVERN SET ⚠️';
+    cavernSetLabel = isRu ? 'РАЗОРВАННЫЙ ПЕЩЕРНЫЙ СЕТ ' : 'BROKEN CAVERN SET ';
     cavernStatusText = isRu
-      ? `Все 4 пещерные реликвии надеты из разных наборов. Бонусы сетов не действуют ⚠️`
-      : `All 4 cavern relics are from mismatched sets with 0 active set passives ⚠️`;
+      ? `Все 4 пещерные реликвии надеты из разных наборов. Бонусы сетов не действуют `
+      : `All 4 cavern relics are from mismatched sets with 0 active set passives `;
     actions.push({
       title: isRu ? 'Разорванный пещерный сет (0 бонусов)' : 'Broken Cavern Relics (0 set bonuses)',
       desc: isRu
