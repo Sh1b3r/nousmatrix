@@ -610,7 +610,7 @@ export default function App() {
 
             {/* Main Content Grid */}
             <div className="dashboard-grid">
-              {/* Left Column: Real Combat Stats & NousMatrix Audit */}
+              {/* Left Column: Real Combat Stats, Overall Evaluation & Relics Roll Breakdown */}
               <div className="dashboard-col-left">
                 {/* 1. Real In-Game Combat Attributes Table */}
                 <div className="panel panel-combat-stats" style={{ marginBottom: '24px' }}>
@@ -621,22 +621,18 @@ export default function App() {
                   <CombatStats character={activeChar} t={t} lang={lang} />
                 </div>
 
-                {/* 2. Audit Benchmark & Bottleneck */}
-                <div className="panel panel-audit">
-                  <AuditPanel audit={audit} t={t} lang={lang} />
+                {/* 2. БЛОК 1: ОБЩАЯ ОЦЕНКА БИЛДА (Overall Score, Role, Bottleneck, Action Plan) */}
+                <div className="panel panel-overall-score" style={{ marginBottom: '24px' }}>
+                  <OverallScorePanel audit={audit} t={t} lang={lang} />
                 </div>
 
-                {/* 3. Mathematical Combat Simulation Card (MoC 12 Boss) */}
-                <CombatSimulationCard
-                  character={activeChar}
-                  audit={audit}
-                  stats={audit?.stats}
-                  showcase={currentProfile?.characters || []}
-                  lang={lang}
-                />
+                {/* 3. БЛОК 2: ПОДСЧЁТ РЕЛИКВИЙ И ПЛАНАРОК (Cavern & Planar Rolls Audit) */}
+                <div className="panel panel-relics-audit">
+                  <RelicsAuditPanel audit={audit} t={t} lang={lang} />
+                </div>
               </div>
 
-              {/* Right Column: 6 Relic Slots & Set Bonuses */}
+              {/* Right Column: 6 Relic Slots, Active Sets & Full Team Combat Simulation */}
               <div className="dashboard-col-right">
                 {/* 1. 6 Relic Slots Grid */}
                 <div className="panel panel-relics" style={{ marginBottom: '24px' }}>
@@ -653,12 +649,21 @@ export default function App() {
                 </div>
 
                 {/* 2. Active Set Bonuses */}
-                <div className="panel panel-sets">
+                <div className="panel panel-sets" style={{ marginBottom: '24px' }}>
                   <div className="panel-title">
                     <span>{t.setsTitle}</span>
                   </div>
                   <SetBonuses character={activeChar} t={t} lang={lang} />
                 </div>
+
+                {/* 3. БЛОК 3: БОЕВАЯ СИМУЛЯЦИЯ И РОТАЦИЯ ОТРЯДА (MoC 12 Boss Team Rotation) */}
+                <CombatSimulationCard
+                  character={activeChar}
+                  audit={audit}
+                  stats={audit?.stats}
+                  showcase={currentProfile?.characters || []}
+                  lang={lang}
+                />
               </div>
             </div>
 

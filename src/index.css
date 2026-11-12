@@ -1763,9 +1763,9 @@ main {
 .audit-action-box {
   background: var(--surface-2);
   border-left: 3px solid var(--accent);
-  padding: 14px 18px;
-  margin-bottom: 12px;
-  font-size: 13px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
   border-radius: 0 2px 2px 0;
 }
 
@@ -1776,6 +1776,142 @@ main {
   font-family: var(--font-mono);
   font-size: 12px;
   text-transform: uppercase;
+}
+
+/* Overall Score & Relics Breakdown Custom Additions */
+.audit-section-divider {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.panel-title.sub-title {
+  font-size: 10px;
+  margin-bottom: 8px;
+  border-bottom: none;
+  padding-bottom: 0;
+  color: var(--text-tertiary);
+  letter-spacing: 0.05em;
+}
+
+.bottleneck-text {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.audit-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.action-box-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.action-bullet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: rgba(0, 229, 255, 0.1);
+  border-radius: 2px;
+  font-size: 10px;
+  color: var(--accent);
+}
+
+.action-box-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Relics & Planars Audit Specifics */
+.relics-audit-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.relic-audit-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.relic-audit-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.relic-audit-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.relic-set-status-pill {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: 0.03em;
+}
+
+.relic-set-status-pill.active {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00FF88;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.relic-set-status-pill.broken {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-subtle);
+}
+
+.set-name-text {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.condition-bullet {
+  margin-right: 6px;
+}
+
+.relic-audit-empty {
+  padding: 12px;
+  background: var(--surface-2);
+  border: 1px dashed var(--border-subtle);
+  border-radius: 3px;
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Panel Combat Sim Alignment */
+.panel-combat-sim {
+  border-left: 3px solid var(--accent);
 }
 
 /* ==========================================================================
