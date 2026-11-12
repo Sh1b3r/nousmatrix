@@ -28,35 +28,48 @@ async function getLocalizedPresets(lang) {
     : (cachedPresets?.en || cachedPresets?.ru || cachedPresets);
 }
 
+function getInitialSessionData() {
+  if (typeof window === 'undefined') {
+    return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null };
+  }
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const urlUid = params.get('uid');
+    const stored = sessionStorage.getItem('nousmatrix_cached_profiles');
+    const cachedMap = new Map();
+    let initialProfile = null;
+
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      Object.entries(parsed).forEach(([k, v]) => {
+        cachedMap.set(String(k), v);
+      });
+      if (urlUid && parsed[urlUid]) {
+        initialProfile = parsed[urlUid];
+      }
+    }
+
+    return { cachedMap, initialProfile, initialUrlUid: urlUid };
+  } catch {
+    return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null };
+  }
+}
+
 export default function App() {
-  const [currentProfile, setCurrentProfile] = useState(null);
+  const [initialData] = useState(getInitialSessionData);
+  const [currentProfile, setCurrentProfile] = useState(initialData.initialProfile);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(() => Boolean(initialData.initialUrlUid && !initialData.initialProfile));
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const hasInternalHomeRef = useRef(false);
-  const profileCacheRef = useRef(new Map());
-  const lastProfileRef = useRef(null);
+  const profileCacheRef = useRef(initialData.cachedMap);
+  const lastProfileRef = useRef(initialData.initialProfile);
 
   // Region-based automatic locale detection (Default: English 'en', Slavic: 'ru', NO manual switcher)
   const lang = getDetectedLanguage();
   const t = translations[lang] || translations.en;
-
-  // Restore cached profiles from sessionStorage on initial mount
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem('nousmatrix_cached_profiles');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        Object.entries(parsed).forEach(([k, v]) => {
-          profileCacheRef.current.set(String(k), v);
-        });
-      }
-    } catch (e) {
-      console.warn('Session cache load error:', e);
-    }
-  }, []);
 
   const saveToCache = (uid, data) => {
     if (!uid || !data) return;
@@ -125,7 +138,9 @@ export default function App() {
     const urlUid = params.get('uid');
     if (urlUid) {
       window.history.replaceState({ view: 'profile', uid: urlUid }, '', window.location.href);
-      fetchProfile(urlUid, false);
+      if (!currentProfile || String(currentProfile.player?.uid) !== String(urlUid)) {
+        fetchProfile(urlUid, false);
+      }
     } else {
       hasInternalHomeRef.current = true;
       window.history.replaceState({ view: 'home' }, '', window.location.pathname);
@@ -475,16 +490,26 @@ export default function App() {
 
       <main>
         {!currentProfile ? (
-          <HomeView
-            onSearch={fetchProfile}
-            isLoading={isLoading}
-            errorMsg={errorMsg}
-            onOpenDemo={handleOpenDemo}
-            recentProfile={lastProfileRef.current}
-            onRestoreProfile={handleRestoreProfile}
-            t={t}
-            lang={lang}
-          />
+          (isLoading && initialData.initialUrlUid) ? (
+            <div className="profile-loading-screen">
+              <div className="profile-loading-spinner" />
+              <div className="profile-loading-text">
+                {lang === 'ru' ? 'СИНХРОНИЗАЦИЯ ДАННЫХ С ИГРОВЫМИ СЕРВЕРАМИ...' : 'SYNCING PROFILE FROM GAME SERVERS...'}
+              </div>
+              <div className="profile-loading-sub">UID: {initialData.initialUrlUid}</div>
+            </div>
+          ) : (
+            <HomeView
+              onSearch={fetchProfile}
+              isLoading={isLoading}
+              errorMsg={errorMsg}
+              onOpenDemo={handleOpenDemo}
+              recentProfile={lastProfileRef.current}
+              onRestoreProfile={handleRestoreProfile}
+              t={t}
+              lang={lang}
+            />
+          )
         ) : (
           <section id="view-dashboard" style={{ display: 'block' }}>
             {/* Player Banner */}
