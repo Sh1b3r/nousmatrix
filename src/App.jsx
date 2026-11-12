@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ThreeBackground from './components/ThreeBackground';
 import Header from './components/Header';
 import HomeView from './components/HomeView';
@@ -8,6 +8,7 @@ import CombatStats from './components/CombatStats';
 import RelicsGrid from './components/RelicsGrid';
 import SetBonuses from './components/SetBonuses';
 import AuditPanel from './components/AuditPanel';
+import CombatSimulationCard from './components/CombatSimulationCard';
 import TrophyModal from './components/TrophyModal';
 import { RefreshIcon } from './components/Icons.jsx';
 import { iconUrl, calculateCharacterAudit } from './utils/audit';
@@ -480,7 +481,35 @@ export default function App() {
     fetchProfile('700142890', true);
   };
 
-  const activeChar = currentProfile?.characters?.[activeIndex] || null;
+  const [optimizedRelicsMap, setOptimizedRelicsMap] = useState({});
+
+  const rawActiveChar = currentProfile?.characters?.[activeIndex] || null;
+  const activeChar = useMemo(() => {
+    if (!rawActiveChar) return null;
+    const overridden = optimizedRelicsMap[rawActiveChar.id];
+    if (overridden) {
+      return { ...rawActiveChar, relics: overridden, isOptimizedVirtual: true };
+    }
+    return rawActiveChar;
+  }, [rawActiveChar, optimizedRelicsMap]);
+
+  const handleApplyOptimizedBuild = (newPieces) => {
+    if (!rawActiveChar) return;
+    setOptimizedRelicsMap(prev => ({
+      ...prev,
+      [rawActiveChar.id]: newPieces
+    }));
+  };
+
+  const handleResetOptimizedBuild = () => {
+    if (!rawActiveChar) return;
+    setOptimizedRelicsMap(prev => {
+      const copy = { ...prev };
+      delete copy[rawActiveChar.id];
+      return copy;
+    });
+  };
+
   const audit = activeChar ? calculateCharacterAudit(activeChar, lang) : null;
   const player = currentProfile?.player || null;
 
@@ -593,17 +622,47 @@ export default function App() {
                 <div className="panel panel-audit">
                   <AuditPanel audit={audit} t={t} lang={lang} />
                 </div>
+
+                {/* 3. Mathematical Combat Simulation Card (MoC 12 Boss) */}
+                <CombatSimulationCard character={activeChar} audit={audit} stats={audit?.stats} lang={lang} />
               </div>
 
               {/* Right Column: 6 Relic Slots & Set Bonuses */}
               <div className="dashboard-col-right">
                 {/* 1. 6 Relic Slots Grid */}
                 <div className="panel panel-relics" style={{ marginBottom: '24px' }}>
-                  <div className="panel-title">
-                    <span>{t.relicsTitle}</span>
-                    <span style={{ color: 'var(--accent)' }}>{t.verifiedData}</span>
+                  <div className="panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>
+                      {t.relicsTitle}
+                      {activeChar?.isOptimizedVirtual && (
+                        <span style={{ marginLeft: '8px', color: '#00E676', fontFamily: 'var(--font-mono)', fontSize: '10.5px' }}>
+                          [ПРИМЕРКА ОПТИМИЗАЦИИ]
+                        </span>
+                      )}
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {activeChar?.isOptimizedVirtual && (
+                        <button
+                          type="button"
+                          className="btn-outline"
+                          onClick={handleResetOptimizedBuild}
+                          style={{ fontSize: '10px', padding: '2px 8px', color: 'var(--accent)', borderColor: 'var(--accent)' }}
+                          title={lang === 'ru' ? 'Сбросить примерку к исходным артефактам' : 'Reset to original relics'}
+                        >
+                          {lang === 'ru' ? 'СБРОСИТЬ' : 'RESET'}
+                        </button>
+                      )}
+                      <span style={{ color: 'var(--accent)' }}>{t.verifiedData}</span>
+                    </div>
                   </div>
-                  <RelicsGrid character={activeChar} audit={audit} t={t} lang={lang} />
+                  <RelicsGrid
+                    character={activeChar}
+                    audit={audit}
+                    profile={currentProfile}
+                    onApplyOptimizedBuild={handleApplyOptimizedBuild}
+                    t={t}
+                    lang={lang}
+                  />
                 </div>
 
                 {/* 2. Active Set Bonuses */}

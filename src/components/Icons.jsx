@@ -170,7 +170,29 @@ export function ArrowRightIcon({ size = 16, className = '', style = {} }) {
   );
 }
 
-// 15. Dynamic Role Icon Resolver
+// 15. Swap / Exchange (⇄)
+export function SwapIcon({ size = 16, className = '', style = {} }) {
+  return (
+    <svg {...defaultProps} width={size} height={size} className={className} style={style}>
+      <polyline points="16 3 21 8 16 13" />
+      <line x1="21" y1="8" x2="9" y2="8" />
+      <polyline points="8 21 3 16 8 11" />
+      <line x1="3" y1="16" x2="15" y2="16" />
+    </svg>
+  );
+}
+
+// 16. Sword / Attack (⚔)
+export function SwordIcon({ size = 16, className = '', style = {} }) {
+  return <DpsIcon size={size} className={className} style={style} />;
+}
+
+// 17. Sparkles / AI (✨)
+export function SparklesIcon({ size = 16, className = '', style = {} }) {
+  return <SparkleIcon size={size} className={className} style={style} />;
+}
+
+// 18. Dynamic Role Icon Resolver
 export function RoleSvgIcon({ role = 'DPS', iconType = 'dps', size = 16, className = '', style = {} }) {
   const norm = (iconType || role || '').toString().toLowerCase();
 

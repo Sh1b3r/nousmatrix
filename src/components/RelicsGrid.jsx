@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { iconUrl, handleImageFallback } from '../utils/audit';
 import { formatStatName } from '../utils/i18n';
-import { SphereIcon, RopeIcon, WarnIcon, CheckIcon } from './Icons.jsx';
+import { SphereIcon, RopeIcon, WarnIcon, CheckIcon, SparklesIcon } from './Icons.jsx';
+import BuildOptimizerModal from './BuildOptimizerModal.jsx';
 
-export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
+export default function RelicsGrid({ character, audit, profile, onApplyOptimizedBuild, t, lang = 'ru' }) {
   if (!character) return null;
   const isRu = lang === 'ru';
 
   // Toggle between sectioned layout (позначки в разных местах у сетов) and unified grid
   const [layoutMode, setLayoutMode] = useState('grouped');
+  const [isOptimizerOpen, setIsOptimizerOpen] = useState(false);
 
   const relics = character.relics || [];
   const slots = t.relicSlots || [];
@@ -298,6 +300,28 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
           </div>
         </div>
       )}
+
+      {/* Button: "УЛУЧШИТЬ БИЛД" at the very bottom of the relics block */}
+      <div className="relics-bottom-action-bar">
+        <button
+          type="button"
+          className="btn-submit optimizer-open-btn"
+          onClick={() => setIsOptimizerOpen(true)}
+        >
+          <SparklesIcon size={16} />
+          <span>{isRu ? 'УЛУЧШИТЬ БИЛД' : 'OPTIMIZE BUILD'}</span>
+        </button>
+      </div>
+
+      <BuildOptimizerModal
+        isOpen={isOptimizerOpen}
+        onClose={() => setIsOptimizerOpen(false)}
+        character={character}
+        audit={audit}
+        profile={profile}
+        onApplyOptimizedBuild={onApplyOptimizedBuild}
+        lang={lang}
+      />
     </div>
   );
 }
