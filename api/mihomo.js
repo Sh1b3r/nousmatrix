@@ -85,15 +85,15 @@ export default async function handler(req, res) {
         }
       });
 
-      // 2. If any character is missing planar relics (slots 5 or 6), check raw sr_info endpoint
-      const hasMissingPlanar = data.characters.some(c => {
+      // 2. If any character is missing planar relics (slots 5 or 6), check raw sr_info endpoint and Enka Network
+      let stillMissingPlanar = data.characters.some(c => {
         const relics = c.relics || [];
         const hasSphere = relics.some(r => Number(r.type ?? r.pos) === 5 || String(r.id).endsWith('5'));
         const hasRope = relics.some(r => Number(r.type ?? r.pos) === 6 || String(r.id).endsWith('6'));
         return !hasSphere || !hasRope;
       });
 
-      if (hasMissingPlanar) {
+      if (stillMissingPlanar) {
         try {
           const rawRes = await fetch(`https://api.mihomo.me/sr_info/${cleanUid}${forceParam}${cacheBuster}`, {
             headers: outgoingHeaders
@@ -153,6 +153,77 @@ export default async function handler(req, res) {
           }
         } catch {
           // sr_info fallback skipped
+        }
+
+        // Re-check if any characters still need planars from Enka Network
+        stillMissingPlanar = data.characters.some(c => {
+          const relics = c.relics || [];
+          const hasSphere = relics.some(r => Number(r.type ?? r.pos) === 5 || String(r.id).endsWith('5'));
+          const hasRope = relics.some(r => Number(r.type ?? r.pos) === 6 || String(r.id).endsWith('6'));
+          return !hasSphere || !hasRope;
+        });
+
+        if (stillMissingPlanar) {
+          try {
+            const enkaRes = await fetch(`https://enka.network/api/hsr/uid/${cleanUid}`, {
+              headers: { 'User-Agent': 'NousMatrix/1.0' }
+            });
+            if (enkaRes.ok) {
+              const enkaData = await enkaRes.json();
+              const enkaAvatars = enkaData.detailInfo?.avatarDetailList || [];
+
+              data.characters.forEach(c => {
+                const enkaChar = enkaAvatars.find(a => String(a.avatarId) === String(c.id));
+                if (enkaChar && Array.isArray(enkaChar.relicList)) {
+                  c.relics = c.relics || [];
+                  const existingTypes = new Set(c.relics.map(r => Number(r.type ?? r.pos)));
+
+                  enkaChar.relicList.forEach(rawR => {
+                    const typeNum = Number(rawR.type);
+                    if ((typeNum === 5 || typeNum === 6) && !existingTypes.has(typeNum)) {
+                      const tid = String(rawR.tid || '');
+                      const setId = tid.length >= 5 ? tid.slice(1, 4) : '';
+                      const setDef = SETS_MAP[setId] || KNOWN_NEW_SETS[setId];
+
+                      const setName = isRu
+                        ? (setDef?.nameRu || 'Планарный орнамент')
+                        : (setDef?.nameEn || 'Planar Ornament');
+
+                      let pieceName = setName;
+                      if (typeNum === 5) {
+                        pieceName = isRu ? (KNOWN_NEW_SETS[setId]?.sphereRu || `${setName}: Сфера`) : (KNOWN_NEW_SETS[setId]?.sphereEn || `${setName}: Sphere`);
+                      } else if (typeNum === 6) {
+                        pieceName = isRu ? (KNOWN_NEW_SETS[setId]?.ropeRu || `${setName}: Вервь`) : (KNOWN_NEW_SETS[setId]?.ropeEn || `${setName}: Rope`);
+                      }
+
+                      c.relics.push({
+                        id: tid,
+                        name: pieceName,
+                        set_id: setId,
+                        set_name: setName,
+                        rarity: Math.floor(Number(tid) / 10000) || 5,
+                        type: typeNum,
+                        pos: typeNum,
+                        level: rawR.level || 15,
+                        icon: `icon/relic/${setId}_${typeNum === 5 ? 0 : 1}.png`,
+                        main_affix: {
+                          type: 'MainAffix',
+                          field: 'unknown',
+                          name: isRu ? 'Основной стат' : 'Main Stat',
+                          value: 0,
+                          display: ''
+                        },
+                        sub_affix: []
+                      });
+                      existingTypes.add(typeNum);
+                    }
+                  });
+                }
+              });
+            }
+          } catch {
+            // Enka fallback skipped
+          }
         }
       }
     }

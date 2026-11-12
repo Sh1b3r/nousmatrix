@@ -306,3 +306,4 @@ export function optimizeCharacterBuild(char, currentRelics, accountPool, options
     improvementScore: Math.min(100, Math.round(changesCount * 8.5 + (isFullCavernSet ? 15 : 0) + (isFullPlanarSet ? 10 : 0)))
   };
 }
+
