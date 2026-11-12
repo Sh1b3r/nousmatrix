@@ -191,7 +191,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
           icon: 'dps',
           labelRu: 'МНИМЫЙ САБ-ДПС (КРИТЫ)',
           labelEn: 'IMAGINARY CRIT SUB-DPS',
-          descRu: 'Критовая сборка Волчиска 999 ур: нанесение высокого личного мнимого урона в дополнение к наложению дебаффов.',
+          descRu: 'Критовая сборка Серебряного Волка ур. 999: нанесение высокого личного мнимого урона в дополнение к наложению дебаффов.',
           descEn: 'Silver Wolf Lv.999 Crit Sub-DPS build: outputs massive personal Imaginary damage alongside debuffs.',
           confidence: 90,
           targetArchetype: 'CRIT_DPS'

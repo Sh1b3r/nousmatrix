@@ -178,8 +178,27 @@ main {
   vertical-align: middle;
 }
 
-.refresh-btn:hover .refresh-icon {
+.refresh-btn:hover:not(:disabled) .refresh-icon {
   transform: rotate(180deg);
+}
+
+@keyframes spinRefresh {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.refresh-btn.loading .refresh-icon,
+.refresh-icon.spinning {
+  animation: spinRefresh 0.8s linear infinite !important;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.75;
+  cursor: wait;
 }
 
 /* ==========================================================================

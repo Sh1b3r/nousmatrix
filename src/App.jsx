@@ -33,6 +33,7 @@ export default function App() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const hasInternalHomeRef = useRef(false);
   const profileCacheRef = useRef(new Map());
@@ -309,7 +310,11 @@ export default function App() {
       }
     }
 
-    setIsLoading(true);
+    if (forceRefresh) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
     setErrorMsg('');
 
     try {
@@ -433,6 +438,7 @@ export default function App() {
       setErrorMsg(t.errGeneric);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -505,11 +511,16 @@ export default function App() {
 
               <div className="player-actions">
                 <button
-                  className="btn-outline refresh-btn"
+                  type="button"
+                  className={`btn-outline refresh-btn ${isRefreshing ? 'loading' : ''}`}
                   onClick={() => fetchProfile(player?.uid, false, true)}
+                  disabled={isRefreshing}
                   title={lang === 'ru' ? "Обновить данные из игры (обойти кэш)" : "Refresh data from game (bypass cache)"}
                 >
-                  <RefreshIcon size={12} className="refresh-icon" /> {lang === 'ru' ? 'ОБНОВИТЬ' : 'REFRESH'}
+                  <RefreshIcon size={12} className={`refresh-icon ${isRefreshing ? 'spinning' : ''}`} />{' '}
+                  {isRefreshing
+                    ? (lang === 'ru' ? 'ОБНОВЛЕНИЕ...' : 'REFRESHING...')
+                    : (lang === 'ru' ? 'ОБНОВИТЬ' : 'REFRESH')}
                 </button>
                 <button
                   className="btn-outline back-btn"
