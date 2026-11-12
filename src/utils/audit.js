@@ -58,10 +58,10 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
   const setIds = relics.map(r => String(r.set_id || '')).concat(resolvedSets.map(s => String(s?.def?.id || '')));
 
   // Check main stats on body (slot 3), boots (slot 4), sphere (slot 5), rope (slot 6)
-  const bodyRelic = relics.find(r => r.type === 3 || r.pos === 3);
-  const bootsRelic = relics.find(r => r.type === 4 || r.pos === 4);
-  const sphereRelic = relics.find(r => r.type === 5 || r.pos === 5);
-  const ropeRelic = relics.find(r => r.type === 6 || r.pos === 6);
+  const bodyRelic = relics.find(r => r.type === 3 || r.pos === 3 || String(r.type).toUpperCase() === 'BODY' || String(r.id).endsWith('3'));
+  const bootsRelic = relics.find(r => r.type === 4 || r.pos === 4 || String(r.type).toUpperCase() === 'FOOT' || String(r.id).endsWith('4'));
+  const sphereRelic = relics.find(r => r.type === 5 || r.pos === 5 || String(r.type).toUpperCase() === 'NECK' || String(r.type).toUpperCase() === 'SPHERE' || String(r.id).endsWith('5'));
+  const ropeRelic = relics.find(r => r.type === 6 || r.pos === 6 || String(r.type).toUpperCase() === 'OBJECT' || String(r.type).toUpperCase() === 'ROPE' || String(r.id).endsWith('6'));
 
   const bodyStat = bodyRelic?.main_affix?.field || '';
   const bootsStat = bootsRelic?.main_affix?.field || '';
@@ -195,18 +195,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
           descEn: 'Silver Wolf Lv.999 Crit Sub-DPS build: outputs massive personal Imaginary damage alongside debuffs.',
           confidence: 90,
           targetArchetype: 'CRIT_DPS'
-        };
-      }
-      return {
-        type: 'SUPPORT',
-        role: 'SUPPORT',
-        icon: 'support',
-        labelRu: 'МНИМЫЙ ДЕБАФФЕР (САППОРТ)',
-        labelEn: 'IMAGINARY DEBUFFER SUPPORT',
-        descRu: 'Классический саппорт Волчиска 999 ур: приоритет ШПЭ (96%+ / 67% с сигной) и высокой скорости (145-160+) для гарантированного внедрения уязвимостей.',
-        descEn: 'Silver Wolf Lv.999 debuffer support: prioritized EHR (96%+ / 67% with sig) and high SPD (145-160+) for 100% weakness implant.',
-        confidence: 95,
-        targetArchetype: 'NIHILITY_DEBUFF'
+        }
       };
     }
 
@@ -257,9 +246,9 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       type: 'SUPPORT',
       role: 'SUPPORT',
       icon: 'support',
-      labelRu: 'ЩИТОВИК-САСТЕЙН (МАКС. ЗАЩИТА)',
+      labelRu: 'ЩИТОВИК-СУСТЕЙН (МАКС. ЗАЩИТА)',
       labelEn: 'PURE SHIELDER / SUSTAIN',
-      descRu: 'Классический састейн: максимизация Защиты (4000+ DEF) для непробиваемого щита всей команды.',
+      descRu: 'Классический сустейн: максимизация Защиты (4000+ DEF) для непробиваемого щита всей команды.',
       descEn: 'Pure shielder: maximized DEF (4000+ DEF) for impenetrable teamwide shield uptime.',
       confidence: 96,
       targetArchetype: 'PRESERVATION_DEF'
@@ -330,7 +319,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       type: 'SUPPORT',
       role: 'SUPPORT',
       icon: 'heal',
-      labelRu: 'ЦЕЛИТЕЛЬ-САСТЕЙН (ИЗОБИЛИЕ)',
+      labelRu: 'ЦЕЛИТЕЛЬ-СУСТЕЙН (ИЗОБИЛИЕ)',
       labelEn: 'HEALER / SUSTAIN (ABUNDANCE)',
       descRu: 'Сборка на эффективное лечение, снятие ослаблений и выживание команды.',
       descEn: 'Built for team healing, cleanse, and survival.',
@@ -344,7 +333,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = 'ru') 
       type: 'SUPPORT',
       role: 'SUPPORT',
       icon: 'support',
-      labelRu: 'ЩИТОВИК-САСТЕЙН (СОХРАНЕНИЕ)',
+      labelRu: 'ЩИТОВИК-СУСТЕЙН (СОХРАНЕНИЕ)',
       labelEn: 'SHIELDER / SUSTAIN (PRESERVATION)',
       descRu: 'Сборка на прочность щитов и командное снижение урона.',
       descEn: 'Built for maximum team shielding and damage reduction.',
@@ -1530,7 +1519,15 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const eres = parseFloat(((addMap['effect_res']?.value || 0) * 100).toFixed(1));
   const heal = parseFloat(((addMap['heal_rate']?.value || 0) * 100).toFixed(1));
   const err = parseFloat((((addMap['sp_rate']?.value || 0)) * 100).toFixed(1));
-  const ropeRelic = (char.relics || []).find(r => r.type === 6 || r.pos === 6);
+  const ropeRelic = (char.relics || []).find(r => {
+    if (!r) return false;
+    const num = Number(r.type ?? r.pos);
+    if (num === 6) return true;
+    const typeStr = String(r.type || r.type_name || '').toUpperCase();
+    if (typeStr === 'OBJECT' || typeStr === 'ROPE' || typeStr.includes('ВЕРВ')) return true;
+    const idStr = String(r.id || r.tid || '');
+    return idStr.length === 5 && idStr.endsWith('6');
+  });
   const ropeStat = ropeRelic?.main_affix?.field || '';
 
   // 1. Determine Archetype & Detect Dual/Hybrid Role
@@ -2030,7 +2027,16 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   statPoints = Math.max(15, statPoints - mainStatPenalty);
 
   // 4. Planar Ornaments Calculation & Synergy Bonus (Подсчет планарок)
-  const planarRelics = (char.relics || []).filter((r, idx) => r.type == 5 || r.type == 6 || r.pos == 5 || r.pos == 6 || (char.relics.length >= 6 && idx >= 4));
+  const planarRelics = (char.relics || []).filter((r, idx) => {
+    if (!r) return false;
+    const num = Number(r.type ?? r.pos);
+    if (num === 5 || num === 6) return true;
+    const typeStr = String(r.type || r.type_name || '').toUpperCase();
+    if (typeStr === 'NECK' || typeStr === 'OBJECT' || typeStr === 'SPHERE' || typeStr === 'ROPE' || typeStr.includes('СФЕР') || typeStr.includes('ВЕРВ')) return true;
+    const idStr = String(r.id || r.tid || '');
+    if (idStr.length === 5 && (idStr.endsWith('5') || idStr.endsWith('6'))) return true;
+    return char.relics.length >= 6 && idx >= 4;
+  });
   let planarRollsTotal = 0;
   let planarUsefulRolls = 0;
   let planarCv = 0;

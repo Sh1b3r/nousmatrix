@@ -311,8 +311,12 @@ export default function App() {
         return;
       }
     } else {
-      // Force refresh requested: clear in-memory and session cache for this UID
+      // Force refresh requested: clear in-memory and session cache for this UID and player UID
       profileCacheRef.current.delete(uid);
+      if (lastProfileRef.current?.player?.uid) {
+        profileCacheRef.current.delete(String(lastProfileRef.current.player.uid));
+      }
+      lastProfileRef.current = null;
       try {
         const stored = sessionStorage.getItem('nousmatrix_cached_profiles');
         if (stored) {
@@ -341,7 +345,7 @@ export default function App() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-        const cacheBuster = forceRefresh ? `&force=1&_t=${Date.now()}` : '';
+        const cacheBuster = forceRefresh ? `&is_force_update=true&force=1&_t=${Date.now()}` : '';
         const apiRes = await fetch(`/api/mihomo?uid=${uid}&lang=${lang}${cacheBuster}`, {
           signal: controller.signal
         });
@@ -368,7 +372,7 @@ export default function App() {
         try {
           const directController = new AbortController();
           const dTimeout = setTimeout(() => directController.abort(), 10000);
-          const cacheBuster = forceRefresh ? `&_t=${Date.now()}` : '';
+          const cacheBuster = forceRefresh ? `&is_force_update=true&_t=${Date.now()}` : '';
           const directRes = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${lang}${cacheBuster}`, {
             signal: directController.signal
           });
