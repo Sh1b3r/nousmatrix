@@ -1057,7 +1057,28 @@ main {
 }
 
 .relic-worst-banner-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(255, 60, 60, 0.18);
+  border: 1px solid rgba(255, 60, 60, 0.5);
+  color: #ff4d4f;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  width: 100%;
+  white-space: nowrap;
   display: none;
+}
+
+.relic-worst-banner-top .worst-warn-icon {
+  font-size: 12px;
 }
 
 .relic-top-row {
@@ -1604,10 +1625,6 @@ main {
   /* Full 100% width on all cards and containers on mobile */
   .desktop-only {
     display: none !important;
-  }
-
-  .home-card {
-    max-width: 1024px;
   }
 
   .mobile-only {

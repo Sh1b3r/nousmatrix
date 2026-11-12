@@ -1127,6 +1127,16 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   } else if (/Дуран|Duran/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu ? 'До 5 стаков: +25% к бонус-атакам и +25% Крит. Урона' : 'Up to 5 stacks: +25% FUA DMG & +25% CD';
+  } else if (/Миг радости бога|радости бога|Moment of Joy/i.test(planarSet)) {
+    isConditionMet = true;
+    planarCondition = isRu
+      ? '+6% Скорости активно • Действие продвигается вперёд на 40% при входе в бой с Радостью ✓'
+      : '+6% SPD active • 40% Action Advance at battle start with Elation ✓';
+  } else if (/Подпространственный центр|контроля аномалий|Subspace ASC Center/i.test(planarSet)) {
+    isConditionMet = spd >= 145;
+    planarCondition = isConditionMet
+      ? (isRu ? `145+ СКОР выполнено (${spd} ✓) • +6% СКОР и +15% Эффекта Пробития всем союзникам активны ✓` : `145+ SPD achieved (${spd} ✓) • +6% SPD & +15% Break Effect for all allies active ✓`)
+      : (isRu ? `Требуется 145 СКОР (текущая: ${spd} ⚠️) • Бонус команды не активирован!` : `Requires 145 SPD (current: ${spd} ⚠️) • Team bonus inactive!`);
   } else if (/Tengoku|Тэнгоку|Стрим/i.test(planarSet)) {
     isConditionMet = true;
     planarCondition = isRu ? '+8% КШ активно • Дополнительно +24% Крит. Урона при наличии спутника/призыва ✓' : '+8% CR active • +24% CRIT DMG with summon/servant ✓';
