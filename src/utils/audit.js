@@ -675,6 +675,32 @@ export function determineCharacterMetrics(char, archetype, stats) {
     };
   }
 
+  // 1b. Mortenax Blade (Мортенакс Блэйд) - The Zone countdown has fixed 70 SPD!
+  // Speed is ABSOLUTE #1 PRIORITY so he takes 3+ actions before the zone ends!
+  // Crits are secondary because his Ultimate grants free +20% CR / +60% CD (+100 CV)!
+  const isMortenax = charId === '1507' || lowerName.includes('мортенакс') || lowerName.includes('mortenax');
+  if (isMortenax) {
+    const spdStatus = spd >= 160 ? '[160+ HYPER ✓]' : (spd >= 145 ? '[145+ ZONE TUNED ✓]' : (spd >= 134 ? '[134+ OK]' : '[SLOW ⚠️]'));
+    const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 150 ? '[OK]' : '[LOW]'));
+
+    return {
+      primary: {
+        labelRu: 'СКОРОСТЬ (ТАЙМЕР ЗОНЫ 70 SPD)',
+        labelEn: 'SPEED (70 SPD ZONE TIMER)',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spdStatus
+      },
+      secondary: {
+        labelRu: 'КРИТ. МАССА (+100 CV В ЗОНЕ)',
+        labelEn: 'CRIT VALUE (+100 CV IN ZONE)',
+        display: `${cv.toFixed(1)} CV`,
+        percent: Math.min(100, Math.max(10, (cv / 260) * 100)),
+        status: cvStatus
+      }
+    };
+  }
+
   // Standard Debuffer Silver Wolf / Pela / Jiaoqiu (NIHILITY_DEBUFF) - Speed is primary, EHR is secondary
   if (archetype === 'NIHILITY_DEBUFF' || isWolf) {
     const isJiaoqiu = lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu');
@@ -1400,12 +1426,14 @@ export function calculateCharacterAudit(char, lang = 'ru') {
       break;
     }
     default: { // CRIT_DPS, HP_CRIT_DPS & general
-      const isSlowDps =
+      const isMortenax = charId === '1507' || lowerName.includes('мортенакс') || lowerName.includes('mortenax');
+      const isSlowDps = !isMortenax && (
         lowerName.includes('ахерон') || lowerName.includes('acheron') || charId === '1308' ||
         lowerName.includes('химеко') || lowerName.includes('himeko') || lowerName.includes('нова') || lowerName.includes('nova') ||
         lowerName.includes('клара') || lowerName.includes('clara') ||
         lowerName.includes('юньли') || lowerName.includes('yunli') ||
-        archetype === 'HP_CRIT_DPS' || spd < 115;
+        archetype === 'HP_CRIT_DPS' || spd < 115
+      );
 
       const cvRatio = Math.min(1.0, cv / 260);
       const spdRatio = isSlowDps ? 20 : (spd >= 134 ? 20 : (spd / 134) * 15);
@@ -1414,7 +1442,29 @@ export function calculateCharacterAudit(char, lang = 'ru') {
         : Math.min(15, (atk / 2800) * 15);
       statPoints = (cvRatio * 65) + spdRatio + atkRatio;
 
-      if (cr < 70 && cd > 160) {
+      if (isMortenax) {
+        if (spd < 134) {
+          bottleneck = isRu
+            ? `Скорость (${spd}) ниже порога 134.0 SPD. Зона «Infinite Fury» ограничена таймером на 70 SPD: без высокой скорости персонаж не успевает совершить 3+ действия до рассеивания стойки.`
+            : `Speed (${spd}) is below 134.0 SPD. The "Infinite Fury" Zone is bound to a 70 SPD countdown: high speed is required to take 3+ turns before it expires.`;
+          actions.push({
+            title: isRu ? 'Приоритет №1: 134-145+ Скорости' : 'Priority #1: Reach 134-145+ SPD',
+            desc: isRu
+              ? 'Сапоги на Скорость (+25 SPD) и сабстаты критически важны для максимального числа ходов и ультимейтов внутри Зоны.'
+              : 'Speed boots (+25 SPD) and substats are mandatory to maximize turns and ultimates inside the Zone.'
+          });
+        } else {
+          bottleneck = isRu
+            ? `Отличная скоростная сборка под таймер Зоны (${spd} SPD, ${cv} CV, ${hp} HP). Позволяет совершать 3+ действия внутри стойки «Infinite Fury».`
+            : `Optimized high-speed build for the Zone timer (${spd} SPD, ${cv} CV, ${hp} HP). Unlocks 3+ actions inside "Infinite Fury".`;
+          actions.push({
+            title: isRu ? 'Сборка оптимизирована под таймер Зоны' : 'Zone Optimized',
+            desc: isRu
+              ? 'Скорость закрывает тайминг зоны на 70 SPD, а ульт добавляет бесплатные +20% КШ и +60% КУ (+100 CV).'
+              : 'Speed satisfies the 70 SPD countdown, and Ult supplies +20% CR / +60% CD (+100 CV).'
+          });
+        }
+      } else if (cr < 70 && cd > 160) {
         bottleneck = isRu
           ? `Дисбаланс критов: Крит. Шанс (${cr}%) отстает от Крит. Урона (${cd}%). Теряется стабильность ротации.`
           : `Imbalanced CRIT ratio: CRIT Rate (${cr}%) lags behind CRIT DMG (${cd}%).`;
