@@ -647,11 +647,36 @@ export function determineCharacterMetrics(char, archetype, stats) {
   const lowerName = name.toLowerCase();
   const charId = String(char?.id || '');
 
-  // 1. Silver Wolf / Pela / Jiaoqiu (NIHILITY_DEBUFF) - Speed is primary, EHR is secondary
-  if (archetype === 'NIHILITY_DEBUFF' || charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver')) {
-    const isSW = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
+  // 1. Silver Wolf Lv 999 (Серебряный Волк ур. 999 / Silver Wolf LV.999) & Crit Sub-DPS Wolf - Speed is primary, Crits are secondary!
+  const isWolf = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
+  const isSW999 = isWolf && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
+
+  if (isSW999 || (isWolf && cv >= 140)) {
+    const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
+    const cvStatus = cv >= 240 ? '[ELITE]' : (cv >= 200 ? '[TOP]' : (cv >= 160 ? '[OK]' : '[LOW]'));
+
+    return {
+      primary: {
+        labelRu: 'СКОРОСТЬ (SPD)',
+        labelEn: 'SPEED (SPD)',
+        display: `${spd.toFixed(1)} SPD`,
+        percent: Math.min(100, (spd / 160) * 100),
+        status: spdStatus
+      },
+      secondary: {
+        labelRu: 'КРИТ. МАССА (CV)',
+        labelEn: 'CRIT VALUE (CV)',
+        display: `${cv.toFixed(1)} CV`,
+        percent: Math.min(100, Math.max(10, (cv / 260) * 100)),
+        status: cvStatus
+      }
+    };
+  }
+
+  // Standard Debuffer Silver Wolf / Pela / Jiaoqiu (NIHILITY_DEBUFF) - Speed is primary, EHR is secondary
+  if (archetype === 'NIHILITY_DEBUFF' || isWolf) {
     const isJiaoqiu = lowerName.includes('цзяоцю') || lowerName.includes('jiaoqiu');
-    const targetEhr = isJiaoqiu ? 140 : (isSW ? 96 : 67);
+    const targetEhr = isJiaoqiu ? 140 : (isWolf ? 96 : 67);
     const spdStatus = spd >= 160 ? '[160+ CAP ✓]' : (spd >= 145 ? '[145+ OK]' : (spd >= 134 ? '[134+ OK]' : '[SLOW]'));
     const ehrStatus = ehr >= targetEhr ? `[${targetEhr}% CAP ✓]` : `[${ehr.toFixed(0)}% / ${targetEhr}%]`;
 
@@ -1036,12 +1061,17 @@ export function calculateCharacterAudit(char, lang = 'ru') {
   const charId = String(char.id || '');
   const lowerName = name.toLowerCase();
 
-  // EXPLICIT CHARACTER OVERRIDES FIRST (Guarantees Blade, Castorice, Yao Guang, Silver Wolf, Acheron, etc. are never misidentified)
+  // EXPLICIT CHARACTER OVERRIDES FIRST (Guarantees Blade, Castorice, Wolf 999, Yao Guang, Silver Wolf, Acheron, etc. are never misidentified)
+  const isWolfChar = charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver');
+  const isWolf999 = isWolfChar && (lowerName.includes('999') || lowerName.includes('ур') || lowerName.includes('lv'));
+
   if (charId === '1205' || lowerName.includes('блэйд') || lowerName.includes('blade') || charId === '1407' || lowerName.includes('касторице') || lowerName.includes('castorice')) {
     archetype = 'HP_CRIT_DPS';
+  } else if (isWolf999 || (isWolfChar && cv >= 150)) {
+    archetype = 'CRIT_DPS';
   } else if (lowerName.includes('яо гуан') || lowerName.includes('яогуан') || lowerName.includes('yaoguang') || lowerName.includes('yao guang') || lowerName.includes('爻光')) {
     archetype = 'HARMONY_SPD';
-  } else if (charId === '1006' || lowerName.includes('волк') || lowerName.includes('silver wolf') || lowerName.includes('silver')) {
+  } else if (isWolfChar) {
     archetype = 'NIHILITY_DEBUFF';
   } else if (charId === '1308' || lowerName.includes('ахерон') || lowerName.includes('acheron')) {
     archetype = 'CRIT_DPS';

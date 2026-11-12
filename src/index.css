@@ -1630,261 +1630,269 @@ main {
 }
 
 @media (max-width: 768px) {
-
-  /* Full 100% width on all cards and containers on mobile */
   .desktop-only {
     display: none !important;
   }
 
-  .mobile-only {
-    display: inline-flex !important;
+  .home-card {
+    width: calc(100% + 40px) !important;
+    max-width: none !important;
+    margin-left: -20px !important;
+    margin-right: -20px !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
   }
+}
 
-  .relic-worst-banner-top.mobile-only {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: rgba(255, 60, 60, 0.18);
-    border: 1px solid rgba(255, 60, 60, 0.5);
-    color: #ff4d4f;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    padding: 4px 8px;
-    border-radius: 4px;
-    margin-bottom: 8px;
-    width: 100%;
-    box-sizing: border-box;
-    white-space: nowrap;
-  }
+.mobile-only {
+  display: inline-flex !important;
+}
 
-  .char-hero-card,
-  .lightcone-box,
-  .relic-item-card,
-  .combat-attributes-card,
-  .audit-card,
-  .sets-card,
-  .planar-audit-box,
-  .roster-section,
-  .dashboard-col {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
+.relic-worst-banner-top.mobile-only {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(255, 60, 60, 0.18);
+  border: 1px solid rgba(255, 60, 60, 0.5);
+  color: #ff4d4f;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
 
-  /* UID Search Input on Mobile: Button in its own separate row */
-  .input-box-wrapper {
-    flex-direction: column !important;
-    gap: 10px !important;
-    width: 100% !important;
-  }
+.char-hero-card,
+.lightcone-box,
+.relic-item-card,
+.combat-attributes-card,
+.audit-card,
+.sets-card,
+.planar-audit-box,
+.roster-section,
+.dashboard-col {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
 
-  .uid-input {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    font-size: 14px !important;
-    padding: 14px 16px !important;
-  }
+/* UID Search Input on Mobile: Button in its own separate row */
+.input-box-wrapper {
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
 
-  .input-box-wrapper .btn-submit {
-    width: 100% !important;
-    padding: 13px 20px !important;
-    text-align: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-    font-size: 13px !important;
-  }
+.uid-input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  font-size: 14px !important;
+  padding: 14px 16px !important;
+}
 
-  /* Character Hero Card on Mobile */
-  .char-hero-card {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    padding: 16px 14px !important;
-    gap: 16px !important;
-  }
+.input-box-wrapper .btn-submit {
+  width: 100% !important;
+  padding: 13px 20px !important;
+  text-align: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  font-size: 13px !important;
+}
 
-  .char-hero-left {
-    width: 100% !important;
-    min-width: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 14px !important;
-  }
+/* Character Hero Card on Mobile */
+.char-hero-card {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  padding: 16px 14px !important;
+  gap: 16px !important;
+}
 
-  /* Upper-left avatar + Name and Stars in column to the right */
-  .char-header-row {
-    display: flex !important;
-    align-items: center !important;
-    gap: 14px !important;
-    width: 100% !important;
-  }
+.char-hero-left {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+}
 
-  .char-portrait-box {
-    width: 64px !important;
-    height: 64px !important;
-    border-radius: 50% !important;
-    flex-shrink: 0 !important;
-  }
+/* Upper-left avatar + Name and Stars in column to the right */
+.char-header-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  width: 100% !important;
+}
 
-  .char-title-col {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    gap: 4px !important;
-    min-width: 0 !important;
-    flex: 1 !important;
-  }
+.char-portrait-box {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+}
 
-  .char-name-title {
-    font-size: 20px !important;
-    font-weight: 700 !important;
-    color: #fff !important;
-    line-height: 1.2 !important;
-    word-break: break-word !important;
-    margin: 0 !important;
-  }
+.char-title-col {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
 
-  .char-stars {
-    font-size: 13px !important;
-    color: var(--gold) !important;
-    letter-spacing: 2px !important;
-    line-height: 1 !important;
-  }
+.char-name-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  line-height: 1.2 !important;
+  word-break: break-word !important;
+  margin: 0 !important;
+}
 
-  /* Characteristics (Pills) Centered */
-  .char-tags-row {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-    gap: 6px !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-  }
+.char-stars {
+  font-size: 13px !important;
+  color: var(--gold) !important;
+  letter-spacing: 2px !important;
+  line-height: 1 !important;
+}
 
-  .char-pill {
-    font-size: 11px !important;
-    padding: 3px 8px !important;
-  }
+/* Characteristics (Pills) Centered */
+.char-tags-row {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+}
 
-  /* Skills & Traces grid: 4 per row, perfectly centered and never overflowing */
-  .char-skills-row {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 8px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    justify-items: center !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-    padding: 4px 0 !important;
-    margin: 0 !important;
-  }
+.char-pill {
+  font-size: 11px !important;
+  padding: 3px 8px !important;
+}
 
-  .skill-item {
-    width: 100% !important;
-    max-width: 68px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 4px !important;
-  }
+/* Skills & Traces grid: 4 per row, perfectly centered and never overflowing */
+.char-skills-row {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  justify-items: center !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  padding: 4px 0 !important;
+  margin: 0 !important;
+}
 
-  .skill-icon-wrap {
-    width: 38px !important;
-    height: 38px !important;
-  }
+.skill-item {
+  width: 100% !important;
+  max-width: 68px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
 
-  .skill-icon {
-    width: 26px !important;
-    height: 26px !important;
-  }
+.skill-icon-wrap {
+  width: 38px !important;
+  height: 38px !important;
+}
 
-  .skill-lvl-badge {
-    font-size: 9px !important;
-    padding: 1px 3px !important;
-    bottom: -3px !important;
-    right: -3px !important;
-  }
+.skill-icon {
+  width: 26px !important;
+  height: 26px !important;
+}
 
-  .skill-name-label {
-    font-size: 8px !important;
-    text-align: center !important;
-    letter-spacing: 0 !important;
-    white-space: nowrap !important;
-  }
+.skill-lvl-badge {
+  font-size: 9px !important;
+  padding: 1px 3px !important;
+  bottom: -3px !important;
+  right: -3px !important;
+}
 
-  /* Light Cone card full width */
-  .lightcone-box {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-top: 4px !important;
-    padding: 12px 14px !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 14px !important;
-  }
+.skill-name-label {
+  font-size: 8px !important;
+  text-align: center !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+}
 
-  .cone-img {
-    width: 56px !important;
-    height: 70px !important;
-    flex-shrink: 0 !important;
-  }
+/* Light Cone card full width */
+.lightcone-box {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-top: 4px !important;
+  padding: 12px 14px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
 
-  .cone-name {
-    font-size: 13px !important;
-  }
+.cone-img {
+  width: 56px !important;
+  height: 70px !important;
+  flex-shrink: 0 !important;
+}
 
-  .relics-grid {
-    grid-template-columns: 1fr !important;
-  }
+.cone-name {
+  font-size: 13px !important;
+}
 
-  .planar-grid {
-    grid-template-columns: 1fr !important;
-  }
+.relics-grid {
+  grid-template-columns: 1fr !important;
+}
 
-  .guide-steps {
-    grid-template-columns: 1fr !important;
-  }
+.planar-grid {
+  grid-template-columns: 1fr !important;
+}
 
-  .trophy-stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
+.guide-steps {
+  grid-template-columns: 1fr !important;
+}
 
-  /* Trophy Card on Mobile - Button in separate row */
-  .trophy-card {
-    padding: 24px 18px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
+.trophy-stats-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
 
-  .trophy-card-footer {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 14px !important;
-    width: 100% !important;
-    margin-top: 16px !important;
-  }
+/* Trophy Card on Mobile - Button in separate row */
+.trophy-card {
+  padding: 24px 18px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
 
-  .trophy-verified-tag {
-    justify-content: center !important;
-    text-align: center !important;
-    width: 100% !important;
-  }
+.trophy-card-footer {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+  width: 100% !important;
+  margin-top: 16px !important;
+}
 
-  .trophy-copy-btn {
-    width: 100% !important;
-    text-align: center !important;
-    justify-content: center !important;
-    padding: 12px 16px !important;
-    font-size: 13px !important;
-    white-space: normal !important;
-  }
+.trophy-verified-tag {
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+.trophy-copy-btn {
+  width: 100% !important;
+  text-align: center !important;
+  justify-content: center !important;
+  padding: 12px 16px !important;
+  font-size: 13px !important;
+  white-space: normal !important;
 }
