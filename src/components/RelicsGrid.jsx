@@ -250,16 +250,16 @@ export default function RelicsGrid({ character, audit, t, lang = 'ru' }) {
       ) : (
         /* ВАРИАНТ 2: Единая сетка 6 слотов со сводными позначками наверху */
         <div className="relics-unified-container">
-          {(audit?.cavern?.label || audit?.planar?.setName) && (
+          {(audit?.cavern?.label || audit?.planar?.setName || planarRelics.length === 2) && (
             <div className="relics-sets-summary">
               {audit?.cavern?.label && (
                 <span className={`relic-group-tag ${audit?.cavern?.isComplete ? 'accent' : (audit?.cavern ? 'broken' : '')}`}>
                   {audit.cavern.label}
                 </span>
               )}
-              {audit?.planar?.setName && (
+              {(audit?.planar?.setName || planarRelics.length === 2) && (
                 <span className={`relic-group-tag ${audit?.planar?.isComplete ? 'accent' : 'broken'}`}>
-                  {planarTagLabel}
+                  {renderPlanarTag()}
                 </span>
               )}
             </div>
