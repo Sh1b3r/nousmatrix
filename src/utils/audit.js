@@ -1432,6 +1432,11 @@ export function getSubAffixWeight(field, archetype) {
   }
 }
 
+export function isCritDps(archetype) {
+  if (!archetype) return false;
+  return archetype === "CRIT_DPS" || archetype === "HP_CRIT_DPS" || archetype === "MORTENAX_HYBRID";
+}
+
 export function calculateCharacterAudit(char, lang = "ru") {
   if (!char) return null;
   if (Array.isArray(char.ornaments) && char.ornaments.length > 0) {
@@ -2055,11 +2060,13 @@ export function calculateCharacterAudit(char, lang = "ru") {
     heal,
     err
   });
+  const needsCrit = isCritDps(archetype);
   return {
     score: finalScore.toFixed(1),
     topPercent: topPercent.toFixed(1),
     rollEfficiency: rollEfficiency.toFixed(1),
-    cv: cv.toFixed(1),
+    cv: needsCrit ? cv.toFixed(1) : null,
+    needsCrit,
     spd: spd.toFixed(1),
     archetype,
     detectedRole,
@@ -2088,7 +2095,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       setName: cavernGroups.length > 0 ? cavernGroups[0].name : "",
       isComplete: isCavernComplete,
       efficiency: cavernEfficiency,
-      cv: cavernCv.toFixed(1),
+      cv: needsCrit && cavernCv > 0 ? cavernCv.toFixed(1) : null,
       condition: cavernStatusText,
       rollsTotal: cavernRollsTotal,
       usefulRolls: Math.round(cavernUsefulRolls),
@@ -2098,7 +2105,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       setName: planarSet,
       isComplete: isPlanarSetComplete,
       efficiency: planarEfficiency,
-      cv: planarCv.toFixed(1),
+      cv: needsCrit && planarCv > 0 ? planarCv.toFixed(1) : null,
       condition: planarCondition,
       rollsTotal: planarRollsTotal,
       usefulRolls: Math.round(planarUsefulRolls)

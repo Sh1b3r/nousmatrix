@@ -25,18 +25,19 @@ export default function RelicsAuditPanel({
     ? Math.round((cavernEff * cavernTotal + planarEff * planarTotal) / totalRolls)
     : (cavernEff || planarEff || 0);
 
-  const cavernCvNum = parseFloat(cavern?.cv || 0);
-  const planarCvNum = parseFloat(planar?.cv || 0);
-  const totalCvNum = cavernCvNum + planarCvNum;
-  const totalCv = totalCvNum > 0 ? totalCvNum.toFixed(1) : "0.0";
+  // Критмасса высчитывается и показывается ТОЛЬКО тем, кому она нужна (ДД)
+  const needsCrit = Boolean(
+    audit.needsCrit ?? (
+      audit.archetype === "CRIT_DPS" ||
+      audit.archetype === "HP_CRIT_DPS" ||
+      audit.archetype === "MORTENAX_HYBRID"
+    )
+  );
 
-  // Benchmarks for progress bar sliders:
-  // Cavern (4 slots): ~140 CV
-  // Planar (2 slots): ~70 CV
-  // Total (6 slots): ~200 CV
-  const cavernCvPercent = Math.min(100, Math.max(5, (cavernCvNum / 140) * 100));
-  const planarCvPercent = Math.min(100, Math.max(5, (planarCvNum / 70) * 100));
-  const totalCvPercent = Math.min(100, Math.max(5, (totalCvNum / 200) * 100));
+  const cavernCvNum = needsCrit && cavern?.cv ? parseFloat(cavern.cv) : 0;
+  const planarCvNum = needsCrit && planar?.cv ? parseFloat(planar.cv) : 0;
+  const totalCvNum = cavernCvNum + planarCvNum;
+  const totalCv = totalCvNum > 0 ? totalCvNum.toFixed(1) : null;
 
   const isAllComplete = Boolean(cavern?.isComplete && planar?.isComplete);
   const isAnyComplete = Boolean(cavern?.isComplete || planar?.isComplete);
@@ -93,19 +94,13 @@ export default function RelicsAuditPanel({
                 </div>
               </div>
 
-              {totalCvNum > 0 && (
+              {needsCrit && totalCv && (
                 <div className="metric-row">
                   <div className="metric-label-line">
-                    <span>{isRu ? "Общая крит. масса сетов (Total CV)" : "Total Relics Crit Value (Total CV)"}</span>
+                    <span>{isRu ? "Общая крит. масса реликвий (Total CV)" : "Total Relics Crit Value (Total CV)"}</span>
                     <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
                       {totalCv}
                     </span>
-                  </div>
-                  <div className="metric-bar-bg">
-                    <div
-                      className="metric-bar-fill accent"
-                      style={{ width: `${totalCvPercent}%` }}
-                    />
                   </div>
                 </div>
               )}
@@ -159,19 +154,13 @@ export default function RelicsAuditPanel({
                       <div className="metric-bar-fill accent" style={{ width: `${cavern.efficiency}%` }} />
                     </div>
                   </div>
-                  {parseFloat(cavern.cv) > 0 && (
+                  {needsCrit && cavern.cv && parseFloat(cavern.cv) > 0 && (
                     <div className="metric-row">
                       <div className="metric-label-line">
                         <span>{isRu ? "Крит. масса пещерных сетов (Cavern CV)" : "Cavern Crit Value (Cavern CV)"}</span>
                         <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
                           {cavern.cv}
                         </span>
-                      </div>
-                      <div className="metric-bar-bg">
-                        <div
-                          className="metric-bar-fill accent"
-                          style={{ width: `${cavernCvPercent}%` }}
-                        />
                       </div>
                     </div>
                   )}
@@ -217,19 +206,13 @@ export default function RelicsAuditPanel({
                       <div className="metric-bar-fill accent" style={{ width: `${planar.efficiency}%` }} />
                     </div>
                   </div>
-                  {parseFloat(planar.cv) > 0 && (
+                  {needsCrit && planar.cv && parseFloat(planar.cv) > 0 && (
                     <div className="metric-row">
                       <div className="metric-label-line">
                         <span>{isRu ? "Крит. масса планарок (Planar CV)" : "Planar Crit Value (Planar CV)"}</span>
                         <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
                           {planar.cv}
                         </span>
-                      </div>
-                      <div className="metric-bar-bg">
-                        <div
-                          className="metric-bar-fill accent"
-                          style={{ width: `${planarCvPercent}%` }}
-                        />
                       </div>
                     </div>
                   )}
