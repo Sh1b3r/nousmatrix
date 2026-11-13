@@ -20,22 +20,9 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
       document.body.style.paddingRight = `${scrollbarWidth}px`;
     }
 
-    const backdropEl = document.getElementById("modal-trophy");
-    const handleWheel = (e) => {
-      if (backdropEl && e.deltaY) {
-        backdropEl.scrollTop += e.deltaY;
-      }
-    };
-    if (backdropEl) {
-      backdropEl.addEventListener("wheel", handleWheel, { passive: true });
-    }
-
     return () => {
       document.body.style.overflow = prevOverflow;
       document.body.style.paddingRight = prevPaddingRight;
-      if (backdropEl) {
-        backdropEl.removeEventListener("wheel", handleWheel);
-      }
     };
   }, [isOpen]);
 
