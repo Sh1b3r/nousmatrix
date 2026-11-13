@@ -100,6 +100,87 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
   const hasSupportPlanar = setIds.some((id) => ["308", "317", "310", "302", "312"].includes(id)) || /вонвак|русалк|киль|флот|пенакони/i.test(setNames);
   const hasDpsPlanar = setIds.some((id) => ["306", "311", "309", "315", "314", "313"].includes(id)) || /салсотто|глатирамер|арена|дуран|идзумо|сигони/i.test(setNames);
   const isMortenax = charId === "1507" || lowerName.includes("мортенакс") || lowerName.includes("mortenax");
+
+  const evaluateSlotAlignment = (targetArchetype) => {
+    let matched = 0;
+    const arch = targetArchetype || "";
+    // 1. Body
+    if (arch.includes("CRIT")) {
+      if (bodyStat === "crit_rate" || bodyStat === "crit_dmg") matched++;
+    } else if (arch.includes("DEF")) {
+      if (bodyStat === "def") matched++;
+    } else if (arch.includes("HP")) {
+      if (bodyStat === "hp") matched++;
+    } else if (arch.includes("HEAL") || arch.includes("ABUNDANCE")) {
+      if (bodyStat === "heal" || bodyStat === "hp" || bodyStat === "atk") matched++;
+    } else if (arch.includes("DOT") || arch.includes("DEBUFF")) {
+      if (bodyStat === "effect_hit" || bodyStat === "atk") matched++;
+    } else if (arch.includes("BREAK")) {
+      if (bodyStat === "hp" || bodyStat === "def" || bodyStat === "atk") matched++;
+    } else {
+      if (bodyStat) matched++;
+    }
+
+    // 2. Boots
+    if (bootsStat === "spd") {
+      matched++;
+    } else if (arch.includes("DEF") && bootsStat === "def") {
+      matched++;
+    } else if (arch.includes("HP") && bootsStat === "hp") {
+      matched++;
+    } else if (bootsStat === "atk" && (arch.includes("DPS") || arch.includes("DOT"))) {
+      matched++;
+    } else if (bootsStat) {
+      matched += 0.5;
+    }
+
+    // 3. Sphere
+    if (sphereStat.includes("dmg")) {
+      matched++;
+    } else if (arch.includes("DEF") && sphereStat === "def") {
+      matched++;
+    } else if (arch.includes("HP") && sphereStat === "hp") {
+      matched++;
+    } else if (sphereStat === "atk" && (arch.includes("DOT") || arch.includes("DPS") || arch.includes("ABUNDANCE"))) {
+      matched++;
+    } else if (sphereStat) {
+      matched += 0.5;
+    }
+
+    // 4. Rope
+    if (arch.includes("SUPPORT") || arch.includes("HARMONY") || arch.includes("DEBUFF")) {
+      if (ropeStat === "sp_rate" || ropeStat === "hp" || ropeStat === "def") matched++;
+    } else if (arch.includes("BREAK")) {
+      if (ropeStat === "break_dmg") matched++;
+    } else if (arch.includes("DEF")) {
+      if (ropeStat === "def" || ropeStat === "sp_rate") matched++;
+    } else if (arch.includes("HP")) {
+      if (ropeStat === "hp") matched++;
+    } else if (ropeStat === "atk" || ropeStat === "sp_rate") {
+      matched++;
+    } else if (ropeStat) {
+      matched += 0.5;
+    }
+
+    return Math.min(4, Math.max(1, Math.round(matched)));
+  };
+
+  const formatRoleResult = (res) => {
+    const arch = res.targetArchetype || "CRIT_DPS";
+    const matchedSlots = evaluateSlotAlignment(arch);
+    const hasSynergySet = hasSupportPlanar || hasDpsPlanar || setNames.length > 5;
+    const calculatedConfidence = Math.min(99, Math.max(72, Math.round(30 + (matchedSlots / 4) * 50 + (hasSynergySet ? 18 : 10))));
+
+    return {
+      ...res,
+      confidence: res.confidence ? Math.min(res.confidence, calculatedConfidence) : calculatedConfidence,
+      matchedCriteria: isRu ? `${matchedSlots}/4 профильных слота` : `${matchedSlots}/4 profile slots`,
+      matchedSlots,
+      methodRu: "Метод: Путь персонажа (30%), 4 переменных слота — Тело, Сапоги, Сфера, Вервь (до 50%) и бонусы сетов (до 18%).",
+      methodEn: "Method: Character Path (30%), 4 variable slots — Body, Feet, Sphere, Rope (up to 50%), and set synergy (up to 18%)."
+    };
+  };
+
   if (isMortenax) {
     let supportScore = 0;
     let dpsScore = 0;
@@ -113,7 +194,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
     if (sphereStat.includes("fire") || sphereStat.includes("dmg")) dpsScore += 20;
     if (cv >= 150) dpsScore += 20;
     if (dpsScore > supportScore && (hasDpsPlanar || isCritBody) && !isErrRope && !hasSupportPlanar) {
-      return {
+      return formatRoleResult({
         type: "DPS",
         role: "DPS",
         icon: "dps",
@@ -123,10 +204,10 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         descEn: "Personal hypercarry build: prioritizing Crit Value (+100 CV inside Zone) and Max HP for massive offensive scaling.",
         confidence: Math.min(99, Math.max(80, Math.round(dpsScore))),
         targetArchetype: "HP_CRIT_DPS"
-      };
+      });
     }
     if (supportScore >= 40 && dpsScore >= 40) {
-      return {
+      return formatRoleResult({
         type: "HYBRID",
         role: "HYBRID",
         icon: "hybrid",
@@ -136,9 +217,9 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         descEn: "Balanced hybrid build: fast Zone timer cycle (70 SPD) and team buffs via Master Smith/Vonwacq paired with personal crit damage.",
         confidence: Math.min(98, Math.round(50 + (supportScore + dpsScore) / 2.5)),
         targetArchetype: "MORTENAX_HYBRID"
-      };
+      });
     }
-    return {
+    return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "support",
@@ -148,7 +229,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       descEn: "Built as Team Support Debuffer: prioritized Speed (lapping 70 SPD zone countdown), ERR, and team buffs (Master Smith 4-pc Kindle Flame).",
       confidence: Math.min(99, Math.max(82, Math.round(supportScore))),
       targetArchetype: "MORTENAX_SUPPORT"
-    };
+    });
   }
   const isWelt = charId === "1004" || lowerName.includes("вельт") || lowerName.includes("welt");
   if (isWelt) {
@@ -164,7 +245,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
     if (cv >= 130) dpsScore += 25;
     if (hasDpsPlanar || setNames.includes("пустыни") || setNames.includes("первооткрыватель")) dpsScore += 25;
     if (supportScore > dpsScore || isEhrBody || ehr >= 60) {
-      return {
+      return formatRoleResult({
         type: "SUPPORT",
         role: "SUPPORT",
         icon: "support",
@@ -174,9 +255,9 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         descEn: "Crowd control & debuff build: high EHR (67%+) to guarantee Imprisonment, Slow, and 100% Vulnerability uptime.",
         confidence: Math.min(99, Math.max(82, Math.round(supportScore))),
         targetArchetype: "NIHILITY_DEBUFF"
-      };
+      });
     }
-    return {
+    return formatRoleResult({
       type: "DPS",
       role: "DPS",
       icon: "dps",
@@ -186,14 +267,14 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       descEn: "Personal damage build: prioritized Crit Rate/DMG and Imaginary DMG to maximize skill and ultimate bounce multipliers.",
       confidence: Math.min(99, Math.max(80, Math.round(dpsScore))),
       targetArchetype: "CRIT_DPS"
-    };
+    });
   }
   const isWolf = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
   const isSW999 = isWolf && (lowerName.includes("999") || lowerName.includes("ур") || lowerName.includes("lv"));
   if (isWolf) {
     if (isSW999) {
       if (cv >= 150 || isCritBody && sphereStat.includes("imaginary")) {
-        return {
+        return formatRoleResult({
           type: "DPS",
           role: "DPS",
           icon: "dps",
@@ -203,12 +284,11 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
           descEn: "Silver Wolf Lv.999 Crit Sub-DPS build: outputs massive personal Imaginary damage alongside debuffs.",
           confidence: 90,
           targetArchetype: "CRIT_DPS"
-        };
+        });
       }
-      ;
     }
     if (cv >= 150 || isCritBody && sphereStat.includes("quantum")) {
-      return {
+      return formatRoleResult({
         type: "DPS",
         role: "DPS",
         icon: "dps",
@@ -218,9 +298,9 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         descEn: "Crit Sub-DPS build (E2+ optimized): outputs significant personal Quantum damage alongside debuffs.",
         confidence: 90,
         targetArchetype: "CRIT_DPS"
-      };
+      });
     }
-    return {
+    return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "support",
@@ -230,12 +310,12 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       descEn: "Classic debuffer support: prioritized EHR (96%+ / 67% with sig) and high SPD (145-160+) for 100% weakness implant.",
       confidence: 95,
       targetArchetype: "NIHILITY_DEBUFF"
-    };
+    });
   }
   const isAven = charId === "1304" || lowerName.includes("авантюрин") || lowerName.includes("aventurine");
   if (isAven) {
     if (cv >= 120 || bodyStat === "crit_dmg" || hasDpsPlanar) {
-      return {
+      return formatRoleResult({
         type: "HYBRID",
         role: "HYBRID",
         icon: "hybrid",
@@ -245,9 +325,9 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         descEn: "Hybrid build: Crit DMG body and offensive planar sets while maintaining 4000 DEF for the talent +48% CR bonus.",
         confidence: 92,
         targetArchetype: "PRESERVATION_DEF"
-      };
+      });
     }
-    return {
+    return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "support",
@@ -257,12 +337,12 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       descEn: "Pure shielder: maximized DEF (4000+ DEF) for impenetrable teamwide shield uptime.",
       confidence: 96,
       targetArchetype: "PRESERVATION_DEF"
-    };
+    });
   }
   const isJiaoqiu = charId === "1218" || lowerName.includes("цзяоцю") || lowerName.includes("jiaoqiu");
   if (isJiaoqiu) {
     if (sphereStat.includes("fire") && cv >= 110) {
-      return {
+      return formatRoleResult({
         type: "DPS",
         role: "DPS",
         icon: "dps",
@@ -272,9 +352,9 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         descEn: "Sub-DPS build focused on personal Burn DoT damage scaling.",
         confidence: 88,
         targetArchetype: "DOT_DPS"
-      };
+      });
     }
-    return {
+    return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "support",
@@ -284,12 +364,12 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       descEn: "Built for stack generation and Ult vulnerability: maximum speed (160+) and 140%+ EHR.",
       confidence: 96,
       targetArchetype: "NIHILITY_DEBUFF"
-    };
+    });
   }
   const isMarchHunt = (charId === "1224" || lowerName.includes("март")) && (path === "Rogue" || path === "Hunt");
   if (isMarchHunt) {
     if (be >= 100 || ropeStat === "break_dmg") {
-      return {
+      return formatRoleResult({
         type: "SUPPORT",
         role: "SUPPORT",
         icon: "support",
@@ -299,9 +379,9 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         descEn: "Built for Super Break teams: prioritized Break Effect and high Speed.",
         confidence: 90,
         targetArchetype: "BREAK_DPS"
-      };
+      });
     }
-    return {
+    return formatRoleResult({
       type: "DPS",
       role: "DPS",
       icon: "dps",
@@ -311,10 +391,10 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       descEn: "Built for follow-up attack teams (Feixiao/Ratio): prioritized CR, CD, and ATK.",
       confidence: 92,
       targetArchetype: "CRIT_DPS"
-    };
+    });
   }
   if (path === "Priest" || path === "Abundance") {
-    return {
+    return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "heal",
@@ -322,12 +402,11 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       labelEn: "HEALER / SUSTAIN (ABUNDANCE)",
       descRu: "Сборка на эффективное лечение, снятие ослаблений и выживание команды.",
       descEn: "Built for team healing, cleanse, and survival.",
-      confidence: 98,
       targetArchetype: heal > 0 ? be > 100 ? "ABUNDANCE_BREAK" : "ABUNDANCE_HP" : "ABUNDANCE_HP"
-    };
+    });
   }
   if (path === "Knight" || path === "Preservation") {
-    return {
+    return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "support",
@@ -335,12 +414,11 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       labelEn: "SHIELDER / SUSTAIN (PRESERVATION)",
       descRu: "Сборка на прочность щитов и командное снижение урона.",
       descEn: "Built for maximum team shielding and damage reduction.",
-      confidence: 98,
       targetArchetype: def > hp ? "PRESERVATION_DEF" : "PRESERVATION_HP"
-    };
+    });
   }
   if (path === "Shaman" || path === "Harmony") {
-    return {
+    return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "buffer",
@@ -348,11 +426,10 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       labelEn: "BUFFER / ENABLER (HARMONY)",
       descRu: "Сборка на усиление урона, продвижение ходов и генерацию очков действий команды.",
       descEn: "Built for amplifying team damage, action advance, and buff uptime.",
-      confidence: 98,
       targetArchetype: lowerName.includes("яо") ? "HARMONY_SPD" : lowerName.includes("жуань") ? "HARMONY_BREAK" : cd >= 150 ? "HARMONY_CRIT" : "HARMONY_ATK"
-    };
+    });
   }
-  return {
+  return formatRoleResult({
     type: "DPS",
     role: "DPS",
     icon: "dps",
@@ -360,9 +437,8 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
     labelEn: "MAIN DPS (DAMAGE DEALER)",
     descRu: "Сборка на нанесение максимального урона.",
     descEn: "Built for maximizing offensive damage output.",
-    confidence: 95,
     targetArchetype: be >= 180 ? "BREAK_DPS" : cr < 40 && ehr > 40 ? "DOT_DPS" : hp > 5500 ? "HP_CRIT_DPS" : "CRIT_DPS"
-  };
+  });
 }
 export function evaluateRelicMainStat(relic, archetype, char) {
   if (!relic || !relic.main_affix) {
@@ -1589,10 +1665,6 @@ export function calculateCharacterAudit(char, lang = "ru") {
       statPoints = defRatio * 73 + spdBonus + cvBonus;
       if (def >= 4e3) {
         bottleneck = isRu ? `Защита (${def}) закрывает максимальный порог таланта (+48% КШ). Билд полностью оптимизирован.` : `DEF (${def}) reaches the 4000 talent cap (+48% CRIT Rate). Build is highly optimized.`;
-        actions.push({
-          title: isRu ? "Сборка завершена (End-Game Tier)" : "Build Complete (End-Game Tier)",
-          desc: isRu ? "Избыточную защиту можно безопасно перевести в Крит. Урон и Скорость." : "Excess DEF rolls can be shifted to CRIT DMG and SPD."
-        });
       } else {
         bottleneck = isRu ? `Защита (${def}) ниже капа 4000. Талант недополучает ${Math.round((4e3 - def) * 0.024)}% бесплатного Крит. Шанса.` : `DEF (${def}) is below the 4000 cap, losing ${Math.round((4e3 - def) * 0.024)}% free CRIT Rate.`;
         actions.push({
@@ -1621,11 +1693,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
           desc: isRu ? "Каждые 10% КУ прямо увеличивают урон вашего гиперкерри." : "Every 10% CD directly boosts your main carry damage."
         });
       } else {
-        bottleneck = isRu ? `Сбалансированная сборка Гармонии (${cd}% КУ, ${spd} СКОР, ${err}% ВЭ).` : `High tier Harmony build (${cd}% CD, ${spd} SPD, ${err}% ERR).`;
-        actions.push({
-          title: isRu ? "Оптимизация: Замена худшего артефакта" : "Optimization: Replace Worst Relic",
-          desc: isRu ? `Замените слот ${weakestRelicIndex + 1} на реликвию с большим количеством полезных роллов.` : `Replace slot ${weakestRelicIndex + 1} with higher roll value.`
-        });
+        bottleneck = isRu ? `Сбалансированная сборка Гармонии (${cd}% КУ, ${spd} СКОР, ${err}% ВЭ). Явных узких мест нет.` : `High tier Harmony build (${cd}% CD, ${spd} SPD, ${err}% ERR). No critical bottlenecks.`;
       }
       break;
     }
@@ -1647,11 +1715,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
           desc: isRu ? "Используйте вервь со статом Восстановление энергии." : "Equip an Energy Regeneration Rate main stat rope."
         });
       } else {
-        bottleneck = isRu ? `Отличная скоростная сборка саппорта (${spd} СКОР, +${err}% ВЭ). Закрывает все ротации.` : `High-speed support build (${spd} SPD, +${err}% ERR). Full rotation capability.`;
-        actions.push({
-          title: isRu ? "Сборка готова к эндгейму" : "Endgame Ready",
-          desc: isRu ? "Скорость и ротации полностью оптимизированы." : "Speed and rotations are fully optimized."
-        });
+        bottleneck = isRu ? `Отличная скоростная сборка саппорта (${spd} СКОР, +${err}% ВЭ). Закрывает все ротации. Явных узких мест нет.` : `High-speed support build (${spd} SPD, +${err}% ERR). Full rotation capability. No bottlenecks.`;
       }
       break;
     }
@@ -1674,11 +1738,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
           desc: isRu ? "Доберите АТК% на соединительной верви или планарной сфере." : "Gain ATK% on rope or planar sphere."
         });
       } else {
-        bottleneck = isRu ? `Отличная сборка (${atk} АТК, ${heal}% исцеления, ${spd} СКОР). Закрывает весь хай-энд контент.` : `Solid ATK-scaling healer build (${atk} ATK, ${heal}% heal, ${spd} SPD).`;
-        actions.push({
-          title: isRu ? "Сборка завершена" : "Build Complete",
-          desc: isRu ? "Ротация и исцеление полностью соответствуют эндовым активностям." : "Fully endgame ready."
-        });
+        bottleneck = isRu ? `Отличная сборка (${atk} АТК, ${heal}% исцеления, ${spd} СКОР). Закрывает весь эндгейм-контент. Явных узких мест нет.` : `Solid ATK-scaling healer build (${atk} ATK, ${heal}% heal, ${spd} SPD). No bottlenecks.`;
       }
       break;
     }
@@ -1694,11 +1754,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
           desc: isRu ? "Криты не нужны: замените куски с роллами в КУ/КШ на чистое Пробитие и Скорость." : "Crits are useless: swap to pure Break Effect and SPD."
         });
       } else {
-        bottleneck = isRu ? `Эффект пробития (${be}%) и Скорость (${spd}) закрывают тайминги ультимейта.` : `Break Effect (${be}%) and SPD (${spd}) satisfy all Cycle 0 breakpoints.`;
-        actions.push({
-          title: isRu ? "Сборка завершена" : "Build Complete",
-          desc: isRu ? "Топовый ранг супер-пробития." : "Top tier break build."
-        });
+        bottleneck = isRu ? `Эффект пробития (${be}%) и Скорость (${spd}) закрывают тайминги ультимейта. Явных узких мест нет.` : `Break Effect (${be}%) and SPD (${spd}) satisfy all Cycle 0 breakpoints. No bottlenecks.`;
       }
       break;
     }
@@ -1714,11 +1770,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
           desc: isRu ? "Сапоги на Скорость (+25 SPD) обязательны для быстрой перезарядки Зоны и обновления баффа Кузнеца." : "Speed boots are mandatory for cycling Zone and refreshing Master Smith buff."
         });
       } else {
-        bottleneck = isRu ? `Отличная сборка Саппорта-Дебаффера (${spd} SPD, ${hp} HP). Успевает накладывать срез защиты и поддерживать бафф +15% урона отряду до сброса Зоны.` : `Optimized Support Debuffer build (${spd} SPD, ${hp} HP). Reliably refreshes team buffs within the 70 SPD countdown.`;
-        actions.push({
-          title: isRu ? "Сборка Саппорта оптимизирована" : "Support Build Optimized",
-          desc: isRu ? "Высокая скорость опережает таймер Зоны, а вервь на ВЭ/сет Кузнеца усиливают весь отряд." : "High speed laps the zone timer while Master Smith & ERR support the team."
-        });
+        bottleneck = isRu ? `Отличная сборка Саппорта-Дебаффера (${spd} SPD, ${hp} HP). Закрывает тайминг Зоны и баффы отряда. Явных узких мест нет.` : `Optimized Support Debuffer build (${spd} SPD, ${hp} HP). Reliably refreshes team buffs within the 70 SPD countdown. No bottlenecks.`;
       }
       break;
     }
@@ -1735,10 +1787,6 @@ export function calculateCharacterAudit(char, lang = "ru") {
         });
       } else {
         bottleneck = isRu ? `Базовые пороги закрыты: Скорость ${spd} SPD (порог 134.0), Крит. масса ${cv} CV, HP ${hp}. Явных узких мест нет.` : `Archetype thresholds satisfied: Speed ${spd} SPD (cap 134.0), CV ${cv}, HP ${hp}. No major bottlenecks.`;
-        actions.push({
-          title: isRu ? "Ключевые пороги закрыты (явных узких мест нет)" : "Archetype Thresholds Satisfied",
-          desc: isRu ? `Текущие параметры (Скорость: ${spd} SPD, Крит. масса: ${cv} CV, HP: ${hp}) закрывают требования роли. Дальнейшее усиление возможно через замену слота ${weakestRelicIndex + 1}.` : `Current stats meet archetype requirements. Further gains via slot ${weakestRelicIndex + 1}.`
-        });
       }
       break;
     }
@@ -1758,10 +1806,6 @@ export function calculateCharacterAudit(char, lang = "ru") {
           });
         } else {
           bottleneck = isRu ? `Скорость закрывает тайминг Зоны (${spd} SPD, ${cv} CV, ${hp} HP). Явных узких мест нет.` : `Speed satisfies Zone timer (${spd} SPD, ${cv} CV, ${hp} HP). No critical bottlenecks.`;
-          actions.push({
-            title: isRu ? "Ключевые пороги закрыты (явных узких мест нет)" : "Zone Thresholds Satisfied",
-            desc: isRu ? "Скорость закрывает тайминг зоны на 70 SPD, а сверхспособность добавляет криты (+100 CV)." : "Speed satisfies the 70 SPD countdown, and Ult supplies +100 CV."
-          });
         }
       } else if (cr < 70 && cd > 160) {
         bottleneck = isRu ? `Дисбаланс критов: Крит. шанс ${cr.toFixed(1)}% отстаёт от Крит. урона ${cd.toFixed(1)}% (целевое соотношение ~1:2).` : `CRIT imbalance: CRIT Rate ${cr.toFixed(1)}% lags behind CRIT DMG ${cd.toFixed(1)}% (target ~1:2 ratio).`;
@@ -1783,10 +1827,6 @@ export function calculateCharacterAudit(char, lang = "ru") {
         });
       } else {
         bottleneck = isRu ? `Существенных узких мест нет: ключевые характеристики (${cv ? `${cv} CV, ` : ""}${spd} SPD) закрывают требования роли.` : `No critical bottlenecks: core stats meet content requirements.`;
-        actions.push({
-          title: isRu ? "Ключевые пороги закрыты (явных узких мест нет)" : "Core Thresholds Satisfied",
-          desc: isRu ? `Текущие характеристики соответствуют требованиям роли. Точечное улучшение возможно через замену слота ${weakestRelicIndex + 1} на артефакт с большим числом полезных роллов.` : `Current build satisfies archetype benchmarks. Further incremental gains via upgrading slot ${weakestRelicIndex + 1}.`
-        });
       }
       break;
     }
@@ -1797,13 +1837,34 @@ export function calculateCharacterAudit(char, lang = "ru") {
   if (wrongMainRelics.length > 0) {
     const worstMain = wrongMainRelics[0];
     const sName = isRu ? slotNamesRu[worstMain.idx] || `Слот ${worstMain.idx + 1}` : slotNamesEn[worstMain.idx] || `Slot ${worstMain.idx + 1}`;
+    const worstRelicObj = char.relics?.[worstMain.idx];
+    const pieceName = worstRelicObj?.name ? ` («${worstRelicObj.name}»)` : "";
     const recText = isRu ? worstMain.mainEval.recommendedRu : worstMain.mainEval.recommendedEn;
     actions.unshift({
       title: isRu ? `Критично: Неверный главный стат (${sName})` : `Critical: Wrong Main Stat (${sName})`,
-      desc: isRu ? `На реликвии «${sName}» активен неподходящий главный стат. Для вашего архетипа необходимо заменить на: ${recText}.` : `Slot "${sName}" has incompatible main stat. For this archetype, switch to: ${recText}.`
+      desc: isRu ? `На реликвии в слоте «${sName}»${pieceName} активен неподходящий главный стат. Для вашего архетипа необходимо заменить на: ${recText}.` : `Slot "${sName}"${pieceName} has incompatible main stat. For this archetype, switch to: ${recText}.`
     });
-    bottleneck = isRu ? `Критическая потеря урона/эффективности: ${sName} имеет неподходящий главный стат. Срочно замените на: ${recText}.` : `Critical efficiency loss: ${sName} has incompatible main stat. Priority replacement: ${recText}.`;
+    bottleneck = isRu ? `Критическая потеря урона/эффективности: «${sName}»${pieceName} имеет неподходящий главный стат. Срочно замените на: ${recText}.` : `Critical efficiency loss: "${sName}"${pieceName} has incompatible main stat. Priority replacement: ${recText}.`;
   }
+
+  const weakestRelic = char.relics?.[weakestRelicIndex];
+  const weakestScore = relicScores.find((r) => r.idx === weakestRelicIndex);
+  const weakestSlotRu = slotNamesRu[weakestRelicIndex] || `Слот ${weakestRelicIndex + 1}`;
+  const weakestSlotEn = slotNamesEn[weakestRelicIndex] || `Slot ${weakestRelicIndex + 1}`;
+  const weakestName = weakestRelic?.name || "";
+  const usefulRollsCount = weakestScore ? Math.round(weakestScore.pScore * 10) / 10 : 0;
+  const totalRollsCountForRelic = weakestScore?.pTotal || 0;
+
+  const minMaxAdvice = {
+    slotName: isRu ? weakestSlotRu : weakestSlotEn,
+    relicName: weakestName,
+    usefulRolls: usefulRollsCount,
+    totalRolls: totalRollsCountForRelic,
+    titleRu: `Кандидат на замену при мин-максе: «${weakestSlotRu}»${weakestName ? ` (${weakestName})` : ""}`,
+    titleEn: `Min-Max Upgrade Target: «${weakestSlotEn}»${weakestName ? ` (${weakestName})` : ""}`,
+    descRu: `Среди экипированных предметов реликвия в слоте «${weakestSlotRu}»${weakestName ? ` («${weakestName}»)` : ""} набрала наименьшую полезность сабстатов (${usefulRollsCount} из ${totalRollsCountForRelic} полезных улучшений — часть роллов ушла в непрофильные характеристики). Поскольку базовые требования роли закрыты, именно замена этой детали даст наибольшую отдачу при дальнейшей прокачке.`,
+    descEn: `Among equipped pieces, the «${weakestSlotEn}» slot${weakestName ? ` («${weakestName}»)` : ""} has the lowest substat efficiency (${usefulRollsCount} of ${totalRollsCountForRelic} useful upgrades rolled into off-stats). With core requirements fulfilled, replacing this piece yields the highest marginal upgrade.`
+  };
   let mainStatPenalty = 0;
   relicScores.forEach((r) => {
     if (r.mainEval?.status === "wrong") mainStatPenalty += 14;
@@ -2089,6 +2150,8 @@ export function calculateCharacterAudit(char, lang = "ru") {
     secondaryMetric: characterMetrics.secondary,
     bottleneck,
     actions,
+    minMaxAdvice,
+    isThresholdsMet: actions.length === 0,
     weakestRelicIndex,
     cavern: {
       label: cavernSetLabel,

@@ -107,19 +107,25 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
                 className="role-confidence-tag"
                 title={
                   isRu
-                    ? "Уверенность классификации: вероятность того, что текущий набор экипировки и главных статов соответствует этой роли"
-                    : "Classification confidence: likelihood that equipped stats align with this role"
+                    ? audit.detectedRole.methodRu || "Соответствие: оценка Пути персонажа, 4 переменных слотов экипировки (Тело, Сапоги, Сфера, Вервь) и бонусов сетов"
+                    : audit.detectedRole.methodEn || "Role alignment: based on Character Path, 4 variable slots (Body, Feet, Sphere, Rope), and set synergy"
                 }
               >
                 {isRu
-                  ? `Уверенность классификации: ${audit.detectedRole.confidence}%`
-                  : `Classification confidence: ${audit.detectedRole.confidence}%`}
+                  ? `Соответствие роли: ${audit.detectedRole.matchedCriteria ? `${audit.detectedRole.matchedCriteria} (${audit.detectedRole.confidence}%)` : `${audit.detectedRole.confidence}%`}`
+                  : `Role match: ${audit.detectedRole.matchedCriteria ? `${audit.detectedRole.matchedCriteria} (${audit.detectedRole.confidence}%)` : `${audit.detectedRole.confidence}%`}`}
               </span>
             )}
           </div>
           <div className="role-badge-desc">
             {isRu ? audit.detectedRole.descRu : audit.detectedRole.descEn}
           </div>
+          {audit.detectedRole.methodRu && (
+            <div className="role-method-note">
+              <span className="role-method-icon">ℹ</span>
+              <span>{isRu ? audit.detectedRole.methodRu : audit.detectedRole.methodEn}</span>
+            </div>
+          )}
         </div>
       )}
 
@@ -222,7 +228,7 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
         </div>
       )}
 
-      {audit.actions && audit.actions.length > 0 && (
+      {audit.actions && audit.actions.length > 0 ? (
         <div className="audit-actions-section">
           <div className="panel-title sub-title">
             <span>{t.improvementPlan || (isRu ? "Рекомендации по улучшению" : "Improvement Recommendations")}</span>
@@ -239,6 +245,33 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
               </div>
             ))}
           </div>
+        </div>
+      ) : (
+        <div className="audit-complete-card">
+          <div className="complete-card-head">
+            <span className="complete-card-icon">
+              <CheckIcon size={16} />
+            </span>
+            <span className="complete-card-title">
+              {isRu ? "Ключевые требования роли выполнены" : "All Core Archetype Requirements Fulfilled"}
+            </span>
+          </div>
+          <p className="complete-card-desc">
+            {isRu
+              ? "Все базовые пороги (скорость, ключевые боевые параметры и главные характеристики) закрыты. Срочных исправлений билда не требуется."
+              : "All baseline breakpoints (speed, core combat stats, and main stats) are satisfied. No urgent adjustments required."}
+          </p>
+          {audit.minMaxAdvice && (
+            <div className="minmax-hint-box">
+              <div className="minmax-hint-title">
+                <SparklesIcon size={13} />
+                <span>{isRu ? audit.minMaxAdvice.titleRu : audit.minMaxAdvice.titleEn}</span>
+              </div>
+              <div className="minmax-hint-desc">
+                {isRu ? audit.minMaxAdvice.descRu : audit.minMaxAdvice.descEn}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

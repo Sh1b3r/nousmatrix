@@ -229,7 +229,7 @@ export default function CharacterOverview({ character, audit, t, lang = "ru" }) 
               </div>
             )}
 
-            {topAction && (
+            {topAction ? (
               <div className="verdict-takeaway-item action" onClick={handleJumpToPlan}>
                 <span className="takeaway-label">
                   <SparklesIcon size={12} />
@@ -237,6 +237,24 @@ export default function CharacterOverview({ character, audit, t, lang = "ru" }) 
                 </span>
                 <span className="takeaway-text clickable" title={topAction.desc}>
                   {topAction.title}
+                </span>
+                <span className="takeaway-jump-arrow">→</span>
+              </div>
+            ) : (
+              <div className="verdict-takeaway-item complete" onClick={handleJumpToPlan}>
+                <span className="takeaway-label">
+                  <CheckIcon size={12} />
+                  <span>{isRu ? "Статус:" : "Status:"}</span>
+                </span>
+                <span
+                  className="takeaway-text clickable"
+                  title={
+                    isRu
+                      ? "Все ключевые пороги закрыты, критических узких мест нет"
+                      : "All key breakpoints met, no critical bottlenecks"
+                  }
+                >
+                  {isRu ? "Ключевые пороги закрыты (явных узких мест нет)" : "Core thresholds satisfied (no bottlenecks)"}
                 </span>
                 <span className="takeaway-jump-arrow">→</span>
               </div>
