@@ -5,8 +5,7 @@ export default function RelicsAuditPanel({
   audit,
   t,
   lang = "ru",
-  layoutMode = "grouped",
-  onLayoutModeChange
+  layoutMode = "grouped"
 }) {
   if (!audit) return null;
   const isRu = (lang || (t?.lvl === "Ур." ? "ru" : "en")) === "ru";
@@ -19,14 +18,25 @@ export default function RelicsAuditPanel({
   const planarTotal = Number(planar?.rollsTotal || 0);
   const totalUseful = cavernUseful + planarUseful;
   const totalRolls = cavernTotal + planarTotal;
+
+  const cavernEff = Number(cavern?.efficiency || 0);
+  const planarEff = Number(planar?.efficiency || 0);
   const combinedEfficiency = totalRolls > 0
-    ? Math.round((totalUseful / totalRolls) * 100)
-    : (cavern?.efficiency || planar?.efficiency || 0);
+    ? Math.round((cavernEff * cavernTotal + planarEff * planarTotal) / totalRolls)
+    : (cavernEff || planarEff || 0);
 
   const cavernCvNum = parseFloat(cavern?.cv || 0);
   const planarCvNum = parseFloat(planar?.cv || 0);
   const totalCvNum = cavernCvNum + planarCvNum;
   const totalCv = totalCvNum > 0 ? totalCvNum.toFixed(1) : "0.0";
+
+  // Benchmarks for progress bar sliders:
+  // Cavern (4 slots): ~140 CV
+  // Planar (2 slots): ~70 CV
+  // Total (6 slots): ~200 CV
+  const cavernCvPercent = Math.min(100, Math.max(5, (cavernCvNum / 140) * 100));
+  const planarCvPercent = Math.min(100, Math.max(5, (planarCvNum / 70) * 100));
+  const totalCvPercent = Math.min(100, Math.max(5, (totalCvNum / 200) * 100));
 
   const isAllComplete = Boolean(cavern?.isComplete && planar?.isComplete);
   const isAnyComplete = Boolean(cavern?.isComplete || planar?.isComplete);
@@ -38,29 +48,7 @@ export default function RelicsAuditPanel({
           <span className="relics-audit-dot"></span>
           <span>{isRu ? "ПОДСЧЁТ РЕЛИКВИЙ И ПЛАНАРОК" : "RELICS & PLANARS AUDIT"}</span>
         </div>
-        <div className="relics-audit-actions">
-          {onLayoutModeChange && (
-            <div className="relic-view-toggle mini">
-              <button
-                type="button"
-                className={`toggle-btn ${layoutMode === "grouped" ? "active" : ""}`}
-                onClick={() => onLayoutModeChange("grouped")}
-                title={isRu ? "Раздельные блоки по секциям" : "Grouped by sections"}
-              >
-                {isRu ? "ПО СЕКЦИЯМ" : "BY SECTIONS"}
-              </button>
-              <button
-                type="button"
-                className={`toggle-btn ${layoutMode === "unified" ? "active" : ""}`}
-                onClick={() => onLayoutModeChange("unified")}
-                title={isRu ? "Единый блок для всех 6 слотов" : "Unified block for all slots"}
-              >
-                {isRu ? "ВСЕ СЛОТЫ" : "ALL SLOTS"}
-              </button>
-            </div>
-          )}
-          <span className="relics-audit-badge">{isRu ? "АУДИТ РОЛЛОВ СЕТОВ" : "SET ROLL QUALITY"}</span>
-        </div>
+        <span className="relics-audit-badge">{isRu ? "АУДИТ РОЛЛОВ СЕТОВ" : "SET ROLL QUALITY"}</span>
       </div>
 
       <div className="relics-audit-grid">
@@ -108,10 +96,16 @@ export default function RelicsAuditPanel({
               {totalCvNum > 0 && (
                 <div className="metric-row">
                   <div className="metric-label-line">
-                    <span>{isRu ? "Общая крит. масса реликвий (Total CV)" : "Total Relics Crit Value (Total CV)"}</span>
+                    <span>{isRu ? "Общая крит. масса сетов (Total CV)" : "Total Relics Crit Value (Total CV)"}</span>
                     <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
                       {totalCv}
                     </span>
+                  </div>
+                  <div className="metric-bar-bg">
+                    <div
+                      className="metric-bar-fill accent"
+                      style={{ width: `${totalCvPercent}%` }}
+                    />
                   </div>
                 </div>
               )}
@@ -173,6 +167,12 @@ export default function RelicsAuditPanel({
                           {cavern.cv}
                         </span>
                       </div>
+                      <div className="metric-bar-bg">
+                        <div
+                          className="metric-bar-fill accent"
+                          style={{ width: `${cavernCvPercent}%` }}
+                        />
+                      </div>
                     </div>
                   )}
                   {cavern.condition && (
@@ -224,6 +224,12 @@ export default function RelicsAuditPanel({
                         <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
                           {planar.cv}
                         </span>
+                      </div>
+                      <div className="metric-bar-bg">
+                        <div
+                          className="metric-bar-fill accent"
+                          style={{ width: `${planarCvPercent}%` }}
+                        />
                       </div>
                     </div>
                   )}

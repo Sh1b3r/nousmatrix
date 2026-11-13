@@ -1341,6 +1341,97 @@ export function determineCharacterMetrics(char, archetype, stats) {
     }
   };
 }
+
+export function getSubAffixWeight(field, archetype) {
+  const f = field || "";
+  switch (archetype) {
+    case "PRESERVATION_DEF":
+      if (f === "def") return 1;
+      if (f === "crit_dmg" || f === "crit_rate" || f === "spd") return 0.9;
+      if (f === "effect_res") return 0.75;
+      if (f === "hp") return 0.35;
+      return 0;
+    case "PRESERVATION_HP":
+      if (f === "hp") return 1;
+      if (f === "def" || f === "spd") return 0.9;
+      if (f === "effect_res") return 0.8;
+      return 0;
+    case "ABUNDANCE_ATK":
+      if (f === "atk" || f === "spd") return 1;
+      if (f === "effect_res") return 0.8;
+      if (f === "hp" || f === "def") return 0.4;
+      return 0;
+    case "ABUNDANCE_HP":
+      if (f === "hp" || f === "spd") return 1;
+      if (f === "effect_res") return 0.8;
+      if (f === "def") return 0.5;
+      return 0;
+    case "ABUNDANCE_BREAK":
+      if (f === "break_dmg" || f === "spd") return 1;
+      if (f === "effect_res") return 0.75;
+      if (f === "hp" || f === "def" || f === "atk") return 0.4;
+      return 0;
+    case "HARMONY_CRIT":
+      if (f === "crit_dmg" || f === "spd") return 1;
+      if (f === "effect_res") return 0.75;
+      if (f === "hp" || f === "def") return 0.45;
+      return 0;
+    case "HARMONY_SPD":
+      if (f === "spd") return 1;
+      if (f === "effect_res") return 0.85;
+      if (f === "hp" || f === "def") return 0.5;
+      return 0;
+    case "HARMONY_ATK":
+      if (f === "atk" || f === "spd") return 1;
+      if (f === "effect_res") return 0.75;
+      if (f === "hp" || f === "def") return 0.45;
+      return 0;
+    case "HARMONY_BREAK":
+      if (f === "break_dmg" || f === "spd") return 1;
+      if (f === "effect_res") return 0.75;
+      if (f === "hp" || f === "def") return 0.45;
+      return 0;
+    case "BREAK_DPS":
+      if (f === "break_dmg" || f === "spd") return 1;
+      if (f === "atk") return 0.8;
+      return 0;
+    case "DOT_DPS":
+      if (f === "atk" || f === "spd") return 1;
+      if (f === "effect_hit") return 0.9;
+      if (f === "break_dmg") return 0.4;
+      return 0;
+    case "HP_CRIT_DPS":
+      if (f === "crit_rate" || f === "crit_dmg") return 1;
+      if (f === "hp") return 0.95;
+      if (f === "spd") return 0.85;
+      return 0;
+    case "MORTENAX_SUPPORT":
+      if (f === "spd") return 1;
+      if (f === "hp") return 0.95;
+      if (f === "effect_res") return 0.8;
+      if (f === "def") return 0.7;
+      if (f === "crit_rate" || f === "crit_dmg") return 0.5;
+      return 0;
+    case "MORTENAX_HYBRID":
+      if (f === "spd" || f === "crit_rate" || f === "crit_dmg") return 1;
+      if (f === "hp") return 0.95;
+      if (f === "effect_res") return 0.7;
+      if (f === "def") return 0.5;
+      return 0;
+    case "NIHILITY_DEBUFF":
+      if (f === "effect_hit" || f === "spd") return 1;
+      if (f === "crit_rate" || f === "crit_dmg") return 0.8;
+      if (f === "atk") return 0.5;
+      if (f === "effect_res") return 0.5;
+      return 0;
+    default: // CRIT_DPS
+      if (f === "crit_rate" || f === "crit_dmg") return 1;
+      if (f === "atk" || f === "spd") return 0.85;
+      if (f === "break_dmg") return 0.2;
+      return 0;
+  }
+}
+
 export function calculateCharacterAudit(char, lang = "ru") {
   if (!char) return null;
   if (Array.isArray(char.ornaments) && char.ornaments.length > 0) {
@@ -1464,90 +1555,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       const upgrades = Math.max(0, (sub.count || 1) - 1);
       pTotal += upgrades;
       totalRollsCount += upgrades;
-      const f = sub.field || "";
-      let weight = 0;
-      switch (archetype) {
-        case "PRESERVATION_DEF":
-          if (f === "def") weight = 1;
-          else if (f === "crit_dmg" || f === "crit_rate" || f === "spd") weight = 0.9;
-          else if (f === "effect_res") weight = 0.7;
-          else if (f === "hp") weight = 0.3;
-          break;
-        case "PRESERVATION_HP":
-          if (f === "hp") weight = 1;
-          else if (f === "def" || f === "spd") weight = 0.9;
-          else if (f === "effect_res") weight = 0.8;
-          break;
-        case "ABUNDANCE_ATK":
-          if (f === "atk" || f === "spd") weight = 1;
-          else if (f === "effect_res") weight = 0.8;
-          else if (f === "hp" || f === "def") weight = 0.5;
-          break;
-        case "ABUNDANCE_HP":
-          if (f === "hp" || f === "spd") weight = 1;
-          else if (f === "effect_res") weight = 0.8;
-          else if (f === "def") weight = 0.6;
-          break;
-        case "ABUNDANCE_BREAK":
-          if (f === "break_dmg" || f === "spd") weight = 1;
-          else if (f === "effect_res" || f === "atk") weight = 0.7;
-          else if (f === "hp" || f === "def") weight = 0.5;
-          break;
-        case "HARMONY_CRIT":
-          if (f === "crit_dmg" || f === "spd") weight = 1;
-          else if (f === "effect_res") weight = 0.7;
-          else if (f === "hp" || f === "def") weight = 0.5;
-          break;
-        case "HARMONY_SPD":
-          if (f === "spd") weight = 1;
-          else if (f === "effect_res") weight = 0.85;
-          else if (f === "hp" || f === "def") weight = 0.7;
-          break;
-        case "HARMONY_ATK":
-          if (f === "atk" || f === "spd") weight = 1;
-          else if (f === "hp" || f === "def" || f === "effect_res") weight = 0.6;
-          break;
-        case "HARMONY_BREAK":
-          if (f === "break_dmg" || f === "spd") weight = 1;
-          else if (f === "hp" || f === "def" || f === "effect_res") weight = 0.6;
-          break;
-        case "BREAK_DPS":
-          if (f === "break_dmg" || f === "spd") weight = 1;
-          else if (f === "atk") weight = 0.85;
-          break;
-        case "DOT_DPS":
-          if (f === "atk" || f === "spd") weight = 1;
-          else if (f === "effect_hit") weight = 0.9;
-          else if (f === "break_dmg") weight = 0.6;
-          break;
-        case "HP_CRIT_DPS":
-          if (f === "crit_rate" || f === "crit_dmg") weight = 1;
-          else if (f === "hp") weight = 0.95;
-          else if (f === "spd") weight = 0.8;
-          break;
-        case "MORTENAX_SUPPORT":
-          if (f === "spd") weight = 1;
-          else if (f === "hp") weight = 0.95;
-          else if (f === "effect_res") weight = 0.8;
-          else if (f === "def") weight = 0.7;
-          else if (f === "crit_rate" || f === "crit_dmg") weight = 0.5;
-          break;
-        case "MORTENAX_HYBRID":
-          if (f === "spd" || f === "crit_rate" || f === "crit_dmg") weight = 1;
-          else if (f === "hp") weight = 0.95;
-          else if (f === "effect_res") weight = 0.7;
-          else if (f === "def") weight = 0.5;
-          break;
-        case "NIHILITY_DEBUFF":
-          if (f === "effect_hit" || f === "spd") weight = 1;
-          else if (f === "effect_res" || f === "hp" || f === "def") weight = 0.6;
-          break;
-        default:
-          if (f === "crit_rate" || f === "crit_dmg") weight = 1;
-          else if (f === "atk" || f === "spd") weight = 0.85;
-          else if (f === "break_dmg") weight = 0.3;
-          break;
-      }
+      const weight = getSubAffixWeight(sub.field, archetype);
       pScore += upgrades * weight;
       usefulRollsSum += upgrades * weight;
     });
@@ -1809,6 +1817,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
   });
   let planarRollsTotal = 0;
   let planarUsefulRolls = 0;
+  let planarUsefulRollsWeighted = 0;
   let planarCv = 0;
   planarRelics.forEach((r) => {
     (r.sub_affix || []).forEach((sub) => {
@@ -1816,20 +1825,21 @@ export function calculateCharacterAudit(char, lang = "ru") {
       planarRollsTotal += upgrades;
       if (sub.field === "crit_rate") {
         planarCv += (sub.value || 0) * 200;
-        planarUsefulRolls += upgrades;
       } else if (sub.field === "crit_dmg") {
         planarCv += (sub.value || 0) * 100;
-        planarUsefulRolls += upgrades;
-      } else if (["spd", "atk", "def", "hp", "break_dmg", "effect_hit", "effect_res"].includes(sub.field)) {
-        planarUsefulRolls += upgrades * 0.9;
       }
+      const weight = getSubAffixWeight(sub.field, archetype);
+      if (weight >= 0.5) {
+        planarUsefulRolls += upgrades;
+      }
+      planarUsefulRollsWeighted += upgrades * weight;
     });
   });
   const pInfo0 = planarRelics.length > 0 ? resolveRelicSetInfo(planarRelics[0], isRu ? "ru" : "en") : null;
   const pInfo1 = planarRelics.length > 1 ? resolveRelicSetInfo(planarRelics[1], isRu ? "ru" : "en") : null;
   const planarSet = pInfo0?.name || (planarRelics.length > 0 ? planarRelics[0].set_name || "" : "");
   const isPlanarSetComplete = planarRelics.length === 2 && (planarRelics[0].set_id === planarRelics[1].set_id || pInfo0?.name && pInfo0.name === pInfo1?.name);
-  const planarEfficiency = planarRollsTotal > 0 ? Math.round(planarUsefulRolls / planarRollsTotal * 100) : 75;
+  const planarEfficiency = planarRollsTotal > 0 ? Math.min(100, Math.round((planarUsefulRollsWeighted / planarRollsTotal) * 100)) : 75;
   let planarCondition = "";
   let isConditionMet = true;
   if (/Салсотто|Salsotto/i.test(planarSet)) {
@@ -1966,6 +1976,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const cavernRelics = (char.relics || []).filter((r) => r.type >= 1 && r.type <= 4);
   let cavernRollsTotal = 0;
   let cavernUsefulRolls = 0;
+  let cavernUsefulRollsWeighted = 0;
   let cavernCv = 0;
   cavernRelics.forEach((r) => {
     (r.sub_affix || []).forEach((sub) => {
@@ -1973,16 +1984,17 @@ export function calculateCharacterAudit(char, lang = "ru") {
       cavernRollsTotal += upgrades;
       if (sub.field === "crit_rate") {
         cavernCv += (sub.value || 0) * 200;
-        cavernUsefulRolls += upgrades;
       } else if (sub.field === "crit_dmg") {
         cavernCv += (sub.value || 0) * 100;
-        cavernUsefulRolls += upgrades;
-      } else if (["spd", "atk", "def", "hp", "break_dmg", "effect_hit", "effect_res"].includes(sub.field)) {
-        cavernUsefulRolls += upgrades * 0.9;
       }
+      const weight = getSubAffixWeight(sub.field, archetype);
+      if (weight >= 0.5) {
+        cavernUsefulRolls += upgrades;
+      }
+      cavernUsefulRollsWeighted += upgrades * weight;
     });
   });
-  const cavernEfficiency = cavernRollsTotal > 0 ? Math.round(cavernUsefulRolls / cavernRollsTotal * 100) : 75;
+  const cavernEfficiency = cavernRollsTotal > 0 ? Math.min(100, Math.round((cavernUsefulRollsWeighted / cavernRollsTotal) * 100)) : 75;
   const cavernSetCounts = {};
   cavernRelics.forEach((r) => {
     const info = resolveRelicSetInfo(r, isRu ? "ru" : "en");
