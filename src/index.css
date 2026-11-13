@@ -4939,6 +4939,94 @@ main {
   color: var(--text-tertiary);
 }
 
+/* Provenance & Methodology Explanations */
+.score-model-explanation {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  margin-top: -6px;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.metric-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.metric-provenance-tag {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 1px 6px;
+  border-radius: 3px;
+  line-height: 1.3;
+}
+
+.metric-provenance-tag.calc {
+  background: rgba(123, 104, 238, 0.12);
+  color: #B4A7F5;
+  border: 1px solid rgba(123, 104, 238, 0.25);
+}
+
+.metric-provenance-tag.hsr {
+  background: rgba(0, 229, 255, 0.08);
+  color: #00E5FF;
+  border: 1px solid rgba(0, 229, 255, 0.25);
+}
+
+.score-provenance-footer {
+  margin-top: 16px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+}
+
+.score-provenance-footer .prov-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.sim-provenance-tag {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #B4A7F5;
+  background: rgba(123, 104, 238, 0.1);
+  border: 1px solid rgba(123, 104, 238, 0.25);
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+}
+
+.sim-assumptions-list {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.assumption-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-tertiary);
+}
+
+.assumption-bullet {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
 /* 6. Responsive Layout Breakpoints */
 .mobile-only {
   display: none !important;

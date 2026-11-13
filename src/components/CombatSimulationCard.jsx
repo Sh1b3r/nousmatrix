@@ -54,8 +54,8 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   return (
     <div className="panel panel-combat-sim">
       <div className="panel-title">
-        <span>{isRu ? "Боевая симуляция и ротация" : "Combat Simulation & Rotation"}</span>
-        <span className="sim-boss-badge">{isRu ? "MoC 12 // Босс 90 ур." : "MoC 12 // Lv. 90 Boss"}</span>
+        <span>{isRu ? "Боевая симуляция ротации" : "Combat Rotation Simulation"}</span>
+        <span className="sim-boss-badge">{isRu ? "Допущение: MoC 12 // Босс 90 ур." : "Assumption: MoC 12 // Lv.90 Boss"}</span>
       </div>
 
       <div className="combat-sim-header">
@@ -75,13 +75,16 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               )}
               <span>{roleBadgeLabel()}</span>
             </span>
+            <span className="sim-provenance-tag">
+              {isRu ? "Расчёт симуляции" : "Model Simulation"}
+            </span>
           </div>
           <h3 className="combat-sim-heading">
-            {isRu ? "Математический расчёт боевой ротации отряда" : "Mathematical Squad Combat Simulation"}
+            {isRu ? "Симуляция боевой ротации отряда" : "Squad Combat Rotation Simulation"}
           </h3>
         </div>
         <div className="combat-sim-tier-box">
-          <span className="combat-sim-tier-label">{isRu ? "Боевой ранг" : "Combat Tier"}</span>
+          <span className="combat-sim-tier-label">{isRu ? "Ранг эффективности" : "Performance Tier"}</span>
           <span className="combat-sim-tier-val">{sim.benchmarkTier}</span>
         </div>
       </div>
@@ -114,17 +117,17 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             <div className="alert-body-col">
               <span className="alert-title">
                 {isRu
-                  ? `${missingTeammates.length} из 3 союзников не выставлены на витрине`
+                  ? `${missingTeammates.length} из 3 союзников отсутствуют на витрине`
                   : `${missingTeammates.length} of 3 teammates missing from showcase`}
               </span>
               <p className="alert-text">
                 {isRu
-                  ? `Для расчёта с реальными статами выставьте [${missingTeammates
+                  ? `Для них используются эталонные допущения (базовые софт-капы следов). Чтобы подтянуть реальные характеристики снаряжения [${missingTeammates
                       .map((m) => m.nameRu || m.characterName || m.names[0])
-                      .join(", ")}] на витрину в игре и нажмите «ОБНОВИТЬ». Сейчас применены эталонные софт-капы.`
-                  : `For calculations with exact stats, place [${missingTeammates
+                      .join(", ")}], выставьте их на витрину в игре и нажмите «ОБНОВИТЬ».`
+                  : `Default baseline assumptions are used for missing allies. Place [${missingTeammates
                       .map((m) => m.nameEn || m.characterName || m.names[0])
-                      .join(", ")}] on your in-game showcase. Standard soft-caps are used currently.`}
+                      .join(", ")}] on showcase for live gear calculation.`}
               </p>
             </div>
           </div>
@@ -135,11 +138,11 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             </div>
             <div className="alert-body-col">
               <span className="alert-title">
-                {isRu ? "Все союзники синхронизированы с витрины" : "All teammates verified from showcase"}
+                {isRu ? "Все союзники синхронизированы с витрины HSR" : "All teammates verified from HSR showcase"}
               </span>
               <p className="alert-text">
                 {isRu
-                  ? "Урон ротации рассчитан с учётом реальных характеристик снаряжения саппортов."
+                  ? "Урон ротации рассчитан с учётом реальных параметров снаряжения саппортов."
                   : "Rotation damage is calculated using live equipped teammate gear."}
               </p>
             </div>
@@ -176,14 +179,14 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 </div>
                 <div className="teammate-status-row">
                   {isEquipped ? (
-                    <span className="teammate-badge status-on">
+                    <span className="teammate-badge status-on" title={isRu ? "Характеристики получены из профиля HSR" : "Stats synced from HSR"}>
                       <CheckIcon size={11} />
-                      <span>{isRu ? "На витрине" : "On Showcase"}</span>
+                      <span>{isRu ? "На витрине (HSR)" : "On Showcase (HSR)"}</span>
                     </span>
                   ) : (
-                    <span className="teammate-badge status-off">
+                    <span className="teammate-badge status-off" title={isRu ? "Союзника нет на витрине, применены стандартные допущения" : "Teammate missing, baseline defaults used"}>
                       <WarnIcon size={11} />
-                      <span>{isRu ? "Эталонный" : "Preset"}</span>
+                      <span>{isRu ? "Эталон (допущение)" : "Baseline default"}</span>
                     </span>
                   )}
                   {isEquipped && tm.realStats && (
@@ -213,7 +216,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               {Number(rotationSim.rotationTotalDamage || 0).toLocaleString("ru-RU")}
             </span>
             <span className="sim-metric-hint">
-              {isRu ? "За полный цикл 4 союзников" : "Full 4-unit sequence"}
+              {isRu ? "Расчёт за полный цикл 4 союзников" : "Calculated 4-unit sequence"}
             </span>
           </div>
           <div className="combat-sim-metric-box">
@@ -224,7 +227,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               {Number(rotationSim.peakHitDamage || 0).toLocaleString("ru-RU")}
             </span>
             <span className="sim-metric-hint">
-              {isRu ? "Главная ульта / взрыв" : "Max single ability impact"}
+              {isRu ? "Главная сверхспособность / удар" : "Max single ability impact"}
             </span>
           </div>
           <div className="combat-sim-metric-box">
@@ -280,15 +283,36 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
           <summary className="sim-params-summary">
             <span>
               {isRu
-                ? "Параметры симуляции (MoC 12 / Босс 90 ур.)"
-                : "Simulation Parameters (MoC 12 / Lv.90 Boss)"}
+                ? "Допущения и параметры симуляции (MoC 12 / Босс 90 ур.)"
+                : "Simulation Assumptions & Parameters (MoC 12 / Lv.90 Boss)"}
             </span>
           </summary>
-          <p className="sim-footnote">
-            {isRu
-              ? "Условия расчёта: босс 90 уровня (MoC 12 / Апокалипсис), фактор брони 1100, базовая устойчивость 20% RES, окно действия 100 AV (150 AV в цикле 0). Для подтягивания реальных статов саппортов выставьте их на витрину в игре."
-              : "Conditions: Lv. 90 Boss (MoC 12 / Apocalyptic Shadow), 1100 DEF factor, 20% Base RES, 100 AV turn window. Place support teammates on your in-game showcase to pipe real equipment stats into calculations."}
-          </p>
+          <div className="sim-assumptions-list">
+            <div className="assumption-item">
+              <span className="assumption-bullet">•</span>
+              <span>{isRu ? "Цель симуляции: босс 90 уровня (Зал Забвения 12 / Апокалипсис), защитный фактор 1100, базовая устойчивость 20% RES." : "Target: Lv. 90 Boss (MoC 12), 1100 DEF factor, 20% Base RES."}</span>
+            </div>
+            <div className="assumption-item">
+              <span className="assumption-bullet">•</span>
+              <span>{isRu ? "Окно действия: 100 AV (150 AV в цикле 0)." : "Action window: 100 AV (150 AV in Cycle 0)."}</span>
+            </div>
+            <div className="assumption-item">
+              <span className="assumption-bullet">•</span>
+              <span>
+                {isRu
+                  ? missingTeammates.length > 0
+                    ? `Союзники: для ${missingTeammates.length} союзников не с витрины применены стандартные эталонные уровни следов и баффов.`
+                    : "Союзники: все 3 союзника найдены на витрине — расчёт использует реальные статы их реликвий."
+                  : missingTeammates.length > 0
+                  ? `Teammates: ${missingTeammates.length} missing allies use standard soft-cap trace assumptions.`
+                  : "Teammates: all 3 allies found on showcase, using live relic stats."}
+              </span>
+            </div>
+            <div className="assumption-item">
+              <span className="assumption-bullet">•</span>
+              <span>{isRu ? "Назначение: стандартизированная математическая модель для сравнения сборок, а не запись живого боя." : "Purpose: standardized model for build comparison, not a recorded live run."}</span>
+            </div>
+          </div>
         </details>
       </div>
     </div>

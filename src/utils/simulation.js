@@ -117,8 +117,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
           desc: isRu ? "Навык в состоянии Бесконечной ярости расходует только здоровье, оставляя все SP саппортам." : "Skill consumes HP instead of Skill Points, keeping SP positive for team."
         }
       ],
-      summaryRu: `Мортенакс Блейд выступает мощнейшим гибридным саб-ДПС и дебаффером: обеспечивает колоссальный командный срез защиты (-30% DEF) и статус уязвимости (+50% получаемого урона) с 100% аптаймом через атаки союзников, одновременно нанося ~${personalDpa.toLocaleString("ru-RU")} личного огненного урона за действие от своего запаса HP (${hp.toLocaleString("ru-RU")} HP).`,
-      summaryEn: `Mortenax Blade functions as an elite hybrid sub-DPS & debuffer: applies massive team DEF shred (-30% DEF) and vulnerability (+50% dmg taken) via ally hits while outputting ~${personalDpa.toLocaleString("en-US")} personal HP-scaling Fire damage per action.`
+      summaryRu: `В гибридной роли Мортенакс Блейд совмещает дебафф и личный урон: обеспечивает срез защиты (-30% DEF) и статус уязвимости (+50% получаемого урона) через атаки союзников, а также наносит ~${personalDpa.toLocaleString("ru-RU")} расчётного урона за действие от запаса здоровья (${hp.toLocaleString("ru-RU")} HP).`,
+      summaryEn: `In a hybrid role, Mortenax Blade combines debuffing and damage: provides -30% DEF shred and +50% vulnerability taken via ally hits while delivering ~${personalDpa.toLocaleString("en-US")} calculated damage per action scaling with ${hp.toLocaleString("en-US")} HP.`
     };
   }
   if (isWelt) {
@@ -160,8 +160,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
           desc: isRu ? "Замедленные враги получают на 12% больше любого урона от всех союзников." : "Slowed enemies receive 12% increased damage from all party members."
         }
       ],
-      summaryRu: `Вельт совмещает личный саб-ДПС (~${personalDpa.toLocaleString("ru-RU")} за скилл) с мощнейшим контролем боевого поля: задержка действий на 40% и замедление босса на 10% дают отряду безопасные окна атак и дают +12% к общему урону команды.`,
-      summaryEn: `Welt combines sub-DPS damage (~${personalDpa.toLocaleString("en-US")} per skill) with premier battlefield control: 40% action delay, 10% SPD slow and 12% team vulnerability.`
+      summaryRu: `Вельт обеспечивает личный урон (~${personalDpa.toLocaleString("ru-RU")} за навык) и контроль поля боя: задержка действий на 40% и замедление босса на 10% создают дополнительные окна атак союзников с +12% к общему урону отряда.`,
+      summaryEn: `Welt combines calculated sub-DPS (~${personalDpa.toLocaleString("en-US")} per skill) with crowd control: 40% action delay, 10% slow and +12% team vulnerability.`
     };
   }
   if (isSilverWolf) {
@@ -203,8 +203,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
           desc: isRu ? "Случайные баги при каждой атаке дополнительно замедляют и ослабляют босса." : "Applies random bugs on each hit reducing speed, attack and armor."
         }
       ],
-      summaryRu: `Серебряный Волк нивелирует механику стихийного иммунитета: внедряет уязвимость отряда со снижением -20% RES, срезает -45% DEF босса и при этом наносит ~${personalDpa.toLocaleString("ru-RU")} личного взрывного урона с ультимейта.`,
-      summaryEn: `Silver Wolf invalidates element lockouts: implants weakness with -20% RES, cuts boss DEF by 45% and outputs ~${personalDpa.toLocaleString("en-US")} single-target burst.`
+      summaryRu: `Серебряный Волк внедряет уязвимость стихии союзников (-20% RES), снижает защиту цели на -45% DEF со сверхспособности и наносит ~${personalDpa.toLocaleString("ru-RU")} расчётного урона.`,
+      summaryEn: `Silver Wolf implants weakness (-20% RES), reduces target armor by 45% DEF and delivers ~${personalDpa.toLocaleString("en-US")} calculated burst.`
     };
   }
   if (isAventurine) {
@@ -249,8 +249,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
           desc: isRu ? "Делает всех союзников практически неуязвимыми к заморозке, оглушению и ДоТам." : "Grants massive team crowd control and debuff resistance."
         }
       ],
-      summaryRu: `Авантюрин является идеальным танком и саб-ДПС: при защите ${def.toLocaleString("ru-RU")} выдаёт ~${personalDpa.toLocaleString("ru-RU")} критического урона за бонус-атаку, накладывает +15% крит. уязвимость для гиперкерри и держит несокрушимый щит на ${shieldPerSkill.toLocaleString("ru-RU")} HP с +50% сопротивлением эффектам.`,
-      summaryEn: `Aventurine delivers top-tier tanking and sub-DPS: generates ~${personalDpa.toLocaleString("en-US")} crit damage per follow-up, grants +15% Crit Vulnerability to targets and sustains unbroken ~${shieldPerSkill.toLocaleString("en-US")} HP shields with +50% team Effect RES.`
+      summaryRu: `Авантюрин совмещает выживаемость и дополнительный урон: при защите ${def.toLocaleString("ru-RU")} даёт ~${personalDpa.toLocaleString("ru-RU")} урона за бонус-атаку, накладывает +15% крит. уязвимости и создаёт щит прочностью ${shieldPerSkill.toLocaleString("ru-RU")} HP с +50% сопротивления эффектам отряду.`,
+      summaryEn: `Aventurine provides team defense and sub-DPS: generates ~${personalDpa.toLocaleString("en-US")} damage per follow-up, applies +15% crit vulnerability and maintains ~${shieldPerSkill.toLocaleString("en-US")} HP shields with +50% effect RES.`
     };
   }
   if (isPela) {
@@ -326,8 +326,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
           desc: isRu ? "Каждый стак повышает любой урон союзников, достигая максимума при 5 стаках." : "Each stack linearly amplifies all damage dealt by the entire party."
         }
       ],
-      summaryRu: `Цзяоцю — сильнейший усилитель ультимейтов в игре: даёт колоссальные +35% урона сверхспособностей (идеально для Ахерон) плюс +15% к любому общему урону, стабильно нанося ~${ashenRoastTick.toLocaleString("ru-RU")} ДоТ-урона.`,
-      summaryEn: `Jiaoqiu is the premier Ultimate damage amplifier: grants +35% Ult vulnerability (Acheron best-in-slot) and +15% general vulnerability alongside ~${ashenRoastTick.toLocaleString("en-US")} DoT ticks.`
+      summaryRu: `Цзяоцю усиливает урон сверхспособностей (+35% получаемого урона ультимейтов) и даёт +15% к общему урону отряда, нанося ~${ashenRoastTick.toLocaleString("ru-RU")} урона от горения за тик.`,
+      summaryEn: `Jiaoqiu amplifies ultimate damage (+35% Ult vulnerability) and adds +15% all-damage vulnerability alongside ~${ashenRoastTick.toLocaleString("en-US")} DoT ticks.`
     };
   }
   if (isGallagher || isLingsha) {
@@ -405,8 +405,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
           desc: isRu ? "Заливает энергию керри, позволяя реализовывать 2-3 ходовую ротацию ультимейта." : "Restores target energy enabling consistent 2-3 turn Ult rotations."
         }
       ],
-      summaryRu: `Воскресенье (Сандей) является абсолютным гиперкерри-буфером: продвигает действие керри на 100%, заливает +${cdTransfer.toFixed(1)}% КУ (на основе своих ${cd.toFixed(1)}% КУ), даёт +50% общего урона и мгновенно восстанавливает 40 единиц энергии.`,
-      summaryEn: `Sunday is the premier hypercarry amplifier: grants 100% action advance, transfers +${cdTransfer.toFixed(1)}% Crit DMG (from his ${cd.toFixed(1)}% CD), provides +50% DMG boost and feeds 40 energy.`
+      summaryRu: `Воскресенье продвигает действие выбранного керри на 100%, передаёт +${cdTransfer.toFixed(1)}% КУ (рассчитано от собственных ${cd.toFixed(1)}% КУ), даёт +50% общего урона и восполняет 40 единиц энергии.`,
+      summaryEn: `Sunday advances ally action by 100%, transfers +${cdTransfer.toFixed(1)}% Crit DMG (from ${cd.toFixed(1)}% personal CD), adds +50% DMG boost and restores 40 energy.`
     };
   }
   if (isYaoGuang) {

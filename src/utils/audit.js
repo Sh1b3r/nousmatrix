@@ -1728,16 +1728,16 @@ export function calculateCharacterAudit(char, lang = "ru") {
       const hpRatio = Math.min(30, hp / 7e3 * 30);
       statPoints = spdRatio + cvRatio + hpRatio;
       if (spd < 134) {
-        bottleneck = isRu ? `Скорость (${spd}) ниже порога 134.0 SPD. Для гибридной сборки важно успевать реализовать криты и баффы внутри Зоны 70 SPD.` : `Speed (${spd}) is below 134.0 SPD. Hybrid build must lap the 70 SPD zone countdown.`;
+        bottleneck = isRu ? `Скорость (${spd} SPD) ниже порога 134.0 SPD. Для гибридной сборки важно успевать реализовать криты и баффы внутри Зоны (таймер 70 SPD).` : `Speed (${spd} SPD) is below 134.0 SPD. Hybrid build must lap the 70 SPD zone countdown.`;
         actions.push({
-          title: isRu ? "Приоритет: 134-145+ Скорости" : "Priority: 134-145+ Speed",
-          desc: isRu ? "Сапоги на Скорость (+25 SPD) максимизируют число атак внутри Зоны." : "Speed boots maximize actions inside the Zone."
+          title: isRu ? `Приоритет: Скорость ${spd} → 134.0+ SPD` : `Priority: Speed ${spd} → 134.0+ SPD`,
+          desc: isRu ? `Не хватает ${(134 - spd).toFixed(1)} SPD. Сапоги на скорость (+25 SPD) позволят делать 2 действия внутри Зоны.` : `Need ${(134 - spd).toFixed(1)} more SPD. Speed boots (+25 SPD) ensure 2 turns within the Zone.`
         });
       } else {
-        bottleneck = isRu ? `Сбалансированная гибридная сборка (${spd} SPD, ${cv} CV, ${hp} HP). Сочетает командный бафф с высоким личным уроном.` : `Balanced hybrid build (${spd} SPD, ${cv} CV, ${hp} HP). Combines team buffing with personal damage.`;
+        bottleneck = isRu ? `Базовые пороги закрыты: Скорость ${spd} SPD (порог 134.0), Крит. масса ${cv} CV, HP ${hp}. Явных узких мест нет.` : `Archetype thresholds satisfied: Speed ${spd} SPD (cap 134.0), CV ${cv}, HP ${hp}. No major bottlenecks.`;
         actions.push({
-          title: isRu ? "Гибридный билд сбалансирован" : "Hybrid Build Balanced",
-          desc: isRu ? "Успешное опережение таймера Зоны в связке с бонусом +100 CV в стойке «Infinite Fury»." : 'Successfully laps the zone timer paired with +100 CV inside "Infinite Fury".'
+          title: isRu ? "Ключевые пороги закрыты (явных узких мест нет)" : "Archetype Thresholds Satisfied",
+          desc: isRu ? `Текущие параметры (Скорость: ${spd} SPD, Крит. масса: ${cv} CV, HP: ${hp}) закрывают требования роли. Дальнейшее усиление возможно через замену слота ${weakestRelicIndex + 1}.` : `Current stats meet archetype requirements. Further gains via slot ${weakestRelicIndex + 1}.`
         });
       }
       break;
@@ -1751,41 +1751,41 @@ export function calculateCharacterAudit(char, lang = "ru") {
       statPoints = cvRatio * 65 + spdRatio + atkRatio;
       if (isMortenax) {
         if (spd < 134) {
-          bottleneck = isRu ? `Скорость (${spd}) ниже порога 134.0 SPD. Зона «Infinite Fury» ограничена таймером на 70 SPD: без высокой скорости персонаж не успевает совершить 3+ действия до рассеивания стойки.` : `Speed (${spd}) is below 134.0 SPD. The "Infinite Fury" Zone is bound to a 70 SPD countdown: high speed is required to take 3+ turns before it expires.`;
+          bottleneck = isRu ? `Скорость (${spd} SPD) ниже порога 134.0 SPD. Зона ограничена таймером на 70 SPD: без достаточной скорости персонаж не успевает совершить несколько действий.` : `Speed (${spd} SPD) is below 134.0 SPD. Zone is bound to a 70 SPD countdown.`;
           actions.push({
-            title: isRu ? "Приоритет №1: 134-145+ Скорости" : "Priority #1: Reach 134-145+ SPD",
-            desc: isRu ? "Сапоги на Скорость (+25 SPD) и сабстаты критически важны для максимального числа ходов и ультимейтов внутри Зоны." : "Speed boots (+25 SPD) and substats are mandatory to maximize turns and ultimates inside the Zone."
+            title: isRu ? `Приоритет: Скорость ${spd} → 134.0+ SPD` : `Priority: Reach 134.0+ SPD`,
+            desc: isRu ? `Не хватает ${(134 - spd).toFixed(1)} SPD. Сапоги на скорость (+25 SPD) и сабстаты необходимы для действий внутри Зоны.` : `Need ${(134 - spd).toFixed(1)} more SPD. Speed boots and substats unlock turns inside the Zone.`
           });
         } else {
-          bottleneck = isRu ? `Отличная скоростная сборка под таймер Зоны (${spd} SPD, ${cv} CV, ${hp} HP). Позволяет совершать 3+ действия внутри стойки «Infinite Fury».` : `Optimized high-speed build for the Zone timer (${spd} SPD, ${cv} CV, ${hp} HP). Unlocks 3+ actions inside "Infinite Fury".`;
+          bottleneck = isRu ? `Скорость закрывает тайминг Зоны (${spd} SPD, ${cv} CV, ${hp} HP). Явных узких мест нет.` : `Speed satisfies Zone timer (${spd} SPD, ${cv} CV, ${hp} HP). No critical bottlenecks.`;
           actions.push({
-            title: isRu ? "Сборка оптимизирована под таймер Зоны" : "Zone Optimized",
-            desc: isRu ? "Скорость закрывает тайминг зоны на 70 SPD, а ульт добавляет бесплатные +20% КШ и +60% КУ (+100 CV)." : "Speed satisfies the 70 SPD countdown, and Ult supplies +20% CR / +60% CD (+100 CV)."
+            title: isRu ? "Ключевые пороги закрыты (явных узких мест нет)" : "Zone Thresholds Satisfied",
+            desc: isRu ? "Скорость закрывает тайминг зоны на 70 SPD, а сверхспособность добавляет криты (+100 CV)." : "Speed satisfies the 70 SPD countdown, and Ult supplies +100 CV."
           });
         }
       } else if (cr < 70 && cd > 160) {
-        bottleneck = isRu ? `Дисбаланс критов: Крит. Шанс (${cr}%) отстает от Крит. Урона (${cd}%). Теряется стабильность ротации.` : `Imbalanced CRIT ratio: CRIT Rate (${cr}%) lags behind CRIT DMG (${cd}%).`;
+        bottleneck = isRu ? `Дисбаланс критов: Крит. шанс ${cr.toFixed(1)}% отстаёт от Крит. урона ${cd.toFixed(1)}% (целевое соотношение ~1:2).` : `CRIT imbalance: CRIT Rate ${cr.toFixed(1)}% lags behind CRIT DMG ${cd.toFixed(1)}% (target ~1:2 ratio).`;
         actions.push({
-          title: isRu ? "Приоритет: Стабилизация Крит. Шанса" : "Priority: Stabilize CRIT Rate",
-          desc: isRu ? "Соотношение 1:2 дает наибольшую среднюю ротацию урона." : "Target 1:2 ratio to maximize expected damage per rotation."
+          title: isRu ? `Приоритет: Крит. шанс ${cr.toFixed(1)}% → 70%+` : `Priority: CRIT Rate ${cr.toFixed(1)}% → 70%+`,
+          desc: isRu ? `При текущем КУ (${cd.toFixed(1)}%) удары часто проходят без крита. Доберите ${(70 - cr).toFixed(1)}% КШ в сабстатах для стабильного среднего урона.` : `At ${cd.toFixed(1)}% CD, hits frequently fail to crit. Gain ${(70 - cr).toFixed(1)}% CR in substats for consistent damage.`
         });
       } else if (!isSlowDps && spd < 134) {
-        bottleneck = isRu ? `Скорость (${spd}) ниже порога 134.0 SPD. Теряется 1 действие в Цикле 0 Зала Забвения.` : `Speed (${spd}) is below 134.0 SPD. The character misses an extra turn in Cycle 0.`;
+        bottleneck = isRu ? `Скорость (${spd} SPD) ниже брейкпоинта 134.0 SPD. Теряется второе действие в цикле 0 Зала Забвения.` : `Speed (${spd} SPD) is below 134.0 SPD threshold, missing a 2nd turn in Cycle 0.`;
         actions.push({
-          title: isRu ? "Приоритет: 134.0 Скорости" : "Priority: Reach 134.0 SPD",
-          desc: isRu ? "Доберите 1-2 сабстата скорости для получения 2 действий в первом цикле." : "Gain 1-2 speed substats to unlock 2 actions in Cycle 0."
+          title: isRu ? `Приоритет: Скорость ${spd} → 134.0 SPD` : `Priority: Speed ${spd} → 134.0 SPD`,
+          desc: isRu ? `Не хватает ${(134 - spd).toFixed(1)} SPD до порога 134.0. Доберите 1-2 сабстата скорости для дополнительного хода в цикле 0.` : `Need ${(134 - spd).toFixed(1)} more SPD to reach 134.0. Gain 1-2 speed substats to unlock 2 actions in Cycle 0.`
         });
       } else if (isSlowDps && archetype !== "HP_CRIT_DPS" && atk < 3e3) {
-        bottleneck = isRu ? `Сила атаки (${atk}) ниже рекомендуемой для гиперкерри (3200+ АТК). Сборка ориентирована на чистый урон без затрат на скорость.` : `ATK (${atk}) is below recommended hypercarry benchmark (3200+ ATK). Focus on pure damage without speed investment.`;
+        bottleneck = isRu ? `Сила атаки (${Math.round(atk)} ATK) ниже целевой для гиперкерри без упора в скорость (3200+ ATK).` : `ATK (${Math.round(atk)}) is below benchmark (3200+ ATK) for low-speed carry builds.`;
         actions.push({
-          title: isRu ? "Приоритет: Сила Атаки%" : "Priority: Scale ATK%",
-          desc: isRu ? "Сапоги на Силу атаки% максимизируют урон атак и ультимейта." : "ATK% boots maximize skill and ultimate damage."
+          title: isRu ? `Приоритет: Сила атаки ${Math.round(atk)} → 3200+ ATK` : `Priority: ATK ${Math.round(atk)} → 3200+ ATK`,
+          desc: isRu ? `Рекомендуется добрать ${3200 - Math.round(atk)} ATK на соединительной верви или в сабстатах.` : `Gain ${3200 - Math.round(atk)} ATK on link rope or substats.`
         });
       } else {
-        bottleneck = isRu ? isSlowDps ? `Сбалансированная сборка на максимальный урон (CV ${cv}, ${archetype === "HP_CRIT_DPS" ? `${hp} HP` : `${atk} АТК`}). Скорость не требуется.` : `Сбалансированная боевая сборка (CV ${cv}, SPD ${spd}).` : isSlowDps ? `Optimal max-damage build (CV ${cv}, ${archetype === "HP_CRIT_DPS" ? `${hp} HP` : `${atk} ATK`}). No speed required.` : `Solid balanced build (CV ${cv}, SPD ${spd}).`;
+        bottleneck = isRu ? `Существенных узких мест нет: ключевые характеристики (${cv ? `${cv} CV, ` : ""}${spd} SPD) закрывают требования роли.` : `No critical bottlenecks: core stats meet content requirements.`;
         actions.push({
-          title: isRu ? "Оптимизация: Замена худшего артефакта" : "Optimization: Replace Worst Relic",
-          desc: isRu ? `Замените слот ${weakestRelicIndex + 1} на реликвию с большим количеством роллов в криты.` : `Upgrade slot ${weakestRelicIndex + 1} with offensive rolls.`
+          title: isRu ? "Ключевые пороги закрыты (явных узких мест нет)" : "Core Thresholds Satisfied",
+          desc: isRu ? `Текущие характеристики соответствуют требованиям роли. Точечное улучшение возможно через замену слота ${weakestRelicIndex + 1} на артефакт с большим числом полезных роллов.` : `Current build satisfies archetype benchmarks. Further incremental gains via upgrading slot ${weakestRelicIndex + 1}.`
         });
       }
       break;

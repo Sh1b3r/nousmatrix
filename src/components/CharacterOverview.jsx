@@ -194,10 +194,26 @@ export default function CharacterOverview({ character, audit, t, lang = "ru" }) 
       {audit && (
         <div className="char-hero-verdict-bar">
           <div className="verdict-score-block">
-            <span className="verdict-score-pill">
+            <span
+              className="verdict-score-pill"
+              title={
+                isRu
+                  ? "Расчётный индекс готовности билда (от 0 до 100): 70% статы роли, 30% роллы реликвий"
+                  : "Readiness index (0-100): 70% archetype stats, 30% relic rolls"
+              }
+            >
               GRADE {audit.grade || "S"} • {audit.score}/100
             </span>
-            <span className="verdict-rank-pill">TOP {audit.topPercent}%</span>
+            <span
+              className="verdict-rank-pill"
+              title={
+                isRu
+                  ? "Ориентировочное положение на кривой распределения билдов (μ=68, σ=11.5). Не является живой переписью серверов."
+                  : "Estimated position on theoretical distribution (μ=68, σ=11.5), not a live server census."
+              }
+            >
+              TOP {audit.topPercent}%
+            </span>
           </div>
 
           <div className="verdict-takeaways-group">
@@ -217,7 +233,7 @@ export default function CharacterOverview({ character, audit, t, lang = "ru" }) 
               <div className="verdict-takeaway-item action" onClick={handleJumpToPlan}>
                 <span className="takeaway-label">
                   <SparklesIcon size={12} />
-                  <span>{isRu ? "Главный совет:" : "Next Priority:"}</span>
+                  <span>{isRu ? "Приоритет:" : "Priority:"}</span>
                 </span>
                 <span className="takeaway-text clickable" title={topAction.desc}>
                   {topAction.title}

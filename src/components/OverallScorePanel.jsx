@@ -18,7 +18,7 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
 
   const getGradeTier = (score) => {
     const s = Number(score) || 0;
-    if (s >= 92) return { grade: "SSS", labelRu: "Эталон билда", labelEn: "Prime Benchmark", color: "#FF4D4D" };
+    if (s >= 92) return { grade: "SSS", labelRu: "Эталон роли", labelEn: "Prime Benchmark", color: "#FF4D4D" };
     if (s >= 85) return { grade: "SS", labelRu: "Превосходный", labelEn: "Excellent", color: "#00E5FF" };
     if (s >= 75) return { grade: "S", labelRu: "Отличный", labelEn: "Great", color: "#00FF88" };
     if (s >= 65) return { grade: "A", labelRu: "Хороший", labelEn: "Solid Build", color: "#FFB74D" };
@@ -37,7 +37,22 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
             {isRu ? "Индекс боевой готовности билда" : "Combat Readiness Index"}
           </span>
         </div>
-        <span className="overall-matrix-badge">{t.matrix100 || "Matrix 100"}</span>
+        <span
+          className="overall-matrix-badge"
+          title={
+            isRu
+              ? "Модель NousMatrix: 70% оценки зависит от достижения целевых порогов характеристик, 30% — от полезных роллов реликвий"
+              : "NousMatrix composite score: 70% archetype stat thresholds, 30% relic roll efficiency"
+          }
+        >
+          {t.matrix100 || "Matrix 100"}
+        </span>
+      </div>
+
+      <div className="score-model-explanation">
+        {isRu
+          ? "Расчётная оценка качества билда: взвешенный индекс порогов характеристик (70%) и роллов реликвий (30%)."
+          : "Computed build quality index: weighted combination of stat targets (70%) and relic rolls (30%)."}
       </div>
 
       <div className="score-hero-container">
@@ -51,16 +66,23 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
           </span>
         </div>
         <div className="score-hero-right">
-          <div className="score-tier-badge">
-            <span className="tier-prefix">GLOBAL RANK</span>
+          <div
+            className="score-tier-badge"
+            title={
+              isRu
+                ? "Ориентировочный процентиль по кривой распределения билдов (μ=68, σ=11.5). Показывает расчётное положение относительно теоретической выборки, а не живую перепись всех серверов."
+                : "Calculated theoretical percentile (normal distribution μ=68, σ=11.5). Illustrates relative position against benchmark builds, not a live server census."
+            }
+          >
+            <span className="tier-prefix">{isRu ? "ЭВРИСТИКА РАНГА" : "THEORETICAL RANK"}</span>
             <span className="tier-percent">TOP {audit.topPercent}%</span>
           </div>
           <div
             className="score-verified-stamp"
             title={
               isRu
-                ? "Данные получены напрямую из открытого профиля в игре через Hoyoverse API"
-                : "Live profile data pulled from official Hoyoverse game servers"
+                ? "Фактические характеристики и экипировка получены напрямую из профиля игрока через Hoyoverse API"
+                : "Live attributes and equipment synced directly from player showcase via Hoyoverse API"
             }
           >
             <CheckIcon size={12} />
@@ -85,13 +107,13 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
                 className="role-confidence-tag"
                 title={
                   isRu
-                    ? "Степень соответствия текущего набора артефактов и характеристик данному архетипу"
-                    : "Percentage alignment between equipped gear and this archetype"
+                    ? "Уверенность классификации: вероятность того, что текущий набор экипировки и главных статов соответствует этой роли"
+                    : "Classification confidence: likelihood that equipped stats align with this role"
                 }
               >
                 {isRu
-                  ? `Соответствие архетипу: ${audit.detectedRole.confidence}%`
-                  : `Archetype match: ${audit.detectedRole.confidence}%`}
+                  ? `Уверенность классификации: ${audit.detectedRole.confidence}%`
+                  : `Classification confidence: ${audit.detectedRole.confidence}%`}
               </span>
             )}
           </div>
@@ -105,9 +127,14 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
         {/* Metric 1: Roll Efficiency */}
         <div className="metric-row">
           <div className="metric-label-line">
-            <span className="metric-name">
-              {t.rollEfficiency || (isRu ? "Качество роллов (Roll Efficiency)" : "Roll Efficiency")}
-            </span>
+            <div className="metric-name-wrap">
+              <span className="metric-name">
+                {t.rollEfficiency || (isRu ? "Качество роллов (Roll Efficiency)" : "Roll Efficiency")}
+              </span>
+              <span className="metric-provenance-tag calc" title={isRu ? "Рассчитано сайтом на основе сабстатов реликвий" : "Computed by model"}>
+                {isRu ? "Расчёт модели" : "Model calc"}
+              </span>
+            </div>
             <span className="metric-val">{audit.rollEfficiency}%</span>
           </div>
           <div className="metric-bar-bg">
@@ -121,11 +148,16 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
         {/* Metric 2: Primary Archetype Metric */}
         <div className="metric-row">
           <div className="metric-label-line">
-            <span className="metric-name">
-              {isRu
-                ? audit.primaryMetric?.labelRu || t.critValue || "Крит. масса"
-                : audit.primaryMetric?.labelEn || t.critValue || "Crit Value"}
-            </span>
+            <div className="metric-name-wrap">
+              <span className="metric-name">
+                {isRu
+                  ? audit.primaryMetric?.labelRu || t.critValue || "Крит. масса"
+                  : audit.primaryMetric?.labelEn || t.critValue || "Crit Value"}
+              </span>
+              <span className="metric-provenance-tag hsr" title={isRu ? "Получено из профиля игрока в HSR" : "Synced from HSR Profile"}>
+                {isRu ? "Из профиля HSR" : "From HSR"}
+              </span>
+            </div>
             <span className="metric-val">
               {audit.primaryMetric
                 ? `${audit.primaryMetric.display} ${audit.primaryMetric.status || ""}`.trim()
@@ -145,11 +177,16 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
         {/* Metric 3: Speed Breakpoint */}
         <div className="metric-row">
           <div className="metric-label-line">
-            <span className="metric-name">
-              {isRu
-                ? audit.secondaryMetric?.labelRu || t.speedThreshold || "Порог скорости"
-                : audit.secondaryMetric?.labelEn || t.speedThreshold || "Speed Threshold"}
-            </span>
+            <div className="metric-name-wrap">
+              <span className="metric-name">
+                {isRu
+                  ? audit.secondaryMetric?.labelRu || t.speedThreshold || "Порог скорости"
+                  : audit.secondaryMetric?.labelEn || t.speedThreshold || "Speed Threshold"}
+              </span>
+              <span className="metric-provenance-tag hsr" title={isRu ? "Получено из профиля игрока в HSR" : "Synced from HSR Profile"}>
+                {isRu ? "Из профиля HSR" : "From HSR"}
+              </span>
+            </div>
             <span className="metric-val">
               {audit.secondaryMetric
                 ? `${audit.secondaryMetric.display} ${audit.secondaryMetric.status || ""}`.trim()
@@ -188,7 +225,7 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
       {audit.actions && audit.actions.length > 0 && (
         <div className="audit-actions-section">
           <div className="panel-title sub-title">
-            <span>{t.improvementPlan || (isRu ? "План улучшений" : "Action Plan")}</span>
+            <span>{t.improvementPlan || (isRu ? "Рекомендации по улучшению" : "Improvement Recommendations")}</span>
             <span className="actions-count-pill">{formatActionsCount(audit.actions.length, isRu)}</span>
           </div>
           <div className="audit-actions-list">
@@ -204,6 +241,15 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
           </div>
         </div>
       )}
+
+      <div className="score-provenance-footer">
+        <span className="prov-dot" />
+        <span>
+          {isRu
+            ? "Фактические характеристики получены из профиля HSR. Оценки боеспособности, пороги и рекомендации рассчитаны алгоритмами NousMatrix."
+            : "Actual stats loaded from HSR game profile. Readiness score, thresholds and suggestions calculated by NousMatrix."}
+        </span>
+      </div>
     </div>
   );
 }
