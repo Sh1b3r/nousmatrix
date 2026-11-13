@@ -1,8 +1,10 @@
 import React from "react";
-import { getCharHeadIcon, getCharAvatarPath, iconUrl, handleImageFallback } from "../utils/audit";
+import { getCharHeadIcon, getCharAvatarPath, iconUrl, handleImageFallback, resolveElementIcon, resolvePathIcon } from "../utils/audit";
 export default function CharacterOverview({ character, t, lang = "ru" }) {
   if (!character) return null;
   const isRu = lang === "ru";
+  const elemIcon = resolveElementIcon(character.element);
+  const pathIcon = resolvePathIcon(character.path);
   const targetTypes = ["Normal", "BPSkill", "Ultra", "Talent", "Maze"];
   const seenTypes =  new Set();
   const coreSkills = [];
@@ -45,7 +47,7 @@ export default function CharacterOverview({ character, t, lang = "ru" }) {
       alt: character.name,
       onError: (e) => handleImageFallback(e, getCharAvatarPath(character))
     }
-  )),  React.createElement("div", { className: "char-details-primary" },  React.createElement("h2", null,  React.createElement("span", null, character.name),  React.createElement("span", { className: "char-stars" }, "★".repeat(character.rarity || 5))),  React.createElement("div", { className: "char-tags-row" },  React.createElement("span", { className: "char-pill" }, t.lvl, " ", character.level, "/80"),  React.createElement("span", { className: "char-pill accent" }, t.eidolons, character.rank),  React.createElement("span", { className: "char-pill" }, t.path, character.path?.name || "—"),  React.createElement("span", { className: "char-pill" }, t.combatType, character.element?.name || "—")),  React.createElement("div", { className: "char-skills-row" }, coreSkills.map((s) =>  React.createElement(
+  )),  React.createElement("div", { className: "char-details-primary" },  React.createElement("h2", null,  React.createElement("span", null, character.name),  React.createElement("span", { className: "char-stars" }, "★".repeat(character.rarity || 5))),  React.createElement("div", { className: "char-tags-row" },  React.createElement("span", { className: "char-pill" }, t.lvl, " ", character.level, "/80"),  React.createElement("span", { className: "char-pill accent" }, t.eidolons, character.rank), elemIcon &&  React.createElement("span", { className: "char-pill char-icon-pill element-pill", title: character.element?.name ? `${t.combatType}${character.element.name}` : "", style: character.element?.color ? { borderColor: `${character.element.color}88` } : undefined },  React.createElement("img", { src: iconUrl(elemIcon), alt: character.element?.name || "Element", className: "char-badge-icon element-icon", crossOrigin: "anonymous", onError: (e) => handleImageFallback(e, elemIcon) })), pathIcon &&  React.createElement("span", { className: "char-pill char-icon-pill path-pill", title: character.path?.name ? `${t.path}${character.path.name}` : "" },  React.createElement("img", { src: iconUrl(pathIcon), alt: character.path?.name || "Path", className: "char-badge-icon path-icon", crossOrigin: "anonymous", onError: (e) => handleImageFallback(e, pathIcon) }))),  React.createElement("div", { className: "char-skills-row" }, coreSkills.map((s) =>  React.createElement(
     "div",
     {
       key: s.id,

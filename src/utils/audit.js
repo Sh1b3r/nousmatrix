@@ -30,6 +30,51 @@ export function getCharHeadIcon(char) {
   if (!char) return "";
   return iconUrl(getCharAvatarPath(char));
 }
+
+export const ELEMENT_ICONS = {
+  physical: "icon/element/Physical.png",
+  fire: "icon/element/Fire.png",
+  ice: "icon/element/Ice.png",
+  thunder: "icon/element/Thunder.png",
+  lightning: "icon/element/Thunder.png",
+  wind: "icon/element/Wind.png",
+  quantum: "icon/element/Quantum.png",
+  imaginary: "icon/element/Imaginary.png"
+};
+
+export const PATH_ICONS = {
+  warrior: "icon/path/Warrior.png",
+  destruction: "icon/path/Warrior.png",
+  rogue: "icon/path/Rogue.png",
+  hunt: "icon/path/Rogue.png",
+  thehunt: "icon/path/Rogue.png",
+  mage: "icon/path/Mage.png",
+  erudition: "icon/path/Mage.png",
+  shaman: "icon/path/Shaman.png",
+  harmony: "icon/path/Harmony.png",
+  warlock: "icon/path/Warlock.png",
+  nihility: "icon/path/Nihility.png",
+  knight: "icon/path/Knight.png",
+  preservation: "icon/path/Knight.png",
+  priest: "icon/path/Priest.png",
+  abundance: "icon/path/Priest.png",
+  memory: "icon/path/Memory.png",
+  remembrance: "icon/path/Remembrance.png"
+};
+
+export function resolveElementIcon(elem) {
+  if (!elem) return null;
+  if (elem.icon) return elem.icon;
+  const key = String(elem.id || elem.name || "").toLowerCase().replace(/[\s-]+/g, "");
+  return ELEMENT_ICONS[key] || null;
+}
+
+export function resolvePathIcon(path) {
+  if (!path) return null;
+  if (path.icon) return path.icon;
+  const key = String(path.id || path.name || "").toLowerCase().replace(/[\s-]+/g, "");
+  return PATH_ICONS[key] || null;
+}
 export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") {
   if (!char) return null;
   const isRu = lang === "ru";
