@@ -1307,6 +1307,17 @@ main {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
+.relic-view-toggle.mini .toggle-btn {
+  font-size: 9px;
+  padding: 2px 7px;
+}
+
+.relics-audit-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .relics-sets-summary {
   display: flex;
   gap: 8px;
@@ -2139,6 +2150,12 @@ main {
   background: rgba(0, 255, 136, 0.1);
   color: #00FF88;
   border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.relic-set-status-pill.partial {
+  background: rgba(255, 184, 0, 0.1);
+  color: #FFB800;
+  border: 1px solid rgba(255, 184, 0, 0.3);
 }
 
 .relic-set-status-pill.broken {
@@ -4391,9 +4408,9 @@ main {
 }
 
 .showcase-set-tag.planar {
-  background: rgba(0, 255, 136, 0.1);
-  border-color: #00FF88;
-  color: #00FF88;
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .set-condition-text {

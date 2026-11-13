@@ -3,10 +3,19 @@ import { iconUrl, handleImageFallback } from "../utils/audit";
 import { formatStatName } from "../utils/i18n";
 import { resolveRelicSetInfo } from "../utils/setDefinitions";
 import { SphereIcon, RopeIcon, WarnIcon, CheckIcon } from "./Icons.jsx";
-export default function RelicsGrid({ character, audit, t, lang = "ru" }) {
+export default function RelicsGrid({
+  character,
+  audit,
+  t,
+  lang = "ru",
+  layoutMode: externalMode,
+  onLayoutModeChange
+}) {
   if (!character) return null;
   const isRu = lang === "ru";
-  const [layoutMode, setLayoutMode] = useState("grouped");
+  const [internalMode, setInternalMode] = useState("grouped");
+  const layoutMode = externalMode !== undefined ? externalMode : internalMode;
+  const setLayoutMode = onLayoutModeChange || setInternalMode;
   const relics = character.relics || [];
   const slots = t.relicSlots || [];
   const isSphere = (r) => {

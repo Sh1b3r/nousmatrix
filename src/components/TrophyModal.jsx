@@ -81,7 +81,23 @@ const resolveAffixIcon = (affix) => {
   return PROPERTY_ICONS[fieldKey] || null;
 };
 
-export default function TrophyModal({ isOpen, onClose, character, audit, uid, t, lang = "ru" }) {
+export default function TrophyModal({
+  isOpen,
+  onClose,
+  character,
+  audit,
+  uid,
+  t,
+  lang = "ru",
+  layoutMode: externalLayoutMode,
+  onLayoutModeChange
+}) {
+  const [internalLayoutMode, setInternalLayoutMode] = useState("grouped");
+  const layoutMode = externalLayoutMode !== undefined ? externalLayoutMode : internalLayoutMode;
+  const handleLayoutModeChange = (mode) => {
+    setInternalLayoutMode(mode);
+    onLayoutModeChange?.(mode);
+  };
   const [isCopying, setIsCopying] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -304,6 +320,24 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                 </span>
               </div>
               <div className="trophy-controls-actions">
+                <div className="relic-view-toggle mini trophy-layout-toggle">
+                  <button
+                    type="button"
+                    className={`toggle-btn ${layoutMode === "grouped" ? "active" : ""}`}
+                    onClick={() => handleLayoutModeChange("grouped")}
+                    title={isRu ? "По секциям: пещерные (4) и планарные (2)" : "By sections: cavern (4) and planar (2)"}
+                  >
+                    {isRu ? "ПО СЕКЦИЯМ" : "BY SECTIONS"}
+                  </button>
+                  <button
+                    type="button"
+                    className={`toggle-btn ${layoutMode === "unified" ? "active" : ""}`}
+                    onClick={() => handleLayoutModeChange("unified")}
+                    title={isRu ? "Все 6 слотов слитной сеткой" : "All 6 slots unified"}
+                  >
+                    {isRu ? "ВСЕ СЛОТЫ" : "ALL SLOTS"}
+                  </button>
+                </div>
                 <button
                   className="btn-submit trophy-action-btn copy-btn"
                   onClick={handleCopyImage}
@@ -641,149 +675,208 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
 
               {/* ПРАВАЯ КОЛОНКА: РЕЛИКВИИ И СЕТЫ */}
               <div className="showcase-col-right">
-                {/* 1. ЭКИПИРОВАННЫЕ РЕЛИКВИИ (2 КОЛОНКИ Х 3 РЯДА) */}
-                <div className="showcase-section-box">
-                  <div className="showcase-section-title">
-                    <span>{isRu ? "ЭКИПИРОВАННЫЕ РЕЛИКВИИ (6 СЛОТОВ)" : "EQUIPPED RELICS (6 SLOTS)"}</span>
-                    <span className="section-sub-tag text-accent">{isRu ? "ДАННЫЕ ВЕРИФИЦИРОВАНЫ" : "VERIFIED DATA"}</span>
-                  </div>
+                {(() => {
+                  const renderRelicCard = (slotIdx) => {
+                    const piece = getSlotPiece(slotIdx);
+                    const slotTitle = slotTitles[slotIdx];
+                    const isSphereSlot = slotIdx === 4;
+                    const isRopeSlot = slotIdx === 5;
+                    const isOrnament = isSphereSlot || isRopeSlot;
 
-                  <div className="showcase-relics-grid">
-                    {Array.from({ length: 6 }).map((_, slotIdx) => {
-                      const piece = getSlotPiece(slotIdx);
-                      const slotTitle = slotTitles[slotIdx];
-                      const isSphereSlot = slotIdx === 4;
-                      const isRopeSlot = slotIdx === 5;
-                      const isOrnament = isSphereSlot || isRopeSlot;
-
-                      if (!piece) {
-                        return (
-                          <div key={`relic-${slotIdx}`} className="showcase-relic-card empty">
-                            <div className="relic-card-head">
-                              <div className="showcase-relic-icon-wrap placeholder">
-                                {isSphereSlot ? <SphereIcon size={18} /> : isRopeSlot ? <RopeIcon size={18} /> : <span>★</span>}
-                              </div>
-                              <div className="relic-slot-info">
-                                <span className="relic-slot-tag">{slotTitle}</span>
-                                <span className="relic-empty-text">{isRu ? "Ожидает синхронизации" : "Awaiting sync"}</span>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-
-                      const mainStatField = piece.main_affix?.field || "";
-                      const mainStatValue = piece.main_affix?.display || "";
-                      const mainStatName = formatStatName(mainStatField, lang) || formatStatName(piece.main_affix?.name, lang);
-                      const mainStatIcon = resolveAffixIcon(piece.main_affix);
-
-                      const relicSetInfo = resolveRelicSetInfo(piece, lang);
-                      const relicSetName = relicSetInfo?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
-
+                    if (!piece) {
                       return (
-                        <div key={`relic-${slotIdx}`} className="showcase-relic-card">
+                        <div key={`relic-${slotIdx}`} className="showcase-relic-card empty">
                           <div className="relic-card-head">
-                            <div className="showcase-relic-icon-wrap">
-                              {piece.icon ? (
-                                <img
-                                  className="showcase-relic-icon-img"
-                                  src={iconUrl(piece.icon)}
-                                  alt={piece.name || relicSetName}
-                                  crossOrigin="anonymous"
-                                  onError={(e) => handleImageFallback(e, piece.icon)}
-                                />
-                              ) : (
-                                <span className="placeholder-icon">
-                                  {isSphereSlot ? <SphereIcon size={18} /> : isRopeSlot ? <RopeIcon size={18} /> : "★"}
-                                </span>
-                              )}
-                              <span className="relic-lvl-badge">+{piece.level ?? 15}</span>
+                            <div className="showcase-relic-icon-wrap placeholder">
+                              {isSphereSlot ? <SphereIcon size={18} /> : isRopeSlot ? <RopeIcon size={18} /> : <span>★</span>}
                             </div>
                             <div className="relic-slot-info">
-                              <div className="relic-slot-header-row">
-                                <span className="relic-slot-tag">{slotTitle}</span>
-                                <span className="relic-rarity-tag">{isOrnament ? (isRu ? "5★ ОРНАМЕНТ" : "5★ ORNAMENT") : (isRu ? "5★ РЕЛИКВИЯ" : "5★ RELIC")}</span>
-                              </div>
-                              <span className="relic-name-truncate" title={relicSetName}>{relicSetName}</span>
+                              <span className="relic-slot-tag">{slotTitle}</span>
+                              <span className="relic-empty-text">{isRu ? "Ожидает синхронизации" : "Awaiting sync"}</span>
                             </div>
-                          </div>
-
-                          <div className="relic-main-row">
-                            <span className="relic-main-name">
-                              {mainStatIcon && (
-                                <img
-                                  className="relic-affix-icon main"
-                                  src={iconUrl(mainStatIcon)}
-                                  alt=""
-                                  crossOrigin="anonymous"
-                                  onError={(e) => handleImageFallback(e, mainStatIcon)}
-                                />
-                              )}
-                              <span>{mainStatName}</span>
-                            </span>
-                            <span className="relic-main-val text-accent">{mainStatValue}</span>
-                          </div>
-
-                          <div className="relic-subs-list">
-                            {(piece.sub_affix || []).slice(0, 4).map((sub, sIdx) => {
-                              const upgrades = Math.max(0, (sub.count || 1) - 1);
-                              const isKey = ["crit_rate", "crit_dmg", "spd"].includes(sub.field);
-                              const subIcon = resolveAffixIcon(sub);
-                              return (
-                                <div key={`sub-${sIdx}`} className={`relic-sub-item ${isKey ? "key-sub" : ""}`}>
-                                  <span className="sub-name">
-                                    {subIcon && (
-                                      <img
-                                        className="relic-affix-icon sub"
-                                        src={iconUrl(subIcon)}
-                                        alt=""
-                                        crossOrigin="anonymous"
-                                        onError={(e) => handleImageFallback(e, subIcon)}
-                                      />
-                                    )}
-                                    <span>{formatStatName(sub.field, lang) || formatStatName(sub.name, lang)}</span>
-                                  </span>
-                                  <span className="sub-val">
-                                    <span className="relic-sub-num">{sub.display}</span>
-                                    {upgrades > 0 && <span className="sub-roll-tag">{`+${upgrades}`}</span>}
-                                  </span>
-                                </div>
-                              );
-                            })}
                           </div>
                         </div>
                       );
-                    })}
-                  </div>
-                </div>
+                    }
 
-                {/* 2. АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ */}
-                <div className="showcase-section-box">
-                  <div className="showcase-section-title">
-                    <span>{isRu ? "АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ" : "ACTIVE SET BONUSES"}</span>
-                  </div>
-                  <div className="showcase-sets-content">
-                    <div className="sets-summary-row">
-                      {audit.cavern?.setName && (
-                        <span className="showcase-set-tag">
-                          <CheckIcon size={12} />
-                          <span>4/4 {audit.cavern.setName}</span>
-                        </span>
-                      )}
-                      {audit.planar?.setName && (
-                        <span className="showcase-set-tag planar">
-                          <CheckIcon size={12} />
-                          <span>2/2 {audit.planar.setName}</span>
-                        </span>
-                      )}
-                    </div>
-                    <span className="set-condition-text">
-                      {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
-                    </span>
-                  </div>
-                </div>
+                    const mainStatField = piece.main_affix?.field || "";
+                    const mainStatValue = piece.main_affix?.display || "";
+                    const mainStatName = formatStatName(mainStatField, lang) || formatStatName(piece.main_affix?.name, lang);
+                    const mainStatIcon = resolveAffixIcon(piece.main_affix);
 
+                    const relicSetInfo = resolveRelicSetInfo(piece, lang);
+                    const relicSetName = relicSetInfo?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
 
+                    return (
+                      <div key={`relic-${slotIdx}`} className="showcase-relic-card">
+                        <div className="relic-card-head">
+                          <div className="showcase-relic-icon-wrap">
+                            {piece.icon ? (
+                              <img
+                                className="showcase-relic-icon-img"
+                                src={iconUrl(piece.icon)}
+                                alt={piece.name || relicSetName}
+                                crossOrigin="anonymous"
+                                onError={(e) => handleImageFallback(e, piece.icon)}
+                              />
+                            ) : (
+                              <span className="placeholder-icon">
+                                {isSphereSlot ? <SphereIcon size={18} /> : isRopeSlot ? <RopeIcon size={18} /> : "★"}
+                              </span>
+                            )}
+                            <span className="relic-lvl-badge">+{piece.level ?? 15}</span>
+                          </div>
+                          <div className="relic-slot-info">
+                            <div className="relic-slot-header-row">
+                              <span className="relic-slot-tag">{slotTitle}</span>
+                              <span className="relic-rarity-tag">{isOrnament ? (isRu ? "5★ ОРНАМЕНТ" : "5★ ORNAMENT") : (isRu ? "5★ РЕЛИКВИЯ" : "5★ RELIC")}</span>
+                            </div>
+                            <span className="relic-name-truncate" title={relicSetName}>{relicSetName}</span>
+                          </div>
+                        </div>
+
+                        <div className="relic-main-row">
+                          <span className="relic-main-name">
+                            {mainStatIcon && (
+                              <img
+                                className="relic-affix-icon main"
+                                src={iconUrl(mainStatIcon)}
+                                alt=""
+                                crossOrigin="anonymous"
+                                onError={(e) => handleImageFallback(e, mainStatIcon)}
+                              />
+                            )}
+                            <span>{mainStatName}</span>
+                          </span>
+                          <span className="relic-main-val text-accent">{mainStatValue}</span>
+                        </div>
+
+                        <div className="relic-subs-list">
+                          {(piece.sub_affix || []).slice(0, 4).map((sub, sIdx) => {
+                            const upgrades = Math.max(0, (sub.count || 1) - 1);
+                            const isKey = ["crit_rate", "crit_dmg", "spd"].includes(sub.field);
+                            const subIcon = resolveAffixIcon(sub);
+                            return (
+                              <div key={`sub-${sIdx}`} className={`relic-sub-item ${isKey ? "key-sub" : ""}`}>
+                                <span className="sub-name">
+                                  {subIcon && (
+                                    <img
+                                      className="relic-affix-icon sub"
+                                      src={iconUrl(subIcon)}
+                                      alt=""
+                                      crossOrigin="anonymous"
+                                      onError={(e) => handleImageFallback(e, subIcon)}
+                                    />
+                                  )}
+                                  <span>{formatStatName(sub.field, lang) || formatStatName(sub.name, lang)}</span>
+                                </span>
+                                <span className="sub-val">
+                                  <span className="relic-sub-num">{sub.display}</span>
+                                  {upgrades > 0 && <span className="sub-roll-tag">{`+${upgrades}`}</span>}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  };
+
+                  if (layoutMode === "grouped") {
+                    return (
+                      <>
+                        {/* 1. ПЕЩЕРНЫЕ РЕЛИКВИИ (4 ПРЕДМЕТА) СО СВОИМ ТЕГОМ СВЕРХУ */}
+                        <div className="showcase-section-box">
+                          <div className="showcase-section-title">
+                            <span>{isRu ? "ПЕЩЕРНЫЕ РЕЛИКВИИ (4 ПРЕДМЕТА)" : "CAVERN RELICS (4 PIECES)"}</span>
+                            {audit.cavern?.setName && (
+                              <span className="showcase-set-tag">
+                                <CheckIcon size={12} />
+                                <span>4/4 {audit.cavern.setName}</span>
+                              </span>
+                            )}
+                          </div>
+                          <div className="showcase-relics-grid">
+                            {[0, 1, 2, 3].map((slotIdx) => renderRelicCard(slotIdx))}
+                          </div>
+                        </div>
+
+                        {/* 2. ПЛАНАРНЫЕ УКРАШЕНИЯ (2 ПРЕДМЕТА) СО СВОИМ ТЕГОМ СВЕРХУ */}
+                        <div className="showcase-section-box">
+                          <div className="showcase-section-title">
+                            <span>{isRu ? "ПЛАНАРНЫЕ УКРАШЕНИЯ (2 ПРЕДМЕТА)" : "PLANAR ORNAMENTS (2 PIECES)"}</span>
+                            {audit.planar?.setName && (
+                              <span className="showcase-set-tag">
+                                <CheckIcon size={12} />
+                                <span>2/2 {audit.planar.setName}</span>
+                              </span>
+                            )}
+                          </div>
+                          <div className="showcase-relics-grid">
+                            {[4, 5].map((slotIdx) => renderRelicCard(slotIdx))}
+                          </div>
+                        </div>
+
+                        {/* 3. УСЛОВИЯ И БОНУСЫ СЕТОВ В БОЮ */}
+                        {(audit.planar?.condition || audit.cavern?.condition) && (
+                          <div className="showcase-section-box">
+                            <div className="showcase-section-title">
+                              <span>{isRu ? "БОНУСЫ КОМПЛЕКТОВ В БОЮ" : "SET COMBAT BONUSES"}</span>
+                              <span className="section-sub-tag text-accent">{isRu ? "АКТИВИРОВАНО" : "ACTIVE"}</span>
+                            </div>
+                            <div className="showcase-sets-content">
+                              <span className="set-condition-text">
+                                {[audit.cavern?.condition, audit.planar?.condition].filter(Boolean).join(" • ")}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    );
+                  }
+
+                  return (
+                    <>
+                      {/* 1. БЛОК АКТИВИРОВАННЫХ НАБОРОВ (СВЕРХУ РЕЛИКВИЙ!) */}
+                      <div className="showcase-section-box">
+                        <div className="showcase-section-title">
+                          <span>{isRu ? "АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ" : "ACTIVE SET BONUSES"}</span>
+                          <span className="section-sub-tag text-accent">{isRu ? "АКТИВИРОВАНО" : "ACTIVE"}</span>
+                        </div>
+                        <div className="showcase-sets-content">
+                          <div className="sets-summary-row">
+                            {audit.cavern?.setName && (
+                              <span className="showcase-set-tag">
+                                <CheckIcon size={12} />
+                                <span>4/4 {audit.cavern.setName}</span>
+                              </span>
+                            )}
+                            {audit.planar?.setName && (
+                              <span className="showcase-set-tag">
+                                <CheckIcon size={12} />
+                                <span>2/2 {audit.planar.setName}</span>
+                              </span>
+                            )}
+                          </div>
+                          <span className="set-condition-text">
+                            {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* 2. ВСЕ 6 РЕЛИКВИЙ СЛИТНО (СЛИПАЮТСЯ) */}
+                      <div className="showcase-section-box">
+                        <div className="showcase-section-title">
+                          <span>{isRu ? "ЭКИПИРОВАННЫЕ РЕЛИКВИИ (6 СЛОТОВ)" : "EQUIPPED RELICS (6 SLOTS)"}</span>
+                          <span className="section-sub-tag text-accent">{isRu ? "ДАННЫЕ ВЕРИФИЦИРОВАНЫ" : "VERIFIED DATA"}</span>
+                        </div>
+                        <div className="showcase-relics-grid">
+                          {[0, 1, 2, 3, 4, 5].map((slotIdx) => renderRelicCard(slotIdx))}
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
 

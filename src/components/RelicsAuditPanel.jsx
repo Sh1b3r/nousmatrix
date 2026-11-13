@@ -1,21 +1,248 @@
 import React from "react";
-import { SphereIcon, CheckIcon, WarnIcon, SparklesIcon } from "./Icons.jsx";
-export default function RelicsAuditPanel({ audit, t, lang = "ru" }) {
+import { CheckIcon, WarnIcon, SparklesIcon } from "./Icons.jsx";
+
+export default function RelicsAuditPanel({
+  audit,
+  t,
+  lang = "ru",
+  layoutMode = "grouped",
+  onLayoutModeChange
+}) {
   if (!audit) return null;
   const isRu = (lang || (t?.lvl === "Ур." ? "ru" : "en")) === "ru";
   const cavern = audit.cavern;
   const planar = audit.planar;
-  return  React.createElement("div", { className: "relics-audit-panel" },  React.createElement("div", { className: "panel-title relics-audit-title" },  React.createElement("div", { className: "relics-title-group" },  React.createElement("span", { className: "relics-audit-dot" }),  React.createElement("span", null, isRu ? "ПОДСЧЁТ РЕЛИКВИЙ И ПЛАНАРОК" : "RELICS & PLANARS AUDIT")),  React.createElement("span", { className: "relics-audit-badge" }, isRu ? "АУДИТ РОЛЛОВ СЕТОВ" : "SET ROLL QUALITY")),  React.createElement("div", { className: "relics-audit-grid" }, cavern && cavern.label ?  React.createElement("div", { className: "relic-audit-block cavern-block" },  React.createElement("div", { className: "relic-audit-head" },  React.createElement("span", { className: "relic-audit-tag" }, isRu ? "ПЕЩЕРНЫЕ РЕЛИКВИИ (4 СЛОТА)" : "CAVERN RELICS (4 SLOTS)"),  React.createElement("span", { className: `relic-set-status-pill ${cavern.isComplete ? "active" : "broken"}` }, cavern.isComplete ? t.cavernSetComplete || (isRu ? "КОМПЛЕКТ АКТИВЕН 4/4" : "SET ACTIVE 4/4") : t.cavernSetBroken || (isRu ? "КОМБИНАЦИЯ / РАЗОРВАН" : "BROKEN SET"))),  React.createElement("div", { className: "planar-audit-box" },  React.createElement("div", { className: "planar-audit-name" },  React.createElement("span", { className: "set-name-text" }, cavern.label),  React.createElement("span", { className: "planar-rolls-badge" }, cavern.usefulRolls, "/", cavern.rollsTotal, " ", isRu ? "полезных роллов" : "useful rolls")),  React.createElement("div", { className: "metric-row", style: { marginTop: "10px" } },  React.createElement("div", { className: "metric-label-line" },  React.createElement("span", null, t.cavernRollQuality || (isRu ? "Качество роллов пещерных слотов" : "Cavern Relics Roll Quality")),  React.createElement("span", { style: { fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--accent)" } }, cavern.efficiency, "%")),  React.createElement("div", { className: "metric-bar-bg" },  React.createElement(
-    "div",
-    {
-      className: "metric-bar-fill accent",
-      style: { width: `${cavern.efficiency}%` }
-    }
-  ))), parseFloat(cavern.cv) > 0 &&  React.createElement("div", { className: "metric-row" },  React.createElement("div", { className: "metric-label-line" },  React.createElement("span", null, t.cavernCv || (isRu ? "Крит. масса пещерных сетов (CV)" : "Cavern Crit Value (CV)")),  React.createElement("span", { style: { fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" } }, cavern.cv))), cavern.condition &&  React.createElement("div", { className: "planar-condition-line" },  React.createElement("span", { className: "condition-bullet" }, "⚡"),  React.createElement("span", null, cavern.condition)))) :  React.createElement("div", { className: "relic-audit-empty" },  React.createElement("span", null, isRu ? "Пещерные реликвии не экипированы" : "No cavern relics equipped")), planar && planar.setName ?  React.createElement("div", { className: "relic-audit-block planar-block" },  React.createElement("div", { className: "relic-audit-head" },  React.createElement("span", { className: "relic-audit-tag" }, isRu ? "ПЛАНАРНЫЕ УКРАШЕНИЯ (2 СЛОТА)" : "PLANAR ORNAMENTS (2 SLOTS)"),  React.createElement("span", { className: `relic-set-status-pill ${planar.isComplete ? "active" : "broken"}` }, planar.isComplete ? t.planarSetComplete || (isRu ? "СЕТ АКТИВЕН 2/2" : "SET ACTIVE 2/2") : t.planarSetBroken || (isRu ? "РАЗОРВАННЫЙ СЕТ" : "BROKEN SET"))),  React.createElement("div", { className: "planar-audit-box" },  React.createElement("div", { className: "planar-audit-name" },  React.createElement("span", { className: "set-name-text" }, planar.setName),  React.createElement("span", { className: "planar-rolls-badge" }, planar.usefulRolls, "/", planar.rollsTotal, " ", isRu ? "полезных роллов" : "useful rolls")),  React.createElement("div", { className: "metric-row", style: { marginTop: "10px" } },  React.createElement("div", { className: "metric-label-line" },  React.createElement("span", null, t.planarRollQuality || (isRu ? "Качество роллов планарных слотов" : "Planar Roll Quality")),  React.createElement("span", { style: { fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--accent)" } }, planar.efficiency, "%")),  React.createElement("div", { className: "metric-bar-bg" },  React.createElement(
-    "div",
-    {
-      className: "metric-bar-fill accent",
-      style: { width: `${planar.efficiency}%` }
-    }
-  ))), parseFloat(planar.cv) > 0 &&  React.createElement("div", { className: "metric-row" },  React.createElement("div", { className: "metric-label-line" },  React.createElement("span", null, t.planarCv || (isRu ? "Крит. масса планарного сета (CV)" : "Planar Crit Value (CV)")),  React.createElement("span", { style: { fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" } }, planar.cv))), planar.condition &&  React.createElement("div", { className: "planar-condition-line" },  React.createElement("span", { className: "condition-bullet" }, "🔮"),  React.createElement("span", null, planar.condition)))) :  React.createElement("div", { className: "relic-audit-empty" },  React.createElement("span", null, isRu ? "Планарные украшения ожидают синхронизации в игре" : "Planar ornaments awaiting sync"))));
+
+  const cavernUseful = Number(cavern?.usefulRolls || 0);
+  const cavernTotal = Number(cavern?.rollsTotal || 0);
+  const planarUseful = Number(planar?.usefulRolls || 0);
+  const planarTotal = Number(planar?.rollsTotal || 0);
+  const totalUseful = cavernUseful + planarUseful;
+  const totalRolls = cavernTotal + planarTotal;
+  const combinedEfficiency = totalRolls > 0
+    ? Math.round((totalUseful / totalRolls) * 100)
+    : (cavern?.efficiency || planar?.efficiency || 0);
+
+  const cavernCvNum = parseFloat(cavern?.cv || 0);
+  const planarCvNum = parseFloat(planar?.cv || 0);
+  const totalCvNum = cavernCvNum + planarCvNum;
+  const totalCv = totalCvNum > 0 ? totalCvNum.toFixed(1) : "0.0";
+
+  const isAllComplete = Boolean(cavern?.isComplete && planar?.isComplete);
+  const isAnyComplete = Boolean(cavern?.isComplete || planar?.isComplete);
+
+  return (
+    <div className="relics-audit-panel">
+      <div className="panel-title relics-audit-title">
+        <div className="relics-title-group">
+          <span className="relics-audit-dot"></span>
+          <span>{isRu ? "ПОДСЧЁТ РЕЛИКВИЙ И ПЛАНАРОК" : "RELICS & PLANARS AUDIT"}</span>
+        </div>
+        <div className="relics-audit-actions">
+          {onLayoutModeChange && (
+            <div className="relic-view-toggle mini">
+              <button
+                type="button"
+                className={`toggle-btn ${layoutMode === "grouped" ? "active" : ""}`}
+                onClick={() => onLayoutModeChange("grouped")}
+                title={isRu ? "Раздельные блоки по секциям" : "Grouped by sections"}
+              >
+                {isRu ? "ПО СЕКЦИЯМ" : "BY SECTIONS"}
+              </button>
+              <button
+                type="button"
+                className={`toggle-btn ${layoutMode === "unified" ? "active" : ""}`}
+                onClick={() => onLayoutModeChange("unified")}
+                title={isRu ? "Единый блок для всех 6 слотов" : "Unified block for all slots"}
+              >
+                {isRu ? "ВСЕ СЛОТЫ" : "ALL SLOTS"}
+              </button>
+            </div>
+          )}
+          <span className="relics-audit-badge">{isRu ? "АУДИТ РОЛЛОВ СЕТОВ" : "SET ROLL QUALITY"}</span>
+        </div>
+      </div>
+
+      <div className="relics-audit-grid">
+        {layoutMode === "unified" ? (
+          /* ЕДИНЫЙ СЛИТНЫЙ БЛОК (СЛИПАЕТСЯ ПРИ ВЫБОРЕ «ВСЕ СЛОТЫ») */
+          <div className="relic-audit-block unified-block">
+            <div className="relic-audit-head">
+              <span className="relic-audit-tag">
+                {isRu ? "ВСЕ РЕЛИКВИИ И ПЛАНАРКИ (6 СЛОТОВ)" : "ALL RELICS & PLANARS (6 SLOTS)"}
+              </span>
+              <span className={`relic-set-status-pill ${isAllComplete ? "active" : isAnyComplete ? "partial" : "broken"}`}>
+                {isAllComplete
+                  ? (isRu ? "КОМПЛЕКТЫ АКТИВНЫ (6/6)" : "SETS ACTIVE (6/6)")
+                  : isAnyComplete
+                  ? (isRu ? "ЧАСТИЧНО АКТИВНЫ" : "PARTIALLY ACTIVE")
+                  : (isRu ? "РАЗОРВАННЫЕ СЕТЫ" : "BROKEN SETS")}
+              </span>
+            </div>
+
+            <div className="planar-audit-box">
+              <div className="planar-audit-name">
+                <span className="set-name-text">
+                  {[cavern?.label, planar?.setName ? `2/2 ${planar.setName}` : ""].filter(Boolean).join(" • ") || (isRu ? "Комплекты экипированы" : "Equipped sets")}
+                </span>
+                <span className="planar-rolls-badge">
+                  {totalUseful}/{totalRolls} {isRu ? "полезных роллов" : "useful rolls"}
+                </span>
+              </div>
+
+              <div className="metric-row" style={{ marginTop: "10px" }}>
+                <div className="metric-label-line">
+                  <span>{isRu ? "Качество роллов всех слотов (6 реликвий)" : "All Relics Roll Quality (6 Relics)"}</span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--accent)" }}>
+                    {combinedEfficiency}%
+                  </span>
+                </div>
+                <div className="metric-bar-bg">
+                  <div
+                    className="metric-bar-fill accent"
+                    style={{ width: `${combinedEfficiency}%` }}
+                  />
+                </div>
+              </div>
+
+              {totalCvNum > 0 && (
+                <div className="metric-row">
+                  <div className="metric-label-line">
+                    <span>{isRu ? "Общая крит. масса реликвий (Total CV)" : "Total Relics Crit Value (Total CV)"}</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
+                      {totalCv}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {(cavern?.condition || planar?.condition) && (
+                <div className="unified-conditions-wrap" style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "6px" }}>
+                  {cavern?.condition && (
+                    <div className="planar-condition-line">
+                      <span className="condition-bullet">⚡</span>
+                      <span>{cavern.condition}</span>
+                    </div>
+                  )}
+                  {planar?.condition && (
+                    <div className="planar-condition-line">
+                      <span className="condition-bullet">🔮</span>
+                      <span>{planar.condition}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* РАЗДЕЛЬНЫЕ БЛОКИ (ПО СЕКЦИЯМ - КАК НА СКРИНЕ 2) */
+          <>
+            {cavern && cavern.label ? (
+              <div className="relic-audit-block cavern-block">
+                <div className="relic-audit-head">
+                  <span className="relic-audit-tag">{isRu ? "ПЕЩЕРНЫЕ РЕЛИКВИИ (4 СЛОТА)" : "CAVERN RELICS (4 SLOTS)"}</span>
+                  <span className={`relic-set-status-pill ${cavern.isComplete ? "active" : "broken"}`}>
+                    {cavern.isComplete
+                      ? (isRu ? "КОМПЛЕКТ АКТИВЕН" : "SET ACTIVE 4/4")
+                      : (isRu ? "КОМБИНАЦИЯ / РАЗОРВАН" : "BROKEN SET")}
+                  </span>
+                </div>
+                <div className="planar-audit-box">
+                  <div className="planar-audit-name">
+                    <span className="set-name-text">{cavern.label}</span>
+                    <span className="planar-rolls-badge">
+                      {cavern.usefulRolls}/{cavern.rollsTotal} {isRu ? "полезных роллов" : "useful rolls"}
+                    </span>
+                  </div>
+                  <div className="metric-row" style={{ marginTop: "10px" }}>
+                    <div className="metric-label-line">
+                      <span>{isRu ? "Качество роллов пещерных сетов (Голова + Руки + Тело + Сапоги)" : "Cavern Relics Roll Quality"}</span>
+                      <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--accent)" }}>
+                        {cavern.efficiency}%
+                      </span>
+                    </div>
+                    <div className="metric-bar-bg">
+                      <div className="metric-bar-fill accent" style={{ width: `${cavern.efficiency}%` }} />
+                    </div>
+                  </div>
+                  {parseFloat(cavern.cv) > 0 && (
+                    <div className="metric-row">
+                      <div className="metric-label-line">
+                        <span>{isRu ? "Крит. масса пещерных сетов (Cavern CV)" : "Cavern Crit Value (Cavern CV)"}</span>
+                        <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
+                          {cavern.cv}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  {cavern.condition && (
+                    <div className="planar-condition-line">
+                      <span className="condition-bullet">⚡</span>
+                      <span>{cavern.condition}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="relic-audit-empty">
+                <span>{isRu ? "Пещерные реликвии не экипированы" : "No cavern relics equipped"}</span>
+              </div>
+            )}
+
+            {planar && planar.setName ? (
+              <div className="relic-audit-block planar-block">
+                <div className="relic-audit-head">
+                  <span className="relic-audit-tag">{isRu ? "ПЛАНАРНЫЕ УКРАШЕНИЯ (2 СЛОТА)" : "PLANAR ORNAMENTS (2 SLOTS)"}</span>
+                  <span className={`relic-set-status-pill ${planar.isComplete ? "active" : "broken"}`}>
+                    {planar.isComplete
+                      ? (isRu ? "2/2 СЕТ АКТИВЕН" : "2/2 SET ACTIVE")
+                      : (isRu ? "РАЗОРВАННЫЙ СЕТ" : "BROKEN SET")}
+                  </span>
+                </div>
+                <div className="planar-audit-box">
+                  <div className="planar-audit-name">
+                    <span className="set-name-text">{planar.setName}</span>
+                    <span className="planar-rolls-badge">
+                      {planar.usefulRolls}/{planar.rollsTotal} {isRu ? "полезных роллов" : "useful rolls"}
+                    </span>
+                  </div>
+                  <div className="metric-row" style={{ marginTop: "10px" }}>
+                    <div className="metric-label-line">
+                      <span>{isRu ? "Качество роллов планарок (Сфера + Вервь)" : "Planar Roll Quality"}</span>
+                      <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--accent)" }}>
+                        {planar.efficiency}%
+                      </span>
+                    </div>
+                    <div className="metric-bar-bg">
+                      <div className="metric-bar-fill accent" style={{ width: `${planar.efficiency}%` }} />
+                    </div>
+                  </div>
+                  {parseFloat(planar.cv) > 0 && (
+                    <div className="metric-row">
+                      <div className="metric-label-line">
+                        <span>{isRu ? "Крит. масса планарок (Planar CV)" : "Planar Crit Value (Planar CV)"}</span>
+                        <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--text-primary)" }}>
+                          {planar.cv}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  {planar.condition && (
+                    <div className="planar-condition-line">
+                      <span className="condition-bullet">🔮</span>
+                      <span>{planar.condition}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="relic-audit-empty">
+                <span>{isRu ? "Планарные украшения ожидают синхронизации в игре" : "Planar ornaments awaiting sync"}</span>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
 }

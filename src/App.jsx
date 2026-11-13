@@ -56,6 +56,20 @@ export default function App() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
   const isTrophyOpenRef = useRef(false);
+  const [relicsLayoutMode, setRelicsLayoutMode] = useState(() => {
+    try {
+      return localStorage.getItem("nousmatrix_relics_layout_mode") || "grouped";
+    } catch {
+      return "grouped";
+    }
+  });
+  const handleRelicsLayoutModeChange = (mode) => {
+    setRelicsLayoutMode(mode);
+    try {
+      localStorage.setItem("nousmatrix_relics_layout_mode", mode);
+    } catch {
+    }
+  };
   const [isLoading, setIsLoading] = useState(() => Boolean(initialData.initialUrlUid && !initialData.initialProfile));
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -479,13 +493,15 @@ export default function App() {
       t,
       lang
     }
-  ),  React.createElement(CharacterOverview, { character: activeChar, t, lang }),  React.createElement("div", { className: "dashboard-grid" },  React.createElement("div", { className: "dashboard-col-left" },  React.createElement("div", { className: "panel panel-overall-score", style: { marginBottom: "24px" } },  React.createElement(OverallScorePanel, { audit, t, lang })),  React.createElement("div", { className: "panel panel-combat-stats", style: { marginBottom: "24px" } },  React.createElement("div", { className: "panel-title combat-stats-title" },  React.createElement("span", { className: "combat-title-main" }, t.combatStatsTitle),  React.createElement("span", { className: "combat-title-sub" }, t.basePlusBonus)),  React.createElement(CombatStats, { character: activeChar, t, lang })),  React.createElement("div", { className: "panel panel-relics-audit" },  React.createElement(RelicsAuditPanel, { audit, t, lang }))),  React.createElement("div", { className: "dashboard-col-right" },  React.createElement("div", { className: "panel panel-relics", style: { marginBottom: "24px" } },  React.createElement("div", { className: "panel-title", style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },  React.createElement("span", null, t.relicsTitle),  React.createElement("span", { style: { color: "var(--accent)" } }, t.verifiedData)),  React.createElement(
+  ),  React.createElement(CharacterOverview, { character: activeChar, t, lang }),  React.createElement("div", { className: "dashboard-grid" },  React.createElement("div", { className: "dashboard-col-left" },  React.createElement("div", { className: "panel panel-overall-score", style: { marginBottom: "24px" } },  React.createElement(OverallScorePanel, { audit, t, lang })),  React.createElement("div", { className: "panel panel-combat-stats", style: { marginBottom: "24px" } },  React.createElement("div", { className: "panel-title combat-stats-title" },  React.createElement("span", { className: "combat-title-main" }, t.combatStatsTitle),  React.createElement("span", { className: "combat-title-sub" }, t.basePlusBonus)),  React.createElement(CombatStats, { character: activeChar, t, lang })),  React.createElement("div", { className: "panel panel-relics-audit" },  React.createElement(RelicsAuditPanel, { audit, t, lang, layoutMode: relicsLayoutMode, onLayoutModeChange: handleRelicsLayoutModeChange }))),  React.createElement("div", { className: "dashboard-col-right" },  React.createElement("div", { className: "panel panel-relics", style: { marginBottom: "24px" } },  React.createElement("div", { className: "panel-title", style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },  React.createElement("span", null, t.relicsTitle),  React.createElement("span", { style: { color: "var(--accent)" } }, t.verifiedData)),  React.createElement(
     RelicsGrid,
     {
       character: activeChar,
       audit,
       t,
-      lang
+      lang,
+      layoutMode: relicsLayoutMode,
+      onLayoutModeChange: handleRelicsLayoutModeChange
     }
   )),  React.createElement("div", { className: "panel panel-sets", style: { marginBottom: "24px" } },  React.createElement("div", { className: "panel-title" },  React.createElement("span", null, t.setsTitle)),  React.createElement(SetBonuses, { character: activeChar, t, lang })),  React.createElement(
     CombatSimulationCard,
@@ -505,7 +521,9 @@ export default function App() {
       audit,
       uid: player?.uid,
       t,
-      lang
+      lang,
+      layoutMode: relicsLayoutMode,
+      onLayoutModeChange: handleRelicsLayoutModeChange
     }
   ))));
 }
