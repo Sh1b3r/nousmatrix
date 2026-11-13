@@ -38,7 +38,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
 
   const roleBadgeLabel = () => {
     if (sim.type === "HYBRID_SUBDPS") return isRu ? "Саб-ДПС и поддержка" : "Hybrid Sub-DPS & Utility";
-    if (sim.type === "SUPPORT") return isRu ? "Поддержка отряда (Гармония)" : "Team Harmony Buffer";
+    if (sim.type === "SUPPORT") return isRu ? "Поддержка отряда (Саппорт)" : "Team Support / Buffer";
     if (sim.type === "SUSTAIN") return isRu ? "Выживание и защита (Сустейн)" : "Sustain & Mitigation";
     return isRu ? "Основной урон (Гиперкерри)" : "Main Damage Carry";
   };

@@ -398,8 +398,8 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "heal",
-      labelRu: "ЦЕЛИТЕЛЬ-СУСТЕЙН (ИЗОБИЛИЕ)",
-      labelEn: "HEALER / SUSTAIN (ABUNDANCE)",
+      labelRu: "СУСТЕЙН (ИСЦЕЛЕНИЕ)",
+      labelEn: "SUSTAIN (HEALER)",
       descRu: "Сборка на эффективное лечение, снятие ослаблений и выживание команды.",
       descEn: "Built for team healing, cleanse, and survival.",
       targetArchetype: heal > 0 ? be > 100 ? "ABUNDANCE_BREAK" : "ABUNDANCE_HP" : "ABUNDANCE_HP"
@@ -410,24 +410,97 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "support",
-      labelRu: "ЩИТОВИК-СУСТЕЙН (СОХРАНЕНИЕ)",
-      labelEn: "SHIELDER / SUSTAIN (PRESERVATION)",
+      labelRu: "СУСТЕЙН (ЩИТЫ И ЗАЩИТА)",
+      labelEn: "SUSTAIN (SHIELDER)",
       descRu: "Сборка на прочность щитов и командное снижение урона.",
       descEn: "Built for maximum team shielding and damage reduction.",
       targetArchetype: def > hp ? "PRESERVATION_DEF" : "PRESERVATION_HP"
     });
   }
-  if (path === "Shaman" || path === "Harmony") {
-    const isYaoGuangChar = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1408";
+
+  const isHarmony = path === "Shaman" || path === "Harmony";
+  const isMemory = path === "Memory" || path === "Remembrance";
+  const isYaoGuangChar = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1408";
+  const isSunday = charId === "1313" || lowerName.includes("воскресенье") || lowerName.includes("sunday");
+  const isRobin = charId === "1309" || lowerName.includes("зарянка") || lowerName.includes("robin");
+  const isRuanMei = charId === "1307" || charId === "1303" || lowerName.includes("жуань") || lowerName.includes("ruan");
+  const isSparkle = charId === "1306" || lowerName.includes("искорка") || lowerName.includes("sparkle");
+  const isBronya = charId === "1101" || lowerName.includes("броня") || lowerName.includes("bronya");
+  const isTingyun = charId === "1202" || lowerName.includes("тинъюнь") || lowerName.includes("тиньъюнь") || lowerName.includes("tingyun") || lowerName.includes("фугу") || lowerName.includes("fugue");
+
+  const isSupportChar = isHarmony || isYaoGuangChar || isSunday || isRobin || isRuanMei || isSparkle || isBronya || isTingyun ||
+    (isMemory && (isErrRope || hasSupportPlanar || (spd >= 145 && cr >= 45) || err > 0));
+
+  if (isSupportChar) {
+    if (isYaoGuangChar || (spd >= 155 && cr >= 45)) {
+      return formatRoleResult({
+        type: "SUPPORT",
+        role: "SUPPORT",
+        icon: "buffer",
+        labelRu: "САППОРТ (СКОРОСТЬ И АУРА)",
+        labelEn: "SUPPORT (SPEED & AURA)",
+        descRu: "Сборка на гиперскоростное продвижение отряда (+40% AV), генерацию SP и командную ауру критов (+20% КШ / +50% КУ).",
+        descEn: "Built for hyperspeed action advance (+40% AV), SP battery, and team crit aura (+20% CR / +50% CD).",
+        targetArchetype: "HARMONY_SPD"
+      });
+    }
+    if (isRuanMei || be >= 100 || lowerName.includes("первопроходец") || lowerName.includes("trailblazer")) {
+      return formatRoleResult({
+        type: "SUPPORT",
+        role: "SUPPORT",
+        icon: "buffer",
+        labelRu: "САППОРТ (ПРОБИТИЕ И УРОН)",
+        labelEn: "SUPPORT (BREAK & DMG AMP)",
+        descRu: "Сборка на командный эффект пробития, задержку уязвимости и ускорение ротаций отряда.",
+        descEn: "Built for team Break Effect, Weakness Break extension, and damage amplification.",
+        targetArchetype: "HARMONY_BREAK"
+      });
+    }
+    if (isSunday || isSparkle || isBronya || cd >= 140) {
+      return formatRoleResult({
+        type: "SUPPORT",
+        role: "SUPPORT",
+        icon: "buffer",
+        labelRu: "САППОРТ (КРИТ. УРОН И ЗАЛИВКА)",
+        labelEn: "SUPPORT (CRIT DMG & ADVANCE)",
+        descRu: "Сборка на масштабирование Крит. Урона, 100% продвижение действий и заливку гиперкерри.",
+        descEn: "Built for scaling high CRIT DMG, 100% action advance, and hypercarry buff uptime.",
+        targetArchetype: "HARMONY_CRIT"
+      });
+    }
+    if (isRobin || isTingyun || atk >= 2800) {
+      return formatRoleResult({
+        type: "SUPPORT",
+        role: "SUPPORT",
+        icon: "buffer",
+        labelRu: "САППОРТ (СИЛА АТАКИ И ЭНЕРГИЯ)",
+        labelEn: "SUPPORT (ATK & ENERGY)",
+        descRu: "Сборка на заливку силы атаки, энергии ультимейтов и групповое продвижение отряда.",
+        descEn: "Built for team ATK transfer, Energy battery, and team action acceleration.",
+        targetArchetype: "HARMONY_ATK"
+      });
+    }
+    if (isMemory) {
+      return formatRoleResult({
+        type: "SUPPORT",
+        role: "SUPPORT",
+        icon: "buffer",
+        labelRu: "САППОРТ (ПАМЯТЬ И ПРИЗЫВ)",
+        labelEn: "SUPPORT (REMEMBRANCE & SUMMON)",
+        descRu: "Сборка на синергию с Духами Памяти, ускорение действий и командное усиление.",
+        descEn: "Built for Memetic Entity synergy, action advance, and team performance amplification.",
+        targetArchetype: spd >= 145 ? "HARMONY_SPD" : "HARMONY_ATK"
+      });
+    }
     return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
       icon: "buffer",
-      labelRu: "БАФФЕР-САППОРТ (ГАРМОНИЯ)",
-      labelEn: "BUFFER / ENABLER (HARMONY)",
+      labelRu: "САППОРТ (УСИЛЕНИЕ ОТРЯДА)",
+      labelEn: "SUPPORT (TEAM AMPLIFIER)",
       descRu: "Сборка на усиление урона, продвижение ходов и генерацию очков действий команды.",
       descEn: "Built for amplifying team damage, action advance, and buff uptime.",
-      targetArchetype: isYaoGuangChar ? "HARMONY_SPD" : lowerName.includes("жуань") ? "HARMONY_BREAK" : cd >= 150 ? "HARMONY_CRIT" : "HARMONY_ATK"
+      targetArchetype: "HARMONY_SPD"
     });
   }
   return formatRoleResult({
@@ -1722,7 +1795,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
           desc: isRu ? "Каждые 10% КУ прямо увеличивают урон вашего гиперкерри." : "Every 10% CD directly boosts your main carry damage."
         });
       } else {
-        bottleneck = isRu ? `Сбалансированная сборка Гармонии (${cd}% КУ, ${spd} СКОР, ${err}% ВЭ). Явных узких мест нет.` : `High tier Harmony build (${cd}% CD, ${spd} SPD, ${err}% ERR). No critical bottlenecks.`;
+        bottleneck = isRu ? `Сбалансированная сборка саппорта (${cd}% КУ, ${spd} СКОР, ${err}% ВЭ). Явных узких мест нет.` : `High tier support build (${cd}% CD, ${spd} SPD, ${err}% ERR). No critical bottlenecks.`;
       }
       break;
     }

@@ -16,7 +16,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sparkle",
           icon: "icon/character/1306.png",
           names: ["искорка", "sparkle"],
-          roleRu: "Гармония (Усиление керри)",
+          roleRu: "Саппорт (Усиление керри)",
           roleEn: "Harmony (Carry Support)",
           buffDescRu: "Продвижение действия и усиление критического урона Химеко • Новы",
           buffDescEn: "Action advance and CRIT DMG buffs for Himeko • Nova",
@@ -28,7 +28,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday"],
-          roleRu: "Гармония (Продвижение и энергия)",
+          roleRu: "Саппорт (Продвижение и энергия)",
           roleEn: "Harmony (Action Advance and Energy)",
           buffDescRu: "Продвигает Химеко • Нову, восстанавливает ей энергию и активирует Verdict",
           buffDescEn: "Advances Himeko • Nova, restores her Energy and enables Verdict",
@@ -73,7 +73,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday"],
-          roleRu: "Гармония (Продвижение и энергия)",
+          roleRu: "Саппорт (Продвижение и энергия)",
           roleEn: "Harmony (Action Advance and Energy)",
           buffDescRu: "Продвигает Химеко • Нову и помогает чаще использовать её сверхспособность",
           buffDescEn: "Advances Himeko • Nova and helps her use her Ultimate more often",
@@ -154,7 +154,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei", "ruan"],
-          roleRu: "Гармония (Пробитие)",
+          roleRu: "Саппорт (Пробитие)",
           roleEn: "Harmony (Break)",
           buffDescRu: "+50% Эффективность пробития, +25% Пробитие всех RES, +10% SPD, +68% Урон",
           buffDescEn: "+50% Break Efficiency, +25% All-Type RES PEN, +10% SPD, +68% DMG",
@@ -167,7 +167,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Trailblazer (Harmony)",
           icon: "icon/character/8005.png",
           names: ["первопроходец", "trailblazer", "фугу", "fugue"],
-          roleRu: "Гармония (Суперпробитие)",
+          roleRu: "Саппорт (Суперпробитие)",
           roleEn: "Harmony (Super Break)",
           buffDescRu: "Наложение статуса Суперпробития (160% множитель урона), +30% ЭП отряду",
           buffDescEn: "Super Break trigger (160% multiplier), +30% BE to team",
@@ -201,7 +201,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение ВСЕГО отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
           buffDescEn: "100% Team Advance, +1100 ATK, +50% DMG, +25% FUA Crit DMG",
@@ -214,7 +214,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday", "искорка", "sparkle", "топаз", "topaz"],
-          roleRu: "Гармония (Крит. урон и Заливка)",
+          roleRu: "Саппорт (Крит. урон и Заливка)",
           roleEn: "Harmony (Crit & Energy Feed)",
           buffDescRu: "100% Продвижение хода, передача +78% КУ от базы, +50% Урон цели, +40 EP",
           buffDescEn: "100% Target Advance, +78% Crit DMG transfer, +50% DMG, +40 EP",
@@ -297,7 +297,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sparkle",
           icon: "icon/character/1306.png",
           names: ["искорка", "sparkle", "воскресенье", "sunday"],
-          roleRu: "Гармония (Продвижение и КУ)",
+          roleRu: "Саппорт (Продвижение и КУ)",
           roleEn: "Harmony (Advance & Crit)",
           buffDescRu: "+50% Продвижение, передача +102% КУ, +48% Урон, расширение до 7 SP",
           buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48, spBurst: 4 }
@@ -343,7 +343,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (Пробитие)",
+          roleRu: "Саппорт (Пробитие)",
           roleEn: "Harmony (Break)",
           buffDescRu: "+50% Эффективность пробития, +25% All-Type RES PEN, +10% SPD, задержка восстановления",
           buffValues: { breakEff: 50, resPen: 25, teamSpd: 10 }
@@ -355,7 +355,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Trailblazer (Harmony)",
           icon: "icon/character/8005.png",
           names: ["первопроходец", "trailblazer", "гармония"],
-          roleRu: "Гармония (Суперпробитие)",
+          roleRu: "Саппорт (Суперпробитие)",
           roleEn: "Harmony (Super Break)",
           buffDescRu: "Урон суперпробития от стойкости (160% множитель), +30% ЭП",
           buffValues: { superBreakFactor: 1.6, beBoost: 30 }
@@ -387,7 +387,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Fugue",
           icon: "icon/character/1404.png",
           names: ["фугу", "fugue"],
-          roleRu: "Небытие / Гармония (Экзо-стойкость)",
+          roleRu: "Дебаффер / Саппорт (Экзо-стойкость)",
           roleEn: "Nihility / Harmony",
           buffDescRu: "Внедрение Экзо-стойкости, усиление суперпробития всего отряда",
           buffValues: { exoBreak: true, beBoost: 40 }
@@ -398,7 +398,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (Пробитие)",
+          roleRu: "Саппорт (Пробитие)",
           roleEn: "Harmony (Break)",
           buffDescRu: "+50% Эффективность пробития, +25% All-Type RES PEN",
           buffValues: { breakEff: 50, resPen: 25 }
@@ -432,7 +432,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение хода, передача КУ от базы, +50% Урон цели, +40 EP",
           buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50 }
@@ -444,7 +444,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin", "руань мэй", "ruan mei"],
-          roleRu: "Гармония (Командный Урон)",
+          roleRu: "Саппорт (Командный Урон)",
           roleEn: "Harmony (Team Damage)",
           buffDescRu: "100% Продвижение отряда, +50% Урон, накладывает Узы гибели атаками Концерта",
           buffValues: { teamAdvance: 100, dmgBoost: 50 }
@@ -489,7 +489,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Jiaoqiu",
           icon: "icon/character/1218.png",
           names: ["цзяоцю", "jiaoqiu", "пела", "pela", "руань мэй", "ruan mei"],
-          roleRu: "Небытие / Гармония",
+          roleRu: "Дебаффер / Саппорт",
           roleEn: "Nihility / Harmony",
           buffDescRu: "Суммирует срез защиты до капа 100% DEF Shred и даёт дополнительную уязвимость",
           buffValues: { defShred: 40, vuln: 15 }
@@ -523,7 +523,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
           buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50, fuaCd: 25 }
@@ -566,7 +566,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение хода, передача КУ от базы, +50% Урон цели",
           buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50 }
@@ -613,7 +613,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Bronya",
           icon: "icon/character/1101.png",
           names: ["броня", "bronya", "воскресенье", "sunday"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение хода, +66% Урон, +55% КУ, +55% ATK",
           buffValues: { targetAdvance: 100, dmgBoost: 66, cdGrant: 55, atkGrant: 600 }
@@ -668,7 +668,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (Командный бафф)",
+          roleRu: "Саппорт (Командный бафф)",
           roleEn: "Harmony (Dual Buffer)",
           buffDescRu: "+68% Урон обоим керри, +25% All-Type RES PEN, +10% SPD",
           buffValues: { dmgBoost: 68, resPen: 25, teamSpd: 10 }
@@ -702,7 +702,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sparkle",
           icon: "icon/character/1306.png",
           names: ["искорка", "sparkle"],
-          roleRu: "Гармония (Батарейка SP и КУ)",
+          roleRu: "Саппорт (Батарейка SP и КУ)",
           roleEn: "Harmony (SP Battery & Crit)",
           buffDescRu: "+50% Продвижение, передача +102% КУ, +48% Урон, запас 7 SP",
           buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48 }
@@ -714,7 +714,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Tingyun",
           icon: "icon/character/1202.png",
           names: ["тинъюнь", "tingyun", "воскресенье", "sunday"],
-          roleRu: "Гармония (Заливка 50 EP и ATK)",
+          roleRu: "Саппорт (Заливка 50 EP и ATK)",
           roleEn: "Harmony (50 Energy & ATK)",
           buffDescRu: "+50 Энергии ультимейта (быстрый чешуйчатый щит), +55% ATK, +50% Урон",
           buffValues: { atkGrant: 750, dmgBoost: 50, energyFeed: 50 }
@@ -746,7 +746,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение хода, передача КУ от базы, +50% Урон цели, +40 EP",
           buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50, energyFeed: 40 }
@@ -757,7 +757,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin"],
-          roleRu: "Гармония (Концерт)",
+          roleRu: "Саппорт (Концерт)",
           roleEn: "Harmony (Concerto)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
           buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50 }
@@ -802,7 +802,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (Пробитие и RES PEN)",
+          roleRu: "Саппорт (Пробитие и RES PEN)",
           roleEn: "Harmony (RES PEN)",
           buffDescRu: "+68% Урон ДоТов, +25% All-Type RES PEN, +10% SPD, задержка восстановления стойкости",
           buffValues: { dmgBoost: 68, resPen: 25, teamSpd: 10 }
@@ -845,7 +845,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK для масштабирования ДоТов, +50% Урон",
           buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50 }
@@ -890,7 +890,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (RES PEN)",
+          roleRu: "Саппорт (RES PEN)",
           roleEn: "Harmony (RES PEN)",
           buffDescRu: "+68% Урон ДоТов, +25% All-Type RES PEN, +10% SPD",
           buffValues: { dmgBoost: 68, resPen: 25, teamSpd: 10 }
@@ -967,7 +967,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (Пробитие)",
+          roleRu: "Саппорт (Пробитие)",
           roleEn: "Harmony (Break)",
           buffDescRu: "+50% Эффективность пробития, +25% All-Type RES PEN, +10% SPD",
           buffValues: { breakEff: 50, resPen: 25, teamSpd: 10 }
@@ -979,7 +979,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Bronya",
           icon: "icon/character/1101.png",
           names: ["броня", "bronya", "воскресенье", "sunday"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение хода для удвоения выстрелов дуэли",
           buffValues: { targetAdvance: 100, dmgBoost: 66 }
@@ -1010,7 +1010,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Fugue",
           icon: "icon/character/1404.png",
           names: ["фугу", "fugue"],
-          roleRu: "Небытие / Гармония",
+          roleRu: "Дебаффер / Саппорт",
           roleEn: "Nihility / Harmony",
           buffDescRu: "Экзо-стойкость, +40% ЭП, срез защиты",
           buffValues: { exoBreak: true, beBoost: 40, defShred: 20 }
@@ -1021,7 +1021,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (Пробитие)",
+          roleRu: "Саппорт (Пробитие)",
           roleEn: "Harmony (Break)",
           buffDescRu: "+50% Эффективность пробития, +25% RES PEN",
           buffValues: { breakEff: 50, resPen: 25 }
@@ -1055,7 +1055,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (Пробитие)",
+          roleRu: "Саппорт (Пробитие)",
           roleEn: "Harmony (Break)",
           buffDescRu: "+50% Эффективность пробития, +25% All-Type RES PEN, +10% SPD",
           buffValues: { breakEff: 50, resPen: 25, teamSpd: 10 }
@@ -1067,7 +1067,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Fugue",
           icon: "icon/character/1404.png",
           names: ["фугу", "fugue", "первопроходец", "trailblazer"],
-          roleRu: "Небытие / Гармония",
+          roleRu: "Дебаффер / Саппорт",
           roleEn: "Nihility / Harmony",
           buffDescRu: "Внедрение Экзо-стойкости, усиление суперпробития на 160%",
           buffValues: { superBreakFactor: 1.6, beBoost: 30 }
@@ -1098,7 +1098,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Trailblazer (Harmony)",
           icon: "icon/character/8005.png",
           names: ["первопроходец", "trailblazer"],
-          roleRu: "Гармония (Суперпробитие)",
+          roleRu: "Саппорт (Суперпробитие)",
           roleEn: "Harmony (Super Break)",
           buffDescRu: "Суперпробитие стойкости отряда (160%), +30% ЭП",
           buffValues: { superBreakFactor: 1.6, beBoost: 30 }
@@ -1109,7 +1109,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Ruan Mei",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei"],
-          roleRu: "Гармония (Пробитие)",
+          roleRu: "Саппорт (Пробитие)",
           roleEn: "Harmony (Break)",
           buffDescRu: "+50% Эффективность пробития, +25% RES PEN",
           buffValues: { breakEff: 50, resPen: 25 }
@@ -1143,7 +1143,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sparkle",
           icon: "icon/character/1306.png",
           names: ["искорка", "sparkle"],
-          roleRu: "Гармония (Продвижение и КУ)",
+          roleRu: "Саппорт (Продвижение и КУ)",
           roleEn: "Harmony (Advance & Crit)",
           buffDescRu: "+50% Продвижение, передача +102% КУ, +48% Урон, запас 7 SP",
           buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48 }
@@ -1185,7 +1185,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение хода, передача КУ от базы, +50% Урон цели, +40 EP",
           buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50, energyFeed: 40 }
@@ -1196,7 +1196,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Tingyun",
           icon: "icon/character/1202.png",
           names: ["тинъюнь", "tingyun"],
-          roleRu: "Гармония (50 EP & ATK)",
+          roleRu: "Саппорт (50 EP & ATK)",
           roleEn: "Harmony (50 Energy & ATK)",
           buffDescRu: "+50 Энергии ультимейта, +55% ATK, +50% Урон",
           buffValues: { atkGrant: 750, dmgBoost: 50, energyFeed: 50 }
@@ -1230,7 +1230,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
           buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50, fuaCd: 25 }
@@ -1284,7 +1284,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday", "искорка", "sparkle"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение хода, передача КУ от базы, +50% Урон",
           buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50 }
@@ -1318,7 +1318,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон, +25% КУ контратак",
           buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50, fuaCd: 25 }
@@ -1330,7 +1330,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday", "тинъюнь", "tingyun"],
-          roleRu: "Гармония (Крит и Энергия)",
+          roleRu: "Саппорт (Крит и Энергия)",
           roleEn: "Harmony (Crit & Energy)",
           buffDescRu: "100% Продвижение хода, передача КУ, +50% Урон, +40 EP",
           buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50, energyFeed: 40 }
@@ -1372,7 +1372,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin"],
-          roleRu: "Гармония (Концерт)",
+          roleRu: "Саппорт (Концерт)",
           roleEn: "Harmony (Concerto)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
           buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50 }
@@ -1419,7 +1419,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin", "руань мэй", "ruan mei", "пела", "pela"],
-          roleRu: "Гармония (Второй буфер)",
+          roleRu: "Саппорт (Второй буфер)",
           roleEn: "Harmony (Secondary Buffer)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
           buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50 }
@@ -1463,7 +1463,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Tingyun",
           icon: "icon/character/1202.png",
           names: ["тинъюнь", "tingyun"],
-          roleRu: "Гармония (50 EP & ATK)",
+          roleRu: "Саппорт (50 EP & ATK)",
           roleEn: "Harmony (50 Energy & ATK)",
           buffDescRu: "+50 Энергии, +55% ATK, +50% Урон",
           buffValues: { atkGrant: 750, dmgBoost: 50, energyFeed: 50 }
@@ -1520,7 +1520,7 @@ export const CHARACTER_SQUADS = {
           nameEn: "Robin",
           icon: "icon/character/1309.png",
           names: ["робин", "robin"],
-          roleRu: "Гармония (100% Продвижение)",
+          roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
           buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50, fuaCd: 25 }
@@ -1604,7 +1604,7 @@ export function getGenericSquads(char, lang = "ru") {
             nameEn: "Robin / Sunday",
             icon: "icon/character/1309.png",
             names: ["робин", "robin", "воскресенье", "sunday", "руань мэй", "ruan mei"],
-            roleRu: "Гармония (Второй буфер)",
+            roleRu: "Саппорт (Второй буфер)",
             roleEn: "Harmony (Dual Buffer)",
             buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
             buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50 }
@@ -1695,7 +1695,7 @@ export function getGenericSquads(char, lang = "ru") {
             nameEn: "Sunday / Sparkle",
             icon: "icon/character/1313.png",
             names: ["воскресенье", "sunday", "искорка", "sparkle", "броня", "bronya"],
-            roleRu: "Гармония (Продвижение и КУ)",
+            roleRu: "Саппорт (Продвижение и КУ)",
             roleEn: "Harmony (Advance & Crit)",
             buffDescRu: "100% Продвижение хода, передача КУ, +50% Урон",
             buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50 }
@@ -1707,7 +1707,7 @@ export function getGenericSquads(char, lang = "ru") {
             nameEn: "Robin / Ruan Mei",
             icon: "icon/character/1309.png",
             names: ["робин", "robin", "руань мэй", "ruan mei", "пела", "pela"],
-            roleRu: "Гармония / Небытие",
+            roleRu: "Саппорт / Дебаффер",
             roleEn: "Harmony / Nihility",
             buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон или срез защиты",
             buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50, defShred: 40 }
@@ -1738,7 +1738,7 @@ export function getGenericSquads(char, lang = "ru") {
             nameEn: "Ruan Mei",
             icon: "icon/character/1303.png",
             names: ["руань мэй", "ruan mei"],
-            roleRu: "Гармония (Пробитие)",
+            roleRu: "Саппорт (Пробитие)",
             roleEn: "Harmony (Break)",
             buffDescRu: "+50% Эффективность пробития, +25% All-Type RES PEN",
             buffValues: { breakEff: 50, resPen: 25 }
@@ -1749,7 +1749,7 @@ export function getGenericSquads(char, lang = "ru") {
             nameEn: "Trailblazer (Harmony)",
             icon: "icon/character/8005.png",
             names: ["первопроходец", "trailblazer"],
-            roleRu: "Гармония (Суперпробитие)",
+            roleRu: "Саппорт (Суперпробитие)",
             roleEn: "Harmony (Super Break)",
             buffDescRu: "Наложение статуса Суперпробития отряду (160%)",
             buffValues: { superBreakFactor: 1.6, beBoost: 30 }
@@ -1773,7 +1773,7 @@ export function getGenericSquads(char, lang = "ru") {
           nameEn: "Sunday / Sparkle",
           icon: "icon/character/1313.png",
           names: ["воскресенье", "sunday", "искорка", "sparkle", "броня", "bronya"],
-          roleRu: "Гармония (Продвижение и КУ)",
+          roleRu: "Саппорт (Продвижение и КУ)",
           roleEn: "Harmony (Advance & Crit)",
           buffDescRu: "50-100% Продвижение хода, передача +60-80% КУ, +50% Урон цели",
           buffValues: { targetAdvance: 100, cdGrant: 70, dmgBoost: 50 }
@@ -1785,7 +1785,7 @@ export function getGenericSquads(char, lang = "ru") {
           nameEn: "Robin / Pela",
           icon: "icon/character/1309.png",
           names: ["робин", "robin", "руань мэй", "ruan mei", "пела", "pela"],
-          roleRu: "Гармония / Небытие",
+          roleRu: "Саппорт / Дебаффер",
           roleEn: "Harmony / Nihility",
           buffDescRu: "100% Продвижение отряда / +25% RES PEN / -42% Срез защиты",
           buffValues: { dmgBoost: 50, resPen: 25, defShred: 42 }
@@ -1818,7 +1818,7 @@ export function getGenericSquads(char, lang = "ru") {
           nameEn: "Ruan Mei / Robin",
           icon: "icon/character/1303.png",
           names: ["руань мэй", "ruan mei", "робин", "robin"],
-          roleRu: "Гармония (Аура отряда)",
+          roleRu: "Саппорт (Аура отряда)",
           roleEn: "Harmony (Party Aura)",
           buffDescRu: "+68% Урон всем союзникам, +25% All-Type RES PEN, +10% SPD",
           buffValues: { dmgBoost: 68, resPen: 25, teamSpd: 10 }
