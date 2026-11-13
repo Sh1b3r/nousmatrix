@@ -16,7 +16,16 @@ export default function RelicsGrid({
   const [internalMode, setInternalMode] = useState("grouped");
   const layoutMode = externalMode !== undefined ? externalMode : internalMode;
   const setLayoutMode = onLayoutModeChange || setInternalMode;
-  const relics = character.relics || [];
+  const rawRelics = character.relics || [];
+  const ornaments = Array.isArray(character.ornaments) ? character.ornaments : [];
+  const existingRelicIds = new Set(rawRelics.map((r) => r.id || `${r.type}_${r.name}`));
+  const relics = [...rawRelics];
+  ornaments.forEach((orn) => {
+    if (!existingRelicIds.has(orn.id || `${orn.type}_${orn.name}`)) {
+      relics.push(orn);
+    }
+  });
+
   const slots = t.relicSlots || [];
   const isSphere = (r) => {
     if (!r) return false;
@@ -25,7 +34,9 @@ export default function RelicsGrid({
     const typeStr = String(r.type || r.type_name || "").toUpperCase();
     if (typeStr === "NECK" || typeStr === "SPHERE" || typeStr.includes("СФЕР")) return true;
     const idStr = String(r.id || r.tid || "");
-    if (idStr.length === 5 && idStr.endsWith("5")) return true;
+    if ((idStr.length === 5 || idStr.length === 6) && idStr.endsWith("5")) return true;
+    const nameStr = (r.name || "").toLowerCase();
+    if (nameStr.includes("сфер") || nameStr.includes("сцена") || nameStr.includes("ядро") || nameStr.includes("расщелина") || nameStr.includes("stage") || nameStr.includes("sphere") || nameStr.includes("core") || nameStr.includes("fissure")) return true;
     return false;
   };
   const isRope = (r) => {
@@ -35,7 +46,9 @@ export default function RelicsGrid({
     const typeStr = String(r.type || r.type_name || "").toUpperCase();
     if (typeStr === "OBJECT" || typeStr === "ROPE" || typeStr.includes("ВЕРВ")) return true;
     const idStr = String(r.id || r.tid || "");
-    if (idStr.length === 5 && idStr.endsWith("6")) return true;
+    if ((idStr.length === 5 || idStr.length === 6) && idStr.endsWith("6")) return true;
+    const nameStr = (r.name || "").toLowerCase();
+    if (nameStr.includes("верв") || nameStr.includes("реквизит") || nameStr.includes("транслятор") || nameStr.includes("плёнка") || nameStr.includes("пленка") || nameStr.includes("prop") || nameStr.includes("rope") || nameStr.includes("relay") || nameStr.includes("film")) return true;
     return false;
   };
   const cavernRelics = relics.filter((r) => {
@@ -44,8 +57,8 @@ export default function RelicsGrid({
     if (!isSphere(r) && !isRope(r) && relics.indexOf(r) < 4) return true;
     return false;
   });
-  const spherePiece = relics.find(isSphere) || relics.find((r, i) => i === 4 && relics.length >= 5);
-  const ropePiece = relics.find(isRope) || relics.find((r, i) => i === 5 && relics.length >= 6);
+  const spherePiece = relics.find(isSphere) || relics.find((r, i) => (i === 4 && relics.length >= 5) || Number(r.type ?? r.pos) === 5);
+  const ropePiece = relics.find(isRope) || relics.find((r, i) => (i === 5 && relics.length >= 6) || Number(r.type ?? r.pos) === 6);
   const planarRelics = [spherePiece, ropePiece].filter(Boolean);
   const renderPlaceholderCard = (slotIdx, defaultTitle) => {
     const slotTitle = slots[slotIdx] || defaultTitle;

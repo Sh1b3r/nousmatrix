@@ -418,6 +418,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
     });
   }
   if (path === "Shaman" || path === "Harmony") {
+    const isYaoGuangChar = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1408";
     return formatRoleResult({
       type: "SUPPORT",
       role: "SUPPORT",
@@ -426,7 +427,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       labelEn: "BUFFER / ENABLER (HARMONY)",
       descRu: "Сборка на усиление урона, продвижение ходов и генерацию очков действий команды.",
       descEn: "Built for amplifying team damage, action advance, and buff uptime.",
-      targetArchetype: lowerName.includes("яо") ? "HARMONY_SPD" : lowerName.includes("жуань") ? "HARMONY_BREAK" : cd >= 150 ? "HARMONY_CRIT" : "HARMONY_ATK"
+      targetArchetype: isYaoGuangChar ? "HARMONY_SPD" : lowerName.includes("жуань") ? "HARMONY_BREAK" : cd >= 150 ? "HARMONY_CRIT" : "HARMONY_ATK"
     });
   }
   return formatRoleResult({
@@ -546,6 +547,21 @@ export function evaluateRelicMainStat(relic, archetype, char) {
           labelEn: "WRONG MAIN STAT",
           recommendedRu: "Сила атаки% или Шанс попадания эффектов",
           recommendedEn: "ATK% or Effect Hit Rate"
+        };
+      case "HARMONY_SPD":
+        if (field === "crit_rate" || field === "hp" || field === "def" || field === "spd") {
+          return { status: "optimal", scoreBonus: 3.5, labelRu: "ВЕРНЫЙ СТАТ", labelEn: "OPTIMAL" };
+        }
+        if (field === "crit_dmg" || field === "effect_hit" || field === "atk") {
+          return { status: "viable", scoreBonus: 1, labelRu: "ДОПУСТИМЫЙ", labelEn: "VIABLE", recommendedRu: "Крит. Шанс или HP%/Защита%", recommendedEn: "CRIT Rate or HP%/DEF%" };
+        }
+        return {
+          status: "wrong",
+          scoreBonus: -18,
+          labelRu: "НЕПОДХОДЯЩИЙ СТАТ",
+          labelEn: "WRONG MAIN STAT",
+          recommendedRu: "Крит. Шанс (для командной ауры Яо Гуан) или HP%/Защита%",
+          recommendedEn: "CRIT Rate (for Yao Guang team aura) or HP%/DEF%"
         };
       case "HARMONY_CRIT":
         if (field === "crit_dmg") {
@@ -791,6 +807,12 @@ export function evaluateRelicMainStat(relic, archetype, char) {
         recommendedRu: "Бонус стихийного урона или HP%",
         recommendedEn: "Elemental DMG or HP%"
       };
+    }
+    if (archetype === "HARMONY_SPD") {
+      if (field === "hp" || field === "def" || field === "atk" || isMatchingElement) {
+        return { status: "optimal", scoreBonus: 3, labelRu: "ВЕРНЫЙ СТАТ", labelEn: "OPTIMAL" };
+      }
+      return { status: "viable", scoreBonus: 1, labelRu: "ДОПУСТИМЫЙ", labelEn: "VIABLE", recommendedRu: "HP%, Защита% или Стихийный урон", recommendedEn: "HP%, DEF% or Elemental DMG" };
     }
     if (archetype === "HARMONY_ATK") {
       if (isMatchingElement || field === "atk") {
@@ -1454,6 +1476,8 @@ export function getSubAffixWeight(field, archetype) {
       return 0;
     case "HARMONY_SPD":
       if (f === "spd") return 1;
+      if (f === "crit_rate") return 1;
+      if (f === "crit_dmg") return 0.65;
       if (f === "effect_res") return 0.85;
       if (f === "hp" || f === "def") return 0.5;
       return 0;
@@ -1517,11 +1541,16 @@ export function calculateCharacterAudit(char, lang = "ru") {
   if (!char) return null;
   if (Array.isArray(char.ornaments) && char.ornaments.length > 0) {
     const currentRelics = Array.isArray(char.relics) ? char.relics : [];
-    const existingIds = new Set(currentRelics.map((r) => r.id || `${r.type}_${r.name}`));
+    const existingIds = new Set(currentRelics.map((r) => r.id || `${r.type || r.pos}_${r.name}`));
+    const existingTypes = new Set(currentRelics.map((r) => Number(r.type ?? r.pos)).filter(Boolean));
     const merged = [...currentRelics];
     char.ornaments.forEach((orn) => {
-      if (!existingIds.has(orn.id || `${orn.type}_${orn.name}`)) {
+      const typeNum = Number(orn.type ?? orn.pos);
+      const ornId = orn.id || `${typeNum}_${orn.name}`;
+      if (!existingIds.has(ornId) && (!typeNum || !existingTypes.has(typeNum))) {
         merged.push(orn);
+        existingIds.add(ornId);
+        if (typeNum) existingTypes.add(typeNum);
       }
     });
     char.relics = merged;
@@ -1698,15 +1727,23 @@ export function calculateCharacterAudit(char, lang = "ru") {
       break;
     }
     case "HARMONY_SPD": {
-      const spdRatio = spd >= 160 ? 55 : spd >= 145 ? 45 : spd / 145 * 35;
-      const errBonus = err >= 19.4 ? 25 : err > 0 ? 15 : 5;
-      const survBonus = Math.min(20, hp / 4500 * 10 + def / 1200 * 10);
-      statPoints = spdRatio + errBonus + survBonus;
+      const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1408";
+      const spdRatio = spd >= 160 ? 50 : spd >= 145 ? 40 : (spd / 145) * 30;
+      const crBonus = isYaoGuang ? (cr >= 70 ? 25 : cr >= 50 ? 18 : (cr / 50) * 12) : 0;
+      const errBonus = err >= 19.4 ? 20 : err > 0 ? 12 : 5;
+      const survBonus = Math.min(isYaoGuang ? 15 : 25, (hp / 4500) * 10 + (def / 1200) * 10);
+      statPoints = spdRatio + crBonus + errBonus + survBonus;
       if (spd < 145) {
         bottleneck = isRu ? `Скорость (${spd}) ниже ключевого брейкпоинта 145-160 SPD. Саппорту необходима максимальная скорость для ротации.` : `Speed (${spd}) is below the key 145-160 SPD breakpoint. High SPD is essential for turn advance.`;
         actions.push({
           title: isRu ? "Приоритет: 160.0 Скорости" : "Priority: Push to 160.0 SPD",
           desc: isRu ? "Установите сапоги на Скорость и доберите сабстаты скорости." : "Equip SPD boots and prioritize speed substats."
+        });
+      } else if (isYaoGuang && cr < 50) {
+        bottleneck = isRu ? `Крит. шанс (${cr}%) ниже порога 50-70% для активации командной крит-ауры (+20% КШ / +50% КУ).` : `CRIT Rate (${cr}%) is below the 50-70% threshold required to activate +20% CR / +50% CD team aura.`;
+        actions.push({
+          title: isRu ? "Приоритет: 70.0% Крит. шанса" : "Priority: 70.0% CRIT Rate",
+          desc: isRu ? "Используйте тело на Крит. шанс и сабстаты КШ для командной ауры +20% КШ / +50% КУ." : "Equip CRIT Rate body and CR substats for +20% CR / +50% CD team aura."
         });
       } else if (err < 19.4) {
         bottleneck = isRu ? `Отсутствует вервь на Восстановление энергии (+19.4% ВЭ). Ультимейт заряжается медленнее.` : `Missing Energy Regeneration Rate rope (+19.4% ERR). Ultimate uptime is delayed.`;
@@ -1715,7 +1752,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
           desc: isRu ? "Используйте вервь со статом Восстановление энергии." : "Equip an Energy Regeneration Rate main stat rope."
         });
       } else {
-        bottleneck = isRu ? `Отличная скоростная сборка саппорта (${spd} СКОР, +${err}% ВЭ). Закрывает все ротации. Явных узких мест нет.` : `High-speed support build (${spd} SPD, +${err}% ERR). Full rotation capability. No bottlenecks.`;
+        bottleneck = isRu ? `Отличная скоростная сборка саппорта (${spd} СКОР${isYaoGuang ? `, ${cr}% КШ` : ""}, +${err}% ВЭ). Закрывает все ротации. Явных узких мест нет.` : `High-speed support build (${spd} SPD${isYaoGuang ? `, ${cr}% CR` : ""}, +${err}% ERR). Full rotation capability. No bottlenecks.`;
       }
       break;
     }
@@ -1878,7 +1915,9 @@ export function calculateCharacterAudit(char, lang = "ru") {
     const typeStr = String(r.type || r.type_name || "").toUpperCase();
     if (typeStr === "NECK" || typeStr === "OBJECT" || typeStr === "SPHERE" || typeStr === "ROPE" || typeStr.includes("СФЕР") || typeStr.includes("ВЕРВ")) return true;
     const idStr = String(r.id || r.tid || "");
-    if (idStr.length === 5 && (idStr.endsWith("5") || idStr.endsWith("6"))) return true;
+    if ((idStr.length === 5 || idStr.length === 6) && (idStr.endsWith("5") || idStr.endsWith("6"))) return true;
+    const nameStr = (r.name || "").toLowerCase();
+    if (nameStr.includes("сцена") || nameStr.includes("реквизит") || nameStr.includes("stage") || nameStr.includes("prop") || nameStr.includes("расщелина") || nameStr.includes("транслятор") || nameStr.includes("плёнка") || nameStr.includes("пленка") || nameStr.includes("core") || nameStr.includes("relay") || nameStr.includes("fissure") || nameStr.includes("film")) return true;
     return char.relics.length >= 6 && idx >= 4;
   });
   let planarRollsTotal = 0;

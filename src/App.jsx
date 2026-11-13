@@ -40,6 +40,26 @@ function getInitialSessionData() {
     if (stored) {
       const parsed = JSON.parse(stored);
       Object.entries(parsed).forEach(([k, v]) => {
+        if (v && Array.isArray(v.characters)) {
+          v.characters.forEach((c) => {
+            if (Array.isArray(c.ornaments) && c.ornaments.length > 0) {
+              const currentRelics = Array.isArray(c.relics) ? c.relics : [];
+              const existingIds = new Set(currentRelics.map((r) => r.id || `${r.type ?? r.pos}_${r.name}`));
+              const existingTypes = new Set(currentRelics.map((r) => Number(r.type ?? r.pos)).filter(Boolean));
+              const merged = [...currentRelics];
+              c.ornaments.forEach((orn) => {
+                const typeNum = Number(orn.type ?? orn.pos);
+                const ornId = orn.id || `${typeNum}_${orn.name}`;
+                if (!existingIds.has(ornId) && (!typeNum || !existingTypes.has(typeNum))) {
+                  merged.push(orn);
+                  existingIds.add(ornId);
+                  if (typeNum) existingTypes.add(typeNum);
+                }
+              });
+              c.relics = merged;
+            }
+          });
+        }
         cachedMap.set(String(k), v);
       });
       if (urlUid && parsed[urlUid]) {

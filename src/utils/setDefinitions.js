@@ -1502,7 +1502,15 @@ export const SET_DEFINITIONS = [
   {
     "id": "329",
     "ids": [
-      "329"
+      "329",
+      "319",
+      "320",
+      "321",
+      "322",
+      "323",
+      "324",
+      "325",
+      "326"
     ],
     "nameRu": "Миг радости бога",
     "nameEn": "God's Moment of Joy",
@@ -1514,9 +1522,19 @@ export const SET_DEFINITIONS = [
     "desc4En": "",
     "keywords": [
       "миг радости бога",
-      "god's moment of joy",
+      "радости бога",
+      "миг радости",
+      "радост",
+      "вечная сцена",
+      "магический реквизит",
       "вечная сцена мига радости",
       "магический реквизит мига радости",
+      "god's moment of joy",
+      "gods moment of joy",
+      "moment of joy",
+      "joy",
+      "eternal stage",
+      "magic prop",
       "moment of joy's eternal stage",
       "moment of joy's magic prop"
     ]
@@ -1524,7 +1542,9 @@ export const SET_DEFINITIONS = [
   {
     "id": "330",
     "ids": [
-      "330"
+      "330",
+      "327",
+      "328"
     ],
     "nameRu": "Подпространственный центр контроля аномалий",
     "nameEn": "Subspace ASC Center",
@@ -1536,9 +1556,19 @@ export const SET_DEFINITIONS = [
     "desc4En": "",
     "keywords": [
       "подпространственный центр контроля аномалий",
-      "subspace asc center",
+      "центр контроля аномалий",
+      "контроля аномалий",
+      "ядро контроля аномалий",
+      "транслятор аномалий",
       "тёмная расщелина цка",
       "негативная плёнка цка",
+      "расщелина цка",
+      "плёнка цка",
+      "пленка цка",
+      "subspace asc center",
+      "subspace anomaly control",
+      "anomaly control core",
+      "anomaly relay",
       "asc dark fissure",
       "asc negative film"
     ]
@@ -1549,9 +1579,20 @@ export function resolveRelicSetInfo(r, lang = "ru") {
   const isRu = lang === "ru";
   const name = (r.name || "").toLowerCase().trim();
   const sName = (r.set_name || "").toLowerCase().trim();
-  const sId = String(r.set_id || "").trim();
+  let sId = String(r.set_id || "").trim();
+
+  // If set_id is empty or unknown, extract 3-digit setId from 5-digit/6-digit relic id/tid (e.g. 63295 -> 329)
+  if (!sId || sId === "0" || sId === "unknown") {
+    const rawId = String(r.id || r.tid || "").trim();
+    if (rawId.length >= 5) {
+      sId = rawId.slice(1, 4);
+    } else if (rawId.length === 4) {
+      sId = rawId.slice(0, 3);
+    }
+  }
+
   if (sId) {
-    const byId = SET_DEFINITIONS.find((def) => def.ids.includes(sId));
+    const byId = SET_DEFINITIONS.find((def) => def.ids.includes(sId) || def.id === sId);
     if (byId) {
       return {
         matched: true,
