@@ -278,45 +278,6 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                 </span>
               </div>
             </div>
-            {/* НИЖНИЙ БАННЕР: сет-бонусы + боевая симуляция */}
-            <div className="showcase-bottom-banner">
-              <div className="bottom-col-left">
-                <div className="sets-summary-row">
-                  {audit.cavern?.setName && (
-                    <span className="showcase-set-tag">
-                      <CheckIcon size={12} />
-                      <span>4/4 {audit.cavern.setName}</span>
-                    </span>
-                  )}
-                  {audit.planar?.setName && (
-                    <span className="showcase-set-tag planar">
-                      <CheckIcon size={12} />
-                      <span>2/2 {audit.planar.setName}</span>
-                    </span>
-                  )}
-                </div>
-                <span className="set-condition-text">
-                  {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
-                </span>
-              </div>
-
-              {combatSim && (
-                <div className="bottom-col-right">
-                  <div className="sim-meta-box">
-                    <span className="sim-tag">
-                      <SparklesIcon size={12} />
-                      <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIM"}</span>
-                    </span>
-                    <span className="sim-score-text">
-                      {combatSim.metric1Label}: <strong>{combatSim.metric1Value}</strong>
-                    </span>
-                    <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-
             {/* 6 РЕЛИКВИЙ */}
             <div className="showcase-relics-grid">
               {Array.from({ length: 6 }).map((_, slotIdx) => {
@@ -324,7 +285,6 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                 const piece = relics.find((r) => Number(r.type ?? r.pos) === slotNum) || relics[slotIdx];
                 const slotTitle = isRu ? slotNamesRu[slotIdx] : slotNamesEn[slotIdx];
                 const isSphere = slotIdx === 4;
-                const isWeak = slotIdx === audit?.weakestRelicIndex;
 
                 if (!piece) {
                   return (
@@ -348,7 +308,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                 const relicSetName = resolveRelicSetInfo(piece, lang)?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
 
                 return (
-                  <div key={`relic-${slotIdx}`} className={`showcase-relic-card ${isWeak ? "weak-piece" : ""}`}>
+                  <div key={`relic-${slotIdx}`} className="showcase-relic-card">
                     <div className="relic-card-head">
                       <div className="showcase-relic-icon-wrap">
                         {piece.icon ? (
@@ -367,15 +327,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                         <span className="relic-lvl-badge">+{piece.level ?? 15}</span>
                       </div>
                       <div className="relic-slot-info">
-                        <div className="relic-slot-header-row">
-                          <span className="relic-slot-tag">{slotTitle}</span>
-                          {isWeak && (
-                            <span className="relic-weak-tag">
-                              <WarnIcon size={10} />
-                              <span>{isRu ? "СЛАБЫЙ" : "WEAK"}</span>
-                            </span>
-                          )}
-                        </div>
+                        <span className="relic-slot-tag">{slotTitle}</span>
                         <span className="relic-name-truncate" title={relicSetName}>{relicSetName}</span>
                       </div>
                     </div>
@@ -423,6 +375,44 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                   </div>
                 );
               })}
+            </div>
+
+            {/* БАННЕР: сет-бонусы + боевая симуляция */}
+            <div className="showcase-bottom-banner">
+              <div className="bottom-col-left">
+                <div className="sets-summary-row">
+                  {audit.cavern?.setName && (
+                    <span className="showcase-set-tag">
+                      <CheckIcon size={12} />
+                      <span>4/4 {audit.cavern.setName}</span>
+                    </span>
+                  )}
+                  {audit.planar?.setName && (
+                    <span className="showcase-set-tag planar">
+                      <CheckIcon size={12} />
+                      <span>2/2 {audit.planar.setName}</span>
+                    </span>
+                  )}
+                </div>
+                <span className="set-condition-text">
+                  {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
+                </span>
+              </div>
+
+              {combatSim && (
+                <div className="bottom-col-right">
+                  <div className="sim-meta-box">
+                    <span className="sim-tag">
+                      <SparklesIcon size={12} />
+                      <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIM"}</span>
+                    </span>
+                    <span className="sim-score-text">
+                      {combatSim.metric1Label}: <strong>{combatSim.metric1Value}</strong>
+                    </span>
+                    <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
 
