@@ -29,6 +29,51 @@ const PROPERTY_ICONS = {
   imaginary_dmg: "icon/property/IconImaginaryAddedRatio.png"
 };
 
+const ELEMENT_ICONS = {
+  physical: "icon/element/Physical.png",
+  fire: "icon/element/Fire.png",
+  ice: "icon/element/Ice.png",
+  thunder: "icon/element/Thunder.png",
+  lightning: "icon/element/Thunder.png",
+  wind: "icon/element/Wind.png",
+  quantum: "icon/element/Quantum.png",
+  imaginary: "icon/element/Imaginary.png"
+};
+
+const PATH_ICONS = {
+  warrior: "icon/path/Warrior.png",
+  destruction: "icon/path/Warrior.png",
+  rogue: "icon/path/Rogue.png",
+  hunt: "icon/path/Rogue.png",
+  thehunt: "icon/path/Rogue.png",
+  mage: "icon/path/Mage.png",
+  erudition: "icon/path/Mage.png",
+  shaman: "icon/path/Shaman.png",
+  harmony: "icon/path/Harmony.png",
+  warlock: "icon/path/Warlock.png",
+  nihility: "icon/path/Nihility.png",
+  knight: "icon/path/Knight.png",
+  preservation: "icon/path/Knight.png",
+  priest: "icon/path/Priest.png",
+  abundance: "icon/path/Priest.png",
+  memory: "icon/path/Memory.png",
+  remembrance: "icon/path/Remembrance.png"
+};
+
+const resolveElementIcon = (elem) => {
+  if (!elem) return null;
+  if (elem.icon) return elem.icon;
+  const key = String(elem.id || elem.name || "").toLowerCase().replace(/[\s-]+/g, "");
+  return ELEMENT_ICONS[key] || null;
+};
+
+const resolvePathIcon = (path) => {
+  if (!path) return null;
+  if (path.icon) return path.icon;
+  const key = String(path.id || path.name || "").toLowerCase().replace(/[\s-]+/g, "");
+  return PATH_ICONS[key] || null;
+};
+
 const resolveAffixIcon = (affix) => {
   if (!affix) return null;
   if (affix.icon) return affix.icon;
@@ -65,6 +110,8 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
   const archetype = audit.detectedRole?.targetArchetype || "CRIT_DPS";
   const combatSim = runCombatSimulation(character, stats, archetype, lang);
   const relics = character.relics || [];
+  const elemIcon = resolveElementIcon(character.element);
+  const pathIcon = resolvePathIcon(character.path);
 
   const slotTitles = [
     isRu ? "ГОЛОВА" : "HEAD",
@@ -302,19 +349,35 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                   <div className="showcase-pills-row">
                     <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>
                     <span className="showcase-pill accent">{isRu ? "Э" : "E"}{character.rank}</span>
-                    <span className="showcase-pill">{character.path?.name || "—"}</span>
-                    <span className="showcase-pill">
-                      {character.element?.icon && (
+                    {elemIcon && (
+                      <span
+                        className="showcase-pill showcase-icon-pill element-pill"
+                        title={character.element?.name ? `${isRu ? "Стихия: " : "Element: "}${character.element.name}` : ""}
+                        style={character.element?.color ? { borderColor: `${character.element.color}66` } : undefined}
+                      >
                         <img
-                          src={iconUrl(character.element.icon)}
-                          alt=""
-                          className="inline-elem-icon"
+                          src={iconUrl(elemIcon)}
+                          alt={character.element?.name || "Element"}
+                          className="showcase-badge-icon element-icon"
                           crossOrigin="anonymous"
-                          onError={(e) => handleImageFallback(e, character.element.icon)}
+                          onError={(e) => handleImageFallback(e, elemIcon)}
                         />
-                      )}
-                      <span>{character.element?.name || "—"}</span>
-                    </span>
+                      </span>
+                    )}
+                    {pathIcon && (
+                      <span
+                        className="showcase-pill showcase-icon-pill path-pill"
+                        title={character.path?.name ? `${isRu ? "Путь: " : "Path: "}${character.path.name}` : ""}
+                      >
+                        <img
+                          src={iconUrl(pathIcon)}
+                          alt={character.path?.name || "Path"}
+                          className="showcase-badge-icon path-icon"
+                          crossOrigin="anonymous"
+                          onError={(e) => handleImageFallback(e, pathIcon)}
+                        />
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
