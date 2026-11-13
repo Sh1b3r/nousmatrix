@@ -8,9 +8,9 @@
   --border-strong: #3F2E64;
   --border-focus: #FF3C3C;
 
-  --text-primary: #EDEDF2;
-  --text-secondary: #9B93B3;
-  --text-tertiary: #675E80;
+  --text-primary: #F4F3F8;
+  --text-secondary: #B7AFCF;
+  --text-tertiary: #8B82A6;
 
   --accent: #FF3C3C;
   --accent-dim: rgba(255, 60, 60, 0.12);
@@ -656,10 +656,17 @@ main {
   padding: 20px;
   margin-bottom: 24px;
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.char-hero-main-row {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
+  width: 100%;
 }
 
 .char-hero-left {
@@ -927,11 +934,11 @@ main {
 }
 
 .panel-title {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-tertiary);
+  font-family: var(--font-grotesk);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
   margin-bottom: 14px;
   display: flex;
   justify-content: space-between;
@@ -4593,5 +4600,448 @@ main {
 
   .showcase-relics-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   NOUSMATRIX UX & ERGONOMICS OVERHAUL
+   ========================================================================== */
+
+/* 1. Sticky Dashboard Navigation Bar */
+.dashboard-nav-bar {
+  position: sticky;
+  top: 56px;
+  z-index: 90;
+  background: rgba(12, 8, 20, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 8px 16px;
+  margin-bottom: 20px;
+}
+
+.dashboard-nav-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.dashboard-nav-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-bar-label {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.nav-pills-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.nav-pill-btn {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-pill-btn:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  background: var(--surface-2);
+}
+
+.nav-pill-btn.active {
+  background: rgba(255, 60, 60, 0.12);
+  border-color: var(--accent);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(255, 60, 60, 0.2);
+}
+
+/* 2. Executive Summary Verdict Bar on Hero Card */
+.char-hero-verdict-bar {
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.verdict-score-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.verdict-score-pill {
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.verdict-rank-pill {
+  background: rgba(255, 60, 60, 0.12);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 9px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.verdict-takeaways-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.verdict-takeaway-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(20, 14, 34, 0.7);
+  border: 1px solid var(--border-subtle);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  max-width: 480px;
+}
+
+.verdict-takeaway-item.strength .takeaway-label {
+  color: var(--success);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.verdict-takeaway-item.action {
+  cursor: pointer;
+  border-color: rgba(0, 229, 255, 0.35);
+  transition: all 0.2s ease;
+}
+
+.verdict-takeaway-item.action:hover {
+  border-color: #00E5FF;
+  background: rgba(0, 229, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.verdict-takeaway-item.action .takeaway-label {
+  color: #00E5FF;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.takeaway-text {
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.takeaway-jump-arrow {
+  color: #00E5FF;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* 3. Showcase Roster Scroll Improvements */
+.roster-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.roster-scroll-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.roster-scroll-wrapper.can-scroll-left::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 36px;
+  background: linear-gradient(90deg, var(--bg-base) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.roster-scroll-wrapper.can-scroll-right::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 36px;
+  background: linear-gradient(270deg, var(--bg-base) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.roster-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 28px;
+  height: 52px;
+  background: rgba(20, 14, 34, 0.9);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  font-size: 22px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  transition: all 0.15s ease;
+}
+
+.roster-nav-arrow:hover {
+  background: var(--surface-2);
+  border-color: var(--accent);
+  color: #FFFFFF;
+}
+
+.roster-nav-arrow.left {
+  left: 4px;
+}
+
+.roster-nav-arrow.right {
+  right: 4px;
+}
+
+.roster-swipe-badge {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+  background: var(--surface-2);
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+/* 4. Metric Bars Color System */
+.metric-bar-fill.success {
+  background: #00FF88 !important;
+}
+
+.metric-bar-fill.cyan {
+  background: #00E5FF !important;
+}
+
+.metric-bar-fill.primary {
+  background: #7B68EE !important;
+}
+
+.metric-bar-fill.warning {
+  background: #FFB74D !important;
+}
+
+.metric-bar-fill.accent {
+  background: var(--accent) !important;
+}
+
+/* 5. Synchronized Game Data Badges */
+.badge-sync-hsr {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+.sim-boss-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(255, 60, 60, 0.08);
+  border: 1px solid rgba(255, 60, 60, 0.3);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.sim-params-disclosure {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.sim-params-summary {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.sim-params-summary:hover {
+  color: var(--text-secondary);
+}
+
+.sim-footnote {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-tertiary);
+}
+
+/* 6. Responsive Layout Breakpoints */
+.mobile-only {
+  display: none !important;
+}
+
+.desktop-only {
+  display: inline-flex !important;
+}
+
+@media (max-width: 900px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: inline-flex !important;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .char-hero-verdict-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .verdict-takeaways-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .verdict-takeaway-item {
+    max-width: 100%;
+  }
+
+  .player-banner {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .player-actions {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    padding: 10px 14px;
+  }
+
+  .dashboard-nav-bar {
+    top: 50px;
+    padding: 6px 10px;
+  }
+
+  .nav-pill-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-height: 32px;
+  }
+
+  .player-actions button {
+    flex: 1 1 auto;
+    min-height: 42px;
+  }
+
+  .char-hero-card {
+    padding: 14px 12px;
+  }
+
+  .combat-sim-metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .squad-teammates-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .brand-title {
+    font-size: 16px;
+  }
+
+  .char-portrait-box {
+    width: 60px;
+    height: 60px;
+  }
+
+  .char-details-primary h2 {
+    font-size: 18px;
+  }
+
+  .panel {
+    padding: 14px 10px;
+  }
+
+  .nav-bar-label {
+    display: none;
   }
 }

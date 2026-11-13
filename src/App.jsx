@@ -10,6 +10,7 @@ import AuditPanel from "./components/AuditPanel";
 import OverallScorePanel from "./components/OverallScorePanel";
 import RelicsAuditPanel from "./components/RelicsAuditPanel.jsx";
 import CombatSimulationCard from "./components/CombatSimulationCard";
+import DashboardNav from "./components/DashboardNav.jsx";
 import TrophyModal from "./components/TrophyModal";
 import { RefreshIcon } from "./components/Icons.jsx";
 import { iconUrl, calculateCharacterAudit } from "./utils/audit";
@@ -443,87 +444,178 @@ export default function App() {
   const activeChar = currentProfile?.characters?.[activeIndex] || null;
   const audit = activeChar ? calculateCharacterAudit(activeChar, lang) : null;
   const player = currentProfile?.player || null;
-  return  React.createElement("div", { className: "app-container" },  React.createElement(Header, { onBackToHome: handleBackToHome }),  React.createElement("main", null, !currentProfile ? isLoading && initialData.initialUrlUid ?  React.createElement("div", { className: "profile-loading-screen" },  React.createElement("div", { className: "profile-loading-spinner" }),  React.createElement("div", { className: "profile-loading-text" }, lang === "ru" ? "СИНХРОНИЗАЦИЯ ДАННЫХ С ИГРОВЫМИ СЕРВЕРАМИ..." : "SYNCING PROFILE FROM GAME SERVERS..."),  React.createElement("div", { className: "profile-loading-sub" }, "UID: ", initialData.initialUrlUid)) :  React.createElement(
-    HomeView,
-    {
-      onSearch: fetchProfile,
-      isLoading,
-      errorMsg,
-      onOpenDemo: handleOpenDemo,
-      recentProfile: lastProfileRef.current,
-      onRestoreProfile: handleRestoreProfile,
-      t,
-      lang
-    }
-  ) :  React.createElement("section", { id: "view-dashboard", style: { display: "block" } },  React.createElement("div", { className: "player-banner" },  React.createElement("div", { className: "player-info-left" }, player?.avatar &&  React.createElement(
-    "img",
-    {
-      className: "player-avatar",
-      src: iconUrl(player.avatar.icon),
-      alt: player.nickname
-    }
-  ),  React.createElement("div", { className: "player-name-block" },  React.createElement("div", { className: "player-nickname" },  React.createElement("span", null, player?.nickname || (lang === "ru" ? "Первопроходец" : "Trailblazer")),  React.createElement("span", { className: "player-uid-badge" }, "UID: ", player?.uid),  React.createElement("span", { className: "player-level-badge" }, t.lvl, " ", player?.level)), player?.signature &&  React.createElement("div", { className: "player-signature" }, "«", player.signature, "»"))),  React.createElement("div", { className: "player-actions" },  React.createElement(
-    "button",
-    {
-      type: "button",
-      className: `btn-outline refresh-btn ${isRefreshing ? "loading" : ""}`,
-      onClick: () => fetchProfile(player?.uid, false, true),
-      disabled: isRefreshing,
-      title: lang === "ru" ? "Обновить данные из игры (обойти кэш)" : "Refresh data from game (bypass cache)"
-    },
-     React.createElement(RefreshIcon, { size: 12, className: `refresh-icon ${isRefreshing ? "spinning" : ""}` }),
-    " ",
-    isRefreshing ? lang === "ru" ? "ОБНОВЛЕНИЕ..." : "REFRESHING..." : lang === "ru" ? "ОБНОВИТЬ" : "REFRESH"
-  ),  React.createElement(
-    "button",
-    {
-      className: "btn-outline back-btn",
-      onClick: handleBackToHome,
-      title: lang === "ru" ? "Вернуться к смене UID (← в браузере, мышь, стрелка клавиатуры)" : "Back to UID change (← Browser, Mouse, Keyboard Arrow)"
-    },
-     React.createElement("span", { className: "arrow-icon" }, "←"),
-    " ",
-    t.btnBackUid
-  ),  React.createElement("button", { className: "btn-outline", onClick: handleOpenTrophy }, t.btnTrophy))),  React.createElement(
-    ShowcaseRoster,
-    {
-      characters: currentProfile.characters,
-      activeIndex,
-      onSelect: setActiveIndex,
-      t,
-      lang
-    }
-  ),  React.createElement(CharacterOverview, { character: activeChar, t, lang }),  React.createElement("div", { className: "dashboard-grid" },  React.createElement("div", { className: "dashboard-col-left" },  React.createElement("div", { className: "panel panel-overall-score", style: { marginBottom: "24px" } },  React.createElement(OverallScorePanel, { audit, t, lang })),  React.createElement("div", { className: "panel panel-combat-stats", style: { marginBottom: "24px" } },  React.createElement("div", { className: "panel-title combat-stats-title" },  React.createElement("span", { className: "combat-title-main" }, t.combatStatsTitle),  React.createElement("span", { className: "combat-title-sub" }, t.basePlusBonus)),  React.createElement(CombatStats, { character: activeChar, t, lang })),  React.createElement("div", { className: "panel panel-relics-audit" },  React.createElement(RelicsAuditPanel, { audit, t, lang, layoutMode: relicsLayoutMode }))),  React.createElement("div", { className: "dashboard-col-right" },  React.createElement("div", { className: "panel panel-relics", style: { marginBottom: "24px" } },  React.createElement("div", { className: "panel-title", style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },  React.createElement("span", null, t.relicsTitle),  React.createElement("span", { style: { color: "var(--accent)" } }, t.verifiedData)),  React.createElement(
-    RelicsGrid,
-    {
-      character: activeChar,
-      audit,
-      t,
-      lang,
-      layoutMode: relicsLayoutMode,
-      onLayoutModeChange: handleRelicsLayoutModeChange
-    }
-  )),  React.createElement("div", { className: "panel panel-sets", style: { marginBottom: "24px" } },  React.createElement("div", { className: "panel-title" },  React.createElement("span", null, t.setsTitle)),  React.createElement(SetBonuses, { character: activeChar, t, lang })),  React.createElement(
-    CombatSimulationCard,
-    {
-      character: activeChar,
-      audit,
-      stats: audit?.stats,
-      showcase: currentProfile?.characters || [],
-      lang
-    }
-  ))),  React.createElement(
-    TrophyModal,
-    {
-      isOpen: isTrophyOpen,
-      onClose: handleCloseTrophy,
-      character: activeChar,
-      audit,
-      uid: player?.uid,
-      t,
-      lang,
-      layoutMode: relicsLayoutMode,
-      onLayoutModeChange: handleRelicsLayoutModeChange
-    }
-  ))));
+  return (
+    <div className="app-container">
+      <Header onBackToHome={handleBackToHome} />
+      <main>
+        {!currentProfile ? (
+          isLoading && initialData.initialUrlUid ? (
+            <div className="profile-loading-screen">
+              <div className="profile-loading-spinner" />
+              <div className="profile-loading-text">
+                {lang === "ru"
+                  ? "СИНХРОНИЗАЦИЯ ДАННЫХ С ИГРОВЫМИ СЕРВЕРАМИ..."
+                  : "SYNCING PROFILE FROM GAME SERVERS..."}
+              </div>
+              <div className="profile-loading-sub">UID: {initialData.initialUrlUid}</div>
+            </div>
+          ) : (
+            <HomeView
+              onSearch={fetchProfile}
+              isLoading={isLoading}
+              errorMsg={errorMsg}
+              onOpenDemo={handleOpenDemo}
+              recentProfile={lastProfileRef.current}
+              onRestoreProfile={handleRestoreProfile}
+              t={t}
+              lang={lang}
+            />
+          )
+        ) : (
+          <section id="view-dashboard" style={{ display: "block" }}>
+            <div className="player-banner">
+              <div className="player-info-left">
+                {player?.avatar && (
+                  <img
+                    className="player-avatar"
+                    src={iconUrl(player.avatar.icon)}
+                    alt={player.nickname}
+                  />
+                )}
+                <div className="player-name-block">
+                  <div className="player-nickname">
+                    <span>{player?.nickname || (lang === "ru" ? "Первопроходец" : "Trailblazer")}</span>
+                    <span className="player-uid-badge">UID: {player?.uid}</span>
+                    <span className="player-level-badge">
+                      {t.lvl} {player?.level}
+                    </span>
+                  </div>
+                  {player?.signature && (
+                    <div className="player-signature">«{player.signature}»</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="player-actions">
+                <button
+                  type="button"
+                  className={`btn-outline refresh-btn ${isRefreshing ? "loading" : ""}`}
+                  onClick={() => fetchProfile(player?.uid, false, true)}
+                  disabled={isRefreshing}
+                  title={
+                    lang === "ru"
+                      ? "Обновить данные из игры (обойти кэш)"
+                      : "Refresh data from game (bypass cache)"
+                  }
+                >
+                  <RefreshIcon size={12} className={`refresh-icon ${isRefreshing ? "spinning" : ""}`} />{" "}
+                  {isRefreshing
+                    ? lang === "ru"
+                      ? "ОБНОВЛЕНИЕ..."
+                      : "REFRESHING..."
+                    : lang === "ru"
+                    ? "ОБНОВИТЬ"
+                    : "REFRESH"}
+                </button>
+                <button
+                  type="button"
+                  className="btn-outline back-btn"
+                  onClick={handleBackToHome}
+                  title={
+                    lang === "ru"
+                      ? "Вернуться к смене UID (← в браузере, мышь, стрелка клавиатуры)"
+                      : "Back to UID change (← Browser, Mouse, Keyboard Arrow)"
+                  }
+                >
+                  <span className="arrow-icon">←</span> {t.btnBackUid}
+                </button>
+                <button type="button" className="btn-outline" onClick={handleOpenTrophy}>
+                  {t.btnTrophy}
+                </button>
+              </div>
+            </div>
+
+            <ShowcaseRoster
+              characters={currentProfile.characters}
+              activeIndex={activeIndex}
+              onSelect={setActiveIndex}
+              t={t}
+              lang={lang}
+            />
+
+            <DashboardNav lang={lang} />
+
+            <div id="section-overview">
+              <CharacterOverview character={activeChar} audit={audit} t={t} lang={lang} />
+            </div>
+
+            <div className="dashboard-grid">
+              <div className="dashboard-col-left">
+                <div id="section-score" className="panel panel-overall-score" style={{ marginBottom: "24px" }}>
+                  <OverallScorePanel audit={audit} t={t} lang={lang} />
+                </div>
+                <div id="section-stats" className="panel panel-combat-stats" style={{ marginBottom: "24px" }}>
+                  <div className="panel-title combat-stats-title">
+                    <span className="combat-title-main">{t.combatStatsTitle}</span>
+                    <span className="combat-title-sub">{t.basePlusBonus}</span>
+                  </div>
+                  <CombatStats character={activeChar} t={t} lang={lang} />
+                </div>
+                <div className="panel panel-relics-audit">
+                  <RelicsAuditPanel audit={audit} t={t} lang={lang} layoutMode={relicsLayoutMode} />
+                </div>
+              </div>
+
+              <div className="dashboard-col-right">
+                <div id="section-relics" className="panel panel-relics" style={{ marginBottom: "24px" }}>
+                  <div
+                    className="panel-title"
+                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                  >
+                    <span>{t.relicsTitle}</span>
+                    <span className="badge-sync-hsr">{t.verifiedData}</span>
+                  </div>
+                  <RelicsGrid
+                    character={activeChar}
+                    audit={audit}
+                    t={t}
+                    lang={lang}
+                    layoutMode={relicsLayoutMode}
+                    onLayoutModeChange={handleRelicsLayoutModeChange}
+                  />
+                </div>
+                <div className="panel panel-sets" style={{ marginBottom: "24px" }}>
+                  <div className="panel-title">
+                    <span>{t.setsTitle}</span>
+                  </div>
+                  <SetBonuses character={activeChar} t={t} lang={lang} />
+                </div>
+                <div id="section-simulation">
+                  <CombatSimulationCard
+                    character={activeChar}
+                    audit={audit}
+                    stats={audit?.stats}
+                    showcase={currentProfile?.characters || []}
+                    lang={lang}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <TrophyModal
+              isOpen={isTrophyOpen}
+              onClose={handleCloseTrophy}
+              character={activeChar}
+              audit={audit}
+              uid={player?.uid}
+              t={t}
+              lang={lang}
+              layoutMode={relicsLayoutMode}
+              onLayoutModeChange={handleRelicsLayoutModeChange}
+            />
+          </section>
+        )}
+      </main>
+    </div>
+  );
 }
