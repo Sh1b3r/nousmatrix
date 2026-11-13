@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { getCharAvatarPath, getCharHeadIcon, handleImageFallback, iconUrl } from "../utils/audit";
 import { runCombatSimulation } from "../utils/simulation";
 import { formatStatName } from "../utils/i18n";
-import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon, SparklesIcon } from "./Icons.jsx";
+import { resolveRelicSetInfo } from "../utils/setDefinitions";
+import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon, SparklesIcon, SphereIcon, RopeIcon, WarnIcon, RoleSvgIcon } from "./Icons.jsx";
 
 export default function TrophyModal({ isOpen, onClose, character, audit, uid, t, lang = "ru" }) {
   const [isCopying, setIsCopying] = useState(false);
@@ -35,6 +36,17 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
   const relics = character.relics || [];
   const slotNamesRu = ["ГОЛОВА", "РУКИ", "ТЕЛО", "НОГИ", "СФЕРА", "ВЕРВЬ"];
   const slotNamesEn = ["HEAD", "HANDS", "BODY", "FEET", "SPHERE", "ROPE"];
+
+  const getGradeTier = (score) => {
+    const s = Number(score) || 0;
+    if (s >= 92) return { grade: "SSS", labelRu: "ЭТАЛОН БИЛДА", labelEn: "PRIME BENCHMARK", color: "var(--accent)" };
+    if (s >= 85) return { grade: "SS", labelRu: "ПРЕВОСХОДНЫЙ", labelEn: "EXCELLENT", color: "#00E5FF" };
+    if (s >= 75) return { grade: "S", labelRu: "ОТЛИЧНЫЙ", labelEn: "GREAT", color: "#00FF88" };
+    if (s >= 65) return { grade: "A", labelRu: "ХОРОШИЙ", labelEn: "SOLID BUILD", color: "#FFB74D" };
+    if (s >= 50) return { grade: "B", labelRu: "ТРЕБУЕТ ДОРАБОТКИ", labelEn: "WORK IN PROGRESS", color: "#FFA726" };
+    return { grade: "C", labelRu: "НАЧАЛЬНЫЙ", labelEn: "ENTRY LEVEL", color: "#EF5350" };
+  };
+  const gradeInfo = getGradeTier(audit.score);
 
   const generateExportCanvas = async () => {
     if (!cardRef.current) return null;
@@ -150,238 +162,283 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
             </div>
 
             {/* ШАПКА: аватар + имя + путь / элемент */}
-      <div className="showcase-header">
-        <div className="showcase-char-identity">
-          <div className="showcase-avatar-ring">
-            <img
-              src={getCharHeadIcon(character)}
-              alt={character.name}
-              className="showcase-avatar-img"
-              crossOrigin="anonymous"
-              onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
-            />
-          </div>
-          <div className="showcase-name-col">
-            <div className="showcase-char-title">
-              <h2 className="showcase-char-name">{character.name}</h2>
-              <span className="showcase-stars">{"★".repeat(character.rarity || 5)}</span>
-            </div>
-            <div className="showcase-pills-row">
-              <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>
-              <span className="showcase-pill accent">{isRu ? "Э" : "E"}{character.rank}</span>
-              <span className="showcase-pill">{character.path?.name || "—"}</span>
-              <span className="showcase-pill">{character.element?.name || "—"}</span>
-            </div>
-          </div>
-        </div>
-
-        {character.light_cone && (
-          <div className="showcase-cone-box">
-            <img
-              src={iconUrl(character.light_cone.icon)}
-              alt={character.light_cone.name}
-              className="showcase-cone-img"
-              crossOrigin="anonymous"
-              onError={(e) => handleImageFallback(e, character.light_cone.icon)}
-            />
-            <div className="showcase-cone-meta">
-              <span className="showcase-cone-name">{character.light_cone.name}</span>
-              <span className="showcase-cone-sub">
-                {isRu ? "Н" : "S"}{character.light_cone.rank} • {isRu ? "УР. " : "LV. "}{character.light_cone.level}/80
-              </span>
-            </div>
-          </div>
-        )}
-
-        <div className="showcase-score-box">
-          <div className="showcase-rank-tag">
-            <TrophyIcon size={13} />
-            <span>{isRu ? "ГЛОБАЛЬНЫЙ ТОП " : "GLOBAL TOP "}{audit.topPercent}{isRu ? "%" : "%"}</span>
-          </div>
-          <div className="showcase-score-val">
-            <span className="score-num">{audit.score}</span>
-            <span className="score-denom">/100</span>
-          </div>
-          <span className="showcase-uid">UID: {uid}</span>
-        </div>
-      </div>
-
-      {/* СТАТ-БАР: 4 ключевых показателя */}
-      <div className="showcase-stats-bar">
-        <div className="showcase-stat-item">
-          <span className="stat-label">{isRu ? "СКОРОСТЬ (SPD)" : "SPEED (SPD)"}</span>
-          <span className="stat-value text-accent">{stats.spd ? stats.spd.toFixed(1) : "100.0"}</span>
-          <span className="stat-sub">
-            {stats.spd >= 160 ? (isRu ? "[160+ КАП]" : "[160+ CAP]")
-              : stats.spd >= 145 ? (isRu ? "[145+ ЗОНА]" : "[145+ ZONE]")
-                : (isRu ? "[134+ ОК]" : "[134+ OK]")}
-          </span>
-        </div>
-
-        <div className="showcase-stat-item">
-          <span className="stat-label">{isRu ? "КРИТМАССА (CV)" : "CRIT VALUE (CV)"}</span>
-          <span className="stat-value">{stats.cv ? stats.cv.toFixed(1) : "—"}</span>
-          <span className="stat-sub">
-            {stats.cr ? stats.cr.toFixed(1) : 0}{isRu ? "% КШ / " : "% CR / "}
-            {stats.cd ? stats.cd.toFixed(1) : 0}{isRu ? "% КУ" : "% CD"}
-          </span>
-        </div>
-
-        <div className="showcase-stat-item">
-          <span className="stat-label">{isRu ? "АТК / HP" : "ATK / HP"}</span>
-          <span className="stat-value">
-            {stats.hp > 5000 ? `${Math.round(stats.hp)} HP` : `${Math.round(stats.atk || 0)} ATK`}
-          </span>
-          <span className="stat-sub">
-            {isRu ? "ЗАЩИТА: " : "DEF: "}{Math.round(stats.def || 0)}{isRu ? " ЗАЩ" : " DEF"}
-          </span>
-        </div>
-
-        <div className="showcase-stat-item">
-          <span className="stat-label">
-            {stats.be > 40 ? (isRu ? "ЭФФЕКТ ПРОБИТИЯ" : "BREAK EFFECT (BE)")
-              : stats.ehr > 20 ? (isRu ? "ШАНС ПОПАДАНИЯ (ШПЭ)" : "EFFECT HIT RATE (EHR)")
-                : (isRu ? "ВЭ (ERR)" : "ENERGY (ERR)")}
-          </span>
-          <span className="stat-value text-accent">
-            {stats.be > 40 ? `${stats.be.toFixed(1)}%`
-              : stats.ehr > 20 ? `${stats.ehr.toFixed(1)}%`
-                : `+${stats.err ? stats.err.toFixed(1) : "0"}%`}
-          </span>
-          <span className="stat-sub">
-            {stats.be >= 180 ? (isRu ? "[180% КАП]" : "[180% CAP]")
-              : stats.ehr >= 96 ? (isRu ? "[96% КАП]" : "[96% CAP]")
-                : (isRu ? "[ОК]" : "[OK]")}
-          </span>
-        </div>
-      </div>
-
-      {/* 6 РЕЛИКВИЙ */}
-      <div className="showcase-relics-grid">
-        {Array.from({ length: 6 }).map((_, slotIdx) => {
-          const slotNum = slotIdx + 1;
-          const piece = relics.find((r) => Number(r.type ?? r.pos) === slotNum) || relics[slotIdx];
-          const slotTitle = isRu ? slotNamesRu[slotIdx] : slotNamesEn[slotIdx];
-
-          if (!piece) {
-            return (
-              <div key={`relic-${slotIdx}`} className="showcase-relic-card empty">
-                <span className="relic-slot-tag">{slotTitle}</span>
-                <span className="relic-empty-text">{isRu ? "Ожидает синхронизации" : "Awaiting sync"}</span>
-              </div>
-            );
-          }
-
-          const mainStatField = piece.main_affix?.field || "";
-          const mainStatValue = piece.main_affix?.display || "";
-          const mainStatName = piece.main_affix?.name || formatStatName(mainStatField, lang);
-
-          return (
-            <div key={`relic-${slotIdx}`} className="showcase-relic-card">
-              <div className="relic-card-head">
-                <div className="relic-slot-info">
-                  <span className="relic-slot-tag">{slotTitle}</span>
-                  <span className="relic-name-truncate">{piece.name || piece.set_name}</span>
+            <div className="showcase-header">
+              <div className="showcase-char-identity">
+                <div className="showcase-avatar-ring">
+                  <img
+                    src={getCharHeadIcon(character)}
+                    alt={character.name}
+                    className="showcase-avatar-img"
+                    crossOrigin="anonymous"
+                    onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
+                  />
                 </div>
-                <span className="relic-level-badge">+{piece.level || 15}</span>
+                <div className="showcase-name-col">
+                  <div className="showcase-char-title">
+                    <h2 className="showcase-char-name">{character.name}</h2>
+                    <span className="showcase-stars">{"★".repeat(character.rarity || 5)}</span>
+                  </div>
+                  <div className="showcase-pills-row">
+                    <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>
+                    <span className="showcase-pill accent">{isRu ? "Э" : "E"}{character.rank}</span>
+                    <span className="showcase-pill">{character.path?.name || "—"}</span>
+                    <span className="showcase-pill">{character.element?.name || "—"}</span>
+                  </div>
+                </div>
               </div>
-              <div className="relic-main-row">
-                <span className="relic-main-name">
-                  {piece.main_affix?.icon && (
-                    <img
-                      className="relic-affix-icon main"
-                      src={iconUrl(piece.main_affix.icon)}
-                      alt=""
-                      crossOrigin="anonymous"
-                      onError={(e) => handleImageFallback(e, piece.main_affix.icon)}
-                    />
-                  )}
-                  <span>{mainStatName}</span>
+
+              {character.light_cone && (
+                <div className="showcase-cone-box">
+                  <img
+                    src={iconUrl(character.light_cone.icon)}
+                    alt={character.light_cone.name}
+                    className="showcase-cone-img"
+                    crossOrigin="anonymous"
+                    onError={(e) => handleImageFallback(e, character.light_cone.icon)}
+                  />
+                  <div className="showcase-cone-meta">
+                    <span className="showcase-cone-name">{character.light_cone.name}</span>
+                    <span className="showcase-cone-sub">
+                      {isRu ? "Н" : "S"}{character.light_cone.rank} • {isRu ? "УР. " : "LV. "}{character.light_cone.level}/80
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="showcase-score-box">
+                <div className="showcase-score-top-row">
+                  <div className="showcase-rank-tag">
+                    <TrophyIcon size={13} />
+                    <span>{isRu ? "ГЛОБАЛЬНЫЙ ТОП " : "GLOBAL TOP "}{audit.topPercent}{isRu ? "%" : "%"}</span>
+                  </div>
+                  <span className="showcase-uid">UID: {uid}</span>
+                </div>
+                <div className="showcase-score-val">
+                  <span className="score-num">{audit.score}</span>
+                  <span className="score-denom">/100</span>
+                </div>
+                <div className="showcase-grade-row">
+                  <span className="score-grade-pill" style={{ color: gradeInfo.color, borderColor: gradeInfo.color }}>
+                    GRADE {gradeInfo.grade} • {isRu ? gradeInfo.labelRu : gradeInfo.labelEn}
+                  </span>
+                  <span className="score-verified-stamp">
+                    <CheckIcon size={11} />
+                    <span>{isRu ? "ВАЛИДИРОВАНО" : "VALIDATED"}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* СТАТ-БАР: 4 ключевых показателя */}
+            <div className="showcase-stats-bar">
+              <div className="showcase-stat-item">
+                <span className="stat-label">{isRu ? "СКОРОСТЬ (SPD)" : "SPEED (SPD)"}</span>
+                <span className="stat-value text-accent">{stats.spd ? stats.spd.toFixed(1) : "100.0"}</span>
+                <span className="stat-sub">
+                  {stats.spd >= 160 ? (isRu ? "[160+ КАП]" : "[160+ CAP]")
+                    : stats.spd >= 145 ? (isRu ? "[145+ ЗОНА]" : "[145+ ZONE]")
+                      : (isRu ? "[134+ ОК]" : "[134+ OK]")}
                 </span>
-                <span className="relic-main-val text-accent">{mainStatValue}</span>
               </div>
-              <div className="relic-subs-list">
-                {(piece.sub_affix || []).slice(0, 4).map((sub, sIdx) => {
-                  const upgrades = Math.max(0, (sub.count || 1) - 1);
-                  const isKey = ["crit_rate", "crit_dmg", "spd"].includes(sub.field);
+
+              <div className="showcase-stat-item">
+                <span className="stat-label">{isRu ? "КРИТМАССА (CV)" : "CRIT VALUE (CV)"}</span>
+                <span className="stat-value">{stats.cv ? stats.cv.toFixed(1) : "—"}</span>
+                <span className="stat-sub">
+                  {stats.cr ? stats.cr.toFixed(1) : 0}{isRu ? "% КШ / " : "% CR / "}
+                  {stats.cd ? stats.cd.toFixed(1) : 0}{isRu ? "% КУ" : "% CD"}
+                </span>
+              </div>
+
+              <div className="showcase-stat-item">
+                <span className="stat-label">{isRu ? "АТК / HP" : "ATK / HP"}</span>
+                <span className="stat-value">
+                  {stats.hp > 5000 ? `${Math.round(stats.hp)} HP` : `${Math.round(stats.atk || 0)} ATK`}
+                </span>
+                <span className="stat-sub">
+                  {isRu ? "ЗАЩИТА: " : "DEF: "}{Math.round(stats.def || 0)}{isRu ? " ЗАЩ" : " DEF"}
+                </span>
+              </div>
+
+              <div className="showcase-stat-item">
+                <span className="stat-label">
+                  {stats.be > 40 ? (isRu ? "ЭФФЕКТ ПРОБИТИЯ" : "BREAK EFFECT (BE)")
+                    : stats.ehr > 20 ? (isRu ? "ШАНС ПОПАДАНИЯ (ШПЭ)" : "EFFECT HIT RATE (EHR)")
+                      : (isRu ? "ВЭ (ERR)" : "ENERGY (ERR)")}
+                </span>
+                <span className="stat-value text-accent">
+                  {stats.be > 40 ? `${stats.be.toFixed(1)}%`
+                    : stats.ehr > 20 ? `${stats.ehr.toFixed(1)}%`
+                      : `+${stats.err ? stats.err.toFixed(1) : "0"}%`}
+                </span>
+                <span className="stat-sub">
+                  {stats.be >= 180 ? (isRu ? "[180% КАП]" : "[180% CAP]")
+                    : stats.ehr >= 96 ? (isRu ? "[96% КАП]" : "[96% CAP]")
+                      : (isRu ? "[ОК]" : "[OK]")}
+                </span>
+              </div>
+            </div>
+            {/* НИЖНИЙ БАННЕР: сет-бонусы + боевая симуляция */}
+            <div className="showcase-bottom-banner">
+              <div className="bottom-col-left">
+                <div className="sets-summary-row">
+                  {audit.cavern?.setName && (
+                    <span className="showcase-set-tag">
+                      <CheckIcon size={12} />
+                      <span>4/4 {audit.cavern.setName}</span>
+                    </span>
+                  )}
+                  {audit.planar?.setName && (
+                    <span className="showcase-set-tag planar">
+                      <CheckIcon size={12} />
+                      <span>2/2 {audit.planar.setName}</span>
+                    </span>
+                  )}
+                </div>
+                <span className="set-condition-text">
+                  {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
+                </span>
+              </div>
+
+              {combatSim && (
+                <div className="bottom-col-right">
+                  <div className="sim-meta-box">
+                    <span className="sim-tag">
+                      <SparklesIcon size={12} />
+                      <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIM"}</span>
+                    </span>
+                    <span className="sim-score-text">
+                      {combatSim.metric1Label}: <strong>{combatSim.metric1Value}</strong>
+                    </span>
+                    <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+
+            {/* 6 РЕЛИКВИЙ */}
+            <div className="showcase-relics-grid">
+              {Array.from({ length: 6 }).map((_, slotIdx) => {
+                const slotNum = slotIdx + 1;
+                const piece = relics.find((r) => Number(r.type ?? r.pos) === slotNum) || relics[slotIdx];
+                const slotTitle = isRu ? slotNamesRu[slotIdx] : slotNamesEn[slotIdx];
+                const isSphere = slotIdx === 4;
+                const isWeak = slotIdx === audit?.weakestRelicIndex;
+
+                if (!piece) {
                   return (
-                    <div key={`sub-${sIdx}`} className={`relic-sub-item ${isKey ? "key-sub" : ""}`}>
-                      <span className="sub-name">
-                        {sub.icon && (
-                          <img
-                            className="relic-affix-icon sub"
-                            src={iconUrl(sub.icon)}
-                            alt=""
-                            crossOrigin="anonymous"
-                            onError={(e) => handleImageFallback(e, sub.icon)}
-                          />
-                        )}
-                        <span>{formatStatName(sub.field, lang)}</span>
-                      </span>
-                      <span className="sub-val">
-                        <span className="relic-sub-num">{sub.display}</span>
-                        <span className="roll-count-tag">{`+${upgrades}`}</span>
-                      </span>
+                    <div key={`relic-${slotIdx}`} className="showcase-relic-card empty">
+                      <div className="relic-card-head">
+                        <div className="showcase-relic-icon-wrap placeholder">
+                          {isSphere ? <SphereIcon size={18} /> : <RopeIcon size={18} />}
+                        </div>
+                        <div className="relic-slot-info">
+                          <span className="relic-slot-tag">{slotTitle}</span>
+                          <span className="relic-empty-text">{isRu ? "Ожидает синхронизации" : "Awaiting sync"}</span>
+                        </div>
+                      </div>
                     </div>
                   );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                }
 
-      {/* НИЖНИЙ БАННЕР: сет-бонусы + боевая симуляция */}
-      <div className="showcase-bottom-banner">
-        <div className="bottom-col-left">
-          <div className="sets-summary-row">
-            {audit.cavern?.setName && (
-              <span className="showcase-set-tag">
-                <CheckIcon size={12} />
-                <span>4/4 {audit.cavern.setName}</span>
+                const mainStatField = piece.main_affix?.field || "";
+                const mainStatValue = piece.main_affix?.display || "";
+                const mainStatName = formatStatName(mainStatField, lang) || formatStatName(piece.main_affix?.name, lang);
+                const relicSetName = resolveRelicSetInfo(piece, lang)?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
+
+                return (
+                  <div key={`relic-${slotIdx}`} className={`showcase-relic-card ${isWeak ? "weak-piece" : ""}`}>
+                    <div className="relic-card-head">
+                      <div className="showcase-relic-icon-wrap">
+                        {piece.icon ? (
+                          <img
+                            className="showcase-relic-icon-img"
+                            src={iconUrl(piece.icon)}
+                            alt={piece.name || relicSetName}
+                            crossOrigin="anonymous"
+                            onError={(e) => handleImageFallback(e, piece.icon)}
+                          />
+                        ) : (
+                          <span className="placeholder-icon">
+                            {slotIdx === 4 ? <SphereIcon size={18} /> : slotIdx === 5 ? <RopeIcon size={18} /> : "★"}
+                          </span>
+                        )}
+                        <span className="relic-lvl-badge">+{piece.level ?? 15}</span>
+                      </div>
+                      <div className="relic-slot-info">
+                        <div className="relic-slot-header-row">
+                          <span className="relic-slot-tag">{slotTitle}</span>
+                          {isWeak && (
+                            <span className="relic-weak-tag">
+                              <WarnIcon size={10} />
+                              <span>{isRu ? "СЛАБЫЙ" : "WEAK"}</span>
+                            </span>
+                          )}
+                        </div>
+                        <span className="relic-name-truncate" title={relicSetName}>{relicSetName}</span>
+                      </div>
+                    </div>
+                    <div className="relic-main-row">
+                      <span className="relic-main-name">
+                        {piece.main_affix?.icon && (
+                          <img
+                            className="relic-affix-icon main"
+                            src={iconUrl(piece.main_affix.icon)}
+                            alt=""
+                            crossOrigin="anonymous"
+                            onError={(e) => handleImageFallback(e, piece.main_affix.icon)}
+                          />
+                        )}
+                        <span>{mainStatName}</span>
+                      </span>
+                      <span className="relic-main-val text-accent">{mainStatValue}</span>
+                    </div>
+                    <div className="relic-subs-list">
+                      {(piece.sub_affix || []).slice(0, 4).map((sub, sIdx) => {
+                        const upgrades = Math.max(0, (sub.count || 1) - 1);
+                        const isKey = ["crit_rate", "crit_dmg", "spd"].includes(sub.field);
+                        return (
+                          <div key={`sub-${sIdx}`} className={`relic-sub-item ${isKey ? "key-sub" : ""}`}>
+                            <span className="sub-name">
+                              {sub.icon && (
+                                <img
+                                  className="relic-affix-icon sub"
+                                  src={iconUrl(sub.icon)}
+                                  alt=""
+                                  crossOrigin="anonymous"
+                                  onError={(e) => handleImageFallback(e, sub.icon)}
+                                />
+                              )}
+                              <span>{formatStatName(sub.field, lang) || formatStatName(sub.name, lang)}</span>
+                            </span>
+                            <span className="sub-val">
+                              <span className="relic-sub-num">{sub.display}</span>
+                              <span className="roll-count-tag">{`+${upgrades}`}</span>
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+
+            {/* ФУТЕР КАРТЫ */}
+            <div className="showcase-footer">
+              <span className="footer-brand">
+                <img src="/media/NousMatrix-logo.png" alt="" className="footer-logo" />
+                <span>{isRu ? "NOUSMATRIX" : "NOUSMATRIX"}</span>
               </span>
-            )}
-            {audit.planar?.setName && (
-              <span className="showcase-set-tag planar">
-                <CheckIcon size={12} />
-                <span>2/2 {audit.planar.setName}</span>
+              <span className="footer-meta">
+                {isRu ? "ВЕРИФИЦИРОВАННЫЙ АУДИТ • UID: " : "VERIFIED AUDIT • UID: "}{uid} • {(new Date()).toLocaleDateString(isRu ? "ru-RU" : "en-GB")}
               </span>
-            )}
+            </div>
           </div>
-          <span className="set-condition-text">
-            {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
-          </span>
         </div>
-
-        {combatSim && (
-          <div className="bottom-col-right">
-            <div className="sim-meta-box">
-              <span className="sim-tag">
-                <SparklesIcon size={12} />
-                <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIM"}</span>
-              </span>
-              <span className="sim-score-text">
-                {combatSim.metric1Label}: <strong>{combatSim.metric1Value}</strong>
-              </span>
-              <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ФУТЕР КАРТЫ */}
-      <div className="showcase-footer">
-        <span className="footer-brand">
-          <img src="/media/NousMatrix-logo.png" alt="" className="footer-logo" />
-          <span>{isRu ? "NOUSMATRIX" : "NOUSMATRIX"}</span>
-        </span>
-        <span className="footer-meta">
-          {isRu ? "ВЕРИФИЦИРОВАННЫЙ АУДИТ • UID: " : "VERIFIED AUDIT • UID: "}{uid} • {(new Date()).toLocaleDateString(isRu ? "ru-RU" : "en-GB")}
-        </span>
       </div>
     </div>
-  </div>
-</div>
-</div>
   );
 }

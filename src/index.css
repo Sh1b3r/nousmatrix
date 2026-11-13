@@ -3919,7 +3919,20 @@ main {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: 3px;
+}
+
+.showcase-score-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.showcase-grade-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
 }
 
 .showcase-rank-tag {
@@ -3939,7 +3952,7 @@ main {
 .showcase-score-val {
   font-family: var(--font-mono);
   line-height: 1;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .showcase-score-val .score-num {
@@ -4011,11 +4024,17 @@ main {
 .showcase-relic-card {
   background: var(--surface-2);
   border: 1px solid var(--border-subtle);
-  border-radius: 2px;
-  padding: 12px 14px;
+  border-radius: 3px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: border-color 150ms ease;
+}
+
+.showcase-relic-card.weak-piece {
+  border-color: rgba(255, 60, 60, 0.4);
+  background: rgba(255, 60, 60, 0.03);
 }
 
 .showcase-relic-card.empty {
@@ -4027,9 +4046,32 @@ main {
 
 .relic-card-head {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
+}
+
+.showcase-relic-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  background: var(--surface-3);
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.showcase-relic-icon-wrap.placeholder {
+  border-color: var(--border-subtle);
+  color: var(--text-tertiary);
+}
+
+.showcase-relic-icon-img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .relic-slot-info {
@@ -4037,6 +4079,15 @@ main {
   flex-direction: column;
   gap: 2px;
   overflow: hidden;
+  min-width: 0;
+  flex: 1;
+}
+
+.relic-slot-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
 }
 
 .relic-slot-tag {
@@ -4046,6 +4097,22 @@ main {
   color: var(--text-tertiary);
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.relic-weak-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #FF4D4F;
+  background: rgba(255, 77, 79, 0.12);
+  border: 1px solid rgba(255, 77, 79, 0.35);
+  padding: 1px 4px;
+  border-radius: 2px;
+  line-height: 1;
 }
 
 .relic-name-truncate {
@@ -4293,12 +4360,22 @@ main {
   }
 
   .showcase-relic-card {
-    padding: 10px 11px;
+    padding: 8px 10px;
     gap: 6px;
   }
 
+  .showcase-relic-icon-wrap {
+    width: 32px;
+    height: 32px;
+  }
+
+  .showcase-relic-icon-img {
+    width: 26px;
+    height: 26px;
+  }
+
   .relic-main-row {
-    padding: 5px 6px;
+    padding: 4px 6px;
   }
 
   .relic-subs-list {
