@@ -8,7 +8,7 @@ import RelicsGrid from "./components/RelicsGrid";
 import SetBonuses from "./components/SetBonuses";
 import AuditPanel from "./components/AuditPanel";
 import OverallScorePanel from "./components/OverallScorePanel";
-import RelicsAuditPanel from "./components/RelicsAuditPanel";
+import RelicsAuditPanel from "./components/RelicsAuditPanel.jsx";
 import CombatSimulationCard from "./components/CombatSimulationCard";
 import TrophyModal from "./components/TrophyModal";
 import { RefreshIcon } from "./components/Icons.jsx";

@@ -1,7 +1,7 @@
 import React from "react";
 import { CheckIcon, WarnIcon, SparklesIcon } from "./Icons.jsx";
 
-export default function RelicsAuditPanel({
+export function RelicsAuditPanel({
   audit,
   t,
   lang = "ru",
@@ -235,3 +235,5 @@ export default function RelicsAuditPanel({
     </div>
   );
 }
+
+export default RelicsAuditPanel;
