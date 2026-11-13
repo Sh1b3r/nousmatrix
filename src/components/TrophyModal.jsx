@@ -329,76 +329,78 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
               </div>
             </div>
 
-            {/* ШАПКА: Аватар + Имя + Стихия/Путь + Конус + Общий скор */}
+            {/* ШАПКА: Слева (Аватар + Имя + Иконки Пути/Стихии + Конус), Справа (Общий скор) */}
             <div className="showcase-header">
-              <div className="showcase-char-identity">
-                <div className="showcase-avatar-ring">
-                  <img
-                    src={getCharHeadIcon(character)}
-                    alt={character.name}
-                    className="showcase-avatar-img"
-                    crossOrigin="anonymous"
-                    onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
-                  />
-                </div>
-                <div className="showcase-name-col">
-                  <div className="showcase-char-title">
-                    <h2 className="showcase-char-name">{character.name}</h2>
-                    <span className="showcase-stars">{"★".repeat(character.rarity || 5)}</span>
+              <div className="showcase-header-left">
+                <div className="showcase-char-identity">
+                  <div className="showcase-avatar-ring">
+                    <img
+                      src={getCharHeadIcon(character)}
+                      alt={character.name}
+                      className="showcase-avatar-img"
+                      crossOrigin="anonymous"
+                      onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
+                    />
                   </div>
-                  <div className="showcase-pills-row">
-                    <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>
-                    <span className="showcase-pill accent">{isRu ? "Э" : "E"}{character.rank}</span>
-                    {elemIcon && (
-                      <span
-                        className="showcase-pill showcase-icon-pill element-pill"
-                        title={character.element?.name ? `${isRu ? "Стихия: " : "Element: "}${character.element.name}` : ""}
-                        style={character.element?.color ? { borderColor: `${character.element.color}66` } : undefined}
-                      >
-                        <img
-                          src={iconUrl(elemIcon)}
-                          alt={character.element?.name || "Element"}
-                          className="showcase-badge-icon element-icon"
-                          crossOrigin="anonymous"
-                          onError={(e) => handleImageFallback(e, elemIcon)}
-                        />
-                      </span>
-                    )}
-                    {pathIcon && (
-                      <span
-                        className="showcase-pill showcase-icon-pill path-pill"
-                        title={character.path?.name ? `${isRu ? "Путь: " : "Path: "}${character.path.name}` : ""}
-                      >
-                        <img
-                          src={iconUrl(pathIcon)}
-                          alt={character.path?.name || "Path"}
-                          className="showcase-badge-icon path-icon"
-                          crossOrigin="anonymous"
-                          onError={(e) => handleImageFallback(e, pathIcon)}
-                        />
-                      </span>
-                    )}
+                  <div className="showcase-name-col">
+                    <div className="showcase-char-title">
+                      <h2 className="showcase-char-name">{character.name}</h2>
+                      <span className="showcase-stars">{"★".repeat(character.rarity || 5)}</span>
+                    </div>
+                    <div className="showcase-pills-row">
+                      <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>
+                      <span className="showcase-pill accent">{isRu ? "Э" : "E"}{character.rank}</span>
+                      {elemIcon && (
+                        <span
+                          className="showcase-pill showcase-icon-pill element-pill"
+                          title={character.element?.name ? `${isRu ? "Стихия: " : "Element: "}${character.element.name}` : ""}
+                          style={character.element?.color ? { borderColor: `${character.element.color}66` } : undefined}
+                        >
+                          <img
+                            src={iconUrl(elemIcon)}
+                            alt={character.element?.name || "Element"}
+                            className="showcase-badge-icon element-icon"
+                            crossOrigin="anonymous"
+                            onError={(e) => handleImageFallback(e, elemIcon)}
+                          />
+                        </span>
+                      )}
+                      {pathIcon && (
+                        <span
+                          className="showcase-pill showcase-icon-pill path-pill"
+                          title={character.path?.name ? `${isRu ? "Путь: " : "Path: "}${character.path.name}` : ""}
+                        >
+                          <img
+                            src={iconUrl(pathIcon)}
+                            alt={character.path?.name || "Path"}
+                            className="showcase-badge-icon path-icon"
+                            crossOrigin="anonymous"
+                            onError={(e) => handleImageFallback(e, pathIcon)}
+                          />
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {character.light_cone && (
-                <div className="showcase-cone-box">
-                  <img
-                    src={iconUrl(character.light_cone.icon)}
-                    alt={character.light_cone.name}
-                    className="showcase-cone-img"
-                    crossOrigin="anonymous"
-                    onError={(e) => handleImageFallback(e, character.light_cone.icon)}
-                  />
-                  <div className="showcase-cone-meta">
-                    <span className="showcase-cone-name">{character.light_cone.name}</span>
-                    <span className="showcase-cone-sub">
-                      {isRu ? "Н" : "S"}{character.light_cone.rank} • {isRu ? "УР. " : "LV. "}{character.light_cone.level}/80
-                    </span>
+                {character.light_cone && (
+                  <div className="showcase-cone-box">
+                    <img
+                      src={iconUrl(character.light_cone.icon)}
+                      alt={character.light_cone.name}
+                      className="showcase-cone-img"
+                      crossOrigin="anonymous"
+                      onError={(e) => handleImageFallback(e, character.light_cone.icon)}
+                    />
+                    <div className="showcase-cone-meta">
+                      <span className="showcase-cone-name">{character.light_cone.name}</span>
+                      <span className="showcase-cone-sub">
+                        {isRu ? "S" : "S"}{character.light_cone.rank} • {isRu ? "УР. " : "LV. "}{character.light_cone.level}/80
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               <div className="showcase-score-box">
                 <div className="showcase-score-top-row">
@@ -782,6 +784,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                     </span>
                   </div>
                 </div>
+
               </div>
             </div>
 
