@@ -1,34 +1,74 @@
-import React, { useState, useRef } from 'react';
-import html2canvas from 'html2canvas';
-import { getCharAvatarPath, getCharHeadIcon, handleImageFallback, iconUrl } from '../utils/audit';
-import { runCombatSimulation } from '../utils/simulation';
-import { formatStatName } from '../utils/i18n';
-import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon, SparklesIcon } from './Icons.jsx';
+import React, { useState, useRef, useEffect } from "react";
+import { getCharAvatarPath, getCharHeadIcon, handleImageFallback, iconUrl } from "../utils/audit";
+import { runCombatSimulation } from "../utils/simulation";
+import { formatStatName } from "../utils/i18n";
+import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon, SparklesIcon } from "./Icons.jsx";
 
-export default function TrophyModal({ isOpen, onClose, character, audit, uid, t, lang = 'ru' }) {
+export default function TrophyModal({ isOpen, onClose, character, audit, uid, t, lang = "ru" }) {
   const [isCopying, setIsCopying] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
   const cardRef = useRef(null);
 
-  if (!isOpen || !character || !audit) return null;
-  const isRu = lang === 'ru';
-  const stats = audit.stats || {};
-  const archetype = audit.detectedRole?.targetArchetype || 'CRIT_DPS';
-  const combatSim = runCombatSimulation(character, stats, archetype, lang);
+  useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    const prevPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
 
+    const backdropEl = document.getElementById("modal-trophy");
+    const handleWheel = (e) => {
+      if (backdropEl && e.deltaY) {
+        backdropEl.scrollTop += e.deltaY;
+      }
+    };
+    if (backdropEl) {
+      backdropEl.addEventListener("wheel", handleWheel, { passive: true });
+    }
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPaddingRight;
+      if (backdropEl) {
+        backdropEl.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !character || !audit) return null;
+
+  const isRu = lang === "ru";
+  const stats = audit.stats || {};
+  const archetype = audit.detectedRole?.targetArchetype || "CRIT_DPS";
+  const combatSim = runCombatSimulation(character, stats, archetype, lang);
   const relics = character.relics || [];
-  const slotNamesRu = ['ГОЛОВА', 'РУКИ', 'ТЕЛО', 'НОГИ', 'СФЕРА', 'ВЕРВЬ'];
-  const slotNamesEn = ['HEAD', 'HANDS', 'BODY', 'FEET', 'SPHERE', 'ROPE'];
+  const slotNamesRu = ["ГОЛОВА", "РУКИ", "ТЕЛО", "НОГИ", "СФЕРА", "ВЕРВЬ"];
+  const slotNamesEn = ["HEAD", "HANDS", "BODY", "FEET", "SPHERE", "ROPE"];
 
   const generateExportCanvas = async () => {
     if (!cardRef.current) return null;
+    const { default: html2canvas } = await import("html2canvas");
     return await html2canvas(cardRef.current, {
       scale: 2.5,
       useCORS: true,
       allowTaint: false,
-      backgroundColor: '#0F071A',
+      backgroundColor: "#0C0814",
       logging: false,
+      windowWidth: 1200,
+      ignoreElements: (el) => el.classList && el.classList.contains("trophy-controls-bar"),
+      onclone: (clonedDoc, clonedEl) => {
+        clonedEl.style.width = "1000px";
+        clonedEl.style.maxWidth = "1000px";
+        clonedEl.style.minWidth = "1000px";
+        const controls = clonedEl.querySelector(".trophy-controls-bar");
+        if (controls) {
+          controls.remove();
+        }
+      }
     });
   };
 
@@ -36,12 +76,11 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
     try {
       setIsCopying(true);
       const canvas = await generateExportCanvas();
-      if (!canvas) throw new Error('Canvas rendering failed');
-
-      const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      if (!canvas) throw new Error("Canvas rendering failed");
+      const blob = await new Promise((res) => canvas.toBlob(res, "image/png"));
       if (blob && navigator.clipboard && window.ClipboardItem) {
         await navigator.clipboard.write([
-          new ClipboardItem({ 'image/png': blob })
+          new ClipboardItem({ "image/png": blob })
         ]);
         setCopied(true);
         setTimeout(() => setCopied(false), 2500);
@@ -49,7 +88,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
         handleDownloadImage();
       }
     } catch (err) {
-      console.warn('Copy failed, falling back to download:', err);
+      console.warn("Copy failed, falling back to download:", err);
       handleDownloadImage();
     } finally {
       setIsCopying(false);
@@ -61,24 +100,69 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
       setIsDownloading(true);
       const canvas = await generateExportCanvas();
       if (!canvas) return;
-
-      const src = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = `NousMatrix_${character.name.replace(/\s+/g, '_')}_UID${uid}.png`;
+      const src = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.download = `NousMatrix_${character.name.replace(/\s+/g, "_")}_UID${uid}.png`;
       link.href = src;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (err) {
-      console.error('Download error:', err);
+      console.error("Download error:", err);
     } finally {
       setIsDownloading(false);
     }
   };
 
-  const renderCardBody = (isExport = false) => (
-    <div className={`showcase-card ${isExport ? 'export-mode' : ''}`}>
-      {/* 1. Header Banner */}
+  return (
+    <div
+      id="modal-trophy"
+      className="trophy-modal-backdrop"
+      onClick={(e) => {
+        if (e.target.id === "modal-trophy") onClose();
+      }}
+    >
+      <div className="trophy-modal-dialog">
+        <div className="trophy-viewport-container">
+          <div ref={cardRef} className="showcase-card">
+            {/* ТУЛБАР УПРАВЛЕНИЯ ВНУТРИ КАРТОЧКИ (автоматически исключается при копировании/скачивании) */}
+            <div className="trophy-controls-bar">
+              <div className="trophy-controls-left">
+                <span className="trophy-controls-title">
+                  <TrophyIcon size={15} />
+                  <span>{isRu ? "БИЛД-КАРТОЧКА NOUSMATRIX" : "NOUSMATRIX BUILD CARD"}</span>
+                </span>
+                <span className="trophy-controls-hint">
+                  {isRu ? "Официальный верифицированный аудит сборки" : "Official verified build audit"}
+                </span>
+              </div>
+              <div className="trophy-controls-actions">
+                <button
+                  className="btn-submit trophy-action-btn copy-btn"
+                  onClick={handleCopyImage}
+                  disabled={isCopying}
+                >
+                  {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
+                  <span>
+                    {copied
+                      ? (isRu ? "СКОПИРОВАНО!" : "COPIED!")
+                      : isCopying ? (isRu ? "ГЕНЕРАЦИЯ..." : "RENDERING...")
+                        : (isRu ? "СКОПИРОВАТЬ" : "COPY")}
+                  </span>
+                </button>
+                <button
+                  className="btn-outline trophy-action-btn download-btn"
+                  onClick={handleDownloadImage}
+                  disabled={isDownloading}
+                >
+                  <DownloadIcon size={14} />
+                  <span>{isDownloading ? "..." : (isRu ? "СКАЧАТЬ PNG" : "DOWNLOAD PNG")}</span>
+                </button>
+                <button className="btn-close-modal" onClick={onClose} title={isRu ? "Закрыть" : "Close"}>×</button>
+              </div>
+            </div>
+
+            {/* ШАПКА: аватар + имя + путь / элемент */}
       <div className="showcase-header">
         <div className="showcase-char-identity">
           <div className="showcase-avatar-ring">
@@ -93,18 +177,17 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
           <div className="showcase-name-col">
             <div className="showcase-char-title">
               <h2 className="showcase-char-name">{character.name}</h2>
-              <span className="showcase-stars">{'★'.repeat(character.rarity || 5)}</span>
+              <span className="showcase-stars">{"★".repeat(character.rarity || 5)}</span>
             </div>
             <div className="showcase-pills-row">
-              <span className="showcase-pill">УР. {character.level}/80</span>
-              <span className="showcase-pill accent">Э{character.rank}</span>
-              <span className="showcase-pill">{character.path?.name || 'Путь'}</span>
-              <span className="showcase-pill">{character.element?.name || 'Стихия'}</span>
+              <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>
+              <span className="showcase-pill accent">{isRu ? "Э" : "E"}{character.rank}</span>
+              <span className="showcase-pill">{character.path?.name || "—"}</span>
+              <span className="showcase-pill">{character.element?.name || "—"}</span>
             </div>
           </div>
         </div>
 
-        {/* Light Cone Info */}
         {character.light_cone && (
           <div className="showcase-cone-box">
             <img
@@ -117,17 +200,16 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
             <div className="showcase-cone-meta">
               <span className="showcase-cone-name">{character.light_cone.name}</span>
               <span className="showcase-cone-sub">
-                Н{character.light_cone.rank} • УР. {character.light_cone.level}/80
+                {isRu ? "Н" : "S"}{character.light_cone.rank} • {isRu ? "УР. " : "LV. "}{character.light_cone.level}/80
               </span>
             </div>
           </div>
         )}
 
-        {/* Global Rating Score */}
         <div className="showcase-score-box">
           <div className="showcase-rank-tag">
             <TrophyIcon size={13} />
-            <span>GLOBAL TOP {audit.topPercent}% VALIDATED</span>
+            <span>{isRu ? "ГЛОБАЛЬНЫЙ ТОП " : "GLOBAL TOP "}{audit.topPercent}{isRu ? "%" : "%"}</span>
           </div>
           <div className="showcase-score-val">
             <span className="score-num">{audit.score}</span>
@@ -137,63 +219,74 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
         </div>
       </div>
 
-      {/* 2. Key Combat Stats Bar (Large, High-Contrast Numbers) */}
+      {/* СТАТ-БАР: 4 ключевых показателя */}
       <div className="showcase-stats-bar">
         <div className="showcase-stat-item">
-          <span className="stat-label">СКОРОСТЬ (SPD)</span>
-          <span className="stat-value text-accent">{stats.spd ? stats.spd.toFixed(1) : '100.0'}</span>
+          <span className="stat-label">{isRu ? "СКОРОСТЬ (SPD)" : "SPEED (SPD)"}</span>
+          <span className="stat-value text-accent">{stats.spd ? stats.spd.toFixed(1) : "100.0"}</span>
           <span className="stat-sub">
-            {stats.spd >= 160 ? '[160+ CAP]' : (stats.spd >= 145 ? '[145+ ZONE]' : '[134+ OK]')}
+            {stats.spd >= 160 ? (isRu ? "[160+ КАП]" : "[160+ CAP]")
+              : stats.spd >= 145 ? (isRu ? "[145+ ЗОНА]" : "[145+ ZONE]")
+                : (isRu ? "[134+ ОК]" : "[134+ OK]")}
           </span>
         </div>
 
         <div className="showcase-stat-item">
-          <span className="stat-label">КРИТМАССА (CV)</span>
-          <span className="stat-value">{stats.cv ? stats.cv.toFixed(1) : '—'}</span>
+          <span className="stat-label">{isRu ? "КРИТМАССА (CV)" : "CRIT VALUE (CV)"}</span>
+          <span className="stat-value">{stats.cv ? stats.cv.toFixed(1) : "—"}</span>
           <span className="stat-sub">
-            {stats.cr ? stats.cr.toFixed(1) : 0}% КШ / {stats.cd ? stats.cd.toFixed(1) : 0}% КУ
+            {stats.cr ? stats.cr.toFixed(1) : 0}{isRu ? "% КШ / " : "% CR / "}
+            {stats.cd ? stats.cd.toFixed(1) : 0}{isRu ? "% КУ" : "% CD"}
           </span>
         </div>
 
         <div className="showcase-stat-item">
-          <span className="stat-label">АТК / HP</span>
+          <span className="stat-label">{isRu ? "АТК / HP" : "ATK / HP"}</span>
           <span className="stat-value">
             {stats.hp > 5000 ? `${Math.round(stats.hp)} HP` : `${Math.round(stats.atk || 0)} ATK`}
           </span>
-          <span className="stat-sub">ЗАЩИТА: {Math.round(stats.def || 0)} DEF</span>
+          <span className="stat-sub">
+            {isRu ? "ЗАЩИТА: " : "DEF: "}{Math.round(stats.def || 0)}{isRu ? " ЗАЩ" : " DEF"}
+          </span>
         </div>
 
         <div className="showcase-stat-item">
           <span className="stat-label">
-            {stats.be > 40 ? 'ЭФФЕКТ ПРОБИТИЯ' : (stats.ehr > 20 ? 'ШАНС ПОПАДАНИЯ (ШПЭ)' : 'ВЭ (ERR)')}
+            {stats.be > 40 ? (isRu ? "ЭФФЕКТ ПРОБИТИЯ" : "BREAK EFFECT (BE)")
+              : stats.ehr > 20 ? (isRu ? "ШАНС ПОПАДАНИЯ (ШПЭ)" : "EFFECT HIT RATE (EHR)")
+                : (isRu ? "ВЭ (ERR)" : "ENERGY (ERR)")}
           </span>
           <span className="stat-value text-accent">
-            {stats.be > 40 ? `${stats.be.toFixed(1)}%` : (stats.ehr > 20 ? `${stats.ehr.toFixed(1)}%` : `+${stats.err ? stats.err.toFixed(1) : '0'}%`)}
+            {stats.be > 40 ? `${stats.be.toFixed(1)}%`
+              : stats.ehr > 20 ? `${stats.ehr.toFixed(1)}%`
+                : `+${stats.err ? stats.err.toFixed(1) : "0"}%`}
           </span>
           <span className="stat-sub">
-            {stats.be >= 180 ? '[180% CAP]' : (stats.ehr >= 96 ? '[96% CAP]' : '[OK]')}
+            {stats.be >= 180 ? (isRu ? "[180% КАП]" : "[180% CAP]")
+              : stats.ehr >= 96 ? (isRu ? "[96% КАП]" : "[96% CAP]")
+                : (isRu ? "[ОК]" : "[OK]")}
           </span>
         </div>
       </div>
 
-      {/* 3. 6 Equipped Relic Slots Grid (Studio Crisp View) */}
+      {/* 6 РЕЛИКВИЙ */}
       <div className="showcase-relics-grid">
         {Array.from({ length: 6 }).map((_, slotIdx) => {
           const slotNum = slotIdx + 1;
-          const piece = relics.find(r => Number(r.type ?? r.pos) === slotNum) || relics[slotIdx];
+          const piece = relics.find((r) => Number(r.type ?? r.pos) === slotNum) || relics[slotIdx];
           const slotTitle = isRu ? slotNamesRu[slotIdx] : slotNamesEn[slotIdx];
 
           if (!piece) {
             return (
               <div key={`relic-${slotIdx}`} className="showcase-relic-card empty">
                 <span className="relic-slot-tag">{slotTitle}</span>
-                <span className="relic-empty-text">Ожидает синхронизации</span>
+                <span className="relic-empty-text">{isRu ? "Ожидает синхронизации" : "Awaiting sync"}</span>
               </div>
             );
           }
 
-          const mainStatField = piece.main_affix?.field || '';
-          const mainStatValue = piece.main_affix?.display || '';
+          const mainStatField = piece.main_affix?.field || "";
+          const mainStatValue = piece.main_affix?.display || "";
           const mainStatName = piece.main_affix?.name || formatStatName(mainStatField, lang);
 
           return (
@@ -205,22 +298,42 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                 </div>
                 <span className="relic-level-badge">+{piece.level || 15}</span>
               </div>
-
               <div className="relic-main-row">
-                <span className="relic-main-name">{mainStatName}</span>
+                <span className="relic-main-name">
+                  {piece.main_affix?.icon && (
+                    <img
+                      className="relic-affix-icon main"
+                      src={iconUrl(piece.main_affix.icon)}
+                      alt=""
+                      crossOrigin="anonymous"
+                      onError={(e) => handleImageFallback(e, piece.main_affix.icon)}
+                    />
+                  )}
+                  <span>{mainStatName}</span>
+                </span>
                 <span className="relic-main-val text-accent">{mainStatValue}</span>
               </div>
-
               <div className="relic-subs-list">
                 {(piece.sub_affix || []).slice(0, 4).map((sub, sIdx) => {
                   const upgrades = Math.max(0, (sub.count || 1) - 1);
-                  const isKey = ['crit_rate', 'crit_dmg', 'spd'].includes(sub.field);
+                  const isKey = ["crit_rate", "crit_dmg", "spd"].includes(sub.field);
                   return (
-                    <div key={`sub-${sIdx}`} className={`relic-sub-item ${isKey ? 'key-sub' : ''}`}>
-                      <span className="sub-name">{formatStatName(sub.field, lang)}</span>
+                    <div key={`sub-${sIdx}`} className={`relic-sub-item ${isKey ? "key-sub" : ""}`}>
+                      <span className="sub-name">
+                        {sub.icon && (
+                          <img
+                            className="relic-affix-icon sub"
+                            src={iconUrl(sub.icon)}
+                            alt=""
+                            crossOrigin="anonymous"
+                            onError={(e) => handleImageFallback(e, sub.icon)}
+                          />
+                        )}
+                        <span>{formatStatName(sub.field, lang)}</span>
+                      </span>
                       <span className="sub-val">
-                        {sub.display}
-                        <span className="sub-roll-tag">+{upgrades}</span>
+                        <span className="relic-sub-num">{sub.display}</span>
+                        <span className="roll-count-tag">{`+${upgrades}`}</span>
                       </span>
                     </div>
                   );
@@ -231,7 +344,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
         })}
       </div>
 
-      {/* 4. Combat Simulation & Set Bonuses Banner */}
+      {/* НИЖНИЙ БАННЕР: сет-бонусы + боевая симуляция */}
       <div className="showcase-bottom-banner">
         <div className="bottom-col-left">
           <div className="sets-summary-row">
@@ -249,7 +362,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
             )}
           </div>
           <span className="set-condition-text">
-            {audit.planar?.condition || audit.cavern?.condition || 'Все бонусы комплектов активны в бою.'}
+            {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
           </span>
         </div>
 
@@ -258,7 +371,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
             <div className="sim-meta-box">
               <span className="sim-tag">
                 <SparklesIcon size={12} />
-                <span>MOC 12 COMBAT SIM</span>
+                <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIM"}</span>
               </span>
               <span className="sim-score-text">
                 {combatSim.metric1Label}: <strong>{combatSim.metric1Value}</strong>
@@ -269,87 +382,19 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
         )}
       </div>
 
-      {/* 5. Footer Watermark */}
+      {/* ФУТЕР КАРТЫ */}
       <div className="showcase-footer">
         <span className="footer-brand">
           <img src="/media/NousMatrix-logo.png" alt="" className="footer-logo" />
-          <span>NOUSMATRIX // MATHEMATICAL ZERO-SLOP PROFILER</span>
+          <span>{isRu ? "NOUSMATRIX" : "NOUSMATRIX"}</span>
         </span>
         <span className="footer-meta">
-          VERIFIED AUDIT • UID: {uid} • {new Date().toLocaleDateString('ru-RU')}
+          {isRu ? "ВЕРИФИЦИРОВАННЫЙ АУДИТ • UID: " : "VERIFIED AUDIT • UID: "}{uid} • {(new Date()).toLocaleDateString(isRu ? "ru-RU" : "en-GB")}
         </span>
       </div>
     </div>
-  );
-
-  return (
-    <div
-      id="modal-trophy"
-      className="trophy-modal-backdrop"
-      onClick={(e) => { if (e.target.id === 'modal-trophy') onClose(); }}
-    >
-      <div className="trophy-modal-dialog">
-        {/* Controls Toolbar */}
-        <div className="trophy-controls-bar">
-          <div className="trophy-controls-left">
-            <span className="trophy-controls-title">
-              <TrophyIcon size={16} />
-              <span>{isRu ? 'БИЛД-КАРТА В ВЫСОКОМ КАЧЕСТВЕ' : 'HIGH-RES BUILD CARD'}</span>
-            </span>
-            <span className="trophy-controls-hint">
-              {isRu ? 'Чёткий рендеринг без сжатия и мыла для соцсетей' : 'Lossless studio rendering for Discord/Telegram'}
-            </span>
-          </div>
-
-          <div className="trophy-controls-actions">
-            <button
-              className="btn-submit trophy-action-btn copy-btn"
-              onClick={handleCopyImage}
-              disabled={isCopying}
-            >
-              {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
-              <span>{copied ? (isRu ? 'СКОПИРОВАНО!' : 'COPIED!') : (isCopying ? (isRu ? 'ГЕНЕРАЦИЯ...' : 'RENDERING...') : (isRu ? 'СКОПИРОВАТЬ ДЛЯ TG/DISCORD' : 'COPY FOR DISCORD/TG'))}</span>
-            </button>
-
-            <button
-              className="btn-outline trophy-action-btn download-btn"
-              onClick={handleDownloadImage}
-              disabled={isDownloading}
-            >
-              <DownloadIcon size={14} />
-              <span>{isDownloading ? '...' : (isRu ? 'СКАЧАТЬ PNG' : 'DOWNLOAD PNG')}</span>
-            </button>
-
-            <button className="btn-close-modal" onClick={onClose} title="Закрыть">
-              &times;
-            </button>
-          </div>
-        </div>
-
-        {/* Live Vector Viewport Card (Razor-Sharp, Zero Blurring!) */}
-        <div className="trophy-viewport-container">
-          {renderCardBody(false)}
-        </div>
-      </div>
-
-      {/* Hidden 1000px isolated node for studio-quality PNG export */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '1000px',
-          height: 'auto',
-          zIndex: -9999,
-          pointerEvents: 'none',
-          opacity: 1,
-          overflow: 'hidden'
-        }}
-      >
-        <div ref={cardRef} style={{ width: '1000px', background: '#0F071A' }}>
-          {renderCardBody(true)}
-        </div>
-      </div>
-    </div>
+  </div>
+</div>
+</div>
   );
 }

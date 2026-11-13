@@ -1,4 +1,3 @@
-// 100% Official Russian & English In-Game Relic Set Definitions from Hoyoverse TextMap
 export const SET_DEFINITIONS = [
   {
     "id": "101",
@@ -636,7 +635,7 @@ export const SET_DEFINITIONS = [
     "desc2Ru": "Повышает скорость на 6%.",
     "desc4Ru": "Когда владелец или его дух памяти исцеляют союзников, кроме себя и своего духа памяти, владелец получает статус Нежный дождь, который может сработать 1 раз за ход и длится 2 хода. Скорость владельца со статусом Нежный дождь повышается на 6%, и крит. урон всех союзников повышается на 15%. Этот эффект не складывается.",
     "desc2En": "Increases SPD by 6%.",
-    "desc4En": "When the wearer or their memosprite provides healing to ally targets other than themselves, the wearer gains \"Gentle Rain,\" which lasts for 2 turn(s) and can only trigger once per turn. While the wearer has \"Gentle Rain,\" SPD increases by 6% and all allies' CRIT DMG increases by 15%. This effect cannot stack.",
+    "desc4En": `When the wearer or their memosprite provides healing to ally targets other than themselves, the wearer gains "Gentle Rain," which lasts for 2 turn(s) and can only trigger once per turn. While the wearer has "Gentle Rain," SPD increases by 6% and all allies' CRIT DMG increases by 15%. This effect cannot stack.`,
     "keywords": [
       "воительница солнца и грозы",
       "warrior goddess of sun and thunder",
@@ -662,7 +661,7 @@ export const SET_DEFINITIONS = [
     "desc2Ru": "Повышает крит. урон на 16%.",
     "desc4Ru": "Когда владелец становится целью умения другого союзника, он получает 1 ур. статуса Помощь, который может складываться до 2 раз. Если во время использования сверхспособности владелец имеет 2 ур. статуса Помощь, то он расходует все уровни этого статуса и повышает свою силу атаки на 48% на 1 ход.",
     "desc2En": "Increases CRIT DMG by 16%.",
-    "desc4En": "When the wearer becomes the target of another ally target's ability, gains 1 stack of \"Help,\" stacking up to 2 time(s). If there are 2 stack(s) of \"Help\" when the wearer uses their Ultimate, consumes all \"Help\" to increase the wearer's ATK by 48% for 1 turn(s).",
+    "desc4En": `When the wearer becomes the target of another ally target's ability, gains 1 stack of "Help," stacking up to 2 time(s). If there are 2 stack(s) of "Help" when the wearer uses their Ultimate, consumes all "Help" to increase the wearer's ATK by 48% for 1 turn(s).`,
     "keywords": [
       "преследующий волны капитан",
       "wavestrider captain",
@@ -818,7 +817,7 @@ export const SET_DEFINITIONS = [
     "desc2Ru": "Повышает макс. НР владельца на 12%.",
     "desc4Ru": "Повышает крит. урон владельца по противникам с пониженной защитой на 28%. После того как владелец понижает защиту противника, все союзники получают статус Поддержание огня на 2 хода. Этот эффект не складывается. Наносимый союзниками со статусом Поддержание огня урон повышается на 15%. Этот эффект может сработать повторно после атаки владельца.",
     "desc2En": "Increases Max HP by 12%.",
-    "desc4En": "Increases the wearer's CRIT DMG dealt to enemy targets in the DEF reduction state by 28%. After the wearer inflicts the DEF reduction state on an enemy target, all allies gain \"Comburent\" for 2 turn(s). This effect cannot be stacked. The DMG dealt by ally targets with \"Comburent\" increases by 15%. This effect can be triggered again after the wearer uses an attack.",
+    "desc4En": `Increases the wearer's CRIT DMG dealt to enemy targets in the DEF reduction state by 28%. After the wearer inflicts the DEF reduction state on an enemy target, all allies gain "Comburent" for 2 turn(s). This effect cannot be stacked. The DMG dealt by ally targets with "Comburent" increases by 15%. This effect can be triggered again after the wearer uses an attack.`,
     "keywords": [
       "обращённый к небесам кузнец",
       "divine-querying master smith",
@@ -1203,7 +1202,7 @@ export const SET_DEFINITIONS = [
     "icon": "icon/relic/315.png",
     "desc2Ru": "Когда союзник выполняет бонус-атаку, владелец получает 1 ур. статуса Подвиг, до макс. 5 ур. Каждый уровень этого статуса повышает наносимый бонус-атакой владельца урон на 5%. Когда статус Подвиг достигает 5 ур., крит. урон владельца дополнительно повышается на 25%.",
     "desc4Ru": "",
-    "desc2En": "When an ally character uses a Follow-Up ATK, the wearer gains 1 stack of \"Merit,\" stacking up to 5 time(s). Each stack of \"Merit\" increases the DMG dealt by the wearer's Follow-Up ATKs by 5%. When there are 5 stacks, additionally increases the wearer's CRIT DMG by 25%.",
+    "desc2En": `When an ally character uses a Follow-Up ATK, the wearer gains 1 stack of "Merit," stacking up to 5 time(s). Each stack of "Merit" increases the DMG dealt by the wearer's Follow-Up ATKs by 5%. When there are 5 stacks, additionally increases the wearer's CRIT DMG by 25%.`,
     "desc4En": "",
     "keywords": [
       "дуранская династия волков",
@@ -1545,17 +1544,14 @@ export const SET_DEFINITIONS = [
     ]
   }
 ];
-
-export function resolveRelicSetInfo(r, lang = 'ru') {
+export function resolveRelicSetInfo(r, lang = "ru") {
   if (!r) return null;
-  const isRu = lang === 'ru';
-  const name = (r.name || '').toLowerCase().trim();
-  const sName = (r.set_name || '').toLowerCase().trim();
-  const sId = String(r.set_id || '').trim();
-
-  // 1. Direct ID match
+  const isRu = lang === "ru";
+  const name = (r.name || "").toLowerCase().trim();
+  const sName = (r.set_name || "").toLowerCase().trim();
+  const sId = String(r.set_id || "").trim();
   if (sId) {
-    const byId = SET_DEFINITIONS.find(def => def.ids.includes(sId));
+    const byId = SET_DEFINITIONS.find((def) => def.ids.includes(sId));
     if (byId) {
       return {
         matched: true,
@@ -1565,8 +1561,6 @@ export function resolveRelicSetInfo(r, lang = 'ru') {
       };
     }
   }
-
-  // 2. Direct exact name / keyword match
   for (const def of SET_DEFINITIONS) {
     if (sName && (def.nameRu.toLowerCase() === sName || def.nameEn.toLowerCase() === sName)) {
       return {
@@ -1576,7 +1570,7 @@ export function resolveRelicSetInfo(r, lang = 'ru') {
         icon: def.icon
       };
     }
-    if (name && (def.keywords.includes(name) || def.keywords.some(k => k.length >= 4 && name.includes(k)))) {
+    if (name && (def.keywords.includes(name) || def.keywords.some((k) => k.length >= 4 && name.includes(k)))) {
       return {
         matched: true,
         name: isRu ? def.nameRu : def.nameEn,
@@ -1584,7 +1578,7 @@ export function resolveRelicSetInfo(r, lang = 'ru') {
         icon: def.icon
       };
     }
-    if (sName && def.keywords.some(k => k.length >= 4 && (sName.includes(k) || k.includes(sName)))) {
+    if (sName && def.keywords.some((k) => k.length >= 4 && (sName.includes(k) || k.includes(sName)))) {
       return {
         matched: true,
         name: isRu ? def.nameRu : def.nameEn,
@@ -1593,11 +1587,9 @@ export function resolveRelicSetInfo(r, lang = 'ru') {
       };
     }
   }
-
-  // Fallback
   return {
     matched: false,
-    name: r.set_name || (isRu ? (sId ? `Сет #${sId}` : 'Неизвестный сет') : (sId ? `Set #${sId}` : 'Unknown Set')),
+    name: r.set_name || (isRu ? sId ? `Сет #${sId}` : "Неизвестный сет" : sId ? `Set #${sId}` : "Unknown Set"),
     def: null,
     icon: r.icon
   };

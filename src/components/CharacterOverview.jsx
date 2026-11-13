@@ -1,14 +1,10 @@
-import React from 'react';
-import { getCharHeadIcon, getCharAvatarPath, iconUrl, handleImageFallback } from '../utils/audit';
-
-export default function CharacterOverview({ character, t, lang = 'ru' }) {
+import React from "react";
+import { getCharHeadIcon, getCharAvatarPath, iconUrl, handleImageFallback } from "../utils/audit";
+export default function CharacterOverview({ character, t, lang = "ru" }) {
   if (!character) return null;
-  const isRu = lang === 'ru';
-
-  // 1. Core Combat Skills (Normal, Skill, Ultimate, Talent, Technique)
-  // Deduplicate by skill type to ensure each core ability appears exactly once
-  const targetTypes = ['Normal', 'BPSkill', 'Ultra', 'Talent', 'Maze'];
-  const seenTypes = new Set();
+  const isRu = lang === "ru";
+  const targetTypes = ["Normal", "BPSkill", "Ultra", "Talent", "Maze"];
+  const seenTypes =  new Set();
   const coreSkills = [];
   for (const s of character.skills || []) {
     if (targetTypes.includes(s.type) && !seenTypes.has(s.type)) {
@@ -16,124 +12,82 @@ export default function CharacterOverview({ character, t, lang = 'ru' }) {
       coreSkills.push(s);
     }
   }
-
-  // 2. Major Traces (A2, A4, A6 Ascension passives)
-  const majorTraces = (character.skill_trees || []).filter(tr =>
-    ['Point06', 'Point07', 'Point08'].includes(tr.anchor)
+  const majorTraces = (character.skill_trees || []).filter(
+    (tr) => ["Point06", "Point07", "Point08"].includes(tr.anchor)
   );
-
   const getSkillTypeShort = (type) => {
     switch (type) {
-      case 'Normal': return isRu ? 'АТАКА' : 'BASIC';
-      case 'BPSkill': return isRu ? 'НАВЫК' : 'SKILL';
-      case 'Ultra': return isRu ? 'УЛЬТ' : 'ULT';
-      case 'Talent': return isRu ? 'ТАЛАНТ' : 'TALENT';
-      case 'Maze': return isRu ? 'ТЕХНИКА' : 'TECH';
-      default: return type;
+      case "Normal":
+        return isRu ? "АТАКА" : "BASIC";
+      case "BPSkill":
+        return isRu ? "НАВЫК" : "SKILL";
+      case "Ultra":
+        return isRu ? "УЛЬТ" : "ULT";
+      case "Talent":
+        return isRu ? "ТАЛАНТ" : "TALENT";
+      case "Maze":
+        return isRu ? "ТЕХНИКА" : "TECH";
+      default:
+        return type;
     }
   };
-
   const getTraceLabel = (anchor) => {
-    if (anchor === 'Point06') return 'A2';
-    if (anchor === 'Point07') return 'A4';
-    if (anchor === 'Point08') return 'A6';
-    return isRu ? 'СЛЕД' : 'TRACE';
+    if (anchor === "Point06") return "A2";
+    if (anchor === "Point07") return "A4";
+    if (anchor === "Point08") return "A6";
+    return isRu ? "СЛЕД" : "TRACE";
   };
-
-  return (
-    <div className="char-hero-card">
-      <div className="char-hero-left">
-        <div className="char-portrait-box">
-          <img
-            className="char-portrait-img"
-            src={getCharHeadIcon(character)}
-            alt={character.name}
-            onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
-          />
-        </div>
-
-        <div className="char-details-primary">
-          <h2>
-            <span>{character.name}</span>
-            <span className="char-stars">{'★'.repeat(character.rarity || 5)}</span>
-          </h2>
-
-          <div className="char-tags-row">
-            <span className="char-pill">{t.lvl} {character.level}/80</span>
-            <span className="char-pill accent">{t.eidolons}{character.rank}</span>
-            <span className="char-pill">{t.path}{character.path?.name || '—'}</span>
-            <span className="char-pill">{t.combatType}{character.element?.name || '—'}</span>
-          </div>
-
-          {/* Full Skills & Ascension Traces Row */}
-          <div className="char-skills-row">
-            {/* 5 Core Skills */}
-            {coreSkills.map((s) => (
-              <div
-                key={s.id}
-                className="skill-item"
-                title={`${s.type_text || s.type}: ${s.name}\n${s.simple_desc || s.desc || ''}\n(${t.lvl} ${s.level}/${s.max_level})`}
-              >
-                <div className="skill-icon-wrap">
-                  <img
-                    className="skill-icon"
-                    src={iconUrl(s.icon)}
-                    alt={s.name}
-                    onError={(e) => handleImageFallback(e, s.icon)}
-                  />
-                  <span className="skill-lvl-badge">{s.level}</span>
-                </div>
-                <span className="skill-name-label">{getSkillTypeShort(s.type)}</span>
-              </div>
-            ))}
-
-            {/* 3 Major Ascension Traces (A2, A4, A6) */}
-            {majorTraces.map((tr) => (
-              <div
-                key={tr.id}
-                className={`skill-item trace-item ${tr.level > 0 ? 'unlocked' : 'locked'}`}
-                title={`${getTraceLabel(tr.anchor)}: ${isRu ? 'Ключевой след возвышения' : 'Major Ascension Trace'} (${tr.level > 0 ? (isRu ? 'Разблокирован' : 'Unlocked') : (isRu ? 'Заблокирован' : 'Locked')})`}
-              >
-                <div className="skill-icon-wrap">
-                  <img
-                    className="skill-icon"
-                    src={iconUrl(tr.icon)}
-                    alt={tr.anchor}
-                    onError={(e) => handleImageFallback(e, tr.icon)}
-                  />
-                  <span className="skill-lvl-badge trace">{getTraceLabel(tr.anchor)}</span>
-                </div>
-                <span className="skill-name-label">{getTraceLabel(tr.anchor)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {character.light_cone && (
-        <div className="lightcone-box">
-          <img
-            className="cone-img"
-            src={iconUrl(character.light_cone.icon)}
-            alt={character.light_cone.name}
-            onError={(e) => handleImageFallback(e, character.light_cone.icon)}
-          />
-          <div className="cone-info">
-            <div className="cone-name">{character.light_cone.name}</div>
-            <div className="cone-super">
-              {t.superimposition}{character.light_cone.rank} ({'★'.repeat(character.light_cone.rarity || 5)})
-            </div>
-            <div className="cone-level">{t.lvl} {character.light_cone.level}/80</div>
-            <div className="cone-stats">
-              {(character.light_cone.attributes || []).map((a, i) => (
-                <span key={i}>
-                  {a.name.replace('Базовая ', '').replace('Базовое ', '')}: {a.display}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  return  React.createElement("div", { className: "char-hero-card" },  React.createElement("div", { className: "char-hero-left" },  React.createElement("div", { className: "char-portrait-box" },  React.createElement(
+    "img",
+    {
+      className: "char-portrait-img",
+      src: getCharHeadIcon(character),
+      alt: character.name,
+      onError: (e) => handleImageFallback(e, getCharAvatarPath(character))
+    }
+  )),  React.createElement("div", { className: "char-details-primary" },  React.createElement("h2", null,  React.createElement("span", null, character.name),  React.createElement("span", { className: "char-stars" }, "★".repeat(character.rarity || 5))),  React.createElement("div", { className: "char-tags-row" },  React.createElement("span", { className: "char-pill" }, t.lvl, " ", character.level, "/80"),  React.createElement("span", { className: "char-pill accent" }, t.eidolons, character.rank),  React.createElement("span", { className: "char-pill" }, t.path, character.path?.name || "—"),  React.createElement("span", { className: "char-pill" }, t.combatType, character.element?.name || "—")),  React.createElement("div", { className: "char-skills-row" }, coreSkills.map((s) =>  React.createElement(
+    "div",
+    {
+      key: s.id,
+      className: "skill-item",
+      title: `${s.type_text || s.type}: ${s.name}
+${s.simple_desc || s.desc || ""}
+(${t.lvl} ${s.level}/${s.max_level})`
+    },
+     React.createElement("div", { className: "skill-icon-wrap" },  React.createElement(
+      "img",
+      {
+        className: "skill-icon",
+        src: iconUrl(s.icon),
+        alt: s.name,
+        onError: (e) => handleImageFallback(e, s.icon)
+      }
+    ),  React.createElement("span", { className: "skill-lvl-badge" }, s.level)),
+     React.createElement("span", { className: "skill-name-label" }, getSkillTypeShort(s.type))
+  )), majorTraces.map((tr) =>  React.createElement(
+    "div",
+    {
+      key: tr.id,
+      className: `skill-item trace-item ${tr.level > 0 ? "unlocked" : "locked"}`,
+      title: `${getTraceLabel(tr.anchor)}: ${isRu ? "Ключевой след возвышения" : "Major Ascension Trace"} (${tr.level > 0 ? isRu ? "Разблокирован" : "Unlocked" : isRu ? "Заблокирован" : "Locked"})`
+    },
+     React.createElement("div", { className: "skill-icon-wrap" },  React.createElement(
+      "img",
+      {
+        className: "skill-icon",
+        src: iconUrl(tr.icon),
+        alt: tr.anchor,
+        onError: (e) => handleImageFallback(e, tr.icon)
+      }
+    ),  React.createElement("span", { className: "skill-lvl-badge trace" }, getTraceLabel(tr.anchor))),
+     React.createElement("span", { className: "skill-name-label" }, getTraceLabel(tr.anchor))
+  ))))), character.light_cone &&  React.createElement("div", { className: "lightcone-box" },  React.createElement(
+    "img",
+    {
+      className: "cone-img",
+      src: iconUrl(character.light_cone.icon),
+      alt: character.light_cone.name,
+      onError: (e) => handleImageFallback(e, character.light_cone.icon)
+    }
+  ),  React.createElement("div", { className: "cone-info" },  React.createElement("div", { className: "cone-name" }, character.light_cone.name),  React.createElement("div", { className: "cone-super" }, t.superimposition, character.light_cone.rank, " (", "★".repeat(character.light_cone.rarity || 5), ")"),  React.createElement("div", { className: "cone-level" }, t.lvl, " ", character.light_cone.level, "/80"),  React.createElement("div", { className: "cone-stats" }, (character.light_cone.attributes || []).map((a, i) =>  React.createElement("span", { key: i }, a.name.replace("Базовая ", "").replace("Базовое ", ""), ": ", a.display))))));
 }
