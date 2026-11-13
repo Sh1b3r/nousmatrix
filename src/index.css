@@ -54,9 +54,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: relative;
+  z-index: 10;
 }
 
 .brand {
@@ -4607,11 +4606,11 @@ main {
    NOUSMATRIX UX & ERGONOMICS OVERHAUL
    ========================================================================== */
 
-/* 1. Sticky Dashboard Navigation Bar */
+/* 1. Sticky Dashboard Navigation Bar (Only sections stick at top: 0) */
 .dashboard-nav-bar {
   position: sticky;
-  top: 56px;
-  z-index: 90;
+  top: 0;
+  z-index: 100;
   background: rgba(12, 8, 20, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -4995,7 +4994,7 @@ main {
   }
 
   .dashboard-nav-bar {
-    top: 50px;
+    top: 0;
     padding: 6px 10px;
   }
 

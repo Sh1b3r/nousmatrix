@@ -56,7 +56,7 @@ export default function CharacterOverview({ character, audit, t, lang = "ru" }) 
   const handleJumpToPlan = () => {
     const el = document.getElementById("section-score");
     if (el) {
-      const yOffset = -90;
+      const yOffset = -55;
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     }

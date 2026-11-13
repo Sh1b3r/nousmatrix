@@ -16,7 +16,7 @@ export default function DashboardNav({ lang = "ru" }) {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const headerOffset = 140;
+      const headerOffset = 60; // Offset for sticky nav alone at top: 0
 
       for (let i = navItems.length - 1; i >= 0; i--) {
         const item = navItems[i];
@@ -39,7 +39,7 @@ export default function DashboardNav({ lang = "ru" }) {
     setActiveSection(id);
     const target = document.getElementById(id);
     if (target) {
-      const yOffset = -90; // Offset for sticky headers
+      const yOffset = -55; // Offset for sticky sections bar at top: 0
       const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
