@@ -3,7 +3,38 @@ import { getCharAvatarPath, getCharHeadIcon, handleImageFallback, iconUrl } from
 import { runCombatSimulation } from "../utils/simulation";
 import { formatStatName } from "../utils/i18n";
 import { resolveRelicSetInfo } from "../utils/setDefinitions";
-import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon, SparklesIcon, SphereIcon, RopeIcon, WarnIcon, RoleSvgIcon } from "./Icons.jsx";
+import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon, SparklesIcon, SphereIcon, RopeIcon, WarnIcon } from "./Icons.jsx";
+
+const PROPERTY_ICONS = {
+  hp: "icon/property/IconMaxHP.png",
+  atk: "icon/property/IconAttack.png",
+  def: "icon/property/IconDefence.png",
+  spd: "icon/property/IconSpeed.png",
+  crit_rate: "icon/property/IconCriticalChance.png",
+  crit_dmg: "icon/property/IconCriticalDamage.png",
+  break_dmg: "icon/property/IconBreakUp.png",
+  break_effect: "icon/property/IconBreakUp.png",
+  sp_rate: "icon/property/IconEnergyRecovery.png",
+  energy_regen_rate: "icon/property/IconEnergyRecovery.png",
+  effect_hit: "icon/property/IconStatusProbability.png",
+  effect_res: "icon/property/IconStatusResistance.png",
+  heal_rate: "icon/property/IconHealRatio.png",
+  physical_dmg: "icon/property/IconPhysicalAddedRatio.png",
+  fire_dmg: "icon/property/IconFireAddedRatio.png",
+  ice_dmg: "icon/property/IconIceAddedRatio.png",
+  thunder_dmg: "icon/property/IconThunderAddedRatio.png",
+  lightning_dmg: "icon/property/IconThunderAddedRatio.png",
+  wind_dmg: "icon/property/IconWindAddedRatio.png",
+  quantum_dmg: "icon/property/IconQuantumAddedRatio.png",
+  imaginary_dmg: "icon/property/IconImaginaryAddedRatio.png"
+};
+
+const resolveAffixIcon = (affix) => {
+  if (!affix) return null;
+  if (affix.icon) return affix.icon;
+  const fieldKey = String(affix.field || affix.name || "").toLowerCase().replace(/[\s-]+/g, "_");
+  return PROPERTY_ICONS[fieldKey] || null;
+};
 
 export default function TrophyModal({ isOpen, onClose, character, audit, uid, t, lang = "ru" }) {
   const [isCopying, setIsCopying] = useState(false);
@@ -34,8 +65,15 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
   const archetype = audit.detectedRole?.targetArchetype || "CRIT_DPS";
   const combatSim = runCombatSimulation(character, stats, archetype, lang);
   const relics = character.relics || [];
-  const slotNamesRu = ["ГОЛОВА", "РУКИ", "ТЕЛО", "НОГИ", "СФЕРА", "ВЕРВЬ"];
-  const slotNamesEn = ["HEAD", "HANDS", "BODY", "FEET", "SPHERE", "ROPE"];
+
+  const slotTitles = [
+    isRu ? "ГОЛОВА" : "HEAD",
+    isRu ? "КИСТИ" : "HANDS",
+    isRu ? "ТЕЛО" : "BODY",
+    isRu ? "НОГИ" : "FEET",
+    isRu ? "ПЛАНАРНАЯ СФЕРА" : "PLANAR SPHERE",
+    isRu ? "СОЕДИНИТЕЛЬНАЯ ВЕРЕВКА" : "LINK ROPE"
+  ];
 
   const getGradeTier = (score) => {
     const s = Number(score) || 0;
@@ -47,6 +85,89 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
     return { grade: "C", labelRu: "НАЧАЛЬНЫЙ", labelEn: "ENTRY LEVEL", color: "#EF5350" };
   };
   const gradeInfo = getGradeTier(audit.score);
+
+  // Exact base + additions calculation matching CombatStats.jsx
+  const baseMap = {};
+  (character.attributes || []).forEach((a) => {
+    baseMap[a.field] = a;
+  });
+  const addMap = {};
+  (character.additions || []).forEach((a) => {
+    addMap[a.field] = a;
+  });
+
+  const hpBase = baseMap["hp"] ? Math.round(baseMap["hp"].value) : 0;
+  const hpAdd = addMap["hp"] ? Math.round(addMap["hp"].value) : 0;
+  const hpTotal = hpBase + hpAdd;
+
+  const atkBase = baseMap["atk"] ? Math.round(baseMap["atk"].value) : 0;
+  const atkAdd = addMap["atk"] ? Math.round(addMap["atk"].value) : 0;
+  const atkTotal = atkBase + atkAdd;
+
+  const defBase = baseMap["def"] ? Math.round(baseMap["def"].value) : 0;
+  const defAdd = addMap["def"] ? Math.round(addMap["def"].value) : 0;
+  const defTotal = defBase + defAdd;
+
+  const spdBase = baseMap["spd"] ? Number(baseMap["spd"].value).toFixed(1) : "100.0";
+  const spdAdd = addMap["spd"] ? Number(addMap["spd"].value).toFixed(1) : "0.0";
+  const spdTotal = (parseFloat(spdBase) + parseFloat(spdAdd)).toFixed(1);
+
+  const crBase = baseMap["crit_rate"] ? baseMap["crit_rate"].value * 100 : 5;
+  const crAdd = addMap["crit_rate"] ? addMap["crit_rate"].value * 100 : 0;
+  const crTotal = (crBase + crAdd).toFixed(1) + "%";
+
+  const cdBase = baseMap["crit_dmg"] ? baseMap["crit_dmg"].value * 100 : 50;
+  const cdAdd = addMap["crit_dmg"] ? addMap["crit_dmg"].value * 100 : 0;
+  const cdTotal = (cdBase + cdAdd).toFixed(1) + "%";
+
+  const beTotal = addMap["break_dmg"] ? (addMap["break_dmg"].value * 100).toFixed(1) + "%" : null;
+  const errTotal = addMap["sp_rate"] ? (100 + addMap["sp_rate"].value * 100).toFixed(1) + "%" : null;
+  const ehrTotal = addMap["effect_hit"] && addMap["effect_hit"].value > 0 ? (addMap["effect_hit"].value * 100).toFixed(1) + "%" : null;
+
+  const elementFields = [
+    { field: "physical_dmg", icon: "icon/property/IconPhysicalAddedRatio.png", nameRu: "Физ. урон", nameEn: "Physical DMG" },
+    { field: "fire_dmg", icon: "icon/property/IconFireAddedRatio.png", nameRu: "Огн. урон", nameEn: "Fire DMG" },
+    { field: "ice_dmg", icon: "icon/property/IconIceAddedRatio.png", nameRu: "Лед. урон", nameEn: "Ice DMG" },
+    { field: "thunder_dmg", icon: "icon/property/IconThunderAddedRatio.png", nameRu: "Электр. урон", nameEn: "Lightning DMG" },
+    { field: "wind_dmg", icon: "icon/property/IconWindAddedRatio.png", nameRu: "Ветр. урон", nameEn: "Wind DMG" },
+    { field: "quantum_dmg", icon: "icon/property/IconQuantumAddedRatio.png", nameRu: "Квант. урон", nameEn: "Quantum DMG" },
+    { field: "imaginary_dmg", icon: "icon/property/IconImaginaryAddedRatio.png", nameRu: "Мним. урон", nameEn: "Imaginary DMG" }
+  ];
+  const activeElem = elementFields.find((el) => addMap[el.field] && addMap[el.field].value > 0);
+  const elemDmgTotal = activeElem ? (addMap[activeElem.field].value * 100).toFixed(1) + "%" : null;
+
+  // Slot matching
+  const isSphere = (r) => {
+    if (!r) return false;
+    const num = Number(r.type ?? r.pos);
+    if (num === 5) return true;
+    const typeStr = String(r.type || r.type_name || "").toUpperCase();
+    if (typeStr === "NECK" || typeStr === "SPHERE" || typeStr.includes("СФЕР")) return true;
+    const idStr = String(r.id || r.tid || "");
+    if (idStr.length === 5 && idStr.endsWith("5")) return true;
+    return false;
+  };
+  const isRope = (r) => {
+    if (!r) return false;
+    const num = Number(r.type ?? r.pos);
+    if (num === 6) return true;
+    const typeStr = String(r.type || r.type_name || "").toUpperCase();
+    if (typeStr === "OBJECT" || typeStr === "ROPE" || typeStr.includes("ВЕРВ")) return true;
+    const idStr = String(r.id || r.tid || "");
+    if (idStr.length === 5 && idStr.endsWith("6")) return true;
+    return false;
+  };
+
+  const getSlotPiece = (slotIdx) => {
+    if (slotIdx === 4) {
+      return relics.find(isSphere) || relics.find((r, i) => i === 4 && relics.length >= 5) || null;
+    }
+    if (slotIdx === 5) {
+      return relics.find(isRope) || relics.find((r, i) => i === 5 && relics.length >= 6) || null;
+    }
+    const slotNum = slotIdx + 1;
+    return relics.find((r) => Number(r.type ?? r.pos) === slotNum) || relics[slotIdx] || null;
+  };
 
   const generateExportCanvas = async () => {
     if (!cardRef.current) return null;
@@ -60,9 +181,9 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
       windowWidth: 1200,
       ignoreElements: (el) => el.classList && el.classList.contains("trophy-controls-bar"),
       onclone: (clonedDoc, clonedEl) => {
-        clonedEl.style.width = "1000px";
-        clonedEl.style.maxWidth = "1000px";
-        clonedEl.style.minWidth = "1000px";
+        clonedEl.style.width = "1180px";
+        clonedEl.style.maxWidth = "1180px";
+        clonedEl.style.minWidth = "1180px";
         const controls = clonedEl.querySelector(".trophy-controls-bar");
         if (controls) {
           controls.remove();
@@ -161,7 +282,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
               </div>
             </div>
 
-            {/* ШАПКА: аватар + имя + путь / элемент */}
+            {/* ШАПКА: Аватар + Имя + Стихия/Путь + Конус + Общий скор */}
             <div className="showcase-header">
               <div className="showcase-char-identity">
                 <div className="showcase-avatar-ring">
@@ -182,7 +303,18 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                     <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>
                     <span className="showcase-pill accent">{isRu ? "Э" : "E"}{character.rank}</span>
                     <span className="showcase-pill">{character.path?.name || "—"}</span>
-                    <span className="showcase-pill">{character.element?.name || "—"}</span>
+                    <span className="showcase-pill">
+                      {character.element?.icon && (
+                        <img
+                          src={iconUrl(character.element.icon)}
+                          alt=""
+                          className="inline-elem-icon"
+                          crossOrigin="anonymous"
+                          onError={(e) => handleImageFallback(e, character.element.icon)}
+                        />
+                      )}
+                      <span>{character.element?.name || "—"}</span>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -229,198 +361,372 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
               </div>
             </div>
 
-            {/* СТАТ-БАР: 4 ключевых показателя */}
-            <div className="showcase-stats-bar">
-              <div className="showcase-stat-item">
-                <span className="stat-label">{isRu ? "СКОРОСТЬ (SPD)" : "SPEED (SPD)"}</span>
-                <span className="stat-value text-accent">{stats.spd ? stats.spd.toFixed(1) : "100.0"}</span>
-                <span className="stat-sub">
-                  {stats.spd >= 160 ? (isRu ? "[160+ КАП]" : "[160+ CAP]")
-                    : stats.spd >= 145 ? (isRu ? "[145+ ЗОНА]" : "[145+ ZONE]")
-                      : (isRu ? "[134+ ОК]" : "[134+ OK]")}
-                </span>
-              </div>
+            {/* ДВУХКОЛОНОЧНЫЙ БЛОК: СЛЕВА СТАТЫ И СИМУЛЯЦИЯ, СПРАВА РЕЛИКВИИ И СЕТЫ (КАК НА САЙТЕ) */}
+            <div className="showcase-main-layout">
+              {/* ЛЕВАЯ КОЛОНКА: ХАРАКТЕРИСТИКИ И СИМУЛЯЦИЯ */}
+              <div className="showcase-col-left">
+                {/* 1. БОЕВЫЕ ХАРАКТЕРИСТИКИ (БАЗА + БОНУС = ИТОГО) */}
+                <div className="showcase-section-box">
+                  <div className="showcase-section-title">
+                    <span>{isRu ? "БОЕВЫЕ ХАРАКТЕРИСТИКИ" : "COMBAT STATS"}</span>
+                    <span className="section-sub-tag">{isRu ? "БАЗА + БОНУС = ИТОГО" : "BASE + BONUS = TOTAL"}</span>
+                  </div>
 
-              <div className="showcase-stat-item">
-                <span className="stat-label">{isRu ? "КРИТМАССА (CV)" : "CRIT VALUE (CV)"}</span>
-                <span className="stat-value">{stats.cv ? stats.cv.toFixed(1) : "—"}</span>
-                <span className="stat-sub">
-                  {stats.cr ? stats.cr.toFixed(1) : 0}{isRu ? "% КШ / " : "% CR / "}
-                  {stats.cd ? stats.cd.toFixed(1) : 0}{isRu ? "% КУ" : "% CD"}
-                </span>
-              </div>
-
-              <div className="showcase-stat-item">
-                <span className="stat-label">{isRu ? "АТК / HP" : "ATK / HP"}</span>
-                <span className="stat-value">
-                  {stats.hp > 5000 ? `${Math.round(stats.hp)} HP` : `${Math.round(stats.atk || 0)} ATK`}
-                </span>
-                <span className="stat-sub">
-                  {isRu ? "ЗАЩИТА: " : "DEF: "}{Math.round(stats.def || 0)}{isRu ? " ЗАЩ" : " DEF"}
-                </span>
-              </div>
-
-              <div className="showcase-stat-item">
-                <span className="stat-label">
-                  {stats.be > 40 ? (isRu ? "ЭФФЕКТ ПРОБИТИЯ" : "BREAK EFFECT (BE)")
-                    : stats.ehr > 20 ? (isRu ? "ШАНС ПОПАДАНИЯ (ШПЭ)" : "EFFECT HIT RATE (EHR)")
-                      : (isRu ? "ВЭ (ERR)" : "ENERGY (ERR)")}
-                </span>
-                <span className="stat-value text-accent">
-                  {stats.be > 40 ? `${stats.be.toFixed(1)}%`
-                    : stats.ehr > 20 ? `${stats.ehr.toFixed(1)}%`
-                      : `+${stats.err ? stats.err.toFixed(1) : "0"}%`}
-                </span>
-                <span className="stat-sub">
-                  {stats.be >= 180 ? (isRu ? "[180% КАП]" : "[180% CAP]")
-                    : stats.ehr >= 96 ? (isRu ? "[96% КАП]" : "[96% CAP]")
-                      : (isRu ? "[ОК]" : "[OK]")}
-                </span>
-              </div>
-            </div>
-            {/* 6 РЕЛИКВИЙ */}
-            <div className="showcase-relics-grid">
-              {Array.from({ length: 6 }).map((_, slotIdx) => {
-                const slotNum = slotIdx + 1;
-                const piece = relics.find((r) => Number(r.type ?? r.pos) === slotNum) || relics[slotIdx];
-                const slotTitle = isRu ? slotNamesRu[slotIdx] : slotNamesEn[slotIdx];
-                const isSphere = slotIdx === 4;
-
-                if (!piece) {
-                  return (
-                    <div key={`relic-${slotIdx}`} className="showcase-relic-card empty">
-                      <div className="relic-card-head">
-                        <div className="showcase-relic-icon-wrap placeholder">
-                          {isSphere ? <SphereIcon size={18} /> : <RopeIcon size={18} />}
-                        </div>
-                        <div className="relic-slot-info">
-                          <span className="relic-slot-tag">{slotTitle}</span>
-                          <span className="relic-empty-text">{isRu ? "Ожидает синхронизации" : "Awaiting sync"}</span>
-                        </div>
+                  <div className="showcase-stat-table">
+                    <div className="showcase-stat-row">
+                      <div className="stat-left">
+                        <img
+                          className="stat-icon"
+                          src={iconUrl("icon/property/IconMaxHP.png")}
+                          alt="HP"
+                          crossOrigin="anonymous"
+                          onError={(e) => handleImageFallback(e, "icon/property/IconMaxHP.png")}
+                        />
+                        <span className="stat-name">{isRu ? "Макс. HP" : "Max HP"}</span>
+                      </div>
+                      <div className="stat-values">
+                        <span className="stat-calc">{hpBase} <span className="stat-bonus">+{hpAdd}</span> =</span>
+                        <span className="stat-total">{hpTotal.toLocaleString()}</span>
                       </div>
                     </div>
-                  );
-                }
 
-                const mainStatField = piece.main_affix?.field || "";
-                const mainStatValue = piece.main_affix?.display || "";
-                const mainStatName = formatStatName(mainStatField, lang) || formatStatName(piece.main_affix?.name, lang);
-                const relicSetName = resolveRelicSetInfo(piece, lang)?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
-
-                return (
-                  <div key={`relic-${slotIdx}`} className="showcase-relic-card">
-                    <div className="relic-card-head">
-                      <div className="showcase-relic-icon-wrap">
-                        {piece.icon ? (
-                          <img
-                            className="showcase-relic-icon-img"
-                            src={iconUrl(piece.icon)}
-                            alt={piece.name || relicSetName}
-                            crossOrigin="anonymous"
-                            onError={(e) => handleImageFallback(e, piece.icon)}
-                          />
-                        ) : (
-                          <span className="placeholder-icon">
-                            {slotIdx === 4 ? <SphereIcon size={18} /> : slotIdx === 5 ? <RopeIcon size={18} /> : "★"}
-                          </span>
-                        )}
-                        <span className="relic-lvl-badge">+{piece.level ?? 15}</span>
+                    <div className="showcase-stat-row">
+                      <div className="stat-left">
+                        <img
+                          className="stat-icon"
+                          src={iconUrl("icon/property/IconAttack.png")}
+                          alt="ATK"
+                          crossOrigin="anonymous"
+                          onError={(e) => handleImageFallback(e, "icon/property/IconAttack.png")}
+                        />
+                        <span className="stat-name">{isRu ? "Сила атаки" : "ATK"}</span>
                       </div>
-                      <div className="relic-slot-info">
-                        <span className="relic-slot-tag">{slotTitle}</span>
-                        <span className="relic-name-truncate" title={relicSetName}>{relicSetName}</span>
+                      <div className="stat-values">
+                        <span className="stat-calc">{atkBase} <span className="stat-bonus">+{atkAdd}</span> =</span>
+                        <span className="stat-total">{atkTotal.toLocaleString()}</span>
                       </div>
                     </div>
-                    <div className="relic-main-row">
-                      <span className="relic-main-name">
-                        {piece.main_affix?.icon && (
+
+                    <div className="showcase-stat-row">
+                      <div className="stat-left">
+                        <img
+                          className="stat-icon"
+                          src={iconUrl("icon/property/IconDefence.png")}
+                          alt="DEF"
+                          crossOrigin="anonymous"
+                          onError={(e) => handleImageFallback(e, "icon/property/IconDefence.png")}
+                        />
+                        <span className="stat-name">{isRu ? "Защита" : "DEF"}</span>
+                      </div>
+                      <div className="stat-values">
+                        <span className="stat-calc">{defBase} <span className="stat-bonus">+{defAdd}</span> =</span>
+                        <span className="stat-total">{defTotal.toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    <div className="showcase-stat-row">
+                      <div className="stat-left">
+                        <img
+                          className="stat-icon"
+                          src={iconUrl("icon/property/IconSpeed.png")}
+                          alt="SPD"
+                          crossOrigin="anonymous"
+                          onError={(e) => handleImageFallback(e, "icon/property/IconSpeed.png")}
+                        />
+                        <span className="stat-name">{isRu ? "Скорость" : "Speed"}</span>
+                      </div>
+                      <div className="stat-values">
+                        <span className="stat-calc">{spdBase} <span className="stat-bonus">+{spdAdd}</span> =</span>
+                        <span className="stat-total text-accent">{spdTotal}</span>
+                      </div>
+                    </div>
+
+                    <div className="showcase-stat-row">
+                      <div className="stat-left">
+                        <img
+                          className="stat-icon"
+                          src={iconUrl("icon/property/IconCriticalChance.png")}
+                          alt="CR"
+                          crossOrigin="anonymous"
+                          onError={(e) => handleImageFallback(e, "icon/property/IconCriticalChance.png")}
+                        />
+                        <span className="stat-name">{isRu ? "Крит. шанс" : "CRIT Rate"}</span>
+                      </div>
+                      <div className="stat-values">
+                        <span className="stat-total">{crTotal}</span>
+                      </div>
+                    </div>
+
+                    <div className="showcase-stat-row">
+                      <div className="stat-left">
+                        <img
+                          className="stat-icon"
+                          src={iconUrl("icon/property/IconCriticalDamage.png")}
+                          alt="CD"
+                          crossOrigin="anonymous"
+                          onError={(e) => handleImageFallback(e, "icon/property/IconCriticalDamage.png")}
+                        />
+                        <span className="stat-name">{isRu ? "Крит. урон" : "CRIT DMG"}</span>
+                      </div>
+                      <div className="stat-values">
+                        <span className="stat-total">{cdTotal}</span>
+                      </div>
+                    </div>
+
+                    {beTotal && (
+                      <div className="showcase-stat-row">
+                        <div className="stat-left">
                           <img
-                            className="relic-affix-icon main"
-                            src={iconUrl(piece.main_affix.icon)}
-                            alt=""
+                            className="stat-icon"
+                            src={iconUrl("icon/property/IconBreakUp.png")}
+                            alt="BE"
                             crossOrigin="anonymous"
-                            onError={(e) => handleImageFallback(e, piece.main_affix.icon)}
+                            onError={(e) => handleImageFallback(e, "icon/property/IconBreakUp.png")}
                           />
-                        )}
-                        <span>{mainStatName}</span>
+                          <span className="stat-name">{isRu ? "Эфф. пробития" : "Break Effect"}</span>
+                        </div>
+                        <div className="stat-values">
+                          <span className="stat-total text-accent">{beTotal}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {errTotal && (
+                      <div className="showcase-stat-row">
+                        <div className="stat-left">
+                          <img
+                            className="stat-icon"
+                            src={iconUrl("icon/property/IconEnergyRecovery.png")}
+                            alt="ERR"
+                            crossOrigin="anonymous"
+                            onError={(e) => handleImageFallback(e, "icon/property/IconEnergyRecovery.png")}
+                          />
+                          <span className="stat-name">{isRu ? "Восст. энергии" : "Energy Regen"}</span>
+                        </div>
+                        <div className="stat-values">
+                          <span className="stat-total">{errTotal}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {ehrTotal && (
+                      <div className="showcase-stat-row">
+                        <div className="stat-left">
+                          <img
+                            className="stat-icon"
+                            src={iconUrl("icon/property/IconStatusProbability.png")}
+                            alt="EHR"
+                            crossOrigin="anonymous"
+                            onError={(e) => handleImageFallback(e, "icon/property/IconStatusProbability.png")}
+                          />
+                          <span className="stat-name">{isRu ? "Шанс попад. эфф." : "Effect Hit"}</span>
+                        </div>
+                        <div className="stat-values">
+                          <span className="stat-total">{ehrTotal}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {elemDmgTotal && (
+                      <div className="showcase-stat-row">
+                        <div className="stat-left">
+                          <img
+                            className="stat-icon"
+                            src={iconUrl(activeElem.icon)}
+                            alt="Elem"
+                            crossOrigin="anonymous"
+                            onError={(e) => handleImageFallback(e, activeElem.icon)}
+                          />
+                          <span className="stat-name">{isRu ? activeElem.nameRu : activeElem.nameEn}</span>
+                        </div>
+                        <div className="stat-values">
+                          <span className="stat-total text-accent">{elemDmgTotal}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* 2. БОЕВАЯ СИМУЛЯЦИЯ И РОТАЦИЯ */}
+                {combatSim && (
+                  <div className="showcase-section-box">
+                    <div className="showcase-section-title">
+                      <span className="sim-title-wrap">
+                        <SparklesIcon size={13} />
+                        <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIMULATION"}</span>
                       </span>
-                      <span className="relic-main-val text-accent">{mainStatValue}</span>
+                      <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>
                     </div>
-                    <div className="relic-subs-list">
-                      {(piece.sub_affix || []).slice(0, 4).map((sub, sIdx) => {
-                        const upgrades = Math.max(0, (sub.count || 1) - 1);
-                        const isKey = ["crit_rate", "crit_dmg", "spd"].includes(sub.field);
+                    <div className="showcase-sim-body">
+                      <div className="showcase-sim-metric-line">
+                        <span className="sim-metric-name">{combatSim.metric1Label}</span>
+                        <span className="sim-metric-val">{combatSim.metric1Value}</span>
+                      </div>
+                      {combatSim.metric2Value && (
+                        <div className="showcase-sim-metric-line">
+                          <span className="sim-metric-name">{combatSim.metric2Label}</span>
+                          <span className="sim-metric-val">{combatSim.metric2Value}</span>
+                        </div>
+                      )}
+                      <p className="showcase-sim-summary-text">
+                        {isRu ? combatSim.summaryRu : combatSim.summaryEn}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ПРАВАЯ КОЛОНКА: РЕЛИКВИИ И СЕТЫ */}
+              <div className="showcase-col-right">
+                {/* 1. ЭКИПИРОВАННЫЕ РЕЛИКВИИ (2 КОЛОНКИ Х 3 РЯДА) */}
+                <div className="showcase-section-box">
+                  <div className="showcase-section-title">
+                    <span>{isRu ? "ЭКИПИРОВАННЫЕ РЕЛИКВИИ (6 СЛОТОВ)" : "EQUIPPED RELICS (6 SLOTS)"}</span>
+                    <span className="section-sub-tag text-accent">{isRu ? "ДАННЫЕ ВЕРИФИЦИРОВАНЫ" : "VERIFIED DATA"}</span>
+                  </div>
+
+                  <div className="showcase-relics-grid">
+                    {Array.from({ length: 6 }).map((_, slotIdx) => {
+                      const piece = getSlotPiece(slotIdx);
+                      const slotTitle = slotTitles[slotIdx];
+                      const isSphereSlot = slotIdx === 4;
+                      const isRopeSlot = slotIdx === 5;
+                      const isOrnament = isSphereSlot || isRopeSlot;
+
+                      if (!piece) {
                         return (
-                          <div key={`sub-${sIdx}`} className={`relic-sub-item ${isKey ? "key-sub" : ""}`}>
-                            <span className="sub-name">
-                              {sub.icon && (
-                                <img
-                                  className="relic-affix-icon sub"
-                                  src={iconUrl(sub.icon)}
-                                  alt=""
-                                  crossOrigin="anonymous"
-                                  onError={(e) => handleImageFallback(e, sub.icon)}
-                                />
-                              )}
-                              <span>{formatStatName(sub.field, lang) || formatStatName(sub.name, lang)}</span>
-                            </span>
-                            <span className="sub-val">
-                              <span className="relic-sub-num">{sub.display}</span>
-                              <span className="roll-count-tag">{`+${upgrades}`}</span>
-                            </span>
+                          <div key={`relic-${slotIdx}`} className="showcase-relic-card empty">
+                            <div className="relic-card-head">
+                              <div className="showcase-relic-icon-wrap placeholder">
+                                {isSphereSlot ? <SphereIcon size={18} /> : isRopeSlot ? <RopeIcon size={18} /> : <span>★</span>}
+                              </div>
+                              <div className="relic-slot-info">
+                                <span className="relic-slot-tag">{slotTitle}</span>
+                                <span className="relic-empty-text">{isRu ? "Ожидает синхронизации" : "Awaiting sync"}</span>
+                              </div>
+                            </div>
                           </div>
                         );
-                      })}
+                      }
+
+                      const mainStatField = piece.main_affix?.field || "";
+                      const mainStatValue = piece.main_affix?.display || "";
+                      const mainStatName = formatStatName(mainStatField, lang) || formatStatName(piece.main_affix?.name, lang);
+                      const mainStatIcon = resolveAffixIcon(piece.main_affix);
+
+                      const relicSetInfo = resolveRelicSetInfo(piece, lang);
+                      const relicSetName = relicSetInfo?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
+
+                      return (
+                        <div key={`relic-${slotIdx}`} className="showcase-relic-card">
+                          <div className="relic-card-head">
+                            <div className="showcase-relic-icon-wrap">
+                              {piece.icon ? (
+                                <img
+                                  className="showcase-relic-icon-img"
+                                  src={iconUrl(piece.icon)}
+                                  alt={piece.name || relicSetName}
+                                  crossOrigin="anonymous"
+                                  onError={(e) => handleImageFallback(e, piece.icon)}
+                                />
+                              ) : (
+                                <span className="placeholder-icon">
+                                  {isSphereSlot ? <SphereIcon size={18} /> : isRopeSlot ? <RopeIcon size={18} /> : "★"}
+                                </span>
+                              )}
+                              <span className="relic-lvl-badge">+{piece.level ?? 15}</span>
+                            </div>
+                            <div className="relic-slot-info">
+                              <div className="relic-slot-header-row">
+                                <span className="relic-slot-tag">{slotTitle}</span>
+                                <span className="relic-rarity-tag">{isOrnament ? (isRu ? "5★ ОРНАМЕНТ" : "5★ ORNAMENT") : (isRu ? "5★ РЕЛИКВИЯ" : "5★ RELIC")}</span>
+                              </div>
+                              <span className="relic-name-truncate" title={relicSetName}>{relicSetName}</span>
+                            </div>
+                          </div>
+
+                          <div className="relic-main-row">
+                            <span className="relic-main-name">
+                              {mainStatIcon && (
+                                <img
+                                  className="relic-affix-icon main"
+                                  src={iconUrl(mainStatIcon)}
+                                  alt=""
+                                  crossOrigin="anonymous"
+                                  onError={(e) => handleImageFallback(e, mainStatIcon)}
+                                />
+                              )}
+                              <span>{mainStatName}</span>
+                            </span>
+                            <span className="relic-main-val text-accent">{mainStatValue}</span>
+                          </div>
+
+                          <div className="relic-subs-list">
+                            {(piece.sub_affix || []).slice(0, 4).map((sub, sIdx) => {
+                              const upgrades = Math.max(0, (sub.count || 1) - 1);
+                              const isKey = ["crit_rate", "crit_dmg", "spd"].includes(sub.field);
+                              const subIcon = resolveAffixIcon(sub);
+                              return (
+                                <div key={`sub-${sIdx}`} className={`relic-sub-item ${isKey ? "key-sub" : ""}`}>
+                                  <span className="sub-name">
+                                    {subIcon && (
+                                      <img
+                                        className="relic-affix-icon sub"
+                                        src={iconUrl(subIcon)}
+                                        alt=""
+                                        crossOrigin="anonymous"
+                                        onError={(e) => handleImageFallback(e, subIcon)}
+                                      />
+                                    )}
+                                    <span>{formatStatName(sub.field, lang) || formatStatName(sub.name, lang)}</span>
+                                  </span>
+                                  <span className="sub-val">
+                                    <span className="relic-sub-num">{sub.display}</span>
+                                    {upgrades > 0 && <span className="sub-roll-tag">{`+${upgrades}`}</span>}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ */}
+                <div className="showcase-section-box">
+                  <div className="showcase-section-title">
+                    <span>{isRu ? "АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ" : "ACTIVE SET BONUSES"}</span>
+                  </div>
+                  <div className="showcase-sets-content">
+                    <div className="sets-summary-row">
+                      {audit.cavern?.setName && (
+                        <span className="showcase-set-tag">
+                          <CheckIcon size={12} />
+                          <span>4/4 {audit.cavern.setName}</span>
+                        </span>
+                      )}
+                      {audit.planar?.setName && (
+                        <span className="showcase-set-tag planar">
+                          <CheckIcon size={12} />
+                          <span>2/2 {audit.planar.setName}</span>
+                        </span>
+                      )}
                     </div>
+                    <span className="set-condition-text">
+                      {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
-
-            {/* БАННЕР: сет-бонусы + боевая симуляция */}
-            <div className="showcase-bottom-banner">
-              <div className="bottom-col-left">
-                <div className="sets-summary-row">
-                  {audit.cavern?.setName && (
-                    <span className="showcase-set-tag">
-                      <CheckIcon size={12} />
-                      <span>4/4 {audit.cavern.setName}</span>
-                    </span>
-                  )}
-                  {audit.planar?.setName && (
-                    <span className="showcase-set-tag planar">
-                      <CheckIcon size={12} />
-                      <span>2/2 {audit.planar.setName}</span>
-                    </span>
-                  )}
                 </div>
-                <span className="set-condition-text">
-                  {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
-                </span>
               </div>
-
-              {combatSim && (
-                <div className="bottom-col-right">
-                  <div className="sim-meta-box">
-                    <span className="sim-tag">
-                      <SparklesIcon size={12} />
-                      <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIM"}</span>
-                    </span>
-                    <span className="sim-score-text">
-                      {combatSim.metric1Label}: <strong>{combatSim.metric1Value}</strong>
-                    </span>
-                    <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>
-                  </div>
-                </div>
-              )}
             </div>
-
 
             {/* ФУТЕР КАРТЫ */}
             <div className="showcase-footer">
               <span className="footer-brand">
                 <img src="/media/NousMatrix-logo.png" alt="" className="footer-logo" />
-                <span>{isRu ? "NOUSMATRIX" : "NOUSMATRIX"}</span>
+                <span>{isRu ? "NOUSMATRIX // COMBAT READINESS AUDIT" : "NOUSMATRIX // COMBAT READINESS AUDIT"}</span>
               </span>
               <span className="footer-meta">
                 {isRu ? "ВЕРИФИЦИРОВАННЫЙ АУДИТ • UID: " : "VERIFIED AUDIT • UID: "}{uid} • {(new Date()).toLocaleDateString(isRu ? "ru-RU" : "en-GB")}

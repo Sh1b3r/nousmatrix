@@ -13,6 +13,34 @@ export function formatStatName(rawName, lang = "en") {
   if (!rawName) return "";
   const isRu = lang === "ru";
   const s = String(rawName).trim();
+  // Enka/MiHoMo expose stable machine identifiers in relic fields. Translate
+  // those before trying the human-readable labels returned by the API.
+  const field = s.toLowerCase().replace(/[\s-]+/g, "_");
+  const fieldLabels = {
+    atk: ["Сила атаки (АТК)", "ATK"], hp: ["Макс. HP (HP)", "HP"],
+    def: ["Защита (ЗАЩ)", "DEF"], spd: ["Скорость (СКОР)", "Speed (SPD)"],
+    crit_rate: ["Крит. шанс (КШ)", "CRIT Rate (CR)"],
+    crit_dmg: ["Крит. урон (КУ)", "CRIT DMG (CD)"],
+    break_dmg: ["Эфф. пробития (ЭП)", "Break Effect (BE)"],
+    break_effect: ["Эфф. пробития (ЭП)", "Break Effect (BE)"],
+    sp_rate: ["Восст. энергии (ВЭ)", "Energy Regen (ERR)"],
+    energy_regen_rate: ["Восст. энергии (ВЭ)", "Energy Regen (ERR)"],
+    effect_hit: ["Шанс попад. эфф. (ШПЭ)", "Effect Hit (EHR)"],
+    effect_res: ["Сопротивл. эфф. (СЭ)", "Effect RES (RES)"],
+    heal: ["Исходящее исцел.", "Outgoing Healing"],
+    heal_rate: ["Исходящее исцел.", "Outgoing Healing"],
+    physical_dmg: ["Физ. урон", "Physical DMG"],
+    fire_dmg: ["Огн. урон", "Fire DMG"],
+    ice_dmg: ["Лед. урон", "Ice DMG"],
+    thunder_dmg: ["Электр. урон", "Lightning DMG"],
+    lightning_dmg: ["Электр. урон", "Lightning DMG"],
+    wind_dmg: ["Ветр. урон", "Wind DMG"],
+    quantum_dmg: ["Квант. урон", "Quantum DMG"],
+    imaginary_dmg: ["Мним. урон", "Imaginary DMG"],
+    all_dmg: ["Бонус урона", "DMG Bonus"],
+    elation: ["Веселье", "Elation"]
+  };
+  if (fieldLabels[field]) return fieldLabels[field][isRu ? 0 : 1];
   if (/^(Базовая сила атаки|Сила атаки|ATK|Base ATK)$/i.test(s)) {
     return isRu ? "Сила атаки (АТК)" : "ATK";
   }

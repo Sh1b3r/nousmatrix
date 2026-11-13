@@ -1589,7 +1589,7 @@ export function resolveRelicSetInfo(r, lang = "ru") {
   }
   return {
     matched: false,
-    name: r.set_name || (isRu ? sId ? `Сет #${sId}` : "Неизвестный сет" : sId ? `Set #${sId}` : "Unknown Set"),
+    name: isRu ? sId ? `Сет #${sId}` : "Неизвестный сет" : r.set_name || (sId ? `Set #${sId}` : "Unknown Set"),
     def: null,
     icon: r.icon
   };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { iconUrl, handleImageFallback } from "../utils/audit";
 import { formatStatName } from "../utils/i18n";
+import { resolveRelicSetInfo } from "../utils/setDefinitions";
 import { SphereIcon, RopeIcon, WarnIcon, CheckIcon } from "./Icons.jsx";
 export default function RelicsGrid({ character, audit, t, lang = "ru" }) {
   if (!character) return null;
@@ -45,6 +46,7 @@ export default function RelicsGrid({ character, audit, t, lang = "ru" }) {
   const renderCard = (r, idx) => {
     const isWeak = idx === audit?.weakestRelicIndex;
     const slotTitle = slots[idx] || `Слот ${idx + 1}`;
+    const relicSetName = resolveRelicSetInfo(r, lang)?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
     return  React.createElement("div", { key: idx, className: `relic-item-card ${isWeak ? "weak-piece" : ""}` }, isWeak &&  React.createElement("div", { className: "relic-worst-banner-top mobile-only" },  React.createElement("span", { className: "worst-warn-icon" },  React.createElement(WarnIcon, { size: 12 })),  React.createElement("span", null, t.weakPiece)),  React.createElement("div", { className: "relic-top-row" },  React.createElement("div", { className: "relic-left-meta" },  React.createElement("div", { className: "relic-icon-wrap" },  React.createElement(
       "img",
       {
@@ -54,7 +56,7 @@ export default function RelicsGrid({ character, audit, t, lang = "ru" }) {
         crossOrigin: "anonymous",
         onError: (e) => handleImageFallback(e, r.icon)
       }
-    ),  React.createElement("span", { className: "relic-lvl-badge" }, "+", r.level)),  React.createElement("div", { className: "relic-name-col" },  React.createElement("span", { className: "relic-slot-name" }, slotTitle),  React.createElement("span", { className: "relic-piece-title", title: r.name }, r.name))), isWeak ?  React.createElement(React.Fragment, null,  React.createElement("span", { className: "relic-cv-pill weak-pill desktop-only" }, t.weakPiece),  React.createElement("span", { className: "relic-cv-pill mobile-only", style: { color: "var(--text-secondary)", background: "none" } }, idx >= 4 ? isRu ? "5★ ОРНАМЕНТ" : "5★ ORNAMENT" : t.goldRelic)) :  React.createElement("span", { className: "relic-cv-pill", style: { color: "var(--text-secondary)", background: "none" } }, idx >= 4 ? isRu ? "5★ ОРНАМЕНТ" : "5★ ORNAMENT" : t.goldRelic)),  React.createElement("div", { className: "relic-main-stat-box" },  React.createElement("div", { className: "relic-main-left" },  React.createElement("span", { className: "relic-main-label" }, r.main_affix?.icon &&  React.createElement(
+    ),  React.createElement("span", { className: "relic-lvl-badge" }, "+", r.level)),  React.createElement("div", { className: "relic-name-col" },  React.createElement("span", { className: "relic-slot-name" }, slotTitle),  React.createElement("span", { className: "relic-piece-title", title: relicSetName }, relicSetName))), isWeak ?  React.createElement(React.Fragment, null,  React.createElement("span", { className: "relic-cv-pill weak-pill desktop-only" }, t.weakPiece),  React.createElement("span", { className: "relic-cv-pill mobile-only", style: { color: "var(--text-secondary)", background: "none" } }, idx >= 4 ? isRu ? "5★ ОРНАМЕНТ" : "5★ ORNAMENT" : t.goldRelic)) :  React.createElement("span", { className: "relic-cv-pill", style: { color: "var(--text-secondary)", background: "none" } }, idx >= 4 ? isRu ? "5★ ОРНАМЕНТ" : "5★ ORNAMENT" : t.goldRelic)),  React.createElement("div", { className: "relic-main-stat-box" },  React.createElement("div", { className: "relic-main-left" },  React.createElement("span", { className: "relic-main-label" }, r.main_affix?.icon &&  React.createElement(
       "img",
       {
         className: "relic-affix-icon main",
@@ -63,7 +65,7 @@ export default function RelicsGrid({ character, audit, t, lang = "ru" }) {
         crossOrigin: "anonymous",
         onError: (e) => handleImageFallback(e, r.main_affix?.icon)
       }
-    ), formatStatName(r.main_affix?.name, lang)), r.main_eval && idx >= 2 &&  React.createElement(
+    ), (formatStatName(r.main_affix?.field, lang) || formatStatName(r.main_affix?.name, lang))), r.main_eval && idx >= 2 &&  React.createElement(
       "span",
       {
         className: `main-stat-badge ${r.main_eval.status}`,
@@ -86,12 +88,12 @@ export default function RelicsGrid({ character, audit, t, lang = "ru" }) {
           crossOrigin: "anonymous",
           onError: (e) => handleImageFallback(e, sub.icon)
         }
-      ), formatStatName(sub.name, lang)),  React.createElement("span", { className: "relic-sub-val" },  React.createElement("span", { className: "relic-sub-num" }, sub.display),  React.createElement("span", { className: `roll-count-tag ${tagClass}` }, tagText)));
+      ), (formatStatName(sub.field, lang) || formatStatName(sub.name, lang))),  React.createElement("span", { className: "relic-sub-val" },  React.createElement("span", { className: "relic-sub-num" }, sub.display),  React.createElement("span", { className: `roll-count-tag ${tagClass}` }, tagText)));
     })));
   };
   const renderPlanarTag = () => {
     if (audit?.planar?.isComplete) {
-      return  React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: "5px" } },  React.createElement(CheckIcon, { size: 12 }),  React.createElement("span", null, "2/2 ", audit.planar.setName || planarRelics[0]?.set_name));
+      return  React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: "5px" } },  React.createElement(CheckIcon, { size: 12 }),  React.createElement("span", null, "2/2 ", audit.planar.setName || (planarRelics[0] ? resolveRelicSetInfo(planarRelics[0], lang)?.name : "")));
     }
     return  React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: "5px" } },  React.createElement(WarnIcon, { size: 12 }),  React.createElement("span", null, isRu ? "1/2 + 1/2 РАЗОРВАННЫЙ СЕТ" : "1/2 + 1/2 BROKEN SET"));
   };
