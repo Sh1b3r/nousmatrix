@@ -3683,7 +3683,7 @@ main {
   display: block;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 28px 16px 56px;
+  padding: 24px 20px 48px;
   box-sizing: border-box;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
@@ -4244,6 +4244,75 @@ main {
   font-size: 10.5px;
   color: var(--text-tertiary);
   letter-spacing: 0.04em;
+}
+
+@media (min-width: 1200px) {
+  #modal-trophy,
+  .trophy-modal-backdrop {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .trophy-modal-dialog {
+    max-width: 1440px;
+    width: 100%;
+    margin: auto;
+  }
+
+  .showcase-card {
+    padding: 20px 24px;
+  }
+
+  .trophy-controls-bar {
+    margin-bottom: 14px;
+    padding: 8px 14px;
+  }
+
+  .showcase-header {
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+  }
+
+  .showcase-avatar-ring {
+    width: 68px;
+    height: 68px;
+  }
+
+  .showcase-stats-bar {
+    padding: 12px 18px;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .showcase-relics-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .showcase-relic-card {
+    padding: 10px 11px;
+    gap: 6px;
+  }
+
+  .relic-main-row {
+    padding: 5px 6px;
+  }
+
+  .relic-subs-list {
+    gap: 3px;
+  }
+
+  .showcase-bottom-banner {
+    padding: 10px 16px;
+    margin-bottom: 14px;
+  }
+
+  .showcase-footer {
+    padding-top: 10px;
+  }
 }
 
 @media (max-width: 768px) {
