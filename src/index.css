@@ -691,7 +691,7 @@ main {
 .char-details-primary {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
 }
 
 .char-details-primary h2 {
@@ -699,11 +699,8 @@ main {
   font-weight: 700;
   letter-spacing: -0.03em;
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
   color: #fff;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .char-stars {
@@ -3877,13 +3874,7 @@ main {
 .showcase-name-col {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-
-.showcase-char-title {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
+  gap: 3px;
 }
 
 .showcase-char-name {
@@ -3897,8 +3888,9 @@ main {
 
 .showcase-stars {
   color: #F8C300;
-  font-size: 15px;
+  font-size: 14px;
   letter-spacing: 2px;
+  line-height: 1;
 }
 
 .showcase-pills-row {
@@ -3906,6 +3898,7 @@ main {
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  margin-top: 3px;
 }
 
 .showcase-pill {

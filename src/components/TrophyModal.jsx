@@ -343,10 +343,8 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                     />
                   </div>
                   <div className="showcase-name-col">
-                    <div className="showcase-char-title">
-                      <h2 className="showcase-char-name">{character.name}</h2>
-                      <span className="showcase-stars">{"★".repeat(character.rarity || 5)}</span>
-                    </div>
+                    <h2 className="showcase-char-name">{character.name}</h2>
+                    <span className="showcase-stars">{"★".repeat(character.rarity || 5)}</span>
                     <div className="showcase-pills-row">
                       <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>
                       <span className="showcase-pill accent">{isRu ? "Э" : "E"}{character.rank}</span>
@@ -649,30 +647,7 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                     <span>{isRu ? "ЭКИПИРОВАННЫЕ РЕЛИКВИИ (6 СЛОТОВ)" : "EQUIPPED RELICS (6 SLOTS)"}</span>
                     <span className="section-sub-tag text-accent">{isRu ? "ДАННЫЕ ВЕРИФИЦИРОВАНЫ" : "VERIFIED DATA"}</span>
                   </div>
-                  <div className="showcase-section-box">
-                    <div className="showcase-section-title">
-                      <span>{isRu ? "АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ" : "ACTIVE SET BONUSES"}</span>
-                    </div>
-                    <div className="showcase-sets-content">
-                      <div className="sets-summary-row">
-                        {audit.cavern?.setName && (
-                          <span className="showcase-set-tag">
-                            <CheckIcon size={12} />
-                            <span>4/4 {audit.cavern.setName}</span>
-                          </span>
-                        )}
-                        {audit.planar?.setName && (
-                          <span className="showcase-set-tag planar">
-                            <CheckIcon size={12} />
-                            <span>2/2 {audit.planar.setName}</span>
-                          </span>
-                        )}
-                      </div>
-                      <span className="set-condition-text">
-                        {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
-                      </span>
-                    </div>
-                  </div>
+
                   <div className="showcase-relics-grid">
                     {Array.from({ length: 6 }).map((_, slotIdx) => {
                       const piece = getSlotPiece(slotIdx);
@@ -783,6 +758,30 @@ export default function TrophyModal({ isOpen, onClose, character, audit, uid, t,
                 </div>
 
                 {/* 2. АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ */}
+                <div className="showcase-section-box">
+                  <div className="showcase-section-title">
+                    <span>{isRu ? "АКТИВНЫЕ НАБОРЫ РЕЛИКВИЙ" : "ACTIVE SET BONUSES"}</span>
+                  </div>
+                  <div className="showcase-sets-content">
+                    <div className="sets-summary-row">
+                      {audit.cavern?.setName && (
+                        <span className="showcase-set-tag">
+                          <CheckIcon size={12} />
+                          <span>4/4 {audit.cavern.setName}</span>
+                        </span>
+                      )}
+                      {audit.planar?.setName && (
+                        <span className="showcase-set-tag planar">
+                          <CheckIcon size={12} />
+                          <span>2/2 {audit.planar.setName}</span>
+                        </span>
+                      )}
+                    </div>
+                    <span className="set-condition-text">
+                      {audit.planar?.condition || audit.cavern?.condition || (isRu ? "Все бонусы комплектов активны в бою." : "All set bonuses are active in combat.")}
+                    </span>
+                  </div>
+                </div>
 
 
               </div>
