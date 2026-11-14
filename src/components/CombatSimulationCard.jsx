@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { runCombatSimulation } from "../utils/simulation.js";
 import { CHARACTER_SQUADS, matchSquadWithShowcase, rankSquadsByShowcase } from "../utils/teamSynergy.js";
 import { runFullTeamRotationSimulation } from "../utils/rotationSimulation.js";
+import { scoreAgainstCombatBenchmark } from "../utils/combatBenchmark.js";
 import { iconUrl, handleImageFallback } from "../utils/audit.js";
 import { SwordIcon, ShieldIcon, SparklesIcon, CheckIcon, WarnIcon } from "./Icons.jsx";
 
@@ -23,7 +24,6 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
   const [enemyMode, setEnemyMode] = useState("moc");
-  const [isNormalized, setIsNormalized] = useState(false);
   const currentSquad = squads[selectedSquadIdx] || squads[0] || null;
 
   const matchedTeammates = useMemo(() => {
@@ -35,10 +35,41 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   }, [matchedTeammates]);
 
   const rotationSim = useMemo(() => {
-    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode, isNormalized });
-  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode, isNormalized]);
+    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode });
+  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode]);
 
   const sim = runCombatSimulation(character, stats || {}, archetype, lang);
+  const benchmark = useMemo(() => {
+    if (!rotationSim) return null;
+    const teamSignature = [
+      {
+        id: charId,
+        eidolon: Number(character.rank) || 0,
+        lightConeId: character.light_cone?.id || null,
+        superimposition: character.light_cone?.rank || 1,
+        lightConeLevel: character.light_cone?.level || null
+      },
+      ...matchedTeammates.map((teammate) => ({
+        id: String(teammate.id || ""),
+        eidolon: Number(teammate.matchedChar?.rank) || 0,
+        lightConeId: teammate.matchedChar?.light_cone?.id || null,
+        superimposition: teammate.matchedChar?.light_cone?.rank || 1,
+        lightConeLevel: teammate.matchedChar?.light_cone?.level || null,
+        realStats: teammate.realStats || null
+      }))
+    ].sort((a, b) => a.id.localeCompare(b.id));
+    return scoreAgainstCombatBenchmark({
+      characterId: charId,
+      teamId: currentSquad?.id || null,
+      teamSignature: JSON.stringify(teamSignature),
+      eidolon: `E${Number(character.rank) || 0}`,
+      lightConeId: character.light_cone?.id || null,
+      superimposition: character.light_cone?.rank || 1,
+      enemyMode,
+      rotationId: charId,
+      speed: Number(stats?.spd || 0)
+    }, rotationSim.rotationTotalDamage);
+  }, [rotationSim, charId, currentSquad, character, enemyMode, stats, matchedTeammates]);
   if (!sim) return null;
 
   const isDual = Boolean(sim.hasDualOutput);
@@ -64,18 +95,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
       <div className="panel-title">
         <span>{isRu ? "Боевая симуляция ротации" : "Combat Rotation Simulation"}</span>
         <div className="sim-header-controls">
-          <button
-            type="button"
-            className={`sim-norm-toggle ${isNormalized ? "active" : ""}`}
-            onClick={() => setIsNormalized(!isNormalized)}
-            title={
-              isRu
-                ? "Нормализованный бенчмарк (Akasha standard): уравнивает оружие всех игроков к эталону E0S1 для объективной оценки реликвий"
-                : "Normalized E0S1 Benchmark (Akasha standard): standardizes weapon power for pure relic evaluation"
-            }
-          >
-            {isRu ? (isNormalized ? "★ ЭТАЛОН E0S1" : "КОНУС ИЗ ПРОФИЛЯ") : (isNormalized ? "★ E0S1 BENCHMARK" : "LIVE CONE")}
-          </button>
+          <span className="sim-provenance-tag" title={isRu ? "Расчёт использует оружие и характеристики из профиля" : "Calculation uses the profile's light cone and stats"}>
+            {isRu ? "ДАННЫЕ ПРОФИЛЯ" : "PROFILE DATA"}
+          </span>
           <select
             className="sim-mode-select"
             value={enemyMode}
@@ -84,7 +106,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
           >
             <option value="moc">{isRu ? "MoC • Босс 95 ур." : "MoC • Lv.95 Boss"}</option>
             <option value="pf">{isRu ? "PF • Мобы 88 ур." : "PF • Lv.88 Waves"}</option>
-            <option value="as">{isRu ? "AS • Ап-босс 95 ур. (40% RES)" : "AS • Lv.95 Boss (40% RES)"}</option>
+            <option value="as">{isRu ? "AS • Босс 95 ур. (20% баз. RES)" : "AS • Lv.95 Boss (20% base RES)"}</option>
           </select>
         </div>
       </div>
@@ -113,9 +135,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             {isRu ? "Симуляция боевой ротации отряда" : "Squad Combat Rotation Simulation"}
           </h3>
         </div>
-        <div className="combat-sim-tier-box">
-          <span className="combat-sim-tier-label">{isRu ? "Ранг эффективности" : "Performance Tier"}</span>
-          <span className="combat-sim-tier-val">{sim.benchmarkTier}</span>
+        <div className="combat-sim-tier-box" title={benchmark ? `${benchmark.gameVersion} • ${benchmark.source || "verified benchmark"}` : (isRu ? "Для этой конфигурации пока нет проверенного эталона" : "No validated benchmark exists for this configuration yet")}>
+          <span className="combat-sim-tier-label">{isRu ? "Эталон сборки" : "Build Benchmark"}</span>
+          <span className="combat-sim-tier-val">{benchmark ? `${benchmark.percent.toFixed(1)}%` : (isRu ? "Нет данных" : "No data")}</span>
         </div>
       </div>
 
@@ -156,12 +178,12 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               </span>
               <p className="alert-text">
                 {isRu
-                  ? `Для них используются эталонные допущения (базовые софт-капы следов). Чтобы подтянуть реальные характеристики снаряжения [${missingTeammates
+                  ? `Статы ${missingTeammates.length} союзников неизвестны; используются только явно заданные в карточке отряда баффы. Чтобы загрузить витринные данные, добавьте персонажей в профиль и нажмите «ОБНОВИТЬ»: [${missingTeammates
                     .map((m) => m.nameRu || m.characterName || m.names[0])
-                    .join(", ")}], выставьте их на витрину в игре и нажмите «ОБНОВИТЬ».`
-                  : `Default baseline assumptions are used for missing allies. Place [${missingTeammates
+                    .join(", ")}]`
+                  : `Stats for ${missingTeammates.length} allies are unknown; only buffs explicitly configured in the team record are used. Add them to the profile and refresh to load showcase data: [${missingTeammates
                     .map((m) => m.nameEn || m.characterName || m.names[0])
-                    .join(", ")}] on showcase for live gear calculation.`}
+                    .join(", ")}]`}
               </p>
             </div>
           </div>
@@ -172,12 +194,12 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             </div>
             <div className="alert-body-col">
               <span className="alert-title">
-                {isRu ? "Все союзники синхронизированы с витрины HSR" : "All teammates verified from HSR showcase"}
+                {isRu ? "Данные всех союзников загружены из витрины" : "All teammate profiles loaded"}
               </span>
               <p className="alert-text">
                 {isRu
-                  ? "Урон ротации рассчитан с учётом реальных параметров снаряжения саппортов."
-                  : "Rotation damage is calculated using live equipped teammate gear."}
+                  ? "Реальные статы доступны для тех баффов, которые настроены с зависимостью от профиля; длительность эффектов не моделируется."
+                  : "Real stats are available for buffs configured to scale from profile data; effect duration is not simulated."}
               </p>
             </div>
           </div>
@@ -218,9 +240,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                       <span>{isRu ? "На витрине (HSR)" : "On Showcase (HSR)"}</span>
                     </span>
                   ) : (
-                    <span className="teammate-badge status-off" title={isRu ? "Союзника нет на витрине, применены стандартные допущения" : "Teammate missing, baseline defaults used"}>
+                    <span className="teammate-badge status-off" title={isRu ? "Статы союзника неизвестны; используются только явно настроенные баффы" : "Ally stats are unknown; only explicitly configured buffs are used"}>
                       <WarnIcon size={11} />
-                      <span>{isRu ? "Эталон (допущение)" : "Baseline default"}</span>
+                      <span>{isRu ? "Статы неизвестны" : "Stats unknown"}</span>
                     </span>
                   )}
                   {isEquipped && tm.realStats && (
@@ -253,50 +275,29 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
           <div className="combat-sim-metrics-grid rotation-metrics">
             <div className="combat-sim-metric-box highlight-box">
               <span className="sim-metric-label">
-                {isRu ? "Суммарный урон ротации" : "Full Rotation Total DMG"}
+                {isRu ? "Сумма заданных ударов" : "Configured Hits Total"}
               </span>
               <span className="sim-metric-value text-accent big">
                 {Number(rotationSim.rotationTotalDamage || 0).toLocaleString("ru-RU")}
               </span>
               <span className="sim-metric-hint">
                 {currentSquad
-                  ? (isRu ? "Расчётная ротация выбранного состава" : "Calculated rotation for selected squad")
+                  ? (isRu ? "Ручная оценка для выбранного состава" : "Manual estimate for selected squad")
                   : (isRu ? "Без баффов союзников" : "No teammate buffs applied")}
               </span>
             </div>
             <div className="combat-sim-metric-box">
               <span className="sim-metric-label">
-                {isRu ? "Пиковый удар под баффами" : "Peak Buffed Burst"}
+                {isRu ? "Максимальный урон действия" : "Peak Ability Damage"}
               </span>
               <span className="sim-metric-value">
                 {Number(rotationSim.peakHitDamage || 0).toLocaleString("ru-RU")}
               </span>
               <span className="sim-metric-hint">
-                {isRu ? "Главная сверхспособность / удар" : "Max single ability impact"}
-              </span>
-            </div>
-            <div className="combat-sim-metric-box">
-              <span className="sim-metric-label">
-                {isRu ? "DPS за цикл (100 AV)" : "Cycle DPS (100 AV)"}
-              </span>
-              <span className="sim-metric-value">
-                {Number(rotationSim.teamCycleDps || 0).toLocaleString("ru-RU")}
-              </span>
-              <span className="sim-metric-hint">
-                {isRu ? "Скорость закрытия волн MoC" : "Wave clear tempo"}
+                {isRu ? "Может суммировать цели AoE" : "May sum AoE targets"}
               </span>
             </div>
           </div>
-          {rotationSim.loopFactor > 1 && (
-            <div className="sim-loop-factor-notice">
-              <span className="sim-loop-notice-icon">ℹ</span>
-              <span className="sim-loop-notice-text">
-                {isRu
-                  ? `Энергетическая петля: в расчёт заложен множитель повторения ультимейта ×${rotationSim.loopFactor.toFixed(2)} за цикл (на основе СКОР и ВЭ). Это теоретическая модель темпа ротации, а не гарантированный боевой скрипт.`
-                  : `Energy loop: rotation DMG factors in an ultimate recast multiplier of x${rotationSim.loopFactor.toFixed(2)} per cycle (based on SPD & ERR). This is a theoretical model assumption, not guaranteed gameplay.`}
-              </span>
-            </div>
-          )}
         </>
       )}
 
@@ -336,7 +337,15 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
 
       {/* Summary and collapsible technical parameters */}
       <div className="combat-sim-summary">
-        <p className="sim-summary-text">{isRu ? sim.summaryRu : sim.summaryEn}</p>
+        <p className="sim-summary-text">
+          {rotationSim
+            ? (isRu
+              ? "Сумма вручную заданных попаданий по упрощённой формуле. Это оценка сценария, а не полная боевая симуляция: порядок ходов, энергия, частота срабатываний и длительность баффов не рассчитываются."
+              : "Sum of manually configured hits using a simplified formula. This is a scenario estimate, not a full combat simulation: turn order, energy, trigger frequency, and buff duration are not calculated.")
+            : (isRu
+              ? "Для персонажа нет сценария ударов. Доступна только черновая оценка одного удара; она не описывает ротацию или урон за бой."
+              : "No action script is configured for this character. Only a draft single-hit estimate is available; it does not represent a rotation or total combat damage.")}
+        </p>
         <details className="sim-params-disclosure">
           <summary className="sim-params-summary">
             <span>
@@ -361,51 +370,55 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                   ? enemyMode === "pf"
                     ? "Цель: волны мобов 88 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
                     : enemyMode === "as"
-                      ? "Цель: босс 95 уровня, базовое сопротивление 40%; защита считается по уровням персонажа и врага."
+                    ? "Цель: условный босс 95 уровня, базовое сопротивление 20%; индивидуальные сопротивления и слабости врага не заданы."
                       : "Цель: босс 95 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
                   : enemyMode === "pf"
                     ? "Target: Lv. 88 waves, 20% base RES; DEF multiplier uses character and enemy levels."
                     : enemyMode === "as"
-                      ? "Target: Lv. 95 boss, 40% base RES; DEF multiplier uses character and enemy levels."
+                    ? "Target: generic Lv. 95 boss, 20% base RES; enemy-specific resistances and weaknesses are not specified."
                       : "Target: Lv. 95 boss, 20% base RES; DEF multiplier uses character and enemy levels."}
               </span>
             </div>
-            <div className="assumption-item">
-              <span className="assumption-bullet">•</span>
-              <span>{isRu ? "Окно действия: 100 AV (150 AV в цикле 0)." : "Action window: 100 AV (150 AV in Cycle 0)."}</span>
-            </div>
-            {isNormalized && (
-              <div className="assumption-item">
-                <span className="assumption-bullet">•</span>
-                <span className="text-accent">
-                  {isRu
-                    ? "Нормализация E0S1 активна: расчёт урона проведён на стандартизированном сигнатурном конусе S1 (Akasha Leaderboard standard). Оценивается чистая сила фарма реликвий независимо от наложений оружия."
-                    : "E0S1 Normalization active: damage computed on standardized S1 signature weapon (Akasha Leaderboard standard). Evaluates pure relic farm quality."}
-                </span>
-              </div>
-            )}
-            {rotationSim?.loopFactor > 1 && (
+            {rotationSim && (
               <div className="assumption-item">
                 <span className="assumption-bullet">•</span>
                 <span>
                   {isRu
-                    ? `Энергетическая петля ×${rotationSim.loopFactor.toFixed(2)}: ультимейт успевает перезарядиться несколько раз за цикл (СКОР × ВЭ). Это допущение модели, а не точный расчёт игры.`
-                    : `Energy loop x${rotationSim.loopFactor.toFixed(2)}: the ultimate recasts several times per cycle (SPD x ERR). This is a model assumption, not an exact game sim.`}
+                    ? `Для суммарного AoE-урона задано целей: ${rotationSim.targetCount} (PF — 5, MoC/AS — 3). Слабость стихии и сопротивления конкретного врага не учитываются. Обычные удары считают активную стойкость (×0,9); суперпробитие — уже сломанную.`
+                    : `AoE totals use ${rotationSim.targetCount} targets (PF: 5, MoC/AS: 3). Elemental weakness and enemy-specific resistance are not modeled. Direct hits assume active Toughness (×0.9); Super Break assumes the target is broken.`}
                 </span>
               </div>
             )}
+            <div className="assumption-item">
+              <span className="assumption-bullet">•</span>
+              <span>{isRu ? "Показаны только вручную заданные попадания; порядок ходов, энергия и число повторных действий не моделируются." : "Only manually configured hits are included; turn order, energy, and repeated action counts are not simulated."}</span>
+            </div>
+            <div className="assumption-item">
+              <span className="assumption-bullet">•</span>
+              <span>
+                {rotationSim?.buffTimingStatus === "verified-schedule"
+                  ? (isRu ? "Баффы применены по проверенной таблице активности ударов." : "Buffs follow a verified per-hit uptime table.")
+                  : (isRu ? "Нет проверенного таймлайна баффов: заданные бонусы считаются активными на всех ударах." : "No verified buff timeline is available; configured buffs are assumed active on every hit.")}
+              </span>
+            </div>
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
               <span>
                 {isRu
                   ? missingTeammates.length > 0
-                    ? `Союзники: для ${missingTeammates.length} союзников не с витрины применены стандартные эталонные уровни следов и баффов.`
-                    : "Союзники: все 3 союзника найдены на витрине — расчёт использует реальные статы их реликвий."
+                    ? `Союзники: ${missingTeammates.length} персонажей не найдены в витрине; их статы не подставляются, используются только фиксированные значения из данных отряда.`
+                    : "Союзники: все 3 персонажа найдены в витрине — используются показанные статы, но не длительность эффектов."
                   : missingTeammates.length > 0
-                    ? `Teammates: ${missingTeammates.length} missing allies use standard soft-cap trace assumptions.`
-                    : "Teammates: all 3 allies found on showcase, using live relic stats."}
+                    ? `Teammates: ${missingTeammates.length} allies are absent from the showcase; no stats are fabricated, only fixed team-record values are used.`
+                    : "Teammates: all 3 allies are in the showcase; shown stats are used, but effect duration is not simulated."}
               </span>
             </div>
+            {rotationSim?.hasUnmodeledAtkPercent && (
+              <div className="assumption-item">
+                <span className="assumption-bullet">•</span>
+                <span>{isRu ? "Процентный бафф АТК не включён: базовая АТК отсутствует в данных профиля." : "ATK% buffs are omitted because base ATK is unavailable in the profile."}</span>
+              </div>
+            )}
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
               <span>{isRu ? "Назначение: стандартизированная математическая модель для сравнения сборок, а не запись живого боя." : "Purpose: standardized model for build comparison, not a recorded live run."}</span>

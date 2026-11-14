@@ -1147,42 +1147,6 @@ export function evaluateRelicMainStat(relic, archetype, char) {
   return { status: "optimal", scoreBonus: 0, labelRu: "ВЕРНЫЙ СТАТ", labelEn: "OPTIMAL" };
 }
 
-function erf(x) {
-  const a1 = 0.254829592;
-  const a2 = -0.284496736;
-  const a3 = 1.421413741;
-  const a4 = -1.453152027;
-  const a5 = 1.061405429;
-  const p = 0.3275911;
-  const sign = x < 0 ? -1 : 1;
-  const absX = Math.abs(x);
-  const t = 1 / (1 + p * absX);
-  const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX);
-  return sign * y;
-}
-
-const ARCHETYPE_DISTRIBUTIONS = {
-  CRIT_DPS: { mu: 68.5, sigma: 11.2 },
-  HP_CRIT_DPS: { mu: 67.5, sigma: 11.0 },
-  BREAK_DPS: { mu: 66.0, sigma: 10.8 },
-  DOT_DPS: { mu: 65.5, sigma: 10.5 },
-  HARMONY_SPD: { mu: 65.0, sigma: 10.0 },
-  HARMONY_ATK: { mu: 65.0, sigma: 10.2 },
-  HARMONY_CRIT: { mu: 66.5, sigma: 10.5 },
-  NIHILITY_DEBUFF: { mu: 64.5, sigma: 10.2 },
-  PRESERVATION_DEF: { mu: 64.0, sigma: 10.0 },
-  PRESERVATION_HP: { mu: 64.0, sigma: 10.0 },
-  ABUNDANCE_ATK: { mu: 64.0, sigma: 10.0 },
-  ABUNDANCE_HP: { mu: 63.5, sigma: 9.8 }
-};
-
-export function scoreToCalibratedTopPercent(score, archetype = "CRIT_DPS") {
-  const dist = ARCHETYPE_DISTRIBUTIONS[archetype] || { mu: 66.0, sigma: 11.0 };
-  const z = (Number(score) - dist.mu) / dist.sigma;
-  const cdf = 0.5 * (1 + erf(z / Math.SQRT2));
-  const top = (1 - cdf) * 100;
-  return Math.min(99.0, Math.max(0.1, top));
-}
 export function determineCharacterMetrics(char, archetype, stats) {
   const { hp, atk, def, spd, cr, cd, cv, be, ehr, eres, heal, err } = stats;
   const name = char?.name || "";
@@ -2334,7 +2298,6 @@ export function calculateCharacterAudit(char, lang = "ru") {
   }
   statPoints = Math.max(0, statPoints + planarSynergyBonus + cavernSynergyBonus);
   const finalScore = Math.min(100, Math.max(0, statPoints * 0.7 + rollEfficiency * 0.3));
-  const topPercent = scoreToCalibratedTopPercent(finalScore, archetype);
   const characterMetrics = determineCharacterMetrics(char, archetype, {
     hp,
     atk,
@@ -2352,7 +2315,6 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const needsCrit = isCritDps(archetype);
   return {
     score: finalScore.toFixed(1),
-    topPercent: topPercent.toFixed(1),
     rollEfficiency: rollEfficiency.toFixed(1),
     rollEfficiencyMethod: marginalDamageWeights ? "marginal-damage-plus-role-utility" : "role-utility-heuristic",
     marginalDamageRolls: marginalDamageWeights?.rollGains || null,

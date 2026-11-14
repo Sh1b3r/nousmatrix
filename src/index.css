@@ -728,13 +728,20 @@ main {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
+  height: 26px;
+  min-height: 26px;
+  max-height: 26px;
+  padding: 0 10px;
   border-radius: 3px;
   background: var(--surface-2);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 .char-pill.accent {
@@ -744,11 +751,15 @@ main {
 }
 
 .char-icon-pill {
+  height: 26px;
+  min-height: 26px;
+  max-height: 26px;
+  width: 32px;
+  min-width: 32px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 7px;
-  min-height: 28px;
   box-sizing: border-box;
 }
 
@@ -757,21 +768,21 @@ main {
 }
 
 .char-badge-icon {
-  width: 26px;
-  height: 26px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
   display: block;
 }
 
 .char-badge-icon.element-icon {
-  width: 27px;
-  height: 27px;
+  width: 18px;
+  height: 18px;
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
 }
 
 .char-badge-icon.path-icon {
-  width: 26px;
-  height: 26px;
+  width: 18px;
+  height: 18px;
   opacity: 0.96;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
@@ -2793,7 +2804,24 @@ main {
 
   .char-pill {
     font-size: 11px !important;
-    padding: 3px 8px !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    padding: 0 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    line-height: 1 !important;
+  }
+
+  .char-icon-pill {
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    width: 30px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .char-skills-row {
@@ -3075,7 +3103,31 @@ main {
 
   .char-pill {
     font-size: 10px !important;
-    padding: 2px 5px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    padding: 0 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    line-height: 1 !important;
+  }
+
+  .char-icon-pill {
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    width: 26px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .char-badge-icon,
+  .char-badge-icon.element-icon,
+  .char-badge-icon.path-icon {
+    width: 16px !important;
+    height: 16px !important;
   }
 
   .char-skills-row {

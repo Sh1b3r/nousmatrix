@@ -673,7 +673,7 @@ export default function TrophyModal({
                     <div className="showcase-section-title">
                       <span className="sim-title-wrap">
                         <SparklesIcon size={13} />
-                        <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIMULATION"}</span>
+                        <span>{isRu ? "ЧЕРНОВАЯ ОЦЕНКА ОДНОГО УДАРА" : "DRAFT SINGLE-HIT ESTIMATE"}</span>
                       </span>
                       {combatSim.benchmarkTier && <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>}
                     </div>

@@ -1,6 +1,16 @@
 import { ROTATIONS } from "../data/rotations.js";
 import { getTeamBuffsForAction } from "./buffTimeline.js";
 
+function calculateDefenseMultiplier(characterLevel, enemyLevel, defenseReductionPercent) {
+  const reduction = Math.min(1, Math.max(0, defenseReductionPercent / 100));
+  return (characterLevel + 20) / (characterLevel + 20 + (enemyLevel + 20) * (1 - reduction));
+}
+
+function calculateResistanceMultiplier(baseResistance, resistancePenetrationPercent) {
+  const effectiveResistance = Math.max(-1, baseResistance - resistancePenetrationPercent / 100);
+  return 1 - effectiveResistance;
+}
+
 export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matchedTeammates = [], lang = "ru", options = {}) {
   if (!mainChar || !mainStats) return null;
   const isRu = lang === "ru";
@@ -23,6 +33,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   let teamCritVuln = 0;
   let teamBreakVuln = 0;
   let teamBeBoost = 0;
+  let teamBreakEff = 0;
+  let teamFuaCd = 0;
   let hasSuperBreak = false;
   let superBreakFactor = 1;
   let buffTimingStatus = "assumed-full-uptime";
@@ -40,6 +52,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     if (b.critVuln) teamCritVuln += b.critVuln;
     if (b.breakVuln) teamBreakVuln += b.breakVuln;
     if (b.beBoost) teamBeBoost += b.beBoost;
+    if (b.breakEff) teamBreakEff += b.breakEff;
+    if (b.fuaCd) teamFuaCd += b.fuaCd;
     if (b.superBreakFactor) {
       hasSuperBreak = true;
       superBreakFactor = b.superBreakFactor;
@@ -49,25 +63,29 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const kitRotation = ROTATIONS[charId] || null;
   const kitCd = (kitRotation && kitRotation.passiveCritDmg) || 0;
   const kitResPen = (kitRotation && kitRotation.passiveResPen) || 0;
-  // Пресеты врагов по режимам: MoC (босс ур. 95, RES 20%), PF (мобы ур. 88, RES 20%), AS (ап-босс ур. 95, RES 40%)
+  // Generic target presets. Target-specific element resistances are not available in this selector.
   const enemyMode = options.enemyMode || "moc";
   const ENEMY_PRESETS = {
-    moc: { lv: 95, res: 0.2 },
-    pf: { lv: 88, res: 0.2 },
-    as: { lv: 95, res: 0.4 }
+    moc: { lv: 95, res: 0.2, targets: 3 },
+    pf: { lv: 88, res: 0.2, targets: 5 },
+    as: { lv: 95, res: 0.2, targets: 3 }
   };
   const enemy = ENEMY_PRESETS[enemyMode] || ENEMY_PRESETS.moc;
   const totalDefShred = Math.min(1, teamDefShred / 100);
   const charLv = Number(mainChar.level || 80);
   const enemyLv = enemy.lv;
-  const defMult = (charLv + 20) / (charLv + 20 + (enemyLv + 20) * (1 - totalDefShred));
+  const defMult = calculateDefenseMultiplier(charLv, enemyLv, totalDefShred * 100);
   const baseEnemyRes = enemy.res;
-  const effectiveRes = Math.max(-1, baseEnemyRes - (teamResPen + kitResPen) / 100);
-  const resMult = 1 - effectiveRes;
-  const vulnMult = 1 + teamVuln / 100;
+  const resMult = calculateResistanceMultiplier(baseEnemyRes, teamResPen + kitResPen);
+  const damageTakenMult = 1 + teamVuln / 100;
+  const toughnessMultiplier = options.enemyBroken ? 1 : 0.9;
+  // Without a break-state timeline, direct hits assume an active Toughness bar.
+  // Super Break instances below assume the target is already broken.
+  const vulnMult = damageTakenMult * toughnessMultiplier;
   // Use profile stats and explicit team buffs only. There is no universal
   // E0S1 light-cone stat package across characters or signature passives.
-  const baseAttackForPercent = Number(mainStats.base_atk || mainStats.baseAtk || mainChar.baseAtk || mainChar.baseStats?.atk || 0);
+  const characterBaseAttack = (mainChar.attributes || []).find((attribute) => attribute.field === "atk")?.value;
+  const baseAttackForPercent = Number(mainStats.base_atk || mainStats.baseAtk || mainChar.baseAtk || mainChar.baseStats?.atk || characterBaseAttack || 0);
   const percentAttackGrant = baseAttackForPercent * teamAtkPercent / 100;
   const combatAtk = baseAtk + teamAtkGrant + percentAttackGrant;
   const combatHp = baseHp;
@@ -133,7 +151,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const isBlade = charId === "1205" || name.includes("блейд") && !isMortenax || name.includes("blade") && !isMortenax;
   const isJingYuan = charId === "1204" || name.includes("цзин юань") || name.includes("jing yuan");
   const isArgenti = charId === "1302" || name.includes("аргенти") || name.includes("argenti");
-  if (kitRotation) {
+  if (kitRotation?.status === "verified") {
     const actionBuffStatuses = new Set();
     kitRotation.instances.forEach((inst) => {
       const actionTeamBuffs = getTeamBuffsForAction(squad, matchedTeammates, inst.key);
@@ -146,10 +164,9 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       const actionCritMult = 1 + actionCr * actionCd;
       const actionDmgBonus = 1 + (baseDmgBoost + (Number(b.dmgBoost) || 0) + (kitRotation.passiveDmgBoost || 0)) / 100;
       const actionDefShred = Math.min(1, (Number(b.defShred) || 0) / 100);
-      const actionDefMult = (charLv + 20) / (charLv + 20 + (enemyLv + 20) * (1 - actionDefShred));
-      const actionRes = Math.max(-1, baseEnemyRes - ((Number(b.resPen) || 0) + kitResPen) / 100);
-      const actionResMult = 1 - actionRes;
-      const actionVulnMult = 1 + ((Number(b.allVuln) || 0) + (Number(b.vuln) || 0)) / 100;
+      const actionDefMult = calculateDefenseMultiplier(charLv, enemyLv, actionDefShred * 100);
+      const actionResMult = calculateResistanceMultiplier(baseEnemyRes, (Number(b.resPen) || 0) + kitResPen);
+      const actionVulnMult = (1 + ((Number(b.allVuln) || 0) + (Number(b.vuln) || 0)) / 100) * toughnessMultiplier;
       const actionCritVulnFactor = actionCr * (1 + actionCd) * ((Number(b.critVuln) || 0) / 100);
       const actionCritMultiplier = actionCritMult + actionCritVulnFactor / actionVulnMult;
       const actionScalingStat = kitRotation.hpScale ? combatHp : actionAtk;
@@ -176,7 +193,9 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     }
     // Repeated ultimates need a real action-value and energy timeline. This fixed script represents only its listed damage instances.
   } else if (isHimeko) {
-    const skillDmg = Math.round(combatAtk * 3.6 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+    const targetCount = Math.max(1, enemy.targets);
+    const skillMotionValue = 2 + 0.8 * Math.min(2, targetCount - 1);
+    const skillDmg = Math.round(combatAtk * skillMotionValue * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += skillDmg;
     peakHitDamage = Math.max(peakHitDamage, skillDmg);
     steps.push({
@@ -186,12 +205,13 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       phase: isRu ? "ХОД ДПС (НАВЫК)" : "DPS TURN (SKILL)",
       actionNameRu: "Навык «Расплавленное пламя» (Огненный взрыв по боссу и миньонам)",
       actionNameEn: "Skill: Molten Detonation (Blast Fire DMG)",
-      descRu: `200% ATK по боссу + 80% по соседним целям под баффом +${teamDmgBoost}% урона и ${(combatCr * 100).toFixed(0)}% КШ / ${(combatCd * 100).toFixed(0)}% КУ.`,
-      descEn: `200% ATK single + 80% blast with full team multipliers.`,
+      descRu: `${(skillMotionValue * 100).toFixed(0)}% ATK суммарно по ${targetCount} целям (200% главной + до 2 соседних по 80%).`,
+      descEn: `${(skillMotionValue * 100).toFixed(0)}% ATK total across ${targetCount} targets (200% primary + up to 2 adjacent at 80%).`,
       damage: skillDmg,
       isDamageAction: true
     });
-    const ultDmg = Math.round(combatAtk * 4.6 * (combatDmgBonus + 0.2) * critMultiplier * defMult * resMult * vulnMult);
+    const ultMotionValue = 2.3 * targetCount;
+    const ultDmg = Math.round(combatAtk * ultMotionValue * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += ultDmg;
     peakHitDamage = Math.max(peakHitDamage, ultDmg);
     steps.push({
@@ -201,12 +221,14 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       phase: isRu ? "СВЕРХСПОСОБНОСТЬ (УЛЬТИМЕЙТ)" : "ULTIMATE BURST",
       actionNameRu: "Сверхспособность «Небесное пламя» (Массовый залп орбитального спутника)",
       actionNameEn: "Ultimate: Heavenly Flare (Massive Orbital Strike)",
-      descRu: `230% AoE урон по всему полю боя с гарантированным пробитием уязвимости.`,
-      descEn: `230% AoE strike triggering weakness break across field.`,
+      descRu: `230% ATK каждому врагу; суммарно по ${targetCount} целям. Пробитие не моделируется.`,
+      descEn: `230% ATK to each enemy; summed across ${targetCount} targets. Weakness break is not simulated.`,
       damage: ultDmg,
       isDamageAction: true
     });
-    const fuaDmg = Math.round(combatAtk * 1.4 * 3 * (combatDmgBonus + 0.25) * critMultiplier * defMult * resMult * vulnMult);
+    const fuaMotionValue = 1.4 * targetCount;
+    const fuaCritMultiplier = critMultiplier + combatCr * teamFuaCd / 100;
+    const fuaDmg = Math.round(combatAtk * fuaMotionValue * combatDmgBonus * fuaCritMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += fuaDmg;
     peakHitDamage = Math.max(peakHitDamage, fuaDmg);
     steps.push({
@@ -214,21 +236,21 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       charName: mainChar.name,
       avatar: mainChar.avatar?.icon || null,
       phase: isRu ? "БОНУС-АТАКА (ТАЛАНТ)" : "FOLLOW-UP ATTACK",
-      actionNameRu: "Талант «Победный кураж» (3 срабатывания по пробитым целям)",
-      actionNameEn: "Talent: Victory Rush (3 Follow-up procs)",
-      descRu: `140% ATK по всем врагам при истощении стойкости босса и миньонов.`,
-      descEn: `140% ATK AoE follow-up triggered on weakness break.`,
+      actionNameRu: "Талант «Победный кураж» (одно заданное срабатывание)",
+      actionNameEn: "Talent: Victory Rush (one configured follow-up)",
+      descRu: `140% ATK каждому врагу; число реальных срабатываний зависит от пробитий и здесь не моделируется.`,
+      descEn: `140% ATK to each enemy; actual trigger count depends on breaks and is not simulated.`,
       damage: fuaDmg,
       isDamageAction: true
     });
     if (hasSuperBreak) {
-      // Официальная формула Super Break DMG (KQM / HomDGCat):
-      // Super Break DMG = LevelBaseDMG(3767.55 at Lv.80) * (ToughnessReduction / 30) * (1 + BE) * DefMult * ResMult * VulnMult * SuperBreakMultiplier
+      // Simplified Super Break estimate; toughness and ability-level details remain scripted.
       const baseBreakLv80 = 3767.55;
       const beMultiplier = 1 + (baseBe + teamBeBoost) / 100;
       const toughnessReduction = 60; // 60 единиц базового истощения стойкости под навыком
+      const effectiveToughnessReduction = toughnessReduction * (1 + teamBreakEff / 100);
       const breakVulnMult = 1 + (teamVuln + teamBreakVuln) / 100;
-      const sbDmg = Math.round(baseBreakLv80 * (toughnessReduction / 30) * beMultiplier * defMult * resMult * breakVulnMult * superBreakFactor * 2);
+      const sbDmg = Math.round(baseBreakLv80 * (effectiveToughnessReduction / 30) * beMultiplier * defMult * resMult * breakVulnMult * superBreakFactor * 2);
       rotationTotalDamage += sbDmg;
       steps.push({
         stepNumber: steps.length + 1,
@@ -237,8 +259,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
         phase: isRu ? "СУПЕРПРОБИТИЕ (ОТРЯД)" : "SUPER BREAK IMPACT",
         actionNameRu: "Командное Суперпробитие (2 срабатывания по сломанной стойкости)",
         actionNameEn: "Team Super Break (2 procs on broken bar)",
-        descRu: `Формула Super Break: 3767.55 × (60/30) × ${(beMultiplier).toFixed(2)} [BE] × Def × Res × Vuln × ${superBreakFactor.toFixed(1)} [HMC].`,
-        descEn: `Super Break exact formula: 3767.55 x (60/30) x ${(beMultiplier).toFixed(2)} [BE] x Def x Res x Vuln x ${superBreakFactor.toFixed(1)} [HMC].`,
+        descRu: `Оценка Super Break: истощение ${effectiveToughnessReduction.toFixed(0)} × ЭП ${beMultiplier.toFixed(2)} × Защита × Сопротивление × Уязвимость × ${superBreakFactor.toFixed(1)}.`,
+        descEn: `Super Break estimate: ${effectiveToughnessReduction.toFixed(0)} Toughness reduction x ${beMultiplier.toFixed(2)} BE x DEF x RES x vulnerability x ${superBreakFactor.toFixed(1)}.`,
         damage: sbDmg,
         isDamageAction: true
       });
@@ -269,7 +291,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   } else if (isFirefly) {
     const baseBreakLv80 = 3767.55;
     const beMultiplier = 1 + (baseBe + teamBeBoost) / 100;
-    const sbDmg = Math.round(baseBreakLv80 * (60 / 30) * beMultiplier * defMult * resMult * (1 + teamBreakVuln / 100) * 2.5);
+    const effectiveToughnessReduction = 60 * (1 + teamBreakEff / 100);
+    const sbDmg = Math.round(baseBreakLv80 * (effectiveToughnessReduction / 30) * beMultiplier * defMult * resMult * (1 + (teamVuln + teamBreakVuln) / 100) * 2.5);
     rotationTotalDamage += sbDmg;
     peakHitDamage = sbDmg;
     steps.push({
@@ -283,7 +306,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     });
   } else if (isFeixiao) {
     const skillDmg = Math.round(combatAtk * 2 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
-    const fuaDmg = Math.round(combatAtk * 1.1 * 3 * (combatDmgBonus + 0.3) * critMultiplier * defMult * resMult * vulnMult);
+    const fuaCritMultiplier = critMultiplier + combatCr * teamFuaCd / 100;
+    const fuaDmg = Math.round(combatAtk * 1.1 * 3 * (combatDmgBonus + 0.3) * fuaCritMultiplier * defMult * resMult * vulnMult);
     const ultDmg = Math.round(combatAtk * 7 * (combatDmgBonus + 0.6) * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += skillDmg + fuaDmg + ultDmg;
     peakHitDamage = ultDmg;
@@ -375,7 +399,12 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       damage: ultDmg,
       isDamageAction: true
     });
-  } else if (isMortenax || isBlade) {
+  } else if (isMortenax) {
+    // Skill availability depends on current HP and Infinite Fury state. The
+    // profile contains Max HP, but not current HP or a healing/action timeline.
+    // Do not turn a conditional hit into a rotation total.
+    return null;
+  } else if (isBlade) {
     const hpStat = combatHp;
     const skillDmg = Math.round(hpStat * 1.68 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     const ultDmg = Math.round(hpStat * 2.2 * (combatDmgBonus + 0.3) * critMultiplier * defMult * resMult * vulnMult);
@@ -465,7 +494,11 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     peakHitDamage,
     steps,
     enemyMode,
+    targetCount: enemy.targets,
+    enemyLevel: enemyLv,
+    baseEnemyRes,
     buffTimingStatus,
+    calculationStatus: "manual-script-estimate",
     combatStats: {
       combatAtk,
       combatHp,
@@ -474,7 +507,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       critMultiplier: critMultiplier.toFixed(2),
       totalDefShred: (totalDefShred * 100).toFixed(1),
       resMult: resMult.toFixed(2),
-      vulnMult: vulnMult.toFixed(2)
+      vulnMult: damageTakenMult.toFixed(2),
+      toughnessMultiplier: toughnessMultiplier.toFixed(2)
     },
     hasUnmodeledAtkPercent: teamAtkPercent > 0 && baseAttackForPercent <= 0
   };

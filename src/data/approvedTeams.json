@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "gameVersion": "4.7",
   "updatedAt": "2026-11-14",
   "excludedByCharacter": {
@@ -32,7 +32,8 @@
             "roleEn": "Break / Super Break",
             "buffDescRu": "Добавляет экзостойкость и помогает чаще пробивать врагов.",
             "buffDescEn": "Adds exo-toughness and helps break enemies more often.",
-            "buffValues": { "exoBreak": true, "beBoost": 40 }
+            "buffDescRu": "Экзо-стойкость и бонусы пробития; численные эффекты в симуляцию не подставляются без отдельной проверки.",
+            "buffDescEn": "Exo-Toughness and Break effects; numerical bonuses are not applied without separate verification."
           },
           {
             "id": "1222",
@@ -43,7 +44,8 @@
             "roleEn": "Sustain / Break",
             "buffDescRu": "Лечит отряд и часто наносит урон стойкости атаками и призывом.",
             "buffDescEn": "Sustains the team and frequently reduces Toughness with attacks and her summon.",
-            "buffValues": { "breakVuln": 25 }
+            "buffDescRu": "Лечение и частые атаки для истощения стойкости; численные бонусы не подставляются без проверки условий.",
+            "buffDescEn": "Healing and frequent attacks for Toughness reduction; numerical bonuses are not applied without condition checks."
           },
           {
             "id": "1505",
@@ -54,7 +56,8 @@
             "roleEn": "Break amplifier",
             "buffDescRu": "Усиливает урон пробития и эффективность истощения стойкости.",
             "buffDescEn": "Amplifies Break damage and Toughness reduction.",
-            "buffValues": { "superBreakFactor": 1.8, "beBoost": 60, "breakEff": 50 }
+            "buffDescRu": "Усиление пробития; численные бонусы и частота Суперпробития зависят от условий боя и пока не моделируются.",
+            "buffDescEn": "Break amplification; numerical bonuses and Super Break frequency depend on combat conditions and are not modeled yet."
           }
         ]
       }
@@ -75,6 +78,7 @@
         ],
         "verified": { "by": "user", "at": "2026-11-14", "gameVersion": "4.7", "scope": "roster" },
         "isUserConfirmed": true,
+        "requirements": [{ "type": "direct-heal", "forCharacterId": "1507", "reason": "Mortenax spends HP and cannot use Skill at 1 HP." }],
         "teammates": [
           {
             "id": "1507",
@@ -105,8 +109,87 @@
             "icon": "icon/character/1217.png",
             "roleRu": "Сустейн / лечение",
             "roleEn": "Sustain / healer",
+            "combatTags": ["direct-heal"],
             "buffDescRu": "Лечит команду и компенсирует расход HP Мортенакса.",
             "buffDescEn": "Heals the team and offsets Mortenax's HP consumption.",
+            "buffValues": { "teamHeal": true, "teamCleanse": true, "energyFeed": 20, "atkPercent": 40 }
+          }
+        ]
+      }
+    ],
+    "1510": [
+      {
+        "id": "himeko_nova_decimation_mortenax_welt_huohuo",
+        "nameRu": "Децимация: Мортенакс Блэйд + Вельт + Хохо",
+        "nameEn": "Decimation: Mortenax Blade + Welt + Huohuo",
+        "descRu": "Состав для Децимации: Вельт активирует протокол, Мортенакс даёт частые AoE-атаки и дебаффы, Хохо лечит HP, которое Мортенакс тратит навыком, и поддерживает энергию. Числа урона не обозначены как рейтинг или лучшая команда.",
+        "descEn": "Decimation team: Welt activates the protocol, Mortenax provides frequent AoE attacks and debuffs, and Huohuo heals the HP Mortenax spends and supports Energy. Damage is not presented as a ranking or best-team claim.",
+        "sourceVersion": "4.7",
+        "sourceUpdatedAt": "2026-11-08",
+        "sourceUrl": "https://www.hsr-build.com/best-teams/himeko-nova",
+        "status": "guide-supported",
+        "assumptions": { "eidolon": "any", "mode": "Decimation", "enemyTargets": "multiple" },
+        "evidence": [
+          {
+            "source": "HSR Build 4.7 team data",
+            "sourceUrl": "https://www.hsr-build.com/best-teams/himeko-nova",
+            "gameVersion": "4.7",
+            "retrievedAt": "2026-11-14",
+            "metric": "team-core",
+            "note": "4.7 team data lists Himeko • Nova with Mortenax Blade and Welt for frequent AoE hits and DEF reduction. The published team uses a shield sustain; Huohuo is selected here for direct healing of Mortenax's HP expenditure."
+          },
+          {
+            "source": "HSR Tier List Himeko • Nova build guide",
+            "sourceUrl": "https://hsrtierlist.com/himeko-nova",
+            "gameVersion": null,
+            "retrievedAt": "2026-11-14",
+            "metric": "team-roster",
+            "note": "Guide lists the exact Decimation roster Himeko • Nova / Welt / Mortenax Blade / Huohuo. Its page does not state a game version."
+          },
+          {
+            "source": "user-confirmed-mechanics",
+            "sourceUrl": null,
+            "gameVersion": "4.7",
+            "retrievedAt": "2026-11-14",
+            "metric": "sustain-requirement",
+            "note": "User clarified that shields do not restore HP spent by Mortenax and recommended Huohuo for this team."
+          }
+        ],
+        "verified": { "by": "guide-and-user-review", "at": "2026-11-14", "gameVersion": "4.7", "scope": "roster-and-sustain-choice" },
+        "requirements": [{ "type": "direct-heal", "forCharacterId": "1507", "reason": "Mortenax spends HP and cannot use Skill at 1 HP." }],
+        "teammates": [
+          {
+            "id": "1507",
+            "nameRu": "Мортенакс Блэйд",
+            "nameEn": "Mortenax Blade",
+            "icon": "icon/character/1507.png",
+            "roleRu": "Небытие / AoE-дебаффер и расход HP",
+            "roleEn": "Nihility / AoE debuffer and HP spender",
+            "buffDescRu": "Ультимейт снижает защиту врагов на 30% и повышает получаемый ими урон на 50%; навык требует HP выше 1 и активного состояния Бесконечной ярости.",
+            "buffDescEn": "Ultimate reduces enemy DEF by 30% and increases damage taken by 50%; Skill requires HP above 1 and the Infinite Fury state.",
+            "buffValues": { "allVuln": 50, "defShred": 30 }
+          },
+          {
+            "id": "1004",
+            "nameRu": "Вельт",
+            "nameEn": "Welt",
+            "icon": "icon/character/1004.png",
+            "roleRu": "Небытие / триггер Децимации и дебаффер",
+            "roleEn": "Nihility / Decimation trigger and debuffer",
+            "buffDescRu": "Персонаж экипажа Астрального экспресса открывает Децимацию; его ослабления и задержка зависят от применения навыков и сверхспособности.",
+            "buffDescEn": "An Astral Express Companion who enables Decimation; his debuffs and delay depend on Skill and Ultimate use.",
+            "buffValues": { "defShred": 40, "actionDelay": true }
+          },
+          {
+            "id": "1217",
+            "nameRu": "Хохо",
+            "nameEn": "Huohuo",
+            "icon": "icon/character/1217.png",
+            "roleRu": "Изобилие / прямое лечение",
+            "roleEn": "Abundance / direct healing",
+            "combatTags": ["direct-heal"],
+            "buffDescRu": "Лечит Мортенакса после расхода HP; сверхспособность также даёт энергию и силу атаки. Временная доступность эффектов не моделируется.",
+            "buffDescEn": "Heals Mortenax after HP spending; Ultimate also grants Energy and ATK. Buff uptime is not modeled.",
             "buffValues": { "teamHeal": true, "teamCleanse": true, "energyFeed": 20, "atkPercent": 40 }
           }
         ]

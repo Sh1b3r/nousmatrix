@@ -18,12 +18,12 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
 
   const getGradeTier = (score) => {
     const s = Number(score) || 0;
-    if (s >= 92) return { grade: "SSS", labelRu: "Эталон роли", labelEn: "Prime Benchmark", color: "#FF4D4D" };
-    if (s >= 85) return { grade: "SS", labelRu: "Превосходный", labelEn: "Excellent", color: "#00E5FF" };
-    if (s >= 75) return { grade: "S", labelRu: "Отличный", labelEn: "Great", color: "#00FF88" };
-    if (s >= 65) return { grade: "A", labelRu: "Хороший", labelEn: "Solid Build", color: "#FFB74D" };
-    if (s >= 50) return { grade: "B", labelRu: "Требует доработки", labelEn: "Work In Progress", color: "#FFA726" };
-    return { grade: "C", labelRu: "Базовый", labelEn: "Entry Level", color: "#EF5350" };
+    if (s >= 92) return { grade: "SSS", labelRu: "Очень высокий индекс", labelEn: "Very high index", color: "#FF4D4D" };
+    if (s >= 85) return { grade: "SS", labelRu: "Высокий индекс", labelEn: "High index", color: "#00E5FF" };
+    if (s >= 75) return { grade: "S", labelRu: "Сильный индекс", labelEn: "Strong index", color: "#00FF88" };
+    if (s >= 65) return { grade: "A", labelRu: "Хороший индекс", labelEn: "Good index", color: "#FFB74D" };
+    if (s >= 50) return { grade: "B", labelRu: "Есть запас для улучшения", labelEn: "Room to improve", color: "#FFA726" };
+    return { grade: "C", labelRu: "Начальный индекс", labelEn: "Entry index", color: "#EF5350" };
   };
 
   const gradeInfo = getGradeTier(audit.score);
@@ -68,7 +68,7 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
             }}
           >
             <span className="grade-badge" style={{ fontFamily: "var(--font-mono)", fontWeight: 900, lineHeight: 1 }}>
-              GRADE {gradeInfo.grade}
+              INDEX {gradeInfo.grade}
             </span>
             <span className="grade-sep" style={{ opacity: 0.6, lineHeight: 1, margin: "0 2px" }}>•</span>
             <span
@@ -91,12 +91,12 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
             className="score-tier-badge"
             title={
               isRu
-                ? `Глобальный перцентиль сборки (${audit.archetype}): калиброванная модель распределения (Akasha/SeeleLand стандарт). Отражает позицию среди оптимизированных билдов роли.`
-                : `Global build leaderboard percentile (${audit.archetype}): calibrated distribution benchmark (Akasha/SeeleLand standard).`
+              ? "Глобальный перцентиль не показывается: нет сопоставимой выборки билдов и подтверждённой калибровки для этой игры."
+              : "Global percentile is unavailable: there is no matched build sample or validated calibration for this game."
             }
           >
-            <span className="tier-prefix">{isRu ? "ГЛОБАЛЬНЫЙ РАНГ" : "GLOBAL RANK"}</span>
-            <span className="tier-percent">TOP {audit.topPercent || "—"}%</span>
+            <span className="tier-prefix">{isRu ? "СРАВНЕНИЕ С ЛИДЕРАМИ" : "LEADERBOARD COMPARISON"}</span>
+            <span className="tier-percent">{isRu ? "Нет эталона" : "No benchmark"}</span>
           </div>
           <div
             className="score-verified-stamp"
