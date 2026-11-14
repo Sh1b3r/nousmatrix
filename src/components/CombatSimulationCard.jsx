@@ -3,6 +3,7 @@ import { runCombatSimulation } from "../utils/simulation.js";
 import { CHARACTER_SQUADS, TEAM_DATA_BY_CHARACTER, TEAM_STATISTICS_SOURCES, matchSquadWithShowcase, rankSquadsByShowcase } from "../utils/teamSynergy.js";
 import { runFullTeamRotationSimulation } from "../utils/rotationSimulation.js";
 import { scoreAgainstCombatBenchmark } from "../utils/combatBenchmark.js";
+import { resolveCombatEquipmentEffects } from "../utils/combatEquipmentEffects.js";
 import { iconUrl, handleImageFallback } from "../utils/audit.js";
 import { SwordIcon, ShieldIcon, SparklesIcon, CheckIcon, WarnIcon } from "./Icons.jsx";
 
@@ -40,10 +41,13 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const identityMismatches = useMemo(() => matchedTeammates.filter((tm) => tm.identityMismatch), [matchedTeammates]);
 
   const rotationSim = useMemo(() => {
-    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode });
+    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode, language: lang });
   }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode]);
+  const equipmentCoverage = useMemo(() => resolveCombatEquipmentEffects(character, matchedTeammates, {
+    targetCount: enemyMode === "pf" ? 5 : 3
+  }), [character, matchedTeammates, enemyMode]);
 
-  const sim = runCombatSimulation(character, stats || {}, archetype, lang);
+  const sim = runCombatSimulation(character, stats || {}, archetype, lang, { enemyMode, language: lang });
   const benchmark = useMemo(() => {
     if (!rotationSim) return null;
     const teamSignature = [
@@ -81,6 +85,18 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const detectedRole = String(audit.detectedRole?.role || "").toUpperCase();
   const isSupport = ["SUPPORT", "SUSTAIN"].includes(detectedRole)
     || sim.type === "SUPPORT" || sim.type === "SUSTAIN" || sim.type === "HYBRID_SUBDPS";
+  const displayEnemyInfo = rotationSim?.enemyScenarioInfo || sim.enemyScenarioInfo;
+  const displayEnemyTargets = rotationSim?.enemyTargets || (sim.enemyTarget ? [sim.enemyTarget] : []);
+  const selectedEnemySummary = displayEnemyInfo
+    ? displayEnemyTargets.map((target) => {
+      const derived = target.derivedStats || {};
+      const locale = isRu ? "ru-RU" : "en-US";
+      const derivedSummary = target.derivedStatsStatus === "calculated-from-pinned-game-config"
+        ? `; ${isRu ? "HP" : "HP"} ${Number(derived.hp || 0).toLocaleString(locale)}, ${isRu ? "СКОР" : "SPD"} ${Number(derived.speed || 0).toLocaleString(locale)}, ${isRu ? "стойкость" : "Toughness"} ${Number(derived.toughness || 0).toLocaleString(locale)}`
+        : "";
+      return `${target.name || target.id} (Lv. ${target.level}, ${target.resistancePercent.toFixed(0)}% RES${derivedSummary})`;
+    }).join("; ")
+    : null;
 
   const roleBadgeLabel = () => {
     if (sim.type === "HYBRID_SUBDPS") return isRu ? "Саб-ДПС и поддержка" : "Hybrid Sub-DPS & Utility";
@@ -102,18 +118,18 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
       <div className="panel-title">
         <span>{isRu ? "Модель боевого урона" : "Combat Damage Model"}</span>
         <div className="sim-header-controls">
-          <span className="sim-provenance-tag" title={isRu ? "Расчёт использует оружие и характеристики из профиля" : "Calculation uses the profile's light cone and stats"}>
+          <span className="sim-provenance-tag" title={isRu ? "Базовые статы и постоянные свойства берутся из профиля; боевые эффекты конуса и эйдолонов добавляются только при наличии правила для сценария" : "Base stats and permanent properties come from the profile; battle-only Light Cone and Eidolon effects are applied when the scenario has an exact rule"}>
             {isRu ? "ДАННЫЕ ПРОФИЛЯ" : "PROFILE DATA"}
           </span>
           <select
             className="sim-mode-select"
             value={enemyMode}
             onChange={(e) => setEnemyMode(e.target.value)}
-            title={isRu ? "Режим концовки: уровень врага и сопротивление" : "Endgame mode: enemy level and resistance"}
+            title={isRu ? "Режим и активные данные врагов испытания" : "Mode and active challenge enemy data"}
           >
-            <option value="moc">{isRu ? "MoC • Босс 95 ур." : "MoC • Lv.95 Boss"}</option>
-            <option value="pf">{isRu ? "PF • Мобы 88 ур." : "PF • Lv.88 Waves"}</option>
-            <option value="as">{isRu ? "AS • Босс 95 ур. (20% баз. RES)" : "AS • Lv.95 Boss (20% base RES)"}</option>
+            <option value="moc">{isRu ? "MoC • Активный этаж" : "MoC • Active Floor"}</option>
+            <option value="pf">{isRu ? "PF • Активный этаж" : "PF • Active Floor"}</option>
+            <option value="as">{isRu ? "AS • Активный этаж" : "AS • Active Floor"}</option>
           </select>
         </div>
       </div>
@@ -347,13 +363,17 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             <div className="combat-sim-metric-box sub-box">
               <span className="sim-metric-label">{sim.personalDpaLabel}</span>
               <span className="sim-metric-value highlight">
-                {Number(sim.personalDpa).toLocaleString("ru-RU")}
+                {sim.personalDpa === null || sim.personalDpa === undefined
+                  ? "—"
+                  : Number(sim.personalDpa).toLocaleString("ru-RU")}
               </span>
             </div>
             <div className="combat-sim-metric-box sub-box">
               <span className="sim-metric-label">{sim.personalDpcLabel}</span>
               <span className="sim-metric-value">
-                {Number(sim.personalDpc).toLocaleString("ru-RU")}
+                {sim.personalDpc === null || sim.personalDpc === undefined
+                  ? "—"
+                  : Number(sim.personalDpc).toLocaleString("ru-RU")}
               </span>
             </div>
             <div className="combat-sim-metric-box sub-box">
@@ -379,42 +399,56 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
           <summary className="sim-params-summary">
             <span>
               {isRu
-                ? enemyMode === "pf"
-                  ? "Допущения и параметры симуляции (PF / Мобы 88 ур.)"
-                  : enemyMode === "as"
-                    ? "Допущения и параметры симуляции (AS / Ап-босс 95 ур.)"
-                    : "Допущения и параметры симуляции (MoC 12 / Босс 95 ур.)"
-                : enemyMode === "pf"
-                  ? "Simulation Assumptions & Parameters (PF / Lv.88 Waves)"
-                  : enemyMode === "as"
-                    ? "Simulation Assumptions & Parameters (AS / Lv.95 Boss)"
-                    : "Simulation Assumptions & Parameters (MoC 12 / Lv.95 Boss)"}
+                ? `Допущения и параметры симуляции (${enemyMode.toUpperCase()}${displayEnemyInfo ? ` / этаж ${displayEnemyInfo.floor}` : ""})`
+                : `Simulation Assumptions & Parameters (${enemyMode.toUpperCase()}${displayEnemyInfo ? ` / Floor ${displayEnemyInfo.floor}` : ""})`}
             </span>
           </summary>
           <div className="sim-assumptions-list">
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
               <span>
-                {isRu
-                  ? enemyMode === "pf"
-                    ? "Цель: волны мобов 88 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
-                    : enemyMode === "as"
-                    ? "Цель: условный босс 95 уровня, базовое сопротивление 20%; индивидуальные сопротивления и слабости врага не заданы."
-                      : "Цель: босс 95 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
-                  : enemyMode === "pf"
-                    ? "Target: Lv. 88 waves, 20% base RES; DEF multiplier uses character and enemy levels."
-                    : enemyMode === "as"
-                    ? "Target: generic Lv. 95 boss, 20% base RES; enemy-specific resistances and weaknesses are not specified."
-                      : "Target: Lv. 95 boss, 20% base RES; DEF multiplier uses character and enemy levels."}
+                {displayEnemyInfo
+                  ? (isRu
+                    ? `Цели выбранной волны: ${selectedEnemySummary}. Данные 4.7.0: этаж ${displayEnemyInfo.floor}, сторона ${displayEnemyInfo.sideNumber}, этап ${displayEnemyInfo.stageId}, волна ${displayEnemyInfo.waveNumber}/${displayEnemyInfo.waveCount}. Бафф испытания ${displayEnemyInfo.challengeBuffId} не включён.`
+                    : `Selected wave targets: ${selectedEnemySummary}. 4.7.0 data: floor ${displayEnemyInfo.floor}, side ${displayEnemyInfo.sideNumber}, stage ${displayEnemyInfo.stageId}, wave ${displayEnemyInfo.waveNumber}/${displayEnemyInfo.waveCount}. Challenge buff ${displayEnemyInfo.challengeBuffId} is excluded.`)
+                  : (isRu
+                    ? "Используются общие параметры режима: уровни, состав волны и сопротивления конкретных врагов не заданы."
+                    : "Generic mode assumptions are used; exact enemy levels, lineup, and resistances are unavailable.")}
               </span>
             </div>
             {rotationSim && (
               <div className="assumption-item">
                 <span className="assumption-bullet">•</span>
                 <span>
+                  {rotationSim?.enemyScenarioInfo
+                    ? (isRu
+                      ? `В этой волне ${rotationSim.targetCount} целей. Слабости и сопротивления применяются отдельно к каждой; состояние стойкости не задано, поэтому прямой урон считает шкалу целой (×0,9).`
+                      : `This wave has ${rotationSim.targetCount} targets. Weaknesses and RES are resolved per target; break state is unknown, so direct hits assume intact Toughness (×0.9).`)
+                    : (isRu
+                      ? `Условное число целей: ${rotationSim.targetCount}. Сопротивление ${rotationSim.enemyResistancePercent.toFixed(0)}%; слабости и стойкость не заданы.`
+                      : `Generic target count: ${rotationSim.targetCount}. RES is ${rotationSim.enemyResistancePercent.toFixed(0)}%; weakness and break state are unspecified.`)}
+                </span>
+              </div>
+            )}
+            {rotationSim?.calculationWarnings?.map((warning) => (
+              <div className="assumption-item" key={warning}>
+                <span className="assumption-bullet">•</span>
+                <span>
+                  {warning.startsWith("Super Break omitted")
+                    ? isRu
+                      ? "Суперпробитие не включено: задайте пробитую цель, число срабатываний, истощение стойкости и базовый урон пробития для уровня персонажа."
+                      : "Super Break is omitted: configure a broken target, proc count, Toughness reduction, and level-specific base Break damage."
+                    : warning}
+                </span>
+              </div>
+            ))}
+            {equipmentCoverage && (
+              <div className="assumption-item">
+                <span className="assumption-bullet">•</span>
+                <span>
                   {isRu
-                    ? `Для суммарного AoE-урона задано целей: ${rotationSim.targetCount} (PF — 5, MoC/AS — 3). Слабость стихии и сопротивления конкретного врага не учитываются. Обычные удары считают активную стойкость (×0,9); суперпробитие — уже сломанную.`
-                    : `AoE totals use ${rotationSim.targetCount} targets (PF: 5, MoC/AS: 3). Elemental weakness and enemy-specific resistance are not modeled. Direct hits assume active Toughness (×0.9); Super Break assumes the target is broken.`}
+                    ? `Конус и эйдолоны: статы профиля учтены; правил E/S применено: ${equipmentCoverage.applied.length}; условий вне этой модели: ${equipmentCoverage.notModeled.length}.`
+                    : `Light Cone and Eidolons: profile stats are included; E/S rules applied: ${equipmentCoverage.applied.length}; conditions outside this model: ${equipmentCoverage.notModeled.length}.`}
                 </span>
               </div>
             )}

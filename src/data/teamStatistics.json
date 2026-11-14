@@ -302,7 +302,7 @@
     },
     "1406": {
       "en": "Cipher",
-      "ru": "Шифр"
+      "ru": "Цифер"
     },
     "1407": {
       "en": "Castorice",
@@ -1551,7 +1551,7 @@
     },
     "1406": {
       "nameEn": "Cipher",
-      "nameRu": "Шифр",
+      "nameRu": "Цифер",
       "slug": "cipher",
       "sourcePageUrl": "https://astravoy.net/hsr/team-comps/cipher",
       "pageStatus": "available",

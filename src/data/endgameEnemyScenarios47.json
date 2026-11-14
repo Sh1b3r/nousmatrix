@@ -1,0 +1,2143 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "4.7.0",
+  "snapshotDate": "2026-11-15",
+  "dataSource": {
+    "repository": "https://github.com/DimbreathBot/TurnBasedGameData",
+    "commit": "dad9155eb00fdeda31fb8456507c53590d49071f",
+    "commitMessage": "OSPRODWin4.7.0_D17180467_A17176203_L17175930",
+    "rawRoot": "https://raw.githubusercontent.com/DimbreathBot/TurnBasedGameData/dad9155eb00fdeda31fb8456507c53590d49071f",
+    "textMapLanguages": [
+      "EN",
+      "RU"
+    ]
+  },
+  "interpretation": {
+    "selectedContent": "Active challenge group and highest configured floor/tier on snapshotDate.",
+    "scenarioLayout": "Both sides and all stages/waves are preserved separately; do not flatten different waves into one AoE target group.",
+    "resistance": "Explicit MonsterConfig DamageTypeResistance entries are converted to percent points; an unlisted element is set to 0 only when the same config lists it as a weakness. Incomplete coverage stays flagged.",
+    "enemyStats": "Derived combat stats use Base x MonsterModifyRatio x EliteGroupRatio x StageHardLevelGroupRatio; wave HP multiplier defaults to 0 because no override is present in StageConfig. Toughness is divided by 3 and status resistance adds the stage hard-level value, following the referenced endgame stat processor. Raw factors remain alongside derived values.",
+    "enemyStatFormulaSource": "https://github.com/seriaati/hakushin-py/blob/main/hakushin/clients/hsr.py",
+    "unmodeledChallengeBuff": "challengeBuffId is retained as source data but its effects are not applied by this catalog."
+  },
+  "scenarios": {
+    "moc": {
+      "id": "moc-group-1036-floor-12",
+      "mode": "moc",
+      "groupId": 1036,
+      "floor": 12,
+      "challengeId": "5512",
+      "nameEn": "Survival of the Fittest (XII)",
+      "nameRu": "Естественный отбор XII",
+      "activeFrom": "2026-11-02 04:00:00",
+      "activeUntil": "2026-12-14 04:00:00",
+      "challengeBuffId": "3030149",
+      "sides": [
+        {
+          "id": "side-1",
+          "sideNumber": 1,
+          "npcMonsterIds": [
+            "2034010"
+          ],
+          "stages": [
+            {
+              "id": "30126121",
+              "nameEn": "Borisin Warhead: Hoolay",
+              "nameRu": "Вожак борисинцев: Хулэй",
+              "level": 95,
+              "stageHardLevelGroup": 3,
+              "stageAbilities": [],
+              "waves": [
+                [
+                  {
+                    "id": "monster-5013010-w1-monster0",
+                    "monsterId": "5013010",
+                    "templateId": "5013010",
+                    "nameHash": "9742045115079604233",
+                    "nameEn": "Rocking Rebel",
+                    "nameRu": "Рок-н-ролльный хулиган",
+                    "level": 95,
+                    "weaknesses": [
+                      "Physical",
+                      "Fire",
+                      "Wind"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 0,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 0,
+                      "Quantum": 20,
+                      "Imaginary": 20
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 1674,
+                      "defense": 210,
+                      "speed": 132,
+                      "toughness": 360,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 0.25
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 626,
+                      "defense": 1150,
+                      "hp": 628484,
+                      "speed": 174,
+                      "toughness": 120,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 3,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 39.889835,
+                        "defense": 5.47619,
+                        "hp": 294.42172,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 34.75065,
+                        "defense": 5.47619,
+                        "hp": 375.4385,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster0"
+                    }
+                  },
+                  {
+                    "id": "monster-800304016-w1-monster1",
+                    "monsterId": "800304016",
+                    "templateId": "8003040",
+                    "nameHash": "15864002628047023122",
+                    "nameEn": "Decaying Shadow",
+                    "nameRu": "Тень пожирательницы",
+                    "level": 95,
+                    "weaknesses": [
+                      "Fire",
+                      "Thunder",
+                      "Wind"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 0,
+                      "Wind": 0,
+                      "Quantum": 20,
+                      "Imaginary": 20
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 930,
+                      "defense": 210,
+                      "speed": 172,
+                      "toughness": 300,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1.5,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 626,
+                      "defense": 1150,
+                      "hp": 523737,
+                      "speed": 227,
+                      "toughness": 100,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 3,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 39.889835,
+                        "defense": 5.47619,
+                        "hp": 294.42172,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 34.75065,
+                        "defense": 5.47619,
+                        "hp": 375.4385,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster1"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "id": "monster-2034010-w2-monster0",
+                    "monsterId": "2034010",
+                    "templateId": "2034010",
+                    "nameHash": "4307424808395091276",
+                    "nameEn": "Borisin Warhead: Hoolay",
+                    "nameRu": "Вожак борисинцев: Хулэй",
+                    "level": 95,
+                    "weaknesses": [
+                      "Physical",
+                      "Fire",
+                      "Wind"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 0,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 0,
+                      "Quantum": 20,
+                      "Imaginary": 20
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 2557.5,
+                      "defense": 210,
+                      "speed": 200,
+                      "toughness": 720,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 626,
+                      "defense": 1150,
+                      "hp": 960184,
+                      "speed": 264,
+                      "toughness": 240,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 3,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 39.889835,
+                        "defense": 5.47619,
+                        "hp": 294.42172,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 34.75065,
+                        "defense": 5.47619,
+                        "hp": 375.4385,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {
+                      "STAT_CTRL_Frozen": 0.75,
+                      "STAT_Confine": 0.75,
+                      "STAT_Entangle": 0.75
+                    },
+                    "summonIds": [
+                      "203201003",
+                      "203202004"
+                    ],
+                    "sourcePosition": {
+                      "wave": 2,
+                      "slot": "Monster0"
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "side-2",
+          "sideNumber": 2,
+          "npcMonsterIds": [
+            "5034010"
+          ],
+          "stages": [
+            {
+              "id": "30126122",
+              "nameEn": "Blood of the Fallen God: Yabuli",
+              "nameRu": "Кровь падшего бога: Яполи",
+              "level": 95,
+              "stageHardLevelGroup": 3,
+              "stageAbilities": [],
+              "waves": [
+                [
+                  {
+                    "id": "monster-402302001-w1-monster0",
+                    "monsterId": "402302001",
+                    "templateId": "4023020",
+                    "nameHash": "13345892087718649038",
+                    "nameEn": "Moonlit Pegasus",
+                    "nameRu": "Лунный пегас",
+                    "level": 95,
+                    "weaknesses": [
+                      "Fire",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 1023,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 480,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1.454545,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 626,
+                      "defense": 1150,
+                      "hp": 558652,
+                      "speed": 132,
+                      "toughness": 160,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 3,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 39.889835,
+                        "defense": 5.47619,
+                        "hp": 294.42172,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 34.75065,
+                        "defense": 5.47619,
+                        "hp": 375.4385,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster0"
+                    }
+                  },
+                  {
+                    "id": "monster-402301001-w1-monster1",
+                    "monsterId": "402301001",
+                    "templateId": "4023010",
+                    "nameHash": "8036735044007088635",
+                    "nameEn": "Noontide Gryphon",
+                    "nameRu": "Полуденный грифон",
+                    "level": 95,
+                    "weaknesses": [
+                      "Physical",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 0,
+                      "Fire": 20,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 1209,
+                      "defense": 210,
+                      "speed": 120,
+                      "toughness": 480,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 0.5
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1.384615,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 626,
+                      "defense": 1150,
+                      "hp": 628484,
+                      "speed": 158,
+                      "toughness": 160,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 3,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 39.889835,
+                        "defense": 5.47619,
+                        "hp": 294.42172,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 34.75065,
+                        "defense": 5.47619,
+                        "hp": 375.4385,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [
+                      "402201001",
+                      "402201001",
+                      "402201001",
+                      "402201001"
+                    ],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster1"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "id": "monster-5034010-w2-monster0",
+                    "monsterId": "5034010",
+                    "templateId": "5034010",
+                    "nameHash": "12542455939681295413",
+                    "nameEn": "Blood of the Fallen God: Yabuli",
+                    "nameRu": "Кровь падшего бога: Яполи",
+                    "level": 95,
+                    "weaknesses": [
+                      "Ice",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 0,
+                      "Thunder": 20,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 2092.5,
+                      "defense": 210,
+                      "speed": 180,
+                      "toughness": 1080,
+                      "statusResistance": 0.3,
+                      "initialDelayRatio": null
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 626,
+                      "defense": 1150,
+                      "hp": 785605,
+                      "speed": 238,
+                      "toughness": 360,
+                      "statusResistance": 0.4
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 3,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 39.889835,
+                        "defense": 5.47619,
+                        "hp": 294.42172,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 34.75065,
+                        "defense": 5.47619,
+                        "hp": 375.4385,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {
+                      "STAT_CTRL": 1
+                    },
+                    "summonIds": [
+                      "503201002"
+                    ],
+                    "sourcePosition": {
+                      "wave": 2,
+                      "slot": "Monster0"
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "pf": {
+      "id": "pf-group-2027-floor-4",
+      "mode": "pf",
+      "groupId": 2027,
+      "floor": 4,
+      "challengeId": "20274",
+      "nameEn": "Imagined Words (IV)",
+      "nameRu": "Изображённые слова IV",
+      "activeFrom": "2026-10-19 04:00:00",
+      "activeUntil": "2026-11-30 04:00:00",
+      "challengeBuffId": "3031225",
+      "sides": [
+        {
+          "id": "side-1",
+          "sideNumber": 1,
+          "npcMonsterIds": [
+            "4034010"
+          ],
+          "stages": [
+            {
+              "id": "30325041",
+              "nameEn": "Flame Reaver of the Deepest Dark",
+              "nameRu": "Похититель пламени глубокой тьмы",
+              "level": 85,
+              "stageHardLevelGroup": 1,
+              "stageAbilities": [],
+              "waves": [
+                [
+                  {
+                    "id": "monster-4012010-w1-monster0",
+                    "monsterId": "4012010",
+                    "templateId": "4012010",
+                    "nameHash": "17634739213110302411",
+                    "nameEn": "Furiae Warrior",
+                    "nameRu": "Воин ярости",
+                    "level": 85,
+                    "weaknesses": [
+                      "Thunder",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 20,
+                      "Thunder": 0,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 241.8,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 90,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 45522,
+                      "speed": 120,
+                      "toughness": 30,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster0"
+                    }
+                  },
+                  {
+                    "id": "monster-4022010-w1-monster1",
+                    "monsterId": "4022010",
+                    "templateId": "4022010",
+                    "nameHash": "7715014407492377801",
+                    "nameEn": "Meteoric Eagle",
+                    "nameRu": "Метеоритный орёл",
+                    "level": 85,
+                    "weaknesses": [
+                      "Wind",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 0,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 279,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 90,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 52526,
+                      "speed": 120,
+                      "toughness": 30,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster1"
+                    }
+                  },
+                  {
+                    "id": "monster-501211002-w1-monster2",
+                    "monsterId": "501211002",
+                    "templateId": "5012110",
+                    "nameHash": "529724906259089865",
+                    "nameEn": "Furbo Journalist",
+                    "nameRu": "Шерстяка-журналист",
+                    "level": 85,
+                    "weaknesses": [
+                      "Thunder",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 20,
+                      "Thunder": 0,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 372,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 90,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1.5,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 105051,
+                      "speed": 120,
+                      "toughness": 30,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster2"
+                    }
+                  },
+                  {
+                    "id": "monster-4012010-w1-monster3",
+                    "monsterId": "4012010",
+                    "templateId": "4012010",
+                    "nameHash": "17634739213110302411",
+                    "nameEn": "Furiae Warrior",
+                    "nameRu": "Воин ярости",
+                    "level": 85,
+                    "weaknesses": [
+                      "Thunder",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 20,
+                      "Thunder": 0,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 241.8,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 90,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 45522,
+                      "speed": 120,
+                      "toughness": 30,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster3"
+                    }
+                  },
+                  {
+                    "id": "monster-4022010-w1-monster4",
+                    "monsterId": "4022010",
+                    "templateId": "4022010",
+                    "nameHash": "7715014407492377801",
+                    "nameEn": "Meteoric Eagle",
+                    "nameRu": "Метеоритный орёл",
+                    "level": 85,
+                    "weaknesses": [
+                      "Wind",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 0,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 279,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 90,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 52526,
+                      "speed": 120,
+                      "toughness": 30,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster4"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "id": "monster-401301201-w2-monster0",
+                    "monsterId": "401301201",
+                    "templateId": "4013012",
+                    "nameHash": "3041847525656817860",
+                    "nameEn": "Furiae Praetor",
+                    "nameRu": "Авангард ярости",
+                    "level": 85,
+                    "weaknesses": [
+                      "Ice",
+                      "Thunder",
+                      "Quantum"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 0,
+                      "Thunder": 0,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 20
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 1674,
+                      "defense": 210,
+                      "speed": 132,
+                      "toughness": 480,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 4.583333,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 1444452,
+                      "speed": 158,
+                      "toughness": 160,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 2,
+                      "slot": "Monster0"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "id": "monster-4034014-w3-monster0",
+                    "monsterId": "4034014",
+                    "templateId": "4034014",
+                    "nameHash": "4542020936047984840",
+                    "nameEn": "Flame Reaver of the Deepest Dark",
+                    "nameRu": "Похититель пламени глубокой тьмы",
+                    "level": 85,
+                    "weaknesses": [
+                      "Ice",
+                      "Thunder",
+                      "Quantum"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 0,
+                      "Thunder": 0,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 20
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 7672.5,
+                      "defense": 210,
+                      "speed": 132,
+                      "toughness": 720,
+                      "statusResistance": 0.3,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 1444452,
+                      "speed": 158,
+                      "toughness": 240,
+                      "statusResistance": 0.4
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {
+                      "STAT_CTRL_Frozen": 0.75,
+                      "STAT_Confine": 0.75,
+                      "STAT_Entangle": 0.75
+                    },
+                    "summonIds": [
+                      "4032024"
+                    ],
+                    "sourcePosition": {
+                      "wave": 3,
+                      "slot": "Monster0"
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "side-2",
+          "sideNumber": 2,
+          "npcMonsterIds": [
+            "5014020"
+          ],
+          "stages": [
+            {
+              "id": "30325042",
+              "nameEn": "Alloy Mechatron: King Pom-Pom",
+              "nameRu": "Металлический мехатрон: Королева Пом-Пом",
+              "level": 85,
+              "stageHardLevelGroup": 1,
+              "stageAbilities": [],
+              "waves": [
+                [
+                  {
+                    "id": "monster-2032010-w1-monster0",
+                    "monsterId": "2032010",
+                    "templateId": "2032010",
+                    "nameHash": "5295583729512602071",
+                    "nameEn": "Sableclaw Wolftrooper",
+                    "nameRu": "Волк-чернокоготь",
+                    "level": 85,
+                    "weaknesses": [
+                      "Fire",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 20,
+                      "Quantum": 20,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 186,
+                      "defense": 210,
+                      "speed": 120,
+                      "toughness": 90,
+                      "statusResistance": 0.1,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 35017,
+                      "speed": 144,
+                      "toughness": 30,
+                      "statusResistance": 0.2
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster0"
+                    }
+                  },
+                  {
+                    "id": "monster-202205004-w1-monster1",
+                    "monsterId": "202205004",
+                    "templateId": "2022050",
+                    "nameHash": "5705744438691432074",
+                    "nameEn": "Abundance Sprite: Wooden Lupus",
+                    "nameRu": "Зверь Изобилия: Древесный волк",
+                    "level": 85,
+                    "weaknesses": [
+                      "Fire",
+                      "Wind",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 0,
+                      "Quantum": 20,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 186,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 90,
+                      "statusResistance": 0.1,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 35017,
+                      "speed": 120,
+                      "toughness": 30,
+                      "statusResistance": 0.2
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [
+                      "2022051"
+                    ],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster1"
+                    }
+                  },
+                  {
+                    "id": "monster-501211002-w1-monster2",
+                    "monsterId": "501211002",
+                    "templateId": "5012110",
+                    "nameHash": "529724906259089865",
+                    "nameEn": "Furbo Journalist",
+                    "nameRu": "Шерстяка-журналист",
+                    "level": 85,
+                    "weaknesses": [
+                      "Thunder",
+                      "Quantum",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 20,
+                      "Ice": 20,
+                      "Thunder": 0,
+                      "Wind": 20,
+                      "Quantum": 0,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 372,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 90,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1.5,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 105051,
+                      "speed": 120,
+                      "toughness": 30,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster2"
+                    }
+                  },
+                  {
+                    "id": "monster-2032010-w1-monster3",
+                    "monsterId": "2032010",
+                    "templateId": "2032010",
+                    "nameHash": "5295583729512602071",
+                    "nameEn": "Sableclaw Wolftrooper",
+                    "nameRu": "Волк-чернокоготь",
+                    "level": 85,
+                    "weaknesses": [
+                      "Fire",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 20,
+                      "Quantum": 20,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 186,
+                      "defense": 210,
+                      "speed": 120,
+                      "toughness": 90,
+                      "statusResistance": 0.1,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 35017,
+                      "speed": 144,
+                      "toughness": 30,
+                      "statusResistance": 0.2
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster3"
+                    }
+                  },
+                  {
+                    "id": "monster-202205004-w1-monster4",
+                    "monsterId": "202205004",
+                    "templateId": "2022050",
+                    "nameHash": "5705744438691432074",
+                    "nameEn": "Abundance Sprite: Wooden Lupus",
+                    "nameRu": "Зверь Изобилия: Древесный волк",
+                    "level": 85,
+                    "weaknesses": [
+                      "Fire",
+                      "Wind",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 0,
+                      "Quantum": 20,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 186,
+                      "defense": 210,
+                      "speed": 100,
+                      "toughness": 90,
+                      "statusResistance": 0.1,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 35017,
+                      "speed": 120,
+                      "toughness": 30,
+                      "statusResistance": 0.2
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [
+                      "2022051"
+                    ],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster4"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "id": "monster-300302007-w2-monster0",
+                    "monsterId": "300302007",
+                    "templateId": "3003020",
+                    "nameHash": "9524722474129506048",
+                    "nameEn": "Dreamjolt Troupe's Sweet Gorilla",
+                    "nameRu": "Сладкая Горилла из труппы «Кошмарики»",
+                    "level": 85,
+                    "weaknesses": [
+                      "Physical",
+                      "Fire",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 0,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 20,
+                      "Wind": 20,
+                      "Quantum": 20,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 1674,
+                      "defense": 210,
+                      "speed": 144,
+                      "toughness": 300,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 4.583333,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 1444452,
+                      "speed": 173,
+                      "toughness": 100,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {},
+                    "summonIds": [
+                      "3002030"
+                    ],
+                    "sourcePosition": {
+                      "wave": 2,
+                      "slot": "Monster0"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "id": "monster-5014023-w3-monster0",
+                    "monsterId": "5014023",
+                    "templateId": "5014023",
+                    "nameHash": "14041910306053248814",
+                    "nameEn": "Alloy Mechatron: King Pom-Pom",
+                    "nameRu": "Металлический мехатрон: Королева Пом-Пом",
+                    "level": 85,
+                    "weaknesses": [
+                      "Fire",
+                      "Thunder",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 20,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 0,
+                      "Wind": 20,
+                      "Quantum": 20,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 7672.5,
+                      "defense": 210,
+                      "speed": 120,
+                      "toughness": 600,
+                      "statusResistance": 0.3,
+                      "initialDelayRatio": 0.5
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 608,
+                      "defense": 1050,
+                      "hp": 1444452,
+                      "speed": 144,
+                      "toughness": 200,
+                      "statusResistance": 0.4
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 33.752937,
+                        "defense": 5,
+                        "hp": 188.2636,
+                        "speed": 1.2,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {
+                      "STAT_CTRL": 0.5
+                    },
+                    "summonIds": [
+                      "5012120"
+                    ],
+                    "sourcePosition": {
+                      "wave": 3,
+                      "slot": "Monster0"
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "as": {
+      "id": "as-group-3021-floor-4",
+      "mode": "as",
+      "groupId": 3021,
+      "floor": 4,
+      "challengeId": "30214",
+      "nameEn": "Dominance of Oblivion: Difficulty <unbreak>04</unbreak>",
+      "nameRu": "Подчинение забвения: Сложность IV",
+      "activeFrom": "2026-10-05 04:00:00",
+      "activeUntil": "2026-11-16 04:00:00",
+      "challengeBuffId": "3110017",
+      "sides": [
+        {
+          "id": "side-1",
+          "sideNumber": 1,
+          "npcMonsterIds": [
+            "2004012"
+          ],
+          "stages": [
+            {
+              "id": "420534",
+              "nameEn": "Soulhook Sovereign",
+              "nameRu": "Влекущий владыка",
+              "level": 90,
+              "stageHardLevelGroup": 1,
+              "stageAbilities": [],
+              "waves": [
+                [
+                  {
+                    "id": "monster-200401404-w1-monster0",
+                    "monsterId": "200401404",
+                    "templateId": "2004014",
+                    "nameHash": "1358289180218405445",
+                    "nameEn": "Soulhook Sovereign",
+                    "nameRu": "Влекущий владыка",
+                    "level": 90,
+                    "weaknesses": [
+                      "Physical",
+                      "Fire",
+                      "Wind",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 0,
+                      "Fire": 0,
+                      "Ice": 40,
+                      "Thunder": 40,
+                      "Wind": 0,
+                      "Quantum": 40,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 7207.5,
+                      "defense": 210,
+                      "speed": 150,
+                      "toughness": 900,
+                      "statusResistance": 0.2,
+                      "initialDelayRatio": 1.5
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1.096774,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 663,
+                      "defense": 1100,
+                      "hp": 1869807,
+                      "speed": 198,
+                      "toughness": 300,
+                      "statusResistance": 0.30000000000000004
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 36.821384,
+                        "defense": 5.238095,
+                        "hp": 236.53471,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 36.821384,
+                        "defense": 5.238095,
+                        "hp": 236.53471,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {
+                      "STAT_CTRL_Frozen": 0.75
+                    },
+                    "summonIds": [
+                      "800302201",
+                      "800301201",
+                      "300301401",
+                      "301301201"
+                    ],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster0"
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "side-2",
+          "sideNumber": 2,
+          "npcMonsterIds": [
+            "4064012"
+          ],
+          "stages": [
+            {
+              "id": "420544",
+              "nameEn": "Arbiter of the Lost Abyss",
+              "nameRu": "Арбитр бездны замешательства",
+              "level": 90,
+              "stageHardLevelGroup": 1,
+              "stageAbilities": [],
+              "waves": [
+                [
+                  {
+                    "id": "monster-406401204-w1-monster0",
+                    "monsterId": "406401204",
+                    "templateId": "4064012",
+                    "nameHash": "7487180788362239792",
+                    "nameEn": "Arbiter of the Lost Abyss",
+                    "nameRu": "Арбитр бездны замешательства",
+                    "level": 90,
+                    "weaknesses": [
+                      "Physical",
+                      "Fire",
+                      "Thunder",
+                      "Imaginary"
+                    ],
+                    "resistancesPercent": {
+                      "Physical": 0,
+                      "Fire": 0,
+                      "Ice": 20,
+                      "Thunder": 0,
+                      "Wind": 20,
+                      "Quantum": 20,
+                      "Imaginary": 0
+                    },
+                    "resistanceSourceStatus": "complete-from-game-config-resistances-and-weaknesses",
+                    "missingResistanceTypes": [],
+                    "overlappingWeaknesses": [],
+                    "baseStats": {
+                      "attack": 18,
+                      "hp": 27900,
+                      "defense": 210,
+                      "speed": 144,
+                      "toughness": 360,
+                      "statusResistance": 0.3,
+                      "initialDelayRatio": 1
+                    },
+                    "monsterModifiers": {
+                      "attack": 1,
+                      "hp": 1.1,
+                      "defense": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "derivedStats": {
+                      "attack": 663,
+                      "defense": 1100,
+                      "hp": 7259250,
+                      "speed": 190,
+                      "toughness": 120,
+                      "statusResistance": 0.4
+                    },
+                    "derivedStatsStatus": "calculated-from-pinned-game-config",
+                    "waveHpMultiplier": 0,
+                    "eliteGroup": 1,
+                    "monsterHardLevelGroup": 1,
+                    "stageHardLevelGroup": 1,
+                    "eliteGroupFactors": {
+                      "attack": 1,
+                      "defense": 1,
+                      "hp": 1,
+                      "speed": 1,
+                      "toughness": 1
+                    },
+                    "hardLevelFactors": {
+                      "monsterGroup": {
+                        "attack": 36.821384,
+                        "defense": 5.238095,
+                        "hp": 236.53471,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      },
+                      "stageGroup": {
+                        "attack": 36.821384,
+                        "defense": 5.238095,
+                        "hp": 236.53471,
+                        "speed": 1.32,
+                        "toughness": 1,
+                        "statusResistance": 0.1
+                      }
+                    },
+                    "debuffResistances": {
+                      "STAT_CTRL": 0.75
+                    },
+                    "summonIds": [
+                      "406201005",
+                      "406201010",
+                      "406202005",
+                      "406301006"
+                    ],
+                    "sourcePosition": {
+                      "wave": 1,
+                      "slot": "Monster0"
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

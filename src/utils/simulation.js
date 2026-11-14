@@ -1,6 +1,39 @@
 import { ROTATIONS } from "../data/rotations.js";
+import { calculateDefenseMultiplier, calculateResistanceMultiplier, calculateToughnessMultiplier } from "./damageFormula.js";
+import { resolveEnemyScenario } from "./enemyScenario.js";
 
-function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
+function resolveProfileSkillHit(character, archetype) {
+  const preferredTypes = ["BPSkill", "Ultra", "Normal", "Talent"];
+  const skill = preferredTypes
+    .map((type) => (character.skills || []).find((candidate) => candidate.type === type))
+    .find((candidate) => candidate && /damage|DMG|урон/i.test(String(candidate.desc || ""))
+      && /\d+(?:[.,]\d+)?\s*%/.test(String(candidate.desc || "")));
+  if (!skill) return null;
+
+  const description = String(skill.desc || "");
+  const damageRatio = description.match(/(?:damage|DMG|урон)[^%]{0,100}?([\d]+(?:[.,][\d]+)?)\s*%/i);
+  if (!damageRatio) return null;
+  const motionValue = Number(damageRatio[1].replace(",", ".")) / 100;
+  if (!Number.isFinite(motionValue)) return null;
+  const coefficientEnd = damageRatio.index + damageRatio[0].length;
+  const coefficientContext = description.slice(coefficientEnd, coefficientEnd + 100);
+  const englishScaling = coefficientContext.match(/of\s+.{1,60}?(?:'s|’s)\s+(ATK|Attack|HP|Max HP|DEF|Defense)\b/i)?.[1];
+  const localizedScaling = coefficientContext.match(/(?:от|на основе)\s+(?:макс(?:имального)?\.?\s*)?(?:значения\s+)?(атак[а-я]*|АТК|здоровь[а-я]*|НР|HP|защит[а-я]*|ЗАЩ)/i)?.[1];
+  const scalingText = String(englishScaling || localizedScaling || "").toLowerCase();
+  const scalingField = /hp|здоров|нр/.test(scalingText)
+    ? "hp"
+    : /def|defense|защит|защ/.test(scalingText)
+      ? "def"
+      : archetype === "HP_CRIT_DPS" ? "hp" : "atk";
+
+  return {
+    skill,
+    motionValue,
+    scalingField
+  };
+}
+
+function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru", options = {}) {
   if (!char) return null;
   const isRu = lang === "ru";
   const name = (char.name || "").toLowerCase();
@@ -34,19 +67,27 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     be = parseFloat(((addMap["break_dmg"]?.value || 0) * 100).toFixed(1)) || 0;
     ehr = parseFloat(((addMap["effect_hit"]?.value || 0) * 100).toFixed(1)) || 0;
     err = parseFloat(((addMap["sp_rate"]?.value || 0) * 100).toFixed(1)) || 0;
-    const dmgFields = ["fire_dmg", "physical_dmg", "quantum_dmg", "thunder_dmg", "wind_dmg", "ice_dmg", "imaginary_dmg", "all_dmg"];
-    dmgFields.forEach((f) => {
-      if (addMap[f]?.value) {
-        dmg_boost = Math.max(dmg_boost, parseFloat((addMap[f].value * 100).toFixed(1)));
-      }
-    });
+    const damageFieldByElement = {
+      Physical: "physical_dmg", Fire: "fire_dmg", Ice: "ice_dmg", Lightning: "thunder_dmg", Thunder: "thunder_dmg",
+      Wind: "wind_dmg", Quantum: "quantum_dmg", Imaginary: "imaginary_dmg"
+    };
+    const elementDamageField = damageFieldByElement[char.element?.id] || "";
+    dmg_boost = parseFloat((((addMap.all_dmg?.value || 0)
+      + (addMap[elementDamageField]?.value || 0)) * 100).toFixed(1));
   }
   const modeledCharacterLevel = Number(char.level) || 80;
-  const modeledEnemyLevel = 95;
-  const baseDefFactor = (modeledCharacterLevel + 20) / (modeledCharacterLevel + modeledEnemyLevel + 40);
-  // Legacy hit estimates assume a non-weak enemy with an active Toughness bar.
-  const baseResMult = 0.8 * 0.9;
+  const enemyScenario = options.enemyScenario || resolveEnemyScenario(options, options.enemyMode || "moc", char.element?.id || char.element || "");
+  const enemyTarget = enemyScenario.targets[0];
+  const modeledEnemyLevel = Number(enemyTarget?.level) || 95;
+  const baseDefFactor = calculateDefenseMultiplier(modeledCharacterLevel, modeledEnemyLevel, 0);
+  const enemyResistance = Number(enemyTarget?.resistancePercent ?? 20) / 100;
+  const toughnessMultiplier = calculateToughnessMultiplier(enemyTarget?.isBroken);
+  const baseResMult = calculateResistanceMultiplier(enemyResistance, 0) * toughnessMultiplier;
   const baseDmgCoeff = baseDefFactor * baseResMult;
+  const enemyTargetLabel = enemyTarget?.name || (isRu ? "условная цель" : "generic target");
+  const enemyTargetDetails = isRu
+    ? `${enemyTargetLabel}, ур. ${modeledEnemyLevel}, RES ${(enemyResistance * 100).toFixed(0)}%`
+    : `${enemyTargetLabel}, Lv. ${modeledEnemyLevel}, ${(enemyResistance * 100).toFixed(0)}% RES`;
   const effectiveSpd = Math.max(90, spd);
   const actionsPerCycle0 = Math.floor(150 * effectiveSpd / 1e4) + 150 * effectiveSpd % 1e4 / 1e4;
   const actionsPerCycle = Math.floor(100 * effectiveSpd / 1e4) + 100 * effectiveSpd % 1e4 / 1e4;
@@ -112,13 +153,26 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     };
   }
   if (isMortenax) {
-    const zoneDefMult = (modeledCharacterLevel + 20) /
-      (modeledCharacterLevel + 20 + (modeledEnemyLevel + 20) * (1 - 0.3));
+    const zoneDefMult = calculateDefenseMultiplier(modeledCharacterLevel, modeledEnemyLevel, 30);
     const vulnMult = 1 + 0.5;
     const totalDmgBonus = 1 + dmg_boost / 100;
-    const motionValue = 1.68;
-    const personalDpa = Math.round(hp * motionValue * totalDmgBonus * critMultiplier * zoneDefMult * baseResMult * vulnMult);
-    const personalDpc = Math.round(personalDpa * actionsPerCycle);
+    const skill = (char.skills || []).find((candidate) => candidate.type === "BPSkill" || candidate.type_text === "Skill");
+    const skillDescription = String(skill?.desc || "");
+    const damageRatios = [...skillDescription.matchAll(/([\d.]+)%/g)]
+      .map((match) => Number(match[1]))
+      .filter(Number.isFinite);
+    // In the kit description the last two percentages are the AoE HP ratio
+    // and each random bounce's HP ratio; the first percentage is HP cost.
+    const areaRatio = damageRatios.length >= 2 ? damageRatios[damageRatios.length - 2] : null;
+    const bounceRatio = damageRatios.length >= 2 ? damageRatios[damageRatios.length - 1] : null;
+    const bounceCountMatch = skillDescription.match(/(\d+)\s*(?:instance|hit|раз)/i);
+    const bounceCount = bounceCountMatch ? Number(bounceCountMatch[1]) : 4;
+    const motionValue = Number.isFinite(areaRatio) && Number.isFinite(bounceRatio)
+      ? (areaRatio + bounceRatio * bounceCount) / 100
+      : null;
+    const personalDpa = motionValue === null
+      ? null
+      : Math.round(hp * motionValue * totalDmgBonus * critMultiplier * zoneDefMult * baseResMult * vulnMult);
     const actionsInZone = (142.86 * spd / 1e4).toFixed(1);
     return {
       type: "HYBRID_SUBDPS",
@@ -132,9 +186,9 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
       metric3Value: `${actionsInZone}x (${142.86.toFixed(0)} AV)`,
 
       personalDpa,
-      personalDpc,
-      personalDpaLabel: isRu ? "Средний урон навыка (168% HP)" : "Avg Skill Damage (168% HP)",
-      personalDpcLabel: isRu ? "Личный урон в цикл (100 AV)" : "Personal Cycle Output (100 AV)",
+      personalDpc: null,
+      personalDpaLabel: isRu ? "Урон навыка по одной цели в Зоне (HP > 1)" : "One-Target Skill Damage in Zone (HP > 1)",
+      personalDpcLabel: isRu ? "Урон за цикл (нужен таймлайн HP и лечения)" : "Cycle Damage (requires HP and healing timeline)",
       personalMetric3Label: isRu ? "Крит. масса в Зоне (+20/60)" : "Combat Crit Value (+20/60)",
       personalMetric3Value: `${(simCr * 100).toFixed(0)}% КШ / ${(simCd * 100).toFixed(0)}% КУ (${critMultiplier.toFixed(2)}x)`,
 
@@ -161,8 +215,12 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
           desc: isRu ? "Навык в состоянии Бесконечной ярости расходует только здоровье, оставляя все SP саппортам." : "Skill consumes HP instead of Skill Points, keeping SP positive for team."
         }
       ],
-      summaryRu: `В гибридной роли Мортенакс Блейд совмещает дебафф и личный урон: обеспечивает срез защиты (-30% DEF) и статус уязвимости (+50% получаемого урона) через атаки союзников, а также наносит ~${personalDpa.toLocaleString("ru-RU")} расчётного урона за действие от запаса здоровья (${hp.toLocaleString("ru-RU")} HP).`,
-      summaryEn: `In a hybrid role, Mortenax Blade combines debuffing and damage: provides -30% DEF shred and +50% vulnerability taken via ally hits while delivering ~${personalDpa.toLocaleString("en-US")} calculated damage per action scaling with ${hp.toLocaleString("en-US")} HP.`
+      summaryRu: personalDpa === null
+        ? "Мортенакс Блейд: урон навыка не рассчитан — множители навыка не удалось извлечь из данных профиля. Урон за цикл нельзя определить без текущего HP, лечения и таймлайна Зоны."
+        : `Мортенакс Блейд: один навык в Зоне против одной цели наносит около ${personalDpa.toLocaleString("ru-RU")} при HP выше 1. Это не урон за цикл: число доступных навыков зависит от текущего HP, лечения и длительности Зоны.`,
+      summaryEn: personalDpa === null
+        ? "Mortenax Blade: Skill damage was not calculated because its multiplier could not be read from the profile. Cycle damage needs current HP, healing, and Zone timing."
+        : `Mortenax Blade: one Zone Skill against one target deals about ${personalDpa.toLocaleString("en-US")} while HP is above 1. This is not cycle damage; usable Skill count depends on current HP, healing, and Zone duration.`
     };
   }
   if (isWelt) {
@@ -760,27 +818,34 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     case "HP_CRIT_DPS":
     case "CRIT_DPS":
     default: {
-      const isHpScale = archetype === "HP_CRIT_DPS";
-      const scalingStat = (isHpScale ? hp : atk);
-      const isHimekoChar = charId === "1003";
-      const effectiveCr = isHimekoChar ? Math.min(1, simCr + 0.15) : simCr;
+      const profileHit = resolveProfileSkillHit(char, archetype);
+      if (!profileHit) return null;
+      const scalingStat = profileHit.scalingField === "hp" ? hp
+        : profileHit.scalingField === "def" ? def : atk;
+      const effectiveCr = simCr;
       const effectiveCritMult = 1 + effectiveCr * simCd;
-      const motionValue = isHimekoChar ? 2.8 : 2.4;
-      const totalDmgBonus = 1 + (dmg_boost + (isHimekoChar ? 20 : 0)) / 100;
-      const dpa = Math.round(scalingStat * motionValue * totalDmgBonus * effectiveCritMult * baseDmgCoeff);
-      const effectiveActions = isHimekoChar ? actionsPerCycle + 1.2 : actionsPerCycle;
-      const dpc = Math.round(dpa * effectiveActions);
+      const totalDmgBonus = 1 + dmg_boost / 100;
+      const dpa = Math.round(scalingStat * profileHit.motionValue * totalDmgBonus * effectiveCritMult * baseDmgCoeff);
+      const skillName = String(profileHit.skill.name || "Skill");
+      const coefficient = (profileHit.motionValue * 100).toFixed(1);
       return {
         type: "DAMAGE",
         hasDualOutput: false,
-        metric1Label: isRu ? isHimekoChar ? "УРОН НАВЫКА / УЛЬТЫ (DPA)" : "СРЕДНИЙ УРОН ЗА УДАР (DPA)" : isHimekoChar ? "SKILL / ULT BURST (DPA)" : "AVG DAMAGE PER HIT (DPA)",
-        metric1Value: `${dpa.toLocaleString("ru-RU")}`,
-        metric2Label: isRu ? isHimekoChar ? "DPS ЗА ЦИКЛ (С ПОБЕДНЫМ КУРАЖОМ)" : "DPS ЗА ЦИКЛ (100 AV)" : isHimekoChar ? "CYCLE DPS (W/ VICTORY RUSH)" : "CYCLE DPS (100 AV)",
-        metric2Value: `${dpc.toLocaleString("ru-RU")}`,
-        metric3Label: isRu ? isHimekoChar ? "КРИТ. МНОЖИТЕЛЬ (+15% КШ ПАССИВКА)" : "ОЖИДАЕМЫЙ МНОЖИТЕЛЬ КРИТА" : isHimekoChar ? "CRIT MULTIPLIER (+15% CR PASSIVE)" : "EXPECTED CRIT MULTIPLIER",
-        metric3Value: `${effectiveCritMult.toFixed(2)}x (${(effectiveCr * 100).toFixed(0)}% / ${(simCd * 100).toFixed(0)}%)`,
-        summaryRu: isHimekoChar ? `Химеко (включая Нову) против босса MoC 12: наносит ~${dpa.toLocaleString("ru-RU")} с навыка и сверхспособности, а с учётом бонус-атак Победного куража (Victory Rush) суммарный урон за цикл достигает ~${dpc.toLocaleString("ru-RU")} при боевом множителе крита ${effectiveCritMult.toFixed(2)}x.` : `Симуляция боя против босса MoC 12: средний удар наносит ~${dpa.toLocaleString("ru-RU")}, суммарный урон за цикл ~${dpc.toLocaleString("ru-RU")} при множителе крита ${critMultiplier.toFixed(2)}x.`,
-        summaryEn: isHimekoChar ? `Himeko (including Nova) vs MoC 12 Boss: deals ~${dpa.toLocaleString("en-US")} per skill/ultimate, scaling to ~${dpc.toLocaleString("en-US")} cycle output including Victory Rush follow-up attacks at ${effectiveCritMult.toFixed(2)}x crit expectation.` : `Simulated vs MoC 12 Boss: average attack delivers ~${dpa.toLocaleString("en-US")}, totaling ~${dpc.toLocaleString("en-US")} per cycle at ${critMultiplier.toFixed(2)}x crit expectation.`,
+        metric1Label: isRu ? "УРОН ОДНОГО ПОПАДАНИЯ НАВЫКА (ОЦЕНКА)" : "SINGLE SKILL HIT (ESTIMATE)",
+        metric1Value: "~" + dpa.toLocaleString(isRu ? "ru-RU" : "en-US"),
+        metric2Label: null,
+        metric2Value: null,
+        metric3Label: isRu ? "ОЖИДАЕМЫЙ МНОЖИТЕЛЬ КРИТА" : "EXPECTED CRIT MULTIPLIER",
+        metric3Value: effectiveCritMult.toFixed(2) + "x (" + (effectiveCr * 100).toFixed(0) + "% / " + (simCd * 100).toFixed(0) + "%)",
+        personalDpa: dpa,
+        personalDpc: null,
+        personalDpaLabel: isRu ? "Попадание навыка " + skillName : "Skill hit: " + skillName,
+        personalDpcLabel: null,
+        personalMetric3Label: isRu ? "Множитель крита" : "Crit Multiplier",
+        personalMetric3Value: effectiveCritMult.toFixed(2) + "x",
+        summaryRu: "Оценка одного попадания навыка «" + skillName + "» по цели " + enemyTargetDetails + ". Коэффициент " + coefficient + "% взят из описания навыка профиля; цикл, условные эффекты и баффы отряда не моделируются.",
+        summaryEn: "Estimate of one hit from " + skillName + " against " + enemyTargetDetails + ". The " + coefficient + "% coefficient comes from the profile skill description; rotation, conditional effects, and team buffs are not modeled.",
+        calculationPrecision: "profile-skill-single-hit"
       };
     }
   }
@@ -789,14 +854,20 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
 // Legacy character formulas are single-hit estimates, not calibrated rotations.
 // Keep their relative damage result for relic stat comparisons, while the UI
 // states that no cycle DPS or build tier is supported by this model.
-export function runCombatSimulation(char, stats, archetype, lang = "ru") {
-  const result = runCombatSimulationHeuristic(char, stats, archetype, lang);
+export function runCombatSimulation(char, stats, archetype, lang = "ru", options = {}) {
+  const enemyMode = options.enemyMode || "moc";
+  const enemyScenario = resolveEnemyScenario({ ...options, language: lang }, enemyMode, char?.element?.id || char?.element || "");
+  const result = runCombatSimulationHeuristic(char, stats, archetype, lang, { ...options, enemyMode, enemyScenario });
   if (!result) return result;
   const isRu = lang === "ru";
   const isMortenax = String(char?.id || "") === "1507"
     || /мортенакс|mortenax/i.test(String(char?.name || ""));
+  const isProfileSkillHit = result.calculationPrecision === "profile-skill-single-hit";
   return {
     ...result,
+    enemyScenarioInfo: enemyScenario.officialEncounter,
+    enemyScenarioStatus: enemyScenario.status,
+    enemyTarget: enemyScenario.targets[0] || null,
     hasDualOutput: false,
     benchmarkTier: null,
     personalDpc: null,
@@ -805,19 +876,28 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
     personalMetric3Value: null,
     metric1Label: isMortenax
       ? (isRu ? "Навык в Бесконечной ярости • 1 цель" : "Infinite Fury Skill • 1 target")
-      : (isRu ? "Оценка одного удара (черновая модель)" : "Single-hit estimate (draft model)"),
-    metric1Value: Number.isFinite(Number(result.personalDpa)) ? `~${Number(result.personalDpa).toLocaleString(lang === "ru" ? "ru-RU" : "en-US")}` : null,
+      : isProfileSkillHit
+        ? (isRu ? "Оценка попадания навыка по профилю" : "Profile skill-hit estimate")
+        : (isRu ? "Оценка одного удара (черновая модель)" : "Single-hit estimate (draft model)"),
+    metric1Value: result.personalDpa !== null && result.personalDpa !== undefined
+      && Number.isFinite(Number(result.personalDpa))
+      ? `~${Number(result.personalDpa).toLocaleString(lang === "ru" ? "ru-RU" : "en-US")}`
+      : null,
     metric2Label: null,
     metric2Value: null,
     summaryRu: isMortenax
-      ? "Оценка одного усиленного навыка по одной цели (168% макс. HP) внутри Бесконечной ярости. Навык нельзя применить при HP ≤ 1; текущие HP, входящий урон и лечение Хохо не смоделированы, поэтому урон за ротацию не выводится."
-      : "Это ориентировочная одноударная оценка старой формулы. Она не моделирует ротацию, порядок ходов, энергию и условия эффектов; ранг или DPS по ней не присваивается.",
+      ? result.summaryRu
+      : isProfileSkillHit
+        ? result.summaryRu
+        : "Это ориентировочная одноударная оценка старой формулы. Она не моделирует ротацию, порядок ходов, энергию и условия эффектов; ранг или DPS по ней не присваивается.",
     summaryEn: isMortenax
-      ? "Estimate for one enhanced Skill against one target (168% Max HP) during Infinite Fury. Skill cannot be used at HP ≤ 1; current HP, incoming damage, and Huohuo's healing are not modeled, so no rotation total is shown."
-      : "This is a rough single-hit estimate from a legacy formula. It does not model rotations, turn order, energy, or conditional effect uptime; no DPS or tier is assigned.",
+      ? result.summaryEn
+      : isProfileSkillHit
+        ? result.summaryEn
+        : "This is a rough single-hit estimate from a legacy formula. It does not model rotations, turn order, energy, or conditional effect uptime; no DPS or tier is assigned.",
     benchmarkStatus: "unavailable",
-    calculationPrecision: ROTATIONS[String(char?.id || "")]?.status === "verified"
+    calculationPrecision: result.calculationPrecision || (ROTATIONS[String(char?.id || "")]?.status === "verified"
       ? "configured-script-estimate"
-      : "legacy-single-hit-estimate"
+      : "legacy-single-hit-estimate")
   };
 }

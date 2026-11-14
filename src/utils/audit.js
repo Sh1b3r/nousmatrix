@@ -1701,7 +1701,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const heal = parseFloat(((addMap["heal_rate"]?.value || 0) * 100).toFixed(1));
   const err = parseFloat(((addMap["sp_rate"]?.value || 0) * 100).toFixed(1));
   const damageFieldByElement = {
-    Physical: "physical_dmg", Fire: "fire_dmg", Ice: "ice_dmg", Lightning: "thunder_dmg",
+    Physical: "physical_dmg", Fire: "fire_dmg", Ice: "ice_dmg", Lightning: "thunder_dmg", Thunder: "thunder_dmg",
     Wind: "wind_dmg", Quantum: "quantum_dmg", Imaginary: "imaginary_dmg"
   };
   const elementDamageField = damageFieldByElement[char.element?.id] || "";
