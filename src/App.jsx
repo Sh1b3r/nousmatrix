@@ -465,6 +465,36 @@ export default function App() {
     }
     fetchProfile("700142890", true);
   };
+
+  // Background Auto-Sync: автоматическое обновление витрины в фоновом режиме каждые 30 секунд
+  // Если игрок сменил реликвию или конус в игре и вернулся на вкладку браузера — сайт обновится автоматически
+  useEffect(() => {
+    const activeUid = currentProfile?.player?.uid;
+    if (!activeUid) return;
+
+    const intervalId = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        fetchProfile(String(activeUid), false, true);
+      }
+    }, 28000);
+
+    return () => clearInterval(intervalId);
+  }, [currentProfile?.player?.uid]);
+
+  // Window Focus listener: при переключении из окна игры обратно в браузер — мгновенная тихая сверка
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      const activeUid = currentProfile?.player?.uid;
+      if (activeUid && !isRefreshing && !isLoading) {
+        fetchProfile(String(activeUid), false, true);
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("focus", handleWindowFocus);
+      return () => window.removeEventListener("focus", handleWindowFocus);
+    }
+  }, [currentProfile?.player?.uid, isRefreshing, isLoading]);
+
   const activeChar = currentProfile?.characters?.[activeIndex] || null;
   const audit = activeChar ? calculateCharacterAudit(activeChar, lang) : null;
   const player = currentProfile?.player || null;
@@ -521,6 +551,10 @@ export default function App() {
               </div>
 
               <div className="player-actions">
+                <div className="auto-refresh-indicator" title={lang === "ru" ? "Авто-синхронизация активна: обновляет профиль при смене фокуса из игры и каждые 28 сек" : "Auto-sync active: refreshes upon window focus & every 28s"}>
+                  <span className="auto-refresh-dot" />
+                  <span>{lang === "ru" ? "АВТО-СИНК" : "AUTO-SYNC"}</span>
+                </div>
                 <button
                   type="button"
                   className={`btn-outline refresh-btn ${isRefreshing ? "loading" : ""}`}
@@ -528,8 +562,8 @@ export default function App() {
                   disabled={isRefreshing}
                   title={
                     lang === "ru"
-                      ? "Обновить данные из игры (обойти кэш)"
-                      : "Refresh data from game (bypass cache)"
+                      ? "Принудительно запросить свежие данные из игры прямо сейчас"
+                      : "Force fetch fresh game data immediately"
                   }
                 >
                   <RefreshIcon size={12} className={`refresh-icon ${isRefreshing ? "spinning" : ""}`} />{" "}

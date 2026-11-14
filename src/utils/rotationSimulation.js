@@ -68,12 +68,19 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const effectiveRes = Math.max(-1, baseEnemyRes - (teamResPen + kitResPen) / 100);
   const resMult = 1 - effectiveRes;
   const vulnMult = 1 + teamVuln / 100;
-  const combatAtk = baseAtk + teamAtkGrant;
+  const isNormalized = Boolean(options.isNormalized);
+  // Normalized E0S1 Benchmark: стандартизированный эталон конуса S1 (как на Akasha)
+  // Уравнивает оружие всех игроков к эталону 5* S1 для объективного сравнения силы реликвий.
+  const normAtkBonus = isNormalized ? 400 : 0;
+  const normDmgBonus = isNormalized ? 24 : 0;
+  const normCdBonus = isNormalized ? 32 : 0;
+
+  const combatAtk = baseAtk + teamAtkGrant + normAtkBonus;
   const combatHp = baseHp;
   const combatCr = Math.min(1, (baseCr + teamCrGrant) / 100);
-  const combatCd = (baseCd + teamCdGrant + kitCd) / 100;
+  const combatCd = (baseCd + teamCdGrant + kitCd + normCdBonus) / 100;
   const critMultiplier = 1 + combatCr * combatCd;
-  const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost) / 100;
+  const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + normDmgBonus) / 100;
   const steps = [];
   let rotationTotalDamage = 0;
   let peakHitDamage = 0;

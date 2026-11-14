@@ -17,6 +17,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
   const [enemyMode, setEnemyMode] = useState("moc");
+  const [isNormalized, setIsNormalized] = useState(false);
   const currentSquad = squads[selectedSquadIdx] || squads[0];
 
   const matchedTeammates = useMemo(() => {
@@ -28,8 +29,8 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   }, [matchedTeammates]);
 
   const rotationSim = useMemo(() => {
-    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode });
-  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode]);
+    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode, isNormalized });
+  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode, isNormalized]);
 
   const sim = runCombatSimulation(character, stats || {}, archetype, lang);
   if (!sim) return null;
@@ -56,16 +57,30 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
     <div className="panel panel-combat-sim">
       <div className="panel-title">
         <span>{isRu ? "Боевая симуляция ротации" : "Combat Rotation Simulation"}</span>
-        <select
-          className="sim-mode-select"
-          value={enemyMode}
-          onChange={(e) => setEnemyMode(e.target.value)}
-          title={isRu ? "Режим концовки: уровень врага и сопротивление" : "Endgame mode: enemy level and resistance"}
-        >
-          <option value="moc">{isRu ? "MoC • Босс 95 ур." : "MoC • Lv.95 Boss"}</option>
-          <option value="pf">{isRu ? "PF • Мобы 88 ур." : "PF • Lv.88 Waves"}</option>
-          <option value="as">{isRu ? "AS • Ап-босс 95 ур. (40% RES)" : "AS • Lv.95 Boss (40% RES)"}</option>
-        </select>
+        <div className="sim-header-controls">
+          <button
+            type="button"
+            className={`sim-norm-toggle ${isNormalized ? "active" : ""}`}
+            onClick={() => setIsNormalized(!isNormalized)}
+            title={
+              isRu
+                ? "Нормализованный бенчмарк (Akasha standard): уравнивает оружие всех игроков к эталону E0S1 для объективной оценки реликвий"
+                : "Normalized E0S1 Benchmark (Akasha standard): standardizes weapon power for pure relic evaluation"
+            }
+          >
+            {isRu ? (isNormalized ? "★ ЭТАЛОН E0S1" : "КОНУС ИЗ ПРОФИЛЯ") : (isNormalized ? "★ E0S1 BENCHMARK" : "LIVE CONE")}
+          </button>
+          <select
+            className="sim-mode-select"
+            value={enemyMode}
+            onChange={(e) => setEnemyMode(e.target.value)}
+            title={isRu ? "Режим концовки: уровень врага и сопротивление" : "Endgame mode: enemy level and resistance"}
+          >
+            <option value="moc">{isRu ? "MoC • Босс 95 ур." : "MoC • Lv.95 Boss"}</option>
+            <option value="pf">{isRu ? "PF • Мобы 88 ур." : "PF • Lv.88 Waves"}</option>
+            <option value="as">{isRu ? "AS • Ап-босс 95 ур. (40% RES)" : "AS • Lv.95 Boss (40% RES)"}</option>
+          </select>
+        </div>
       </div>
 
       <div className="combat-sim-header">
@@ -341,6 +356,16 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <span className="assumption-bullet">•</span>
               <span>{isRu ? "Окно действия: 100 AV (150 AV в цикле 0)." : "Action window: 100 AV (150 AV in Cycle 0)."}</span>
             </div>
+            {isNormalized && (
+              <div className="assumption-item">
+                <span className="assumption-bullet">•</span>
+                <span className="text-accent">
+                  {isRu
+                    ? "Нормализация E0S1 активна: расчёт урона проведён на стандартизированном сигнатурном конусе S1 (Akasha Leaderboard standard). Оценивается чистая сила фарма реликвий независимо от наложений оружия."
+                    : "E0S1 Normalization active: damage computed on standardized S1 signature weapon (Akasha Leaderboard standard). Evaluates pure relic farm quality."}
+                </span>
+              </div>
+            )}
             {rotationSim?.loopFactor > 1 && (
               <div className="assumption-item">
                 <span className="assumption-bullet">•</span>
