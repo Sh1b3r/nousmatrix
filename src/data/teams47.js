@@ -211,9 +211,9 @@ export const TEAMS_47 = {
           names: ["мортенакс", "mortenax"],
           roleRu: "Нихилия (Дебафы и суб-ДПС)",
           roleEn: "Nihility (Debuffs & Sub-DPS)",
-          buffDescRu: "Срез защиты (-20%), уязвимость (+25%), быстрый набор зарядов для Ахерон",
-          buffDescEn: "DEF shred (-20%), vulnerability (+25%), rapid Slash charge generator",
-          buffValues: { allVuln: 25, defShred: 20 }
+          buffDescRu: "Зона Balefire Bind: срез защиты (-30%), уязвимость (+50%), набор зарядов Слеша при каждом действии союзников",
+          buffDescEn: "Balefire Bind Zone: DEF shred (-30%), vulnerability (+50%), Knot charge feeds on all ally actions",
+          buffValues: { allVuln: 50, defShred: 30 }
         },
         {
           id: "1313",

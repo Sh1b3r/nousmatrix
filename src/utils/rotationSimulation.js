@@ -79,10 +79,27 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
 
   const combatAtk = baseAtk + teamAtkGrant + normAtkBonus;
   const combatHp = baseHp;
-  const combatCr = Math.min(1, (baseCr + teamCrGrant) / 100);
-  const combatCd = (baseCd + teamCdGrant + kitCd + normCdBonus) / 100;
+  const rawTotalCr = (baseCr + teamCrGrant);
+
+  // Специфика таланта СВ ур. 999 («I Carry, We Win»):
+  // Избыточный КШ > 100% конвертируется в Крит. Урон
+  const isWolf999 = (charId === "1006" && (charName.toLowerCase().includes("999") || mainChar.path?.name === "Elation" || mainChar.path?.id === "Elation")) || charName.toLowerCase().includes("999");
+  const overcritBonusCd = (isWolf999 && rawTotalCr > 100) ? (rawTotalCr - 100) : 0;
+
+  // Специфика следа Авантюрина: Прибой («Revel in Surging Waves»):
+  // +100% базовой эффективности Радости при наличии союзника Радости
+  const isAvenSurging = charId === "1513" || charName.toLowerCase().includes("прибой") || charName.toLowerCase().includes("waveflair");
+  const hasElationTeammate = matchedTeammates.some(tm => {
+    const tmId = String(tm.id || "");
+    const tmRole = `${tm.roleRu || ""} ${tm.roleEn || ""}`.toLowerCase();
+    return tmId === "1006" || tmRole.includes("радост") || tmRole.includes("elation");
+  });
+  const elationSurgeBonus = (isAvenSurging && hasElationTeammate) ? 50 : 0;
+
+  const combatCr = Math.min(1, rawTotalCr / 100);
+  const combatCd = (baseCd + teamCdGrant + kitCd + normCdBonus + overcritBonusCd) / 100;
   const critMultiplier = 1 + combatCr * combatCd;
-  const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + normDmgBonus) / 100;
+  const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + normDmgBonus + elationSurgeBonus) / 100;
   const steps = [];
   let rotationTotalDamage = 0;
   let peakHitDamage = 0;

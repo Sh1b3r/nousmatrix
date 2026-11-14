@@ -29,13 +29,13 @@ async function getLocalizedPresets(lang) {
 }
 function getInitialSessionData() {
   if (typeof window === "undefined") {
-    return { cachedMap:  new Map(), initialProfile: null, initialUrlUid: null };
+    return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null };
   }
   try {
     const params = new URLSearchParams(window.location.search);
     const urlUid = params.get("uid");
     const stored = sessionStorage.getItem("nousmatrix_cached_profiles");
-    const cachedMap =  new Map();
+    const cachedMap = new Map();
     let initialProfile = null;
     if (stored) {
       const parsed = JSON.parse(stored);
@@ -68,7 +68,7 @@ function getInitialSessionData() {
     }
     return { cachedMap, initialProfile, initialUrlUid: urlUid };
   } catch {
-    return { cachedMap:  new Map(), initialProfile: null, initialUrlUid: null };
+    return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null };
   }
 }
 export default function App() {
@@ -553,7 +553,7 @@ export default function App() {
               <div className="player-actions">
                 <div className="auto-refresh-indicator" title={lang === "ru" ? "Авто-синхронизация активна: обновляет профиль при смене фокуса из игры и каждые 28 сек" : "Auto-sync active: refreshes upon window focus & every 28s"}>
                   <span className="auto-refresh-dot" />
-                  <span>{lang === "ru" ? "АВТО-СИНК" : "AUTO-SYNC"}</span>
+                  <span>{lang === "ru" ? "АВТО-СИНХРОНИЗАЦИЯ" : "AUTO-SYNC"}</span>
                 </div>
                 <button
                   type="button"
@@ -572,8 +572,8 @@ export default function App() {
                       ? "ОБНОВЛЕНИЕ..."
                       : "REFRESHING..."
                     : lang === "ru"
-                    ? "ОБНОВИТЬ"
-                    : "REFRESH"}
+                      ? "ОБНОВИТЬ"
+                      : "REFRESH"}
                 </button>
                 <button
                   type="button"

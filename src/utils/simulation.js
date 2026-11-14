@@ -51,8 +51,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
   const isHimeko = charId === "1003" || name.includes("химеко") || name.includes("himeko") || name.includes("нова") || name.includes("nova");
   const isSunday = charId === "1313" || name.includes("воскресенье") || name.includes("sunday");
   const isYaoGuang = charId === "1408" || name.includes("яо") || name.includes("yao") || name.includes("гуан") || name.includes("爻光");
-  const isRobin = charId === "1309" || name.includes("робин") || name.includes("robin");
-  const isRuanMei = charId === "1303" || name.includes("руань") || name.includes("ruan");
+  const isRobin = charId === "1309" || name.includes("зарянка") || name.includes("robin");
+  const isRuanMei = charId === "1303" || name.includes("жуань") || name.includes("ruan");
   const isSparkle = charId === "1306" || name.includes("искорка") || name.includes("sparkle");
   const isBronya = charId === "1101" || name.includes("броня") || name.includes("bronya");
   const isTingyun = charId === "1202" || name.includes("тиньъюнь") || name.includes("тинъюнь") || name.includes("tingyun");
@@ -124,21 +124,21 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
       type: "HYBRID_SUBDPS",
       hasDualOutput: true,
       benchmarkTier: personalDpc >= 14e4 ? "SSS" : personalDpc >= 1e5 ? "SS" : "S",
-      
+
       metric1Label: isRu ? "ЛИЧНЫЙ УРОН В ЗОНЕ (DPA)" : "ZONE PERSONAL BURST (DPA)",
       metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
       metric2Label: isRu ? "СРЕЗ ЗАЩИТЫ И УЯЗВИМОСТЬ" : "DEF SHRED & VULNERABILITY",
       metric2Value: "-30% DEF • +50% УРОНА",
       metric3Label: isRu ? "ХОДОВ В ЗОНЕ (70 SPD)" : "ACTIONS IN 70 SPD ZONE",
       metric3Value: `${actionsInZone}x (${142.86.toFixed(0)} AV)`,
-      
+
       personalDpa,
       personalDpc,
       personalDpaLabel: isRu ? "Средний урон навыка (168% HP)" : "Avg Skill Damage (168% HP)",
       personalDpcLabel: isRu ? "Личный урон в цикл (100 AV)" : "Personal Cycle Output (100 AV)",
       personalMetric3Label: isRu ? "Крит. масса в Зоне (+20/60)" : "Combat Crit Value (+20/60)",
       personalMetric3Value: `${(simCr * 100).toFixed(0)}% КШ / ${(simCd * 100).toFixed(0)}% КУ (${critMultiplier.toFixed(2)}x)`,
-      
+
       teamDpsAmp: "+68%",
       teamUtilityBadges: [
         {
@@ -504,7 +504,7 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
       metric3Value: "100% AV ВСЕМУ ОТРЯДУ",
       personalDpa: addDmgHit,
       personalDpc: Math.round(addDmgHit * 8),
-      
+
       personalDpaLabel: isRu ? "Физ. урон за каждую атаку союзника" : "Phys DMG per ally attack",
       personalDpcLabel: isRu ? "Суммарный доп. урон в Концерте" : "Total Concert DMG (8 hits)",
       personalMetric3Label: isRu ? "Сила атаки Робин" : "Robin Base Attack",

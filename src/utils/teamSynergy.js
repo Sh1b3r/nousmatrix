@@ -95,9 +95,9 @@ export const CHARACTER_SQUADS = {
     },
     {
       id: "himeko_nova_welt_robin_dhpt",
-      nameRu: "Отряд 3: Decimation с Робин • Яснопея (Вельт + Дань Хэн • Освободитель Пустошей)",
+      nameRu: "Отряд 3: Decimation с Зарянка • Яснопея (Вельт + Дань Хэн • Освободитель Пустошей)",
       nameEn: "Team 3: Decimation with Robin • Summeretto (Welt + Dan Heng • Permansor Terrae)",
-      descRu: "Зафиксированная альтернативная команда: Вельт открывает Decimation, Робин • Яснопея усиливает частые атаки и помогает с энергией, Дань Хэн • Освободитель Пустошей даёт защиту. Робин требует аккуратного тайминга Assist Skill.",
+      descRu: "Зафиксированная альтернативная команда: Вельт открывает Decimation, Зарянка • Яснопея усиливает частые атаки и помогает с энергией, Дань Хэн • Освободитель Пустошей даёт защиту. Зарянка требует аккуратного тайминга Assist Skill.",
       descEn: "An observed alternative: Welt enables Decimation, Robin • Summeretto amplifies frequent attacks and helps with Energy, while Dan Heng • Permansor Terrae sustains. Robin requires careful Assist Skill timing.",
       teammates: [
         {
@@ -114,10 +114,10 @@ export const CHARACTER_SQUADS = {
         },
         {
           id: "1512",
-          nameRu: "Робин • Яснопея",
+          nameRu: "Зарянка • Яснопея",
           nameEn: "Robin • Summeretto",
           icon: "icon/character/1512.png",
-          names: ["робин • Яснопея", "robin • summeretto", "робин Яснопея", "robin summeretto"],
+          names: ["Зарянка • Яснопея", "robin • summeretto", "Зарянка Яснопея", "robin summeretto"],
           roleRu: "Память (Продвижение и энергия)",
           roleEn: "Remembrance (Action Advance and Energy)",
           buffDescRu: "Продвигает Химеко • Нову и помогает ей получать энергию; требует планировать Assist Skill",
@@ -197,10 +197,10 @@ export const CHARACTER_SQUADS = {
       teammates: [
         {
           id: "1309",
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin"],
+          names: ["Зарянка", "robin"],
           roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение ВСЕГО отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
@@ -401,7 +401,7 @@ export const CHARACTER_SQUADS = {
           nameRu: "Воскресенье",
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
-          names: ["воскресенье", "sunday", "искорка", "sparkle", "робин", "robin"],
+          names: ["воскресенье", "sunday", "искорка", "sparkle", "Зарянка", "robin"],
           roleRu: "Саппорт (Продвижение и КУ)",
           roleEn: "Harmony (Advance & Crit)",
           buffDescRu: "100% Продвижение хода, передача КУ и энергии",
@@ -514,9 +514,9 @@ export const CHARACTER_SQUADS = {
   "1507": [
     {
       id: "mortenax_hypercarry",
-      nameRu: "Отряд 1: Бесконечная Ярость (Сандей + Робин)",
+      nameRu: "Отряд 1: Бесконечная Ярость (Сандей + Зарянка)",
       nameEn: "Team 1: Infinite Fury Hypercarry",
-      descRu: "Гиперкерри через максимальный запас HP: Сандей и Робин удваивают действия Мортенакса до истечения Зоны 70 SPD.",
+      descRu: "Гиперкерри через максимальный запас HP: Сандей и Зарянка удваивают действия Мортенакса до истечения Зоны 70 SPD.",
       descEn: "Maximizes personal Fire HP damage before the 70 SPD zone expires via double action advances.",
       teammates: [
         {
@@ -533,10 +533,10 @@ export const CHARACTER_SQUADS = {
         {
           id: "1309",
           altIds: ["1303"],
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin", "руань мэй", "ruan mei"],
+          names: ["Зарянка", "robin", "жуань мэй", "ruan mei"],
           roleRu: "Саппорт (Командный Урон)",
           roleEn: "Harmony (Team Damage)",
           buffDescRu: "100% Продвижение отряда, +50% Урон, накладывает Узы гибели атаками Концерта",
@@ -580,7 +580,7 @@ export const CHARACTER_SQUADS = {
           nameRu: "Воскресенье",
           nameEn: "Sunday",
           icon: "icon/character/1313.png",
-          names: ["воскресенье", "sunday", "робин", "robin"],
+          names: ["воскресенье", "sunday", "Зарянка", "robin"],
           roleRu: "Саппорт (100% Продвижение и КУ)",
           roleEn: "Harmony (100% Advance & Crit)",
           buffDescRu: "100% Продвижение хода, передача КУ и энергии для постоянных действий",
@@ -607,15 +607,15 @@ export const CHARACTER_SQUADS = {
       id: "feixiao_premium_fua",
       nameRu: "Отряд 1: Премиум Бонус-атаки (FUA Meta)",
       nameEn: "Team 1: Premium FUA Meta",
-      descRu: "Максимальная скорость накопления Ультимейта за счёт частых совместных атак Топаз, Робин и Авантюрина.",
+      descRu: "Максимальная скорость накопления Ультимейта за счёт частых совместных атак Топаз, Зарянки и Авантюрина.",
       descEn: "Fastest Flying Aureus ultimate charging via rapid follow-ups from Topaz, Robin & Aventurine.",
       teammates: [
         {
           id: "1309",
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin"],
+          names: ["Зарянка", "robin"],
           roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
@@ -828,7 +828,7 @@ export const CHARACTER_SQUADS = {
     },
     {
       id: "dhil_sunday_advance",
-      nameRu: "Отряд 2: Двойное Продвижение (Сандей + Робин)",
+      nameRu: "Отряд 2: Двойное Продвижение (Сандей + Зарянка)",
       nameEn: "Team 2: Absolute Advance Wave",
       descRu: "Сандей передаёт максимальный КУ и заливает 40 энергии для постоянного запаса Чешуи Дракона.",
       descEn: "Sunday directly advances DHIL and feeds 40 EP to sustain Dragon Scales.",
@@ -846,10 +846,10 @@ export const CHARACTER_SQUADS = {
         },
         {
           id: "1309",
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin"],
+          names: ["Зарянка", "robin"],
           roleRu: "Саппорт (Концерт)",
           roleEn: "Harmony (Concerto)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
@@ -916,9 +916,9 @@ export const CHARACTER_SQUADS = {
     },
     {
       id: "kafka_robin_dot",
-      nameRu: "Отряд 2: Скоростной ДоТ с Робин (Двойной Концерт)",
+      nameRu: "Отряд 2: Скоростной ДоТ с Зарянка (Двойной Концерт)",
       nameEn: "Team 2: Hyperspeed DoT with Robin",
-      descRu: "Робин продвигает всю ДоТ-команду на 100%, давая Кафке возможность детонировать стаки дважды за цикл.",
+      descRu: "Зарянка продвигает всю ДоТ-команду на 100%, давая Кафке возможность детонировать стаки дважды за цикл.",
       descEn: "Robin advances the entire DoT squad by 100%, enabling back-to-back detonations.",
       teammates: [
         {
@@ -934,10 +934,10 @@ export const CHARACTER_SQUADS = {
         },
         {
           id: "1309",
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin"],
+          names: ["Зарянка", "robin"],
           roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK для масштабирования ДоТов, +50% Урон",
@@ -1312,17 +1312,17 @@ export const CHARACTER_SQUADS = {
   "1305": [
     {
       id: "ratio_premium_fua",
-      nameRu: "Отряд 1: Премиум FUA Мета (Топаз + Робин + Авантюрин)",
+      nameRu: "Отряд 1: Премиум FUA Мета (Топаз + Зарянка + Авантюрин)",
       nameEn: "Team 1: Premium FUA IPC Core",
       descRu: "Золотой стандарт бонус-атак: гарантированный 100% шанс броска мела за счёт 3+ дебаффов Топаз и Авантюрина.",
       descEn: "Guaranteed 100% chalk throw probability via Topaz and Aventurine debuffs.",
       teammates: [
         {
           id: "1309",
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin"],
+          names: ["Зарянка", "robin"],
           roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
@@ -1400,17 +1400,17 @@ export const CHARACTER_SQUADS = {
   "1221": [
     {
       id: "yunli_counter_premier",
-      nameRu: "Отряд 1: Контратаки Интуиции (Робин + Сандей + Хохо)",
+      nameRu: "Отряд 1: Контратаки Интуиции (Зарянка + Сандей + Хохо)",
       nameEn: "Team 1: Intuition Cull Counter Meta",
       descRu: "Юньли провоцирует врагов на атаку и парирует удары сильнейшим ударом Интуиции: Кульминация (до 720% урона).",
       descEn: "Yunli taunts enemies and parries with massive Intuition: Cull counter hits.",
       teammates: [
         {
           id: "1309",
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin"],
+          names: ["Зарянка", "robin"],
           roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон, +25% КУ контратак",
@@ -1443,7 +1443,7 @@ export const CHARACTER_SQUADS = {
     },
     {
       id: "yunli_topaz_fua",
-      nameRu: "Отряд 2: Двойные Бонус-атаки (Топаз + Робин + Авантюрин)",
+      nameRu: "Отряд 2: Двойные Бонус-атаки (Топаз + Зарянка + Авантюрин)",
       nameEn: "Team 2: Dual FUA Synergy (Topaz + Robin)",
       descRu: "Каждая контратака Юньли продвигает Чумби Топаз, создавая непрерывный шквал совместных ударов.",
       descEn: "Each counter attack from Yunli advances Numby for non-stop co-op strikes.",
@@ -1461,10 +1461,10 @@ export const CHARACTER_SQUADS = {
         },
         {
           id: "1309",
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin"],
+          names: ["Зарянка", "robin"],
           roleRu: "Саппорт (Концерт)",
           roleEn: "Harmony (Concerto)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
@@ -1508,10 +1508,10 @@ export const CHARACTER_SQUADS = {
         {
           id: "1309",
           altIds: ["1303", "1105"],
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin", "руань мэй", "ruan mei", "пела", "pela"],
+          names: ["Зарянка", "robin", "жуань мэй", "ruan mei", "пела", "pela"],
           roleRu: "Саппорт (Второй буфер)",
           roleEn: "Harmony (Secondary Buffer)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
@@ -1579,7 +1579,7 @@ export const CHARACTER_SQUADS = {
   "1304": [
     {
       id: "aventurine_fua_core",
-      nameRu: "Отряд 1: FUA Двойной Саб-ДПС (Фэйсяо + Топаз + Робин)",
+      nameRu: "Отряд 1: FUA Двойной Саб-ДПС (Фэйсяо + Топаз + Зарянка)",
       nameEn: "Team 1: Premier Follow-up Shielder Core",
       descRu: "Авантюрин накапливает стаки Слепого пари от атак союзников, непрерывно нанося собственный DEF-урон и защищая команду.",
       descEn: "Aventurine stacks Blind Bet from ally hits, providing frequent DEF damage and team shields.",
@@ -1609,10 +1609,10 @@ export const CHARACTER_SQUADS = {
         },
         {
           id: "1309",
-          nameRu: "Робин",
+          nameRu: "Зарянка",
           nameEn: "Robin",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin"],
+          names: ["Зарянка", "robin"],
           roleRu: "Саппорт (100% Продвижение)",
           roleEn: "Harmony (100% Advance)",
           buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
@@ -1702,10 +1702,10 @@ export function getGenericSquads(char, lang = "ru") {
           {
             id: "1309",
             altIds: ["1313", "1303"],
-            nameRu: "Робин / Сандей",
+            nameRu: "Зарянка / Сандей",
             nameEn: "Robin / Sunday",
             icon: "icon/character/1309.png",
-            names: ["робин", "robin", "воскресенье", "sunday", "руань мэй", "ruan mei"],
+            names: ["Зарянка", "robin", "воскресенье", "sunday", "руань мэй", "ruan mei"],
             roleRu: "Саппорт (Второй буфер)",
             roleEn: "Harmony (Dual Buffer)",
             buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
@@ -1805,10 +1805,10 @@ export function getGenericSquads(char, lang = "ru") {
           {
             id: "1309",
             altIds: ["1303", "1105"],
-            nameRu: "Робин / Жуань Мэй",
+            nameRu: "Зарянка / Жуань Мэй",
             nameEn: "Robin / Ruan Mei",
             icon: "icon/character/1309.png",
-            names: ["робин", "robin", "руань мэй", "ruan mei", "пела", "pela"],
+            names: ["Зарянка", "robin", "руань мэй", "ruan mei", "пела", "pela"],
             roleRu: "Саппорт / Дебаффер",
             roleEn: "Harmony / Nihility",
             buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон или срез защиты",
@@ -1883,10 +1883,10 @@ export function getGenericSquads(char, lang = "ru") {
         {
           id: "1309",
           altIds: ["1303", "1105"],
-          nameRu: "Робин / Пела",
+          nameRu: "Зарянка / Пела",
           nameEn: "Robin / Pela",
           icon: "icon/character/1309.png",
-          names: ["робин", "robin", "руань мэй", "ruan mei", "пела", "pela"],
+          names: ["Зарянка", "robin", "жуань мэй", "ruan mei", "пела", "pela"],
           roleRu: "Саппорт / Дебаффер",
           roleEn: "Harmony / Nihility",
           buffDescRu: "100% Продвижение отряда / +25% RES PEN / -42% Срез защиты",
@@ -1910,16 +1910,16 @@ export function getGenericSquads(char, lang = "ru") {
       id: "generic_dual_dps",
       nameRu: "Отряд 2: Двойной ДПС с Универсальным Буфером",
       nameEn: "Team 2: Dual DPS with Universal Buffer",
-      descRu: "Сборка под одновременную работу двух атакующих персонажей под аурами Жуань Мэй или Робин.",
+      descRu: "Сборка под одновременную работу двух атакующих персонажей под аурами Жуань Мэй или Зарянка.",
       descEn: "Dual carry setup amplified by whole-party auras from Ruan Mei or Robin.",
       teammates: [
         {
           id: "1303",
           altIds: ["1309"],
-          nameRu: "Жуань Мэй / Робин",
+          nameRu: "Жуань Мэй / Зарянка",
           nameEn: "Ruan Mei / Robin",
           icon: "icon/character/1303.png",
-          names: ["руань мэй", "ruan mei", "робин", "robin"],
+          names: ["руань мэй", "ruan mei", "Зарянка", "robin"],
           roleRu: "Саппорт (Аура отряда)",
           roleEn: "Harmony (Party Aura)",
           buffDescRu: "+68% Урон всем союзникам, +25% All-Type RES PEN, +10% SPD",
@@ -1988,7 +1988,7 @@ function computeSupportBuffs(rec, s = {}) {
     buffs.energyFeed = Math.max(num(buffs.energyFeed), 40);
     descRu = `100% Продвижение, передача +${cdGrant}% КУ (от реальных ${cd.toFixed(1)}% КУ), +50% Урон, +40 энергии`;
     descEn = `100% Target Advance, +${cdGrant}% Crit DMG transfer (from ${cd.toFixed(1)}% CD), +50% DMG, +40 Energy`;
-  } else if (id === "1309" || id === "1512" || tag.includes("робин") || tag.includes("зарянка") || tag.includes("robin")) {
+  } else if (id === "1309" || id === "1512" || tag.includes("Зарянка") || tag.includes("зарянка") || tag.includes("robin")) {
     const atk = num(s.atk) || 3300;
     const atkGrant = Math.round(atk * 0.228 + 200);
     buffs.atkGrant = atkGrant;
@@ -2042,15 +2042,25 @@ function computeSupportBuffs(rec, s = {}) {
     descRu = `Сохранение 4.7: надёжные щиты, исцеление, +12% КШ команде, +20 энергии`;
     descEn = `4.7 Sustain: reliable shields, heals, +12% CRIT Rate to team, +20 energy`;
   } else if (id === "1507" || tag.includes("мортенакс") || tag.includes("mortenax")) {
-    buffs.allVuln = Math.max(num(buffs.allVuln), 25);
-    buffs.defShred = Math.max(num(buffs.defShred), 20);
-    descRu = `Нихилия 4.7: +25% уязвимости всех типов, -20% DEF, генератор зарядов`;
-    descEn = `4.7 Nihility: +25% All-Type vulnerability, -20% DEF, charge generator`;
+    buffs.allVuln = Math.max(num(buffs.allVuln), 50);
+    buffs.defShred = Math.max(num(buffs.defShred), 30);
+    descRu = `Нихилия 4.7 (Зона Balefire Bind): +50% уязвимости всех типов, -30% DEF, генератор зарядов при действии каждого союзника`;
+    descEn = `4.7 Nihility (Balefire Bind Zone): +50% All-Type vulnerability, -30% DEF, charge generator on every ally action`;
   } else if (id === "1508" || tag.includes("рин тосака") || tag.includes("rin tohsaka")) {
     buffs.energyFeed = Math.max(num(buffs.energyFeed), 30);
-    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 25);
-    descRu = `Fate Саппорт: заливка +30 энергии, монеты, +25% урон`;
-    descEn = `Fate Support: +30 energy feed, coins, +25% DMG`;
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 40);
+    descRu = `Fate Саппорт: заливка +30 энергии, генерация монет, +40% урон навички`;
+    descEn = `Fate Support: +30 energy feed, coins, +40% Skill DMG`;
+  } else if (id === "1513" || tag.includes("прибой") || tag.includes("waveflair")) {
+    buffs.critVuln = Math.max(num(buffs.critVuln), 15);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 30);
+    descRu = `Радость 4.7: комбо-атаки Радости, +15% крит. уязвимости, +30% урона в фазе Aha Instant`;
+    descEn = `4.7 Elation: coordinated Elation strikes, +15% Crit Vuln, +30% DMG during Aha Instant`;
+  } else if (id === "1006" || tag.includes("999")) {
+    buffs.defShred = Math.max(num(buffs.defShred), 45);
+    buffs.allVuln = Math.max(num(buffs.allVuln), 20);
+    descRu = `Радость 4.7: взрывной урон Радости, -45% DEF, +20% уязвимости, механика Топового лутбокса`;
+    descEn = `4.7 Elation: Elation burst, -45% DEF, +20% Vuln, Top Loot Box mechanics`;
   }
   return { buffs, descRu, descEn };
 }

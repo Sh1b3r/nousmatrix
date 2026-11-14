@@ -269,7 +269,77 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       targetArchetype: "CRIT_DPS"
     });
   }
-  const isWolf = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
+  const isAvenSurging = charId === "1513" || lowerName.includes("прибой") || lowerName.includes("waveflair");
+  if (isAvenSurging) {
+    return formatRoleResult({
+      type: "DPS",
+      role: "DPS",
+      icon: "dps",
+      labelRu: "ДАМАГЕР РАДОСТИ (ELATION DPS)",
+      labelEn: "ELATION MAIN DPS",
+      descRu: "Авантюрин: Прибой. Основной дамагер Пути Радости: множители атак Радости, след «Revel in Surging Waves» (+100% статов Радости), КШ/КУ, скорость и взрывной урон в фазе Aha Instant.",
+      descEn: "Aventurine: Waveflair. Premier Elation Main DPS: scaling off CR/CD, SPD, and Elation multipliers with «Revel in Surging Waves» (+100% boost) during Aha Instant.",
+      confidence: 99,
+      targetArchetype: "CRIT_DPS"
+    });
+  }
+  const isWolf999 = (charId === "1006" && (lowerName.includes("999") || char.path?.name === "Elation" || char.path?.id === "Elation")) || lowerName.includes("ур. 999") || lowerName.includes("lv.999");
+  if (isWolf999) {
+    return formatRoleResult({
+      type: "DPS",
+      role: "DPS",
+      icon: "dps",
+      labelRu: "ДАМАГЕР РАДОСТИ (СВ УР. 999)",
+      labelEn: "ELATION HYPERCARRY (SW 999)",
+      descRu: "Серебряный Волк ур. 999. Дамагер Пути Радости: конверсия избыточного КШ > 100% в Крит. Урон («I Carry, We Win»), ультимейт «God Mode: ON!» и механика «Топового лутбокса».",
+      descEn: "Silver Wolf Lv.999. Elation Hypercarry: «I Carry, We Win» CR > 100% overcrit to CD conversion, God Mode: ON! and Top Loot Box mechanics.",
+      confidence: 99,
+      targetArchetype: "CRIT_DPS"
+    });
+  }
+  const isDahlia = charId === "1505" || lowerName.includes("георгина") || lowerName.includes("dahlia");
+  if (isDahlia) {
+    return formatRoleResult({
+      type: "SUPPORT",
+      role: "SUPPORT",
+      icon: "support",
+      labelRu: "БРЕЙК-САППОРТ (СУПЕРПРОБИТИЕ)",
+      labelEn: "BREAK & SUPER BREAK SUPPORT",
+      descRu: "Георгина: ключевой брейк-саппорт 4.7 для Светлячка. Включает урон Суперпробития по несломанным врагам, механика «Партнер по танцу», срез защиты и разгон ЭП.",
+      descEn: "The Dahlia: premier 4.7 Break support for Firefly. Enables Super Break on unbroken enemies, Dance Partner synergy, DEF shred & massive BE boost.",
+      confidence: 99,
+      targetArchetype: "BREAK_DPS"
+    });
+  }
+  const isArcher = charId === "1015" || lowerName.includes("арчер") || lowerName.includes("archer");
+  if (isArcher) {
+    return formatRoleResult({
+      type: "DPS",
+      role: "DPS",
+      icon: "dps",
+      labelRu: "КВАНТОВЫЙ ГИПЕРКЕРРИ (FATE UBW)",
+      labelEn: "QUANTUM HUNT HYPERCARRY",
+      descRu: "Арчер: Unlimited Blade Works, спам навыков за SP, высокий КШ/КУ, синхронизация с Рин Тосакой и Искоркой.",
+      descEn: "Archer: Unlimited Blade Works, high-frequency SP skill burst, scaled CR/CD, paired with Rin Tohsaka and Sparkle.",
+      confidence: 99,
+      targetArchetype: "CRIT_DPS"
+    });
+  }
+  const isHyacine = charId === "1409" || lowerName.includes("гиацина") || lowerName.includes("hyacine");
+  if (isHyacine) {
+    return formatRoleResult({
+      type: "SUPPORT",
+      role: "SUPPORT",
+      icon: "support",
+      labelRu: "СУСТЕЙН ПАМЯТИ (+12% КШ КОМАНДЕ)",
+      labelEn: "REMEMBRANCE SUSTAIN (+12% TEAM CR)",
+      descRu: "Гиацина: универсальный топ-сустейн 4.7. Щиты, исцеление, заливка энергии и постоянный пассивный бонус +12% Крит. Шанса всей команде.",
+      descEn: "Hyacine: premier 4.7 universal sustain. Shields, heals, energy feed, and permanent passive +12% CRIT Rate to team.",
+      confidence: 99,
+      targetArchetype: "PRESERVATION_HP"
+    });
+  }
+  const isWolf = (charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver")) && !isWolf999;
   if (isWolf) {
     if (cv >= 150 || isCritBody && sphereStat.includes("quantum")) {
       return formatRoleResult({
@@ -296,7 +366,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       targetArchetype: "NIHILITY_DEBUFF"
     });
   }
-  const isAven = charId === "1304" || lowerName.includes("авантюрин") || lowerName.includes("aventurine");
+  const isAven = (charId === "1304" || lowerName.includes("авантюрин") || lowerName.includes("aventurine")) && !isAvenSurging;
   if (isAven) {
     if (cv >= 120 || bodyStat === "crit_dmg" || hasDpsPlanar) {
       return formatRoleResult({
@@ -1678,8 +1748,24 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const lowerName = name.toLowerCase();
   const isWolfChar = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
   if (!detectedRole || detectedRole.role === "DPS") {
+    const isAvenSurgingChar = charId === "1513" || lowerName.includes("прибой") || lowerName.includes("waveflair");
+    const isWolf999Char = (charId === "1006" && (lowerName.includes("999") || char.path?.name === "Elation" || char.path?.id === "Elation")) || lowerName.includes("ур. 999") || lowerName.includes("lv.999");
+    const isDahliaChar = charId === "1505" || lowerName.includes("георгина") || lowerName.includes("dahlia");
+    const isArcherChar = charId === "1015" || lowerName.includes("арчер") || lowerName.includes("archer");
+    const isHyacineChar = charId === "1409" || lowerName.includes("гиацина") || lowerName.includes("hyacine");
     const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光");
-    if ((charId === "1205" || lowerName.includes("блэйд") || lowerName.includes("blade")) && charId !== "1507") {
+
+    if (isAvenSurgingChar) {
+      archetype = "CRIT_DPS";
+    } else if (isWolf999Char) {
+      archetype = "CRIT_DPS";
+    } else if (isArcherChar) {
+      archetype = "CRIT_DPS";
+    } else if (isDahliaChar) {
+      archetype = "BREAK_DPS";
+    } else if (isHyacineChar) {
+      archetype = "PRESERVATION_HP";
+    } else if ((charId === "1205" || lowerName.includes("блэйд") || lowerName.includes("blade")) && charId !== "1507") {
       archetype = "HP_CRIT_DPS";
     } else if (charId === "1407" || lowerName.includes("касторице") || lowerName.includes("castorice")) {
       archetype = "HP_CRIT_DPS";
@@ -1691,7 +1777,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       archetype = "NIHILITY_DEBUFF";
     } else if (charId === "1308" || lowerName.includes("ахерон") || lowerName.includes("acheron")) {
       archetype = "CRIT_DPS";
-    } else if (charId === "1304" || lowerName.includes("авантюрин") || lowerName.includes("aventurine") || path === "Knight" && def > 2500) {
+    } else if (((charId === "1304" || lowerName.includes("авантюрин") || lowerName.includes("aventurine")) && !isAvenSurgingChar) || (path === "Knight" && def > 2500)) {
       archetype = "PRESERVATION_DEF";
     } else if (charId === "1208" || lowerName.includes("фу сюань") || lowerName.includes("fu xuan")) {
       archetype = "PRESERVATION_HP";
