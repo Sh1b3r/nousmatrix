@@ -379,14 +379,14 @@ export const TEAMS_47 = {
     }
   ],
 
-  // Арчер (1015) — ОТДЕЛЬНЫЙ 0-ЦИКЛ ОТРЯД БЕЗ СУСТЕЙНА!
+  // Арчер (1015) — Fate Квантовая Охота
   "1015": [
     {
-      id: "archer_rin_sparkle_nosustain",
-      nameRu: "Отряд 1 (4.7): 0-цикл Без Сустейна (Рин Тосака + Искорка + Воскресенье / СВ)",
-      nameEn: "Team 1 (4.7): 0-Cycle No Sustain (Rin Tohsaka + Sparkle + Sunday / SW)",
-      descRu: "Специализированный 0-цикл отряд Арчера без сустейна: Рин Тосака заливает энергию и драгоценные камни, Искорка даёт лимит 7 SP и 50% продвижение хода, Воскресенье или Серебряный Волк удваивают действия и срезают защиту для мгновенной зачистки волн.",
-      descEn: "Specialized 0-cycle no-sustain Archer squad: Rin Tohsaka feeds energy & gems, Sparkle expands SP cap to 7 with action advance, Sunday or Silver Wolf doubles actions and shreds DEF for instant wave clears.",
+      id: "archer_rin_sparkle_huohuo",
+      nameRu: "Отряд 1 (4.7): Премиум Fate-Гиперкерри (Рин Тосака + Искорка + Хохо)",
+      nameEn: "Team 1 (4.7): Premium Fate Hypercarry (Rin Tohsaka + Sparkle + Huohuo)",
+      descRu: "Основной отряд Арчера: Рин Тосака заливает энергию ультимейтов и драгоценные камни, Искорка даёт 50% продвижение хода и лимит 7 SP, а Хохо — лучший сустейн под батарейку ультимейтов Арчера (+20% энергии команде, +40% ATK и непрерывное очищение дебаффов).",
+      descEn: "Premier Archer squad: Rin Tohsaka feeds ultimate energy & gems, Sparkle provides 50% advance and expands SP cap to 7, while Huohuo acts as best sustain (+20% energy, +40% ATK, and cleanse).",
       isEstimate: true,
       teammates: [
         {
@@ -408,20 +408,64 @@ export const TEAMS_47 = {
           names: ["искорка", "sparkle"],
           roleRu: "Гармония (Продвижение и Лимит 7 SP)",
           roleEn: "Harmony (Advance & 7 SP Cap)",
-          buffDescRu: "+50% Продвижение, лимит 7 SP, передача +102% КУ, +48% урон",
+          buffDescRu: "+50% Продвижение хода, лимит 7 SP, передача +102% КУ, +48% урон",
           buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48 }
         },
         {
-          id: "1313",
-          altIds: ["1006", "1202"],
-          nameRu: "Воскресенье / СВ",
-          nameEn: "Sunday / Silver Wolf",
-          icon: "icon/character/1313.png",
-          names: ["воскресенье", "sunday", "серебряный волк", "silver wolf", "тинъюнь", "tingyun"],
-          roleRu: "Гармония / Дебафф (0-цикл Усиление)",
-          roleEn: "Harmony / Debuff (0-Cycle Amp)",
-          buffDescRu: "100% Продвижение хода или срез защиты цели, максимизация урона без сустейна",
-          buffValues: { targetAdvance: 100, dmgBoost: 50, defShred: 45 }
+          id: "1217",
+          altIds: ["1414"],
+          nameRu: "Хохо",
+          nameEn: "Huohuo",
+          icon: "icon/character/1217.png",
+          names: ["хохо", "huohuo", "дань хэн", "permansor"],
+          roleRu: "Изобилие (Лучший Сустейн / Батарейка)",
+          roleEn: "Abundance (Best Sustain / Energy Battery)",
+          buffDescRu: "Лучший сустейн Арчера: заливка +20% энергии ультимейтов всему отряду, бафф +40% ATK, снятие дебаффов",
+          buffValues: { energyFeed: 20, dmgBoost: 40 }
+        }
+      ]
+    },
+    {
+      id: "archer_rin_sparkle_dhpt",
+      nameRu: "Отряд 2 (4.7): Синергия Пустошей (Рин Тосака + Искорка + Дань Хэн • Освободитель Пустошей)",
+      nameEn: "Team 2 (4.7): Wasteland Synergy (Rin Tohsaka + Sparkle + Dan Heng • Permansor Terrae)",
+      descRu: "Второй вариант сустейна для Арчера: Дань Хэн • Освободитель Пустошей гарантирует монолитную выживаемость, щиты от атак и снижение входящего урона под агрессивным разгоном Искорки и Рин Тосаки.",
+      descEn: "Second sustain option for Archer: Dan Heng • Permansor Terrae ensures unbreakable survivability, shields, and team damage mitigation alongside Sparkle and Rin Tohsaka.",
+      isEstimate: true,
+      teammates: [
+        {
+          id: "1508",
+          nameRu: "Рин Тосака",
+          nameEn: "Rin Tohsaka",
+          icon: "icon/character/1508.png",
+          names: ["рин тосака", "rin tohsaka", "рин", "tohsaka"],
+          roleRu: "Fate Саппорт (Энергия и Монеты)",
+          roleEn: "Fate Support (Energy & Coins)",
+          buffDescRu: "Заливка энергии ультимейтов, генерация драгоценных камней и +40% урон навыка",
+          buffValues: { energyFeed: 30, dmgBoost: 40 }
+        },
+        {
+          id: "1306",
+          nameRu: "Искорка",
+          nameEn: "Sparkle",
+          icon: "icon/character/1306.png",
+          names: ["искорка", "sparkle"],
+          roleRu: "Гармония (Продвижение и Лимит 7 SP)",
+          roleEn: "Harmony (Advance & 7 SP Cap)",
+          buffDescRu: "+50% Продвижение хода, лимит 7 SP, передача +102% КУ, +48% урон",
+          buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48 }
+        },
+        {
+          id: "1414",
+          altIds: ["1217"],
+          nameRu: "Дань Хэн • Освободитель Пустошей",
+          nameEn: "Dan Heng • Permansor Terrae",
+          icon: "icon/character/1414.png",
+          names: ["дань хэн • освободитель пустошей", "дань хэн", "dan heng", "permansor", "dhpt"],
+          roleRu: "Сохранение (Второй Вариант Сустейна)",
+          roleEn: "Preservation (Second Sustain Option)",
+          buffDescRu: "Второй вариант сустейна: мощные командные щиты, снижение входящего урона, защита от ваншотов",
+          buffValues: { teamShield: true, dmgBoost: 20 }
         }
       ]
     }

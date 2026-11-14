@@ -2088,6 +2088,11 @@ function computeSupportBuffs(rec, s = {}) {
     buffs.atkGrant = Math.max(num(buffs.atkGrant), 1200);
     descRu = `Сустейн (Хохо): заливка +20% энергии отряду, бафф +40% ATK, непрерывное снятие ослаблений`;
     descEn = `Sustain (Huohuo): +20% team energy regen, +40% ATK boost, continuous cleanse`;
+  } else if (id === "1414" || tag.includes("освободитель") || tag.includes("permansor")) {
+    buffs.teamShield = true;
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 20);
+    descRu = `Сохранение 4.7 (Дань Хэн • Освободитель Пустошей): мощные командные щиты, снижение входящего урона, защита от ваншотов`;
+    descEn = `4.7 Preservation (Dan Heng • Permansor Terrae): strong team shields, damage reduction, one-shot protection`;
   } else if (id === "1507" || tag.includes("мортенакс") || tag.includes("mortenax")) {
     buffs.allVuln = Math.max(num(buffs.allVuln), 50);
     buffs.defShred = Math.max(num(buffs.defShred), 30);
