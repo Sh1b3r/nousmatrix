@@ -1971,6 +1971,8 @@ const SUPPORT_DEFAULT_STATS = {
   "1513": { atk: 3200, def: 1400, hp: 12000, cr: 80, cd: 160, be: 0 },   // Авантюрин: Прибой
   "1408": { atk: 2800, def: 1400, hp: 12000, cr: 70, cd: 140, be: 0 },   // Яо Гуан
   "1501": { atk: 2600, def: 1400, hp: 12000, cr: 10, cd: 150, be: 0 },   // Искра (Спаркси)
+  "1514": { atk: 3300, def: 1400, hp: 12000, cr: 60, cd: 160, be: 0 },   // Аха (Aha)
+  "1503": { atk: 1200, def: 3200, hp: 13000, cr: 10, cd: 100, be: 0 },   // Жемчуг (Pearl)
   "8007": { atk: 2800, def: 1400, hp: 12000, cr: 60, cd: 130, be: 0 },   // Первопроходец: Радость
   "1006": { atk: 3400, def: 1400, hp: 12000, cr: 100, cd: 180, be: 0 }   // Серебряный Волк ур. 999
 };
@@ -1985,7 +1987,19 @@ function computeSupportBuffs(rec, s = {}) {
   let descEn = null;
   const num = (v) => (typeof v === "number" ? v : 0);
 
-  if (id === "1513" || tag.includes("прибой") || tag.includes("waveflair")) {
+  if (id === "1514" || tag.includes("аха") || tag.includes("aha")) {
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 65);
+    buffs.resPen = Math.max(num(buffs.resPen), 25);
+    buffs.allVuln = Math.max(num(buffs.allVuln), 30);
+    descRu = `Эон Радости 4.7 (Аха): статус «Эманатор Радости», срез Max HP боссов, +65% урон Радости, +30% уязвимость`;
+    descEn = `4.7 Elation Aeon (Aha): «Emanator of Elation» status, Boss Max HP reduction, +65% Elation DMG, +30% Vuln`;
+  } else if (id === "1503" || tag.includes("жемчуг") || tag.includes("pearl")) {
+    buffs.teamShield = true;
+    buffs.teamAdvance = Math.max(num(buffs.teamAdvance), 25);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 30);
+    descRu = `Лучший сустейн Радости (Жемчуг): заряды «Настоящий хит», блокировка урона, лечение от ЗАЩ, продвижение действий`;
+    descEn = `Best 4.7 Elation Sustain (Pearl): «Real Hit» stacks, incoming DMG block, DEF-based heals, action advance`;
+  } else if (id === "1513" || tag.includes("прибой") || tag.includes("waveflair")) {
     buffs.critVuln = Math.max(num(buffs.critVuln), 15);
     buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 40);
     buffs.elationBuff = 100;
@@ -2069,6 +2083,11 @@ function computeSupportBuffs(rec, s = {}) {
     buffs.energyFeed = Math.max(num(buffs.energyFeed), 20);
     descRu = `Сохранение 4.7: надёжные щиты, исцеление, +12% КШ команде, +20 энергии`;
     descEn = `4.7 Sustain: reliable shields, heals, +12% CRIT Rate to team, +20 energy`;
+  } else if (id === "1217" || tag.includes("хохо") || tag.includes("huohuo")) {
+    buffs.energyFeed = Math.max(num(buffs.energyFeed), 20);
+    buffs.atkGrant = Math.max(num(buffs.atkGrant), 1200);
+    descRu = `Сустейн (Хохо): заливка +20% энергии отряду, бафф +40% ATK, непрерывное снятие ослаблений`;
+    descEn = `Sustain (Huohuo): +20% team energy regen, +40% ATK boost, continuous cleanse`;
   } else if (id === "1507" || tag.includes("мортенакс") || tag.includes("mortenax")) {
     buffs.allVuln = Math.max(num(buffs.allVuln), 50);
     buffs.defShred = Math.max(num(buffs.defShred), 30);
