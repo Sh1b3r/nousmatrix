@@ -343,8 +343,10 @@ export default function App() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 12e3);
         const cacheBuster = forceRefresh ? `&is_force_update=true&force=1&_t=${Date.now()}` : "";
+        const fetchHeaders = forceRefresh ? { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' } : {};
         const apiRes = await fetch(`/api/mihomo?uid=${uid}&lang=${lang}${cacheBuster}`, {
-          signal: controller.signal
+          signal: controller.signal,
+          headers: fetchHeaders
         });
         clearTimeout(timeoutId);
         lastStatus = apiRes.status;
@@ -365,8 +367,10 @@ export default function App() {
           const directController = new AbortController();
           const dTimeout = setTimeout(() => directController.abort(), 1e4);
           const cacheBuster = forceRefresh ? `&is_force_update=true&_t=${Date.now()}` : "";
+          const directHeaders = forceRefresh ? { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' } : {};
           const directRes = await fetch(`https://api.mihomo.me/sr_info_parsed/${uid}?lang=${lang}${cacheBuster}`, {
-            signal: directController.signal
+            signal: directController.signal,
+            headers: directHeaders
           });
           clearTimeout(dTimeout);
           if (directRes.ok) {
