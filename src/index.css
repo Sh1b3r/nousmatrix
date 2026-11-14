@@ -5191,14 +5191,6 @@ main {
 }
 
 /* Provenance & Methodology Explanations */
-.score-model-explanation {
-  font-size: 11.5px;
-  color: var(--text-tertiary);
-  margin-top: -6px;
-  margin-bottom: 14px;
-  line-height: 1.4;
-}
-
 .metric-name-wrap {
   display: flex;
   align-items: center;

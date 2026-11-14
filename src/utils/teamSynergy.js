@@ -142,100 +142,67 @@ export const CHARACTER_SQUADS = {
 
   "1003": [
     {
-      id: "himeko_superbreak",
-      nameRu: "Отряд 1: Огненное Суперпробитие (Super Break)",
-      nameEn: "Team 1: Fire Super Break",
-      descRu: "Максимальный урон против боссов с уязвимостью к огню. Позволяет наносить гигантский урон при каждом истощении стойкости.",
-      descEn: "Dominates fire-weak encounters with massive Super Break hits upon toughness breaks.",
+      id: "himeko_47_break_core",
+      nameRu: "Отряд 1 (4.7): Пробитие (Жуань Мэй + Первопроходец Гармонии + Галлахер)",
+      nameEn: "Team 1 (4.7): Break Core (Ruan Mei + Harmony Trailblazer + Gallagher)",
+      descRu: "Актуальный состав HSR Build 4.7: Химеко получает частые бонус-атаки от пробития стойкости; Жуань Мэй и Первопроходец Гармонии усиливают пробитие, Галлахер совмещает лечение и урон по стойкости.",
+      descEn: "HSR Build 4.7 team: Himeko gains frequent follow-ups from breaking Toughness; Ruan Mei and Harmony Trailblazer amplify Break, while Gallagher sustains and contributes Toughness damage.",
+      sourceVersion: "4.7",
+      sourceUpdatedAt: "2026-11-08",
+      sourceUrl: "https://www.hsr-build.com/best-teams/himeko",
       teammates: [
         {
-          id: "1303",
-          nameRu: "Жуань Мэй",
-          nameEn: "Ruan Mei",
-          icon: "icon/character/1303.png",
-          names: ["руань мэй", "ruan mei", "ruan"],
-          roleRu: "Саппорт (Пробитие)",
-          roleEn: "Harmony (Break)",
-          buffDescRu: "+50% Эффективность пробития, +25% Пробитие всех RES, +10% SPD, +68% Урон",
-          buffDescEn: "+50% Break Efficiency, +25% All-Type RES PEN, +10% SPD, +68% DMG",
+          id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", icon: "icon/character/1303.png",
+          roleRu: "Усиление пробития", roleEn: "Break amplifier",
+          buffDescRu: "Повышает эффективность пробития и урон команды.", buffDescEn: "Raises Break efficiency and team damage.",
           buffValues: { breakEff: 50, resPen: 25, teamSpd: 10, dmgBoost: 68 }
         },
         {
-          id: "8005",
-          altIds: ["8006", "1404"],
-          nameRu: "Первопроходец (Гармония)",
-          nameEn: "Trailblazer (Harmony)",
-          icon: "icon/character/8005.png",
-          names: ["первопроходец", "trailblazer", "фугу", "fugue"],
-          roleRu: "Саппорт (Суперпробитие)",
-          roleEn: "Harmony (Super Break)",
-          buffDescRu: "Наложение статуса Суперпробития (160% множитель урона), +30% ЭП отряду",
-          buffDescEn: "Super Break trigger (160% multiplier), +30% BE to team",
+          id: "8005", nameRu: "Первопроходец (Гармония)", nameEn: "Harmony Trailblazer", icon: "icon/character/8005.png",
+          roleRu: "Суперпробитие", roleEn: "Super Break support",
+          buffDescRu: "Даёт команде механику суперпробития.", buffDescEn: "Enables Super Break for the team.",
           buffValues: { superBreakFactor: 1.6, beBoost: 30 }
         },
         {
-          id: "1301",
-          altIds: ["1222"],
-          nameRu: "Галлахер",
-          nameEn: "Gallagher",
-          icon: "icon/character/1301.png",
-          names: ["галлахер", "gallagher", "линша", "lingsha"],
-          roleRu: "Изобилие (Сустейн / Пробитие)",
-          roleEn: "Abundance (Sustain / Break)",
-          buffDescRu: "+12.0% - 25.0% Уязвимость к пробитию, истощение огненной стойкости босса",
-          buffDescEn: "+12-25% Break Vulnerability, rapid Fire toughness reduction",
+          id: "1301", nameRu: "Галлахер", nameEn: "Gallagher", icon: "icon/character/1301.png",
+          roleRu: "Сустейн / пробитие", roleEn: "Sustain / Break",
+          buffDescRu: "Лечение и дополнительное истощение стойкости.", buffDescEn: "Healing and additional Toughness damage.",
           buffValues: { breakVuln: 18 }
         }
       ]
     },
     {
-      id: "himeko_fua_hyper",
-      nameRu: "Отряд 2: Победный кураж (Бонус-атаки и Продвижение)",
-      nameEn: "Team 2: Victory Rush Follow-up Hypercarry",
-      descRu: "Частые бонус-атаки с массовым продвижением отряда и колоссальным усилением критического урона.",
-      descEn: "Maximizes Victory Rush follow-up attacks through whole-team action advance and heavy Crit buffs.",
+      id: "himeko_47_break_no_sustain",
+      nameRu: "Отряд 2 (4.7): Максимум пробития без сустейна",
+      nameEn: "Team 2 (4.7): Maximum Break, No Sustain",
+      descRu: "Вариант из актуального руководства для быстрой ротации: Фугу, Жуань Мэй и Георгина ускоряют пробитие и набор зарядов Химеко. В команде нет лечения или щитов.",
+      descEn: "A current guide variant for faster Break cycles: Fugue, Ruan Mei and The Dahlia accelerate Break and Himeko's Charge. This team has no healer or shielder.",
+      isEstimate: true,
+      sourceVersion: "4.7",
+      sourceUpdatedAt: "2026-11-08",
+      sourceUrl: "https://www.hsr-build.com/best-teams/himeko",
       teammates: [
         {
-          id: "1309",
-          nameRu: "Зарянка",
-          nameEn: "Robin",
-          icon: "icon/character/1309.png",
-          names: ["Зарянка", "robin"],
-          roleRu: "Саппорт (100% Продвижение)",
-          roleEn: "Harmony (100% Advance)",
-          buffDescRu: "100% Продвижение ВСЕГО отряда, +1100 ATK, +50% Урон, +25% КУ бонус-атак",
-          buffDescEn: "100% Team Advance, +1100 ATK, +50% DMG, +25% FUA Crit DMG",
-          buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50, fuaCd: 25 }
+          id: "1404", nameRu: "Фугу", nameEn: "Fugue", icon: "icon/character/1404.png",
+          roleRu: "Имплант уязвимости", roleEn: "Weakness implant",
+          buffDescRu: "Помогает пробивать стойкость и усиливает суперпробитие.", buffDescEn: "Supports Toughness Break and Super Break.",
+          buffValues: { exoBreak: true, beBoost: 40 }
         },
         {
-          id: "1313",
-          altIds: ["1306", "1112"],
-          nameRu: "Воскресенье",
-          nameEn: "Sunday",
-          icon: "icon/character/1313.png",
-          names: ["воскресенье", "sunday", "искорка", "sparkle", "топаз", "topaz"],
-          roleRu: "Саппорт (Крит. урон и Заливка)",
-          roleEn: "Harmony (Crit & Energy Feed)",
-          buffDescRu: "100% Продвижение хода, передача +78% КУ от базы, +50% Урон цели, +40 EP",
-          buffDescEn: "100% Target Advance, +78% Crit DMG transfer, +50% DMG, +40 EP",
-          buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50, energyFeed: 40 }
+          id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", icon: "icon/character/1303.png",
+          roleRu: "Усиление пробития", roleEn: "Break amplifier",
+          buffDescRu: "Повышает эффективность пробития и урон команды.", buffDescEn: "Raises Break efficiency and team damage.",
+          buffValues: { breakEff: 50, resPen: 25, teamSpd: 10, dmgBoost: 68 }
         },
         {
-          id: "1304",
-          nameRu: "Авантюрин",
-          nameEn: "Aventurine",
-          icon: "icon/character/1304.png",
-          names: ["авантюрин", "aventurine"],
-          roleRu: "Сохранение (Щиты / Саб-ДПС)",
-          roleEn: "Preservation (Shield & Sub-DPS)",
-          buffDescRu: "+15.0% Крит. уязвимость врага, +50% Effect RES отряду, общие бонус-атаки",
-          buffDescEn: "+15.0% Crit Vulnerability, +50% Effect RES, co-op follow-up attacks",
-          buffValues: { critVuln: 15, teamEffectRes: 50 }
+          id: "1505", nameRu: "Георгина", nameEn: "The Dahlia", icon: "icon/character/1505.png",
+          roleRu: "Усиление пробития", roleEn: "Break amplifier",
+          buffDescRu: "Усиливает урон пробития и эффективность истощения стойкости.", buffDescEn: "Amplifies Break damage and Toughness reduction.",
+          buffValues: { superBreakFactor: 1.8, beBoost: 60, breakEff: 50 }
         }
       ]
     }
   ],
-
   "1308": [
     {
       id: "acheron_meta_pela_sunday_gallagher",
@@ -1674,287 +1641,28 @@ Object.entries(TEAMS_47).forEach(([ddId, squads]) => {
   CHARACTER_SQUADS[ddId] = squads;
 });
 
-export function getGenericSquads(char, lang = "ru") {
-  const isRu = lang === "ru";
-  const pathId = String(char?.path?.id || "").toLowerCase();
-  const pathName = String(char?.path?.name || "").toLowerCase();
-  if (pathId === "shaman" || pathName.includes("harmony") || pathName.includes("гармон")) {
-    return [
-      {
-        id: "generic_harmony_carry",
-        nameRu: "Отряд 1: Классический Гиперкерри (Усиление лучшего ДПС)",
-        nameEn: "Team 1: Classic Carry Empowerment",
-        descRu: "Ваш саппорт объединяется со вторым буфером для разгона главного гиперкерри отряда.",
-        descEn: "Your buffer teams up with a second amplifier to hypercharge the primary carry.",
-        teammates: [
-          {
-            id: "1308",
-            altIds: ["1220", "1310", "1212"],
-            nameRu: "Ахерон / Фэйсяо",
-            nameEn: "Acheron / Feixiao",
-            icon: "icon/character/1308.png",
-            names: ["ахерон", "acheron", "фэйсяо", "feixiao", "цзинлю", "jingliu"],
-            roleRu: "Главный ДПС (Керри)",
-            roleEn: "Main DPS Carry",
-            buffDescRu: "Получает баффы вашего персонажа и конвертирует их в урон",
-            buffValues: { carrySynergy: true }
-          },
-          {
-            id: "1309",
-            altIds: ["1313", "1303"],
-            nameRu: "Зарянка / Сандей",
-            nameEn: "Robin / Sunday",
-            icon: "icon/character/1309.png",
-            names: ["Зарянка", "robin", "воскресенье", "sunday", "руань мэй", "ruan mei"],
-            roleRu: "Саппорт (Второй буфер)",
-            roleEn: "Harmony (Dual Buffer)",
-            buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон",
-            buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50 }
-          },
-          {
-            id: "1304",
-            altIds: ["1203", "1301"],
-            nameRu: "Авантюрин",
-            nameEn: "Aventurine",
-            icon: "icon/character/1304.png",
-            names: ["авантюрин", "aventurine", "лоча", "luocha", "галлахер", "gallagher"],
-            roleRu: "Сохранение / Изобилие",
-            roleEn: "Sustain (Tank / Heal)",
-            buffDescRu: "Щиты отряда, +15% Крит. уязвимость врага",
-            buffValues: { critVuln: 15 }
-          }
-        ]
-      },
-      {
-        id: "generic_harmony_dual",
-        nameRu: "Отряд 2: Двойной ДПС (Синхронный разгон двух керри)",
-        nameEn: "Team 2: Dual Carry Amplification",
-        descRu: "Сборка под одновременную работу двух атакующих персонажей.",
-        descEn: "Empowering dual carry archetypes simultaneously.",
-        teammates: [
-          {
-            id: "1220",
-            nameRu: "Фэйсяо",
-            nameEn: "Feixiao",
-            icon: "icon/character/1220.png",
-            names: ["фэйсяо", "feixiao"],
-            roleRu: "Основной ДПС 1",
-            roleEn: "Main DPS 1",
-            buffDescRu: "Бонус-атаки и ультимейты",
-            buffValues: { carrySynergy: true }
-          },
-          {
-            id: "1112",
-            nameRu: "Топаз",
-            nameEn: "Topaz",
-            icon: "icon/character/1112.png",
-            names: ["топаз", "topaz"],
-            roleRu: "Основной ДПС 2 (Саб-ДПС)",
-            roleEn: "Main DPS 2 (Sub-DPS)",
-            buffDescRu: "+50% Урон бонус-атак по боссу",
-            buffValues: { fuaVuln: 50 }
-          },
-          {
-            id: "1304",
-            nameRu: "Авантюрин",
-            nameEn: "Aventurine",
-            icon: "icon/character/1304.png",
-            names: ["авантюрин", "aventurine"],
-            roleRu: "Сохранение",
-            roleEn: "Preservation",
-            buffDescRu: "+15% Крит. уязвимость врага",
-            buffValues: { critVuln: 15 }
-          }
-        ]
-      }
-    ];
-  }
-  if (pathId === "knight" || pathId === "priest" || pathName.includes("preservation") || pathName.includes("abundance") || pathName.includes("сохран") || pathName.includes("изобил")) {
-    return [
-      {
-        id: "generic_sustain_hyper",
-        nameRu: "Отряд 1: Премиум Защита Гиперкерри",
-        nameEn: "Team 1: Premier Carry Protection",
-        descRu: "Ваш сустейн обеспечивает выживание и защиту топовому гиперкерри под двумя буферами.",
-        descEn: "Your sustain protects a hypercarry empowered by dual offensive buffers.",
-        teammates: [
-          {
-            id: "1308",
-            altIds: ["1220", "1212", "1003"],
-            nameRu: "Ахерон / Фэйсяо",
-            nameEn: "Acheron / Feixiao",
-            icon: "icon/character/1308.png",
-            names: ["ахерон", "acheron", "фэйсяо", "feixiao", "химеко", "himeko"],
-            roleRu: "Главный ДПС (Керри)",
-            roleEn: "Main DPS Carry",
-            buffDescRu: "Наносит основной урон под вашей защитой",
-            buffValues: { carrySynergy: true }
-          },
-          {
-            id: "1313",
-            altIds: ["1306", "1101"],
-            nameRu: "Воскресенье / Искорка",
-            nameEn: "Sunday / Sparkle",
-            icon: "icon/character/1313.png",
-            names: ["воскресенье", "sunday", "искорка", "sparkle", "броня", "bronya"],
-            roleRu: "Саппорт (Продвижение и КУ)",
-            roleEn: "Harmony (Advance & Crit)",
-            buffDescRu: "100% Продвижение хода, передача КУ, +50% Урон",
-            buffValues: { targetAdvance: 100, cdGrant: 78, dmgBoost: 50 }
-          },
-          {
-            id: "1309",
-            altIds: ["1303", "1105"],
-            nameRu: "Зарянка / Жуань Мэй",
-            nameEn: "Robin / Ruan Mei",
-            icon: "icon/character/1309.png",
-            names: ["Зарянка", "robin", "руань мэй", "ruan mei", "пела", "pela"],
-            roleRu: "Саппорт / Дебаффер",
-            roleEn: "Harmony / Nihility",
-            buffDescRu: "100% Продвижение отряда, +1100 ATK, +50% Урон или срез защиты",
-            buffValues: { teamAdvance: 100, atkGrant: 1100, dmgBoost: 50, defShred: 40 }
-          }
-        ]
-      },
-      {
-        id: "generic_sustain_break",
-        nameRu: "Отряд 2: Защита Отряда Суперпробития",
-        nameEn: "Team 2: Super Break Shielding",
-        descRu: "Защита отряда суперпробития во главе со Светлячком или Бутхиллом.",
-        descEn: "Protecting super break teams led by Firefly or Boothill.",
-        teammates: [
-          {
-            id: "1310",
-            nameRu: "Светлячок",
-            nameEn: "Firefly",
-            icon: "icon/character/1310.png",
-            names: ["светлячок", "firefly"],
-            roleRu: "Главный ДПС (Суперпробитие)",
-            roleEn: "Main DPS (Super Break)",
-            buffDescRu: "Колоссальный урон суперпробития по сломанным боссам",
-            buffValues: { carrySynergy: true }
-          },
-          {
-            id: "1303",
-            nameRu: "Жуань Мэй",
-            nameEn: "Ruan Mei",
-            icon: "icon/character/1303.png",
-            names: ["руань мэй", "ruan mei"],
-            roleRu: "Саппорт (Пробитие)",
-            roleEn: "Harmony (Break)",
-            buffDescRu: "+50% Эффективность пробития, +25% All-Type RES PEN",
-            buffValues: { breakEff: 50, resPen: 25 }
-          },
-          {
-            id: "8005",
-            nameRu: "Первопроходец (Гармония)",
-            nameEn: "Trailblazer (Harmony)",
-            icon: "icon/character/8005.png",
-            names: ["первопроходец", "trailblazer"],
-            roleRu: "Саппорт (Суперпробитие)",
-            roleEn: "Harmony (Super Break)",
-            buffDescRu: "Наложение статуса Суперпробития отряду (160%)",
-            buffValues: { superBreakFactor: 1.6, beBoost: 30 }
-          }
-        ]
-      }
-    ];
-  }
-  return [
-    {
-      id: "generic_hypercarry",
-      nameRu: "Отряд 1: Классический Гиперкерри (Гармония + Срез Защиты)",
-      nameEn: "Team 1: Classic Hypercarry (Harmony + DEF Shred)",
-      descRu: "Максимизация урона через удвоение ходов, заливку критического урона и срез защиты босса.",
-      descEn: "Maximizes carry damage via action advances, Crit DMG buffs and defense shred.",
-      teammates: [
-        {
-          id: "1313",
-          altIds: ["1306", "1101"],
-          nameRu: "Воскресенье / Искорка",
-          nameEn: "Sunday / Sparkle",
-          icon: "icon/character/1313.png",
-          names: ["воскресенье", "sunday", "искорка", "sparkle", "броня", "bronya"],
-          roleRu: "Саппорт (Продвижение и КУ)",
-          roleEn: "Harmony (Advance & Crit)",
-          buffDescRu: "50-100% Продвижение хода, передача +60-80% КУ, +50% Урон цели",
-          buffValues: { targetAdvance: 100, cdGrant: 70, dmgBoost: 50 }
-        },
-        {
-          id: "1309",
-          altIds: ["1303", "1105"],
-          nameRu: "Зарянка / Пела",
-          nameEn: "Robin / Pela",
-          icon: "icon/character/1309.png",
-          names: ["Зарянка", "robin", "жуань мэй", "ruan mei", "пела", "pela"],
-          roleRu: "Саппорт / Дебаффер",
-          roleEn: "Harmony / Nihility",
-          buffDescRu: "100% Продвижение отряда / +25% RES PEN / -42% Срез защиты",
-          buffValues: { dmgBoost: 50, resPen: 25, defShred: 42 }
-        },
-        {
-          id: "1304",
-          altIds: ["1208", "1203", "1217", "1301"],
-          nameRu: "Авантюрин / Лоча",
-          nameEn: "Aventurine / Luocha",
-          icon: "icon/character/1304.png",
-          names: ["авантюрин", "aventurine", "фу сюань", "fu xuan", "лоча", "luocha", "хохо", "huohuo", "галлахер", "gallagher"],
-          roleRu: "Сустейн (Защита и Баффы)",
-          roleEn: "Sustain (Shield & Buffs)",
-          buffDescRu: "Полное выживание команды, +15% КУ уязвимость или +12% КШ пассивно",
-          buffValues: { critVuln: 15, teamEffectRes: 50 }
-        }
-      ]
-    },
-    {
-      id: "generic_dual_dps",
-      nameRu: "Отряд 2: Двойной ДПС с Универсальным Буфером",
-      nameEn: "Team 2: Dual DPS with Universal Buffer",
-      descRu: "Сборка под одновременную работу двух атакующих персонажей под аурами Жуань Мэй или Зарянка.",
-      descEn: "Dual carry setup amplified by whole-party auras from Ruan Mei or Robin.",
-      teammates: [
-        {
-          id: "1303",
-          altIds: ["1309"],
-          nameRu: "Жуань Мэй / Зарянка",
-          nameEn: "Ruan Mei / Robin",
-          icon: "icon/character/1303.png",
-          names: ["руань мэй", "ruan mei", "Зарянка", "robin"],
-          roleRu: "Саппорт (Аура отряда)",
-          roleEn: "Harmony (Party Aura)",
-          buffDescRu: "+68% Урон всем союзникам, +25% All-Type RES PEN, +10% SPD",
-          buffValues: { dmgBoost: 68, resPen: 25, teamSpd: 10 }
-        },
-        {
-          id: "1112",
-          altIds: ["1220", "1308"],
-          nameRu: "Топаз / Второй Керри",
-          nameEn: "Topaz / Second Carry",
-          icon: "icon/character/1112.png",
-          names: ["топаз", "topaz", "фэйсяо", "feixiao", "ахерон", "acheron"],
-          roleRu: "Охота (Саб-ДПС)",
-          roleEn: "Hunt (Sub-DPS)",
-          buffDescRu: "Совместные атаки, +50% Урон бонус-атак или срез стойкости",
-          buffValues: { fuaVuln: 50 }
-        },
-        {
-          id: "1304",
-          altIds: ["1301", "1222"],
-          nameRu: "Авантюрин / Галлахер",
-          nameEn: "Aventurine / Gallagher",
-          icon: "icon/character/1304.png",
-          names: ["авантюрин", "aventurine", "галлахер", "gallagher", "линша", "lingsha"],
-          roleRu: "Сустейн (Танк / Хил)",
-          roleEn: "Sustain (Tank / Heal)",
-          buffDescRu: "Защитные барьеры и дополнительный саб-ДПС вклад в цикл",
-          buffValues: { critVuln: 15 }
-        }
-      ]
-    }
-  ];
+export function getGenericSquads() {
+  // Path-only templates falsely treated unrelated characters as interchangeable
+  // (for example, Acheron, Feixiao and Jingliu as one carry slot). Only curated,
+  // character-specific squads should be recommended until verified synergy
+  // metadata is available for a roster-aware solver.
+  return [];
 }
 // Типові E0S1 кінцеві стати саппортів мети 4.7 — використовуються, коли союзника немає у витрині,
 // щоб відряд все одно отримував реалістичні бафи (замість нулів).
+export function rankSquadsByShowcase(squads, showcaseCharacters = []) {
+  const roster = Array.isArray(showcaseCharacters) ? showcaseCharacters : [];
+  if (!Array.isArray(squads) || squads.length < 2 || !roster.length) return squads || [];
+  const showcasedIds = new Set(roster.map((character) => String(character.id || "")));
+  return squads
+    .map((squad, sourceOrder) => ({
+      squad,
+      sourceOrder,
+      rosterMatches: (squad.teammates || []).filter((teammate) => showcasedIds.has(String(teammate.id || ""))).length
+    }))
+    .sort((a, b) => b.rosterMatches - a.rosterMatches || a.sourceOrder - b.sourceOrder)
+    .map(({ squad }) => squad);
+}
 const SUPPORT_DEFAULT_STATS = {
   "1313": { atk: 3100, def: 1400, hp: 12000, cr: 5, cd: 170, be: 0 },   // Воскресенье
   "1309": { atk: 3300, def: 1600, hp: 13000, cr: 5, cd: 130, be: 0 },   // Зарянка
@@ -2114,24 +1822,13 @@ function computeSupportBuffs(rec, s = {}) {
 
 export function matchSquadWithShowcase(squad, showcaseCharacters = [], lang = "ru") {
   if (!squad || !Array.isArray(squad.teammates)) return [];
-  const distinctVersions = [
-    new Set(["1003", "1510"]),
-
-    new Set(["1309", "1512"]),
-
-    new Set(["1304", "1513"])
-
-  ];
   return squad.teammates.map((rec) => {
     const matchedChar = (showcaseCharacters || []).find((c) => {
       const cId = String(c.id || "");
-      const cName = (c.name || "").toLowerCase();
       const recId = String(rec.id || "");
-      if (cId === recId) return true;
-      if (distinctVersions.some((group) => group.has(cId) && group.has(recId) && cId !== recId)) return false;
-      if (rec.altIds && rec.altIds.includes(cId)) return true;
-      if (rec.names && rec.names.some((n) => cName.includes(n))) return true;
-      return false;
+      // Showcase stats are valid only for the exact character ID. Similar roles,
+      // aliases and alternate versions do not imply equivalent kits or gear.
+      return cId === recId;
     });
     const isRu = lang === "ru";
     const fallbackName = isRu ? rec.nameRu || rec.names?.[0] || "Союзник" : rec.nameEn || rec.names?.[1] || rec.names?.[0] || "Teammate";

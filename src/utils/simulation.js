@@ -15,6 +15,10 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
   let ehr = Number(stats?.ehr || 0);
   let err = Number(stats?.err || 0);
   let dmg_boost = Number(stats?.dmg_boost || 0);
+  const characterLevel = Math.max(1, Number(char.level) || 80);
+  const referenceEnemyLevel = 95;
+  const baseDefFactor = (characterLevel + 20) / (characterLevel + 20 + referenceEnemyLevel + 20);
+  const baseResMult = 0.8; // Neutral target with 20% base RES; weakness is not assumed.
   if (!atk && !hp && char) {
     const baseMap = {};
     (char.attributes || []).forEach((a) => {
@@ -34,15 +38,13 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
     be = parseFloat(((addMap["break_dmg"]?.value || 0) * 100).toFixed(1)) || 0;
     ehr = parseFloat(((addMap["effect_hit"]?.value || 0) * 100).toFixed(1)) || 0;
     err = parseFloat(((addMap["sp_rate"]?.value || 0) * 100).toFixed(1)) || 0;
-    const dmgFields = ["fire_dmg", "physical_dmg", "quantum_dmg", "thunder_dmg", "wind_dmg", "ice_dmg", "imaginary_dmg", "all_dmg"];
-    dmgFields.forEach((f) => {
-      if (addMap[f]?.value) {
-        dmg_boost = Math.max(dmg_boost, parseFloat((addMap[f].value * 100).toFixed(1)));
-      }
-    });
+    const damageFieldByElement = {
+      Physical: "physical_dmg", Fire: "fire_dmg", Ice: "ice_dmg", Lightning: "thunder_dmg",
+      Wind: "wind_dmg", Quantum: "quantum_dmg", Imaginary: "imaginary_dmg"
+    };
+    const elementDamageField = damageFieldByElement[char.element?.id] || "";
+    dmg_boost = parseFloat((((addMap.all_dmg?.value || 0) + (addMap[elementDamageField]?.value || 0)) * 100).toFixed(1));
   }
-  const baseDefFactor = 1e3 / (1100 + 1e3);
-  const baseResMult = 0.8;
   const baseDmgCoeff = baseDefFactor * baseResMult;
   const effectiveSpd = Math.max(90, spd);
   const actionsPerCycle0 = Math.floor(150 * effectiveSpd / 1e4) + 150 * effectiveSpd % 1e4 / 1e4;
@@ -114,7 +116,7 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
     };
   }
   if (isMortenax) {
-    const zoneDefMult = 1e3 / (1100 * (1 - 0.3) + 1e3);
+    const zoneDefMult = (characterLevel + 20) / (characterLevel + 20 + (referenceEnemyLevel + 20) * (1 - 0.3));
     const vulnMult = 1 + 0.5;
     const totalDmgBonus = 1 + dmg_boost / 100;
     const motionValue = 1.68;
@@ -756,8 +758,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
         metric2Value: `${totalDPC.toLocaleString("ru-RU")}`,
         metric3Label: isRu ? "ЧАСТОТА ХОДОВ В ЦИКЛЕ" : "ACTIONS PER CYCLE",
         metric3Value: `${actionsPerCycle.toFixed(2)}x (${actionsPerCycle0.toFixed(2)}x в Цикле 0)`,
-        summaryRu: `Симуляция против босса MoC 12 (90 ур.): суперпробитие наносит ~${superBreakDPA.toLocaleString("ru-RU")} урона за действие при ${be.toFixed(0)}% ЭП.`,
-        summaryEn: `Simulated vs MoC 12 Lv.90 Boss: Super Break deals ~${superBreakDPA.toLocaleString("en-US")} per hit at ${be.toFixed(0)}% BE.`,
+        summaryRu: `Симуляция против босса MoC 12 (95 ур.): суперпробитие наносит ~${superBreakDPA.toLocaleString("ru-RU")} урона за действие при ${be.toFixed(0)}% ЭП.`,
+        summaryEn: `Simulated vs MoC 12 Lv.95 Boss: Super Break deals ~${superBreakDPA.toLocaleString("en-US")} per hit at ${be.toFixed(0)}% BE.`,
         benchmarkTier: totalDPC >= 28e4 ? "SSS" : totalDPC >= 2e5 ? "SS" : totalDPC >= 14e4 ? "S" : "A"
       };
     }

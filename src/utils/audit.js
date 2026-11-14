@@ -1720,13 +1720,12 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const eres = parseFloat(((addMap["effect_res"]?.value || 0) * 100).toFixed(1));
   const heal = parseFloat(((addMap["heal_rate"]?.value || 0) * 100).toFixed(1));
   const err = parseFloat(((addMap["sp_rate"]?.value || 0) * 100).toFixed(1));
-  const dmgFields = ["fire_dmg", "physical_dmg", "quantum_dmg", "thunder_dmg", "wind_dmg", "ice_dmg", "imaginary_dmg", "all_dmg"];
-  let dmg_boost = 0;
-  dmgFields.forEach((f) => {
-    if (addMap[f]?.value) {
-      dmg_boost = Math.max(dmg_boost, parseFloat((addMap[f].value * 100).toFixed(1)));
-    }
-  });
+  const damageFieldByElement = {
+    Physical: "physical_dmg", Fire: "fire_dmg", Ice: "ice_dmg", Lightning: "thunder_dmg",
+    Wind: "wind_dmg", Quantum: "quantum_dmg", Imaginary: "imaginary_dmg"
+  };
+  const elementDamageField = damageFieldByElement[char.element?.id] || "";
+  const dmg_boost = parseFloat((((addMap.all_dmg?.value || 0) + (addMap[elementDamageField]?.value || 0)) * 100).toFixed(1));
   const ropeRelic = (char.relics || []).find((r) => {
     if (!r) return false;
     const num = Number(r.type ?? r.pos);

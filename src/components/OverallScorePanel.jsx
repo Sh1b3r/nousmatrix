@@ -49,12 +49,6 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
         </span>
       </div>
 
-      <div className="score-model-explanation">
-        {isRu
-          ? "Расчётная оценка качества билда: взвешенный индекс порогов характеристик (70%) и роллов реликвий (30%)."
-          : "Computed build quality index: weighted combination of stat targets (70%) and relic rolls (30%)."}
-      </div>
-
       <div className="score-hero-container">
         <div className="score-hero-left">
           <div className="score-number-wrap">

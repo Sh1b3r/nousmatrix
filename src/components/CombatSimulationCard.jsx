@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { runCombatSimulation } from "../utils/simulation.js";
-import { CHARACTER_SQUADS, getGenericSquads, matchSquadWithShowcase } from "../utils/teamSynergy.js";
+import { CHARACTER_SQUADS, getGenericSquads, matchSquadWithShowcase, rankSquadsByShowcase } from "../utils/teamSynergy.js";
 import { runFullTeamRotationSimulation } from "../utils/rotationSimulation.js";
 import { iconUrl, handleImageFallback } from "../utils/audit.js";
 import { SwordIcon, ShieldIcon, SparklesIcon, CheckIcon, WarnIcon } from "./Icons.jsx";
@@ -12,35 +12,36 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const charId = String(character.id || "");
 
   const squads = useMemo(() => {
+    const rankForRoster = (candidates) => rankSquadsByShowcase(candidates, showcase);
     if (CHARACTER_SQUADS[charId] && CHARACTER_SQUADS[charId].length > 0) {
-      return CHARACTER_SQUADS[charId];
+      return rankForRoster(CHARACTER_SQUADS[charId]);
     }
     const name = String(character?.name || "").toLowerCase();
     if (charId === "999" || charId === "1006" || name.includes("волк") || name.includes("silver")) {
-      return CHARACTER_SQUADS["1006"] || CHARACTER_SQUADS["999"] || getGenericSquads(character, lang);
+      return rankForRoster(CHARACTER_SQUADS["1006"] || CHARACTER_SQUADS["999"] || getGenericSquads(character, lang));
     }
     if (charId === "1513" || name.includes("прибой") || name.includes("waveflair")) {
-      return CHARACTER_SQUADS["1513"] || getGenericSquads(character, lang);
+      return rankForRoster(CHARACTER_SQUADS["1513"] || getGenericSquads(character, lang));
     }
     if (charId === "1310" || name.includes("светляч") || name.includes("firefly")) {
-      return CHARACTER_SQUADS["1310"] || getGenericSquads(character, lang);
+      return rankForRoster(CHARACTER_SQUADS["1310"] || getGenericSquads(character, lang));
     }
     if (charId === "1308" || name.includes("ахерон") || name.includes("acheron")) {
-      return CHARACTER_SQUADS["1308"] || getGenericSquads(character, lang);
+      return rankForRoster(CHARACTER_SQUADS["1308"] || getGenericSquads(character, lang));
     }
     if (charId === "1015" || name.includes("арчер") || name.includes("archer")) {
-      return CHARACTER_SQUADS["1015"] || getGenericSquads(character, lang);
+      return rankForRoster(CHARACTER_SQUADS["1015"] || getGenericSquads(character, lang));
     }
     if (charId === "1510" || name.includes("нова") || name.includes("nova")) {
-      return CHARACTER_SQUADS["1510"] || getGenericSquads(character, lang);
+      return rankForRoster(CHARACTER_SQUADS["1510"] || getGenericSquads(character, lang));
     }
-    return getGenericSquads(character, lang);
-  }, [charId, character, lang]);
+    return rankForRoster(getGenericSquads(character, lang));
+  }, [charId, character, lang, showcase]);
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
   const [enemyMode, setEnemyMode] = useState("moc");
   const [isNormalized, setIsNormalized] = useState(false);
-  const currentSquad = squads[selectedSquadIdx] || squads[0];
+  const currentSquad = squads[selectedSquadIdx] || squads[0] || null;
 
   const matchedTeammates = useMemo(() => {
     return matchSquadWithShowcase(currentSquad, showcase, lang);
@@ -137,7 +138,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
       </div>
 
       {/* Squad selector */}
-      <div className="combat-squad-section">
+      {currentSquad ? <div className="combat-squad-section">
         <div className="combat-squad-nav">
           <div className="squad-tabs-list">
             {squads.map((sq, idx) => (
@@ -253,7 +254,15 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             );
           })}
         </div>
-      </div>
+      </div> : (
+        <div className="combat-squad-section">
+          <p className="combat-squad-desc">
+            {isRu
+              ? "Для этого персонажа пока нет проверенной команды. Автоматические замены по Пути или общей роли отключены; показанный расчёт не включает баффы союзников."
+              : "No validated team is available for this character yet. Path or broad-role substitutions are disabled; the displayed calculation does not include teammate buffs."}
+          </p>
+        </div>
+      )}
 
       {/* Rotation Metrics Grid */}
       {rotationSim && (
@@ -267,7 +276,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 {Number(rotationSim.rotationTotalDamage || 0).toLocaleString("ru-RU")}
               </span>
               <span className="sim-metric-hint">
-                {isRu ? "Расчёт за полный цикл 4 союзников" : "Calculated 4-unit sequence"}
+                {currentSquad
+                  ? (isRu ? "Расчётная ротация выбранного состава" : "Calculated rotation for selected squad")
+                  : (isRu ? "Без баффов союзников" : "No teammate buffs applied")}
               </span>
             </div>
             <div className="combat-sim-metric-box">
@@ -365,15 +376,15 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <span>
                 {isRu
                   ? enemyMode === "pf"
-                    ? "Цель симуляции: волны мобов 88 уровня (Чистый Вымысел), защитный фактор 1100, базовая устойчивость 20% RES."
+                    ? "Цель: волны мобов 88 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
                     : enemyMode === "as"
-                    ? "Цель симуляции: ап-босс 95 уровня (Апокалипсис Постоянства), защитный фактор 1100, устойчивость 40% RES."
-                    : "Цель симуляции: босс 95 уровня (Зал Забвения 12), защитный фактор 1100, базовая устойчивость 20% RES."
+                    ? "Цель: босс 95 уровня, базовое сопротивление 40%; защита считается по уровням персонажа и врага."
+                    : "Цель: босс 95 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
                   : enemyMode === "pf"
-                  ? "Target: Lv. 88 mob waves (Pure Fiction), 1100 DEF factor, 20% Base RES."
+                  ? "Target: Lv. 88 waves, 20% base RES; DEF multiplier uses character and enemy levels."
                   : enemyMode === "as"
-                  ? "Target: Lv. 95 Apocalyptic Shadow boss, 1100 DEF factor, 40% RES."
-                  : "Target: Lv. 95 Boss (MoC 12), 1100 DEF factor, 20% Base RES."}
+                  ? "Target: Lv. 95 boss, 40% base RES; DEF multiplier uses character and enemy levels."
+                  : "Target: Lv. 95 boss, 20% base RES; DEF multiplier uses character and enemy levels."}
               </span>
             </div>
             <div className="assumption-item">

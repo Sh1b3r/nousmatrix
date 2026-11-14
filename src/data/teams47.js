@@ -333,53 +333,67 @@ export const TEAMS_47 = {
   // Ахерон (1308) — мета 4.7 БЕЗ Кирен, БЕЗ Трибби, БЕЗ Прибоя
   "1308": [
     {
-      id: "acheron_47_mortenax_sunday_sustain",
-      nameRu: "Отряд 1 (4.7): Дебафф-Гиперкерри (Мортенакс Блэйд + Воскресенье + Гиацина)",
-      nameEn: "Team 1 (4.7): Debuff Hypercarry (Mortenax Blade + Sunday + Hyacine)",
-      descRu: "Мета 4.7: Мортенакс Блэйд выступает топовым суб-ДПС и дебаффером Ахерон (быстрый набор Слэша при каждом действии), Воскресенье продвигает ход на 100% и заливает КУ, Гиацина обеспечивает выживание и баффает КШ.",
-      descEn: "4.7 meta: Mortenax Blade acts as premier Sub-DPS and debuffer for Acheron (fast Slash charging), Sunday gives 100% advance and Crit DMG, Hyacine sustains and buffs CRIT.",
-      isEstimate: true,
+      id: "acheron_47_nihility_core",
+      nameRu: "Отряд 1 (4.7): Небытие (Цзяоцю + Пела + Авантюрин)",
+      nameEn: "Team 1 (4.7): Nihility Core (Jiaoqiu + Pela + Aventurine)",
+      descRu: "Основная рекомендация HSR Build 4.7: два союзника Небытия регулярно накладывают ослабления и ускоряют заряд сверхспособности Ахерон; Авантюрин обеспечивает сустейн без постоянного расхода очков навыков.",
+      descEn: "HSR Build 4.7 primary recommendation: two Nihility allies apply debuffs to accelerate Acheron's Ultimate; Aventurine sustains with low Skill Point demand.",
+      sourceVersion: "4.7",
+      sourceUpdatedAt: "2026-11-08",
+      sourceUrl: "https://www.hsr-build.com/best-teams/acheron",
       teammates: [
         {
-          id: "1507",
-          nameRu: "Мортенакс Блэйд",
-          nameEn: "Mortenax Blade",
-          icon: "icon/character/1507.png",
-          names: ["мортенакс", "mortenax"],
-          roleRu: "Нихилия (Дебафы и суб-ДПС)",
-          roleEn: "Nihility (Debuffs & Sub-DPS)",
-          buffDescRu: "Зона Balefire Bind: срез защиты (-30%), уязвимость (+50%), набор зарядов Слеша при каждом действии союзников",
-          buffDescEn: "Balefire Bind Zone: DEF shred (-30%), vulnerability (+50%), Knot charge feeds on all ally actions",
+          id: "1218", nameRu: "Цзяоцю", nameEn: "Jiaoqiu", icon: "icon/character/1218.png",
+          roleRu: "Небытие / ослабления", roleEn: "Nihility / debuffer",
+          buffDescRu: "Накладывает ослабления, помогая заряжать сверхспособность Ахерон.", buffDescEn: "Applies debuffs that help charge Acheron's Ultimate.",
+          buffValues: { allVuln: 15, defShred: 15 }
+        },
+        {
+          id: "1105", nameRu: "Пела", nameEn: "Pela", icon: "icon/character/1105.png",
+          roleRu: "Небытие / срез защиты", roleEn: "Nihility / DEF shred",
+          buffDescRu: "Срезает защиту и накладывает ослабления для зарядов Ахерон.", buffDescEn: "Shreds DEF and applies debuffs for Acheron stacks.",
+          buffValues: { defShred: 40 }
+        },
+        {
+          id: "1304", nameRu: "Авантюрин", nameEn: "Aventurine", icon: "icon/character/1304.png",
+          roleRu: "Сустейн", roleEn: "Sustain",
+          buffDescRu: "Поддерживает выживаемость команды и помогает накладывать ослабления.", buffDescEn: "Keeps the team alive and can contribute debuffs.",
+          buffValues: { critVuln: 15 }
+        }
+      ]
+    },
+    {
+      id: "acheron_47_ashveil_mortenax_hyacine",
+      nameRu: "Отряд 2 (4.7): Ахерон + Эшвейл + Мортенакс + Гиацина",
+      nameEn: "Team 2 (4.7): Acheron + Ashveil + Mortenax Blade + Hyacine",
+      descRu: "Альтернативный состав HSR Build, отмеченный в 0,5% прохождений четырёх режимов в версии 4.6: Мортенакс накладывает ослабления для зарядов Ахерон, Эшвейл наносит урон бонус-атаками, Гиацина лечит.",
+      descEn: "Alternative HSR Build team seen in 0.5% of clears across four modes in version 4.6: Mortenax applies Acheron-charge debuffs, Ashveil contributes follow-up damage, and Hyacine heals.",
+      isEstimate: true,
+      sourceVersion: "4.7",
+      sourceUpdatedAt: "2026-11-08",
+      sourceUrl: "https://www.hsr-build.com/best-teams/acheron",
+      teammates: [
+        {
+          id: "1504", nameRu: "Эшвейл", nameEn: "Ashveil", icon: "icon/character/1504.png",
+          roleRu: "Охота / бонус-атаки", roleEn: "Hunt / follow-up attacker",
+          buffDescRu: "Добавляет частые бонус-атаки и совместную механику с Мортенаксом.", buffDescEn: "Adds frequent follow-ups and synergy with Mortenax Blade.",
+          buffValues: { fuaVuln: 20 }
+        },
+        {
+          id: "1507", nameRu: "Мортенакс Блэйд", nameEn: "Mortenax Blade", icon: "icon/character/1507.png",
+          roleRu: "Небытие / ослабления", roleEn: "Nihility / debuffer",
+          buffDescRu: "Накладывает ослабления, срез защиты и уязвимость.", buffDescEn: "Applies debuffs, DEF shred and vulnerability.",
           buffValues: { allVuln: 50, defShred: 30 }
         },
         {
-          id: "1313",
-          nameRu: "Воскресенье",
-          nameEn: "Sunday",
-          icon: "icon/character/1313.png",
-          names: ["воскресенье", "sunday"],
-          roleRu: "Гармония (100% Продвижение и КУ)",
-          roleEn: "Harmony (100% Advance & Crit)",
-          buffDescRu: "100% Продвижение хода, передача КУ и энергии",
-          buffValues: { targetAdvance: 100, cdGrant: 80, dmgBoost: 50 }
-        },
-        {
-          id: "1409",
-          altIds: ["1301", "1208"],
-          nameRu: "Гиацина",
-          nameEn: "Hyacine",
-          icon: "icon/character/1409.png",
-          names: ["гиацина", "hyacine", "галлахер", "gallagher"],
-          roleRu: "Сохранение (Лечение и КШ)",
-          roleEn: "Sustain (Heals & CR)",
-          buffDescRu: "Надёжное выживание, щиты, +12% КШ отряду",
+          id: "1409", nameRu: "Гиацина", nameEn: "Hyacine", icon: "icon/character/1409.png",
+          roleRu: "Сустейн / лечение", roleEn: "Sustain / healer",
+          buffDescRu: "Лечит команду, в том числе компенсируя расход HP Мортенакса.", buffDescEn: "Heals the team, including Mortenax's HP consumption.",
           buffValues: { crGrant: 12, energyFeed: 20 }
         }
       ]
     }
   ],
-
-  // Арчер (1015) — Fate Квантовая Охота
   "1015": [
     {
       id: "archer_rin_sparkle_huohuo",
@@ -474,52 +488,98 @@ export const TEAMS_47 = {
   // Химеко: Нова (1510) — Verdict-стенс
   "1510": [
     {
-      id: "himeko_nova_47_mortenax_sunday_rmc",
-      nameRu: "Отряд 1 (4.7): Verdict-стенс (Мортенакс Блэйд + Воскресенье + Первопроходец (Память))",
-      nameEn: "Team 1 (4.7): Verdict Stance (Mortenax Blade + Sunday + Remembrance Trailblazer)",
-      descRu: "Синергия 4.7: Мортенакс Блэйд даёт сильные дебафы и поддерживает оба стенса, Воскресенье — энергию и быстрые ходы для частых Assist Skills, Первопроходец Памяти — главный Verdict-союзник (True DMG и ходы).",
-      descEn: "4.7 synergy: Mortenax Blade provides strong debuffs supporting both stances, Sunday gives energy & turns for Assist Skills, Remembrance TB deals True DMG.",
-      isEstimate: true,
+      id: "himeko_nova_47_sunday_ruanmei_lingsha",
+      nameRu: "Отряд 1 (4.7): Химеко • Нова (Воскресенье + Жуань Мэй + Линша)",
+      nameEn: "Team 1 (4.7): Himeko • Nova (Sunday + Ruan Mei + Lingsha)",
+      descRu: "Основная команда HSR Build 4.7. Талант Химеко • Новы даёт союзникам Assist Skill, поэтому Воскресенье ускоряет число действий, Жуань Мэй усиливает команду, а Линша сохраняет выживаемость и помогает атаковать.",
+      descEn: "HSR Build 4.7 primary team. Himeko • Nova grants allies an Assist Skill, so Sunday increases action frequency, Ruan Mei amplifies the team, and Lingsha sustains while contributing attacks.",
+      sourceVersion: "4.7",
+      sourceUpdatedAt: "2026-11-08",
+      sourceUrl: "https://www.hsr-build.com/best-teams/himeko-nova",
       teammates: [
         {
-          id: "1507",
-          nameRu: "Мортенакс Блэйд",
-          nameEn: "Mortenax Blade",
-          icon: "icon/character/1507.png",
-          names: ["мортенакс", "mortenax"],
-          roleRu: "Нихилия (Дебафы и атаки)",
-          roleEn: "Nihility (Debuffs and Attacks)",
-          buffDescRu: "Сильные дебафы для Химеко Новы, поддержка обоих стенсов",
-          buffValues: { allVuln: 25, defShred: 20 }
+          id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", icon: "icon/character/1313.png",
+          roleRu: "Продвижение действий", roleEn: "Action advance",
+          buffDescRu: "Продвигает Химеко • Нову и помогает ей чаще запускать Assist Skill.", buffDescEn: "Advances Himeko • Nova so she can trigger Assist Skills more often.",
+          buffValues: { targetAdvance: 100, cdGrant: 80, dmgBoost: 50, energyFeed: 40 }
         },
         {
-          id: "1313",
-          nameRu: "Воскресенье",
-          nameEn: "Sunday",
-          icon: "icon/character/1313.png",
-          names: ["воскресенье", "sunday"],
-          roleRu: "Гармония (Энергия и продвижение)",
-          roleEn: "Harmony (Energy and Advance)",
-          buffDescRu: "Энергия и быстрые ходы подряд — чаще срабатывают Assist Skills",
-          buffValues: { targetAdvance: 100 }
+          id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", icon: "icon/character/1303.png",
+          roleRu: "Усиление команды", roleEn: "Team amplifier",
+          buffDescRu: "Усиливает урон и эффективность пробития команды.", buffDescEn: "Amplifies team damage and Break efficiency.",
+          buffValues: { breakEff: 50, resPen: 25, teamSpd: 10, dmgBoost: 68 }
         },
         {
-          id: "8007",
-          altIds: ["8008"],
-          nameRu: "Первопроходец (Память)",
-          nameEn: "Trailblazer (Remembrance)",
-          icon: "icon/character/8007.png",
-          names: ["первопроходец", "trailblazer"],
-          roleRu: "Память (Verdict-стенс, True DMG)",
-          roleEn: "Remembrance (Verdict Stance, True DMG)",
-          buffDescRu: "Главный Verdict-союзник: True DMG и abundance ходов",
-          buffValues: { teamAdvance: 100, dmgBoost: 24 }
+          id: "1222", nameRu: "Линша", nameEn: "Lingsha", icon: "icon/character/1222.png",
+          roleRu: "Сустейн / атаки", roleEn: "Sustain / attacks",
+          buffDescRu: "Лечит команду и наносит частые атаки для активации Assist Skill.", buffDescEn: "Heals the team and attacks frequently to trigger Assist Skills.",
+          buffValues: { breakVuln: 25 }
+        }
+      ]
+    },
+    {
+      id: "himeko_nova_47_robin_welt_dhpt",
+      nameRu: "Отряд 2 (4.7): Зарянка • Яснопея + Вельт + Дань Хэн • Освободитель Пустошей",
+      nameEn: "Team 2 (4.7): Robin • Summeretto + Welt + Dan Heng • Permansor Terrae",
+      descRu: "Альтернатива из выборки HSR Build: Зарянка продвигает Химеко • Нову и восстанавливает энергию, Вельт снижает защиту, Дань Хэн • Освободитель Пустошей защищает команду.",
+      descEn: "HSR Build alternative: Robin • Summeretto advances Himeko • Nova and restores Energy, Welt shreds DEF, and Dan Heng • Permansor Terrae sustains.",
+      isEstimate: true,
+      sourceVersion: "4.7",
+      sourceUpdatedAt: "2026-11-08",
+      sourceUrl: "https://www.hsr-build.com/best-teams/himeko-nova",
+      teammates: [
+        {
+          id: "1512", nameRu: "Зарянка • Яснопея", nameEn: "Robin • Summeretto", icon: "icon/character/1512.png",
+          roleRu: "Продвижение и энергия", roleEn: "Action advance and Energy",
+          buffDescRu: "Продвигает Химеко • Нову и помогает чаще использовать Assist Skill.", buffDescEn: "Advances Himeko • Nova and helps her trigger Assist Skills more often.",
+          buffValues: { targetAdvance: 100, energyFeed: 40, atkGrant: 900, dmgBoost: 50 }
+        },
+        {
+          id: "1004", nameRu: "Вельт", nameEn: "Welt", icon: "icon/character/1004.png",
+          roleRu: "Ослабление врага", roleEn: "Enemy debuffer",
+          buffDescRu: "Снижает защиту противника и задерживает его действия.", buffDescEn: "Shreds enemy DEF and delays its actions.",
+          buffValues: { defShred: 40 }
+        },
+        {
+          id: "1414", nameRu: "Дань Хэн • Освободитель Пустошей", nameEn: "Dan Heng • Permansor Terrae", icon: "icon/character/1414.png",
+          roleRu: "Сустейн / щиты", roleEn: "Sustain / shields",
+          buffDescRu: "Даёт щиты и защищает команду.", buffDescEn: "Provides shields and protects the team.",
+          buffValues: { teamShield: true, atkGrant: 650 }
+        }
+      ]
+    },
+    {
+      id: "himeko_nova_47_mortenax_welt_dhpt",
+      nameRu: "Отряд 3 (4.7): Мортенакс + Вельт + Дань Хэн • Освободитель Пустошей",
+      nameEn: "Team 3 (4.7): Mortenax Blade + Welt + Dan Heng • Permansor Terrae",
+      descRu: "Альтернатива из свежей выборки: двойное ослабление защиты через Вельта и Мортенакса; Дань Хэн • Освободитель Пустошей компенсирует расход HP Мортенаксом.",
+      descEn: "A current sampled alternative: Welt and Mortenax Blade both weaken enemy DEF, while Dan Heng • Permansor Terrae supports Mortenax's HP-spending playstyle.",
+      isEstimate: true,
+      sourceVersion: "4.7",
+      sourceUpdatedAt: "2026-11-08",
+      sourceUrl: "https://www.hsr-build.com/best-teams/himeko-nova",
+      teammates: [
+        {
+          id: "1507", nameRu: "Мортенакс Блэйд", nameEn: "Mortenax Blade", icon: "icon/character/1507.png",
+          roleRu: "Ослабление / саб-ДД", roleEn: "Debuffer / sub-DPS",
+          buffDescRu: "Снижает защиту и уязвимость врагов.", buffDescEn: "Shreds enemy DEF and increases damage taken.",
+          buffValues: { allVuln: 50, defShred: 30 }
+        },
+        {
+          id: "1004", nameRu: "Вельт", nameEn: "Welt", icon: "icon/character/1004.png",
+          roleRu: "Ослабление врага", roleEn: "Enemy debuffer",
+          buffDescRu: "Снижает защиту противника и задерживает его действия.", buffDescEn: "Shreds enemy DEF and delays its actions.",
+          buffValues: { defShred: 40 }
+        },
+        {
+          id: "1414", nameRu: "Дань Хэн • Освободитель Пустошей", nameEn: "Dan Heng • Permansor Terrae", icon: "icon/character/1414.png",
+          roleRu: "Сустейн / щиты", roleEn: "Sustain / shields",
+          buffDescRu: "Защищает команду и поддерживает ротацию.", buffDescEn: "Protects the team and supports the rotation.",
+          buffValues: { teamShield: true, atkGrant: 650 }
         }
       ]
     }
   ],
-
-  // Фаенон (1408) — мета 4.7 (Лига Титанов с сустейном)
   "1408": [
     {
       id: "phainon_47_titan_league_sustain",
