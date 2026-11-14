@@ -23,6 +23,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   let teamVuln = 0;
   let teamBreakVuln = 0;
   let teamBeBoost = 0;
+  let teamSpd = 0;
   let loopFactor = 1;
   let hasSuperBreak = false;  let superBreakFactor = 1;
   let teamActionAdvances = [];
@@ -41,6 +42,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     if (b.critVuln) teamVuln += b.critVuln;
     if (b.breakVuln) teamBreakVuln += b.breakVuln;
     if (b.beBoost) teamBeBoost += b.beBoost;
+    if (b.teamSpd) teamSpd += b.teamSpd;
     if (b.superBreakFactor) {
       hasSuperBreak = true;
       superBreakFactor = b.superBreakFactor;
@@ -141,12 +143,17 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     });
     if (kitRotation.ultLoop) {
       // Дискретная модель энергии и действий (Action Value & Energy Cycle Model):
-      // В цикле 0 (150 AV) количество ходов = Math.floor(150 / (10000 / baseSpd)).
-      // Базовая генерация энергии за ход: Навык = 30 EP, Ультимейт возвращает 5 EP.
-      // Внешние батарейки отряда (Тинъюнь/Воскресенье/Хуохуо/дебаффы): учитываются из teamEnergyGrant.
+      // В цикле 0 (150 AV) базовая скорость с учетом баффов команды и сетов (напр. Сет 329, Жуань Мэй)
+      const combatSpd = Math.max(90, baseSpd * (1 + teamSpd / 100));
+      let totalAdvanceBonusAV = 0;
+      teamActionAdvances.forEach((adv) => {
+        totalAdvanceBonusAV += (10000 / combatSpd) * (Math.min(100, adv) / 100);
+      });
+      // Количество ходов в цикле 0 (150 AV + сэкономленный AV от продвижения действий):
+      const effectiveAVWindow = 150 + totalAdvanceBonusAV;
+      const turnsInCycle0 = Math.max(1, Math.floor(effectiveAVWindow / (10000 / combatSpd)));
       const err = Number(mainStats.err || 100) / 100;
       const ultCost = kitRotation.ultCost || 140;
-      const turnsInCycle0 = Math.max(1, Math.floor(150 / (10000 / Math.max(90, baseSpd))));
       const energyPerTurn = (30 * err);
       const totalEnergyFromTurns = turnsInCycle0 * energyPerTurn + (5 * err);
       // Внешний приток энергии от союзников в ротации
@@ -165,8 +172,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
         phase: isRu ? "ЭНЕРГЕТИЧЕСКИЙ ЦИКЛ" : "ENERGY CYCLE",
         actionNameRu: `Энергетический цикл: ${ultCasts >= 2 ? `${ultCasts} ультимейта` : "1 ультимейт"} (${totalGeneratedEnergy.toFixed(0)}/${ultCost} EP, ${turnsInCycle0} хода)`,
         actionNameEn: `Energy cycle: ${ultCasts >= 2 ? `${ultCasts} ultimates` : "1 ultimate"} (${totalGeneratedEnergy.toFixed(0)}/${ultCost} EP, ${turnsInCycle0} turns)`,
-        descRu: `За 150 AV (${turnsInCycle0} действия при СКОР ${baseSpd.toFixed(0)}) накоплено ${totalGeneratedEnergy.toFixed(0)} EP (ВЭ ${(err * 100).toFixed(1)}%${externalEnergy > 0 ? `, включая +${externalEnergy.toFixed(0)} EP от батареек отряда` : ""}). Множитель ротации: ×${loopFactor.toFixed(2)}.`,
-        descEn: `Over 150 AV (${turnsInCycle0} actions at ${baseSpd.toFixed(0)} SPD) generated ${totalGeneratedEnergy.toFixed(0)} EP (ERR ${(err * 100).toFixed(1)}%${externalEnergy > 0 ? `, with +${externalEnergy.toFixed(0)} EP team energy` : ""}). Rotation multiplier: x${loopFactor.toFixed(2)}.`,
+        descRu: `За 150 AV (${turnsInCycle0} действия при боевой СКОР ${combatSpd.toFixed(0)}${totalAdvanceBonusAV > 0 ? `, включая +${totalAdvanceBonusAV.toFixed(0)} AV от продвижения` : ""}) накоплено ${totalGeneratedEnergy.toFixed(0)} EP (ВЭ ${(err * 100).toFixed(1)}%${externalEnergy > 0 ? `, включая +${externalEnergy.toFixed(0)} EP от батареек отряда` : ""}). Множитель ротации: ×${loopFactor.toFixed(2)}.`,
+        descEn: `Over 150 AV (${turnsInCycle0} actions at combat SPD ${combatSpd.toFixed(0)}${totalAdvanceBonusAV > 0 ? `, with +${totalAdvanceBonusAV.toFixed(0)} AV advance` : ""}) generated ${totalGeneratedEnergy.toFixed(0)} EP (ERR ${(err * 100).toFixed(1)}%${externalEnergy > 0 ? `, with +${externalEnergy.toFixed(0)} EP team energy` : ""}). Rotation multiplier: x${loopFactor.toFixed(2)}.`,
         damage: 0,
         isDamageAction: false
       });

@@ -1667,19 +1667,11 @@ export const CHARACTER_SQUADS = {
 };
 
 // Мета-відряди 4.7: пріоритетні відряди («хто кому підходить у 4.7»).
-// Для ключів, що мають відряди 4.7 (напр. 1308, 1310, 1006, 1510) — нові відряди ставляться на ПЕРШІ місця (unshift),
-// щоб користувач завжди бачив найактуальніші склади версії 4.7.
+// Для персонажів з мети 4.7 (1308, 1310, 1006, 1513, 1015, 1510) — нові відряди повністю
+// замінюють застарілі 1.x-2.x гайди, щоб користувач бачив актуальну соревновательну мету.
 import { TEAMS_47 } from "../data/teams47.js";
 Object.entries(TEAMS_47).forEach(([ddId, squads]) => {
-  if (!CHARACTER_SQUADS[ddId]) CHARACTER_SQUADS[ddId] = [];
-  // Ставимо відряди 4.7 на перші місця
-  [...squads].reverse().forEach((sq) => {
-    const existingIdx = CHARACTER_SQUADS[ddId].findIndex((s) => s.id === sq.id);
-    if (existingIdx !== -1) {
-      CHARACTER_SQUADS[ddId].splice(existingIdx, 1);
-    }
-    CHARACTER_SQUADS[ddId].unshift(sq);
-  });
+  CHARACTER_SQUADS[ddId] = squads;
 });
 
 export function getGenericSquads(char, lang = "ru") {
@@ -2037,6 +2029,28 @@ function computeSupportBuffs(rec, s = {}) {
     buffs.allVuln = Math.max(num(buffs.allVuln), 24);
     descRu = `+24% получаемого урона всеми типами (Королева Барбели), -10% DEF при ЭП-пробитии`;
     descEn = `+24% All-Type vulnerability (Queen Barbel), -10% DEF on BE break`;
+  } else if (id === "1505" || tag.includes("георгина") || tag.includes("dahlia")) {
+    buffs.superBreakFactor = 1.8;
+    buffs.beBoost = Math.max(num(buffs.beBoost), 60);
+    buffs.breakEff = Math.max(num(buffs.breakEff), 50);
+    descRu = `Ключевой брейк-саппорт 4.7: разгон суперпробития (1.8×), +${buffs.beBoost}% ЭП отряду, +50% эффективность стойкости`;
+    descEn = `Premier 4.7 Break Support: Super Break multiplier (1.8×), +${buffs.beBoost}% BE to team, +50% Break Efficiency`;
+  } else if (id === "1409" || tag.includes("гиацина") || tag.includes("hyacine")) {
+    buffs.crGrant = Math.max(num(buffs.crGrant), 12);
+    buffs.teamShield = true;
+    buffs.energyFeed = Math.max(num(buffs.energyFeed), 20);
+    descRu = `Сохранение 4.7: надёжные щиты, исцеление, +12% КШ команде, +20 энергии`;
+    descEn = `4.7 Sustain: reliable shields, heals, +12% CRIT Rate to team, +20 energy`;
+  } else if (id === "1507" || tag.includes("мортенакс") || tag.includes("mortenax")) {
+    buffs.allVuln = Math.max(num(buffs.allVuln), 25);
+    buffs.defShred = Math.max(num(buffs.defShred), 20);
+    descRu = `Нихилия 4.7: +25% уязвимости всех типов, -20% DEF, генератор зарядов`;
+    descEn = `4.7 Nihility: +25% All-Type vulnerability, -20% DEF, charge generator`;
+  } else if (id === "1508" || tag.includes("рин тосака") || tag.includes("rin tohsaka")) {
+    buffs.energyFeed = Math.max(num(buffs.energyFeed), 30);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 25);
+    descRu = `Fate Саппорт: заливка +30 энергии, монеты, +25% урон`;
+    descEn = `Fate Support: +30 energy feed, coins, +25% DMG`;
   }
   return { buffs, descRu, descEn };
 }
@@ -2087,9 +2101,20 @@ export function matchSquadWithShowcase(squad, showcaseCharacters = [], lang = "r
       const computed = computeSupportBuffs(rec, {
         atk: realAtk, def: realDef, hp: realHp, spd: realSpd, cr: realCr, cd: realCd, be: realBe, ehr: realEhr
       });
-      const dynamicBuffs = computed.buffs;
+      const dynamicBuffs = { ...computed.buffs };
       let dynamicBuffDescRu = computed.descRu || rec.buffDescRu;
       let dynamicBuffDescEn = computed.descEn || rec.buffDescEn;
+
+      // Проверка планарного сета 329 («Миг радости бога») на союзнике из витрины
+      const hasSet329 = (matchedChar.relic_sets || []).some(
+        (rs) => rs.id === "329" || /Миг радости|Moment of Joy|329/i.test(rs.name || "")
+      );
+      if (hasSet329) {
+        dynamicBuffs.teamAdvance = Math.max(Number(dynamicBuffs.teamAdvance) || 0, 40);
+        dynamicBuffs.teamSpd = (Number(dynamicBuffs.teamSpd) || 0) + 6;
+        dynamicBuffDescRu += isRu ? " • Сет 329: +6% СКОР, 40% продвижение действия" : " • Set 329: +6% SPD, 40% action advance";
+        dynamicBuffDescEn += " • Set 329: +6% SPD, 40% action advance";
+      }
       return {
         ...rec,
         matchedChar,
