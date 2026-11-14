@@ -283,7 +283,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       targetArchetype: "CRIT_DPS"
     });
   }
-  const isWolf999 = (charId === "1006" && (lowerName.includes("999") || char.path?.name === "Elation" || char.path?.id === "Elation")) || lowerName.includes("ур. 999") || lowerName.includes("lv.999");
+  const isWolf999 = charId === "1006" || charId === "999" || lowerName.includes("волк") || lowerName.includes("silver") || lowerName.includes("999");
   if (isWolf999) {
     return formatRoleResult({
       type: "DPS",
@@ -1749,7 +1749,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const isWolfChar = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
   if (!detectedRole || detectedRole.role === "DPS") {
     const isAvenSurgingChar = charId === "1513" || lowerName.includes("прибой") || lowerName.includes("waveflair");
-    const isWolf999Char = (charId === "1006" && (lowerName.includes("999") || char.path?.name === "Elation" || char.path?.id === "Elation")) || lowerName.includes("ур. 999") || lowerName.includes("lv.999");
+    const isWolf999Char = charId === "1006" || charId === "999" || lowerName.includes("волк") || lowerName.includes("silver") || lowerName.includes("999");
     const isDahliaChar = charId === "1505" || lowerName.includes("георгина") || lowerName.includes("dahlia");
     const isArcherChar = charId === "1015" || lowerName.includes("арчер") || lowerName.includes("archer");
     const isHyacineChar = charId === "1409" || lowerName.includes("гиацина") || lowerName.includes("hyacine");

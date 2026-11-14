@@ -83,7 +83,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
 
   // Специфика таланта СВ ур. 999 («I Carry, We Win»):
   // Избыточный КШ > 100% конвертируется в Крит. Урон
-  const isWolf999 = (charId === "1006" && (name.includes("999") || mainChar.path?.name === "Elation" || mainChar.path?.id === "Elation")) || name.includes("999");
+  const isWolf999 = charId === "1006" || charId === "999" || name.includes("волк") || name.includes("silver") || name.includes("999");
   const overcritBonusCd = (isWolf999 && rawTotalCr > 100) ? (rawTotalCr - 100) : 0;
 
   // Специфика следа Авантюрина: Прибой («Revel in Surging Waves»):

@@ -1971,6 +1971,7 @@ const SUPPORT_DEFAULT_STATS = {
   "1513": { atk: 3200, def: 1400, hp: 12000, cr: 80, cd: 160, be: 0 },   // Авантюрин: Прибой
   "1408": { atk: 2800, def: 1400, hp: 12000, cr: 70, cd: 140, be: 0 },   // Яо Гуан
   "1501": { atk: 2600, def: 1400, hp: 12000, cr: 10, cd: 150, be: 0 },   // Искра (Спаркси)
+  "8007": { atk: 2800, def: 1400, hp: 12000, cr: 60, cd: 130, be: 0 },   // Первопроходец: Радость
   "1006": { atk: 3400, def: 1400, hp: 12000, cr: 100, cd: 180, be: 0 }   // Серебряный Волк ур. 999
 };
 
@@ -1992,15 +1993,21 @@ function computeSupportBuffs(rec, s = {}) {
     descEn = `4.7 Elation: coordinated Elation strikes, «Revel in Surging Waves» (+100% Elation stats), +15% Crit Vuln, Aha Instant phase`;
   } else if (id === "1408" || tag.includes("яо") || tag.includes("yao")) {
     buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
+    buffs.resPen = Math.max(num(buffs.resPen), 25);
     buffs.teamAdvance = Math.max(num(buffs.teamAdvance), 35);
-    descRu = `Саппорт Радости 4.7: генерация Панчлайнов, разгон шкалы Aha Instant, +50% урон Радости`;
-    descEn = `4.7 Elation Support: Punchline generation, Aha Instant acceleration, +50% Elation DMG`;
+    descRu = `Премиум Саппорт Радости 4.7: +25% All-Type RES PEN, синхронный навык Радости, мгновенный вход в Invincible Player`;
+    descEn = `Premier 4.7 Elation Support: +25% All-Type RES PEN, simultaneous team Elation skill, instant Invincible Player charge`;
   } else if (id === "1501" || tag.includes("спаркси") || tag.includes("sparxie") || (tag.includes("искра") && !tag.includes("искорка"))) {
     buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
     buffs.teamAdvance = Math.max(num(buffs.teamAdvance), 50);
     buffs.energyFeed = Math.max(num(buffs.energyFeed), 30);
-    descRu = `Саппорт Радости 4.7: генерация очков действий Радости, разгон Панчлайнов, синергия сета «Миг радости бога», +50% урон`;
-    descEn = `4.7 Elation Support: Elation SP battery, Punchlines, Moment of Joy synergy, +50% DMG`;
+    descRu = `Саппорт Радости 4.7: триггер Mystery Boxes, механика Thrill, генерация SP Радости, сет «Миг радости бога», +50% урон`;
+    descEn = `4.7 Elation Support: Mystery Box procs, Thrill mechanic, Elation SP battery, Moment of Joy synergy, +50% DMG`;
+  } else if (id === "8007" || id === "8008" || tag.includes("гг") || tag.includes("первопроходец") || tag.includes("trailblazer")) {
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
+    buffs.teamAdvance = Math.max(num(buffs.teamAdvance), 30);
+    descRu = `Радость 4.7: статус «Certified Banger», генерация Панчлайнов, +50% урон Радости всему отряду`;
+    descEn = `4.7 Elation: «Certified Banger» status, Punchline generation, +50% team Elation DMG`;
   } else if (id === "1313" || tag.includes("воскресенье") || tag.includes("sunday")) {
     const cd = num(s.cd) || 170;
     const cdGrant = parseFloat((12 + cd * 0.3).toFixed(1));

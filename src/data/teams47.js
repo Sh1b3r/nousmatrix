@@ -7,22 +7,22 @@ export const TEAMS_47 = {
   "1513": [
     {
       id: "aventurine_surging_elation_core",
-      nameRu: "Отряд 1 (4.7): Ядро Радости (Серебряный Волк ур. 999 + Яо Гуан + Искра)",
-      nameEn: "Team 1 (4.7): Pure Elation Core (Silver Wolf Lv.999 + Yao Guang + Sparxie)",
-      descRu: "Мета 4.7 Радости: Авантюрин Прибой в отряде персонажей Радости реализует путь Радости и сет «Миг радости бога», Серебряный Волк ур. 999 наносит взрывной урон Радости и срезает защиту, Яо Гуан генерирует Панчлайны и разгоняет фазу Aha Instant, Искра обеспечивает отряд очками действий Радости.",
-      descEn: "4.7 Elation Meta: Aventurine Surging in pure Elation squad triggers Moment of Joy, Silver Wolf Lv.999 deals Elation burst & shreds DEF, Yao Guang generates Punchlines accelerating Aha Instant, Sparxie feeds Elation SP.",
+      nameRu: "Отряд 1 (4.7): Ядро Радости (Спаркси + Яо Гуан + Гиацина)",
+      nameEn: "Team 1 (4.7): Pure Elation Core (Sparxie + Yao Guang + Hyacine)",
+      descRu: "Мета 4.7 Радости: Авантюрин Прибой в отряде Радости реализует путь Радости и сет «Миг радости бога», Спаркси генерирует Mystery Boxes и SP Радости, Яо Гуан разгоняет фазу Aha Instant, Гиацина обеспечивает выживание и баффает КШ.",
+      descEn: "4.7 Elation Meta: Aventurine Surging triggers Moment of Joy, Sparxie feeds Elation SP and Mystery Boxes, Yao Guang drives Aha Instant, Hyacine sustains.",
       isEstimate: true,
       teammates: [
         {
-          id: "1006",
-          nameRu: "Серебряный Волк ур. 999",
-          nameEn: "Silver Wolf Lv.999",
-          icon: "icon/character/1006.png",
-          names: ["серебряный волк", "silver wolf", "волк", "999"],
-          roleRu: "Радость (Дамагер Радости / Срез DEF)",
-          roleEn: "Elation (Elation DPS & DEF Shred)",
-          buffDescRu: "Взрывной урон Радости, внедрение уязвимостей, срез защиты -45% DEF, режим «God Mode: ON!»",
-          buffValues: { defShred: 45, allVuln: 20, carrySynergy: true }
+          id: "1501",
+          nameRu: "Спаркси",
+          nameEn: "Sparxie",
+          icon: "icon/character/1501.png",
+          names: ["спаркси", "искра", "sparxie", "еванесція", "evanescia"],
+          roleRu: "Радость (Саб-ДПС и Батарейка Радости)",
+          roleEn: "Elation (Sub-DPS & SP Battery)",
+          buffDescRu: "Саб-ДПС Радости: триггер Mystery Boxes, конверсия Thrill, генерация очков действий Радости",
+          buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
         },
         {
           id: "1408",
@@ -32,20 +32,20 @@ export const TEAMS_47 = {
           names: ["яо гуан", "яо", "yao guang", "yao"],
           roleRu: "Радость (Саппорт Радости)",
           roleEn: "Elation (Elation Support)",
-          buffDescRu: "Саппорт Радости: генерация Панчлайнов, разгон шкалы фазы Aha Instant, +50% урон Радости",
-          buffValues: { dmgBoost: 50, teamAdvance: 35 }
+          buffDescRu: "Премиум Саппорт Радости: +25% All-Type RES PEN, синхронный навык Радости, разгон фазы Aha Instant",
+          buffValues: { dmgBoost: 50, resPen: 25, teamAdvance: 35 }
         },
         {
-          id: "1501",
-          altIds: ["1505"],
-          nameRu: "Искра",
-          nameEn: "Sparxie",
-          icon: "icon/character/1501.png",
-          names: ["искра", "sparxie", "спаркси", "еванесція", "evanescia"],
-          roleRu: "Радость (Генератор очков Радости)",
-          roleEn: "Elation (Elation SP Battery)",
-          buffDescRu: "Саппорт Радости: генерация очков действий Радости, разгон Панчлайнов, синергия сета «Миг радости бога», +50% урон",
-          buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
+          id: "1409",
+          altIds: ["1217"],
+          nameRu: "Гиацина",
+          nameEn: "Hyacine",
+          icon: "icon/character/1409.png",
+          names: ["гиацина", "hyacine", "хохо", "huohuo"],
+          roleRu: "Сохранение (Лечение и КШ)",
+          roleEn: "Sustain (Heals & CR)",
+          buffDescRu: "Надёжное выживание отряда, исцеление, заливка энергии, +12% КШ команде",
+          buffValues: { crGrant: 12, energyFeed: 20 }
         }
       ]
     }
@@ -54,23 +54,23 @@ export const TEAMS_47 = {
   // Серебряный Волк ур. 999 (1006 / 999) — ДАМАГЕР РАДОСТИ
   "1006": [
     {
-      id: "sw999_elation_hyper",
-      nameRu: "Отряд 1 (4.7): Ядро Радости (Авантюрин: Прибой + Яо Гуан + Искра)",
-      nameEn: "Team 1 (4.7): Pure Elation Core (Aventurine: Surging + Yao Guang + Sparxie)",
-      descRu: "Сборка Серебряного Волка ур. 999 как гиперкерри пути Радости в чисто радостном отряде: синергия со сетом «Миг радости бога», парные атаки Радости с Авантюрином Прибоем, ускорение фазы Aha Instant от Яо Гуан и генерация очков действий от Искры.",
-      descEn: "Silver Wolf Lv.999 as dedicated Elation Hypercarry in an all-Elation path squad: triggers God's Moment of Joy, coordinated strikes with Aventurine Surging, Aha Instant acceleration from Yao Guang and SP generation from Sparxie.",
+      id: "sw999_elation_premium",
+      nameRu: "Отряд 1 (4.7): Премиум Радость (Спаркси + Яо Гуан + Гиацина)",
+      nameEn: "Team 1 (4.7): Premium Elation (Sparxie + Yao Guang + Hyacine)",
+      descRu: "Премиум отряд Серебряного Волка ур. 999: Спаркси активирует Mystery Boxes и заливает SP Радости через механику Thrill, Яо Гуан даёт +25% All-Type RES PEN и разгоняет шкалу Hidden Ranking для мгновенного входа в режим «Invincible Player», Гиацина обеспечивает выживание и баффает +12% КШ.",
+      descEn: "Premium Silver Wolf LV.999 squad: Sparxie procs Mystery Boxes & feeds Elation SP via Thrill, Yao Guang grants +25% All-Type RES PEN and accelerates Hidden Ranking into «Invincible Player» mode, Hyacine sustains and buffs +12% CR.",
       isEstimate: true,
       teammates: [
         {
-          id: "1513",
-          nameRu: "Авантюрин: Прибой",
-          nameEn: "Aventurine: Surging",
-          icon: "icon/character/1513.png",
-          names: ["авантюрин: прибой", "авантюрин прибой", "aventurine: surging", "aventurine surging", "прибой", "waveflair"],
-          roleRu: "Радость (Дамагер Радости / Ко-ДПС)",
-          roleEn: "Elation (Elation Co-DPS)",
-          buffDescRu: "Второй дамагер Радости: след «Revel in Surging Waves» (+100% статов Радости), комбо-атаки Радости, +15% крит. уязвимости цели",
-          buffValues: { carrySynergy: true, critVuln: 15, elationBuff: 100 }
+          id: "1501",
+          nameRu: "Спаркси",
+          nameEn: "Sparxie",
+          icon: "icon/character/1501.png",
+          names: ["спаркси", "искра", "sparxie", "еванесція", "evanescia"],
+          roleRu: "Радость (Саб-ДПС и Батарейка Радости)",
+          roleEn: "Elation (Sub-DPS & SP Battery)",
+          buffDescRu: "Саб-ДПС Радости: проки Mystery Boxes, конверсия Thrill в урон, генерация очков действий Радости, синергия сета «Миг радости бога»",
+          buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
         },
         {
           id: "1408",
@@ -78,45 +78,89 @@ export const TEAMS_47 = {
           nameEn: "Yao Guang",
           icon: "icon/character/1408.png",
           names: ["яо гуан", "яо", "yao guang", "yao"],
-          roleRu: "Радость (Саппорт Радости)",
-          roleEn: "Elation (Elation Support)",
-          buffDescRu: "Саппорт Радости: генерация Панчлайнов, разгон шкалы фазы Aha Instant, +50% урон Радости",
-          buffValues: { dmgBoost: 50, teamAdvance: 35 }
+          roleRu: "Радость (Премиум Саппорт Радости)",
+          roleEn: "Elation (Premier Elation Support)",
+          buffDescRu: "Главный саппорт Радости: +25% All-Type RES PEN, синхронный навык Радости для команды, быстрый вход в режим «Invincible Player»",
+          buffValues: { dmgBoost: 50, resPen: 25, teamAdvance: 35 }
         },
         {
+          id: "1409",
+          altIds: ["1217", "8007"],
+          nameRu: "Гиацина",
+          nameEn: "Hyacine",
+          icon: "icon/character/1409.png",
+          names: ["гиацина", "hyacine", "хохо", "huohuo", "первопроходец", "trailblazer"],
+          roleRu: "Сохранение (Лечение и КШ)",
+          roleEn: "Sustain (Heals & CR)",
+          buffDescRu: "Надёжное выживание отряда, исцеление, заливка энергии, +12% КШ команде (для оверкрита)",
+          buffValues: { crGrant: 12, energyFeed: 20 }
+        }
+      ]
+    },
+    {
+      id: "sw999_elation_full_joy",
+      nameRu: "Отряд 2 (4.7): Чистый Квартет Радости (Спаркси + Яо Гуан + Первопроходец: Радость)",
+      nameEn: "Team 2 (4.7): Pure 4-Elation Party (Sparxie + Yao Guang + Trailblazer: Elation)",
+      descRu: "Максимальный разгон Пути Радости: 4 персонажа Радости на поле боя. Первопроходец Радости накладывает статус «Certified Banger», генерируя колоссальный поток Панчлайнов для максимального урона Серебряного Волка ур. 999.",
+      descEn: "Maximum Elation Path scaling: 4 Elation units on field. Elation Trailblazer grants «Certified Banger» status, feeding massive Punchlines for peak Silver Wolf LV.999 damage.",
+      isEstimate: true,
+      teammates: [
+        {
           id: "1501",
-          altIds: ["1505"],
-          nameRu: "Искра",
+          nameRu: "Спаркси",
           nameEn: "Sparxie",
           icon: "icon/character/1501.png",
-          names: ["искра", "sparxie", "спаркси", "еванесція", "evanescia"],
-          roleRu: "Радость (Генератор очков Радости)",
-          roleEn: "Elation (Elation SP Battery)",
-          buffDescRu: "Саппорт Радости: генерация очков действий Радости, разгон Панчлайнов, синергия сета «Миг радости бога», +50% урон",
+          names: ["спаркси", "искра", "sparxie"],
+          roleRu: "Радость (Саб-ДПС и Батарейка Радости)",
+          roleEn: "Elation (Sub-DPS & SP Battery)",
+          buffDescRu: "Саб-ДПС Радости: проки Mystery Boxes, конверсия Thrill, генерация очков действий Радости",
           buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
+        },
+        {
+          id: "1408",
+          nameRu: "Яо Гуан",
+          nameEn: "Yao Guang",
+          icon: "icon/character/1408.png",
+          names: ["яо гуан", "яо", "yao guang", "yao"],
+          roleRu: "Радость (Премиум Саппорт Радости)",
+          roleEn: "Elation (Premier Elation Support)",
+          buffDescRu: "+25% All-Type RES PEN, одновременный навык Радости, мгновенный вход в режим «Invincible Player»",
+          buffValues: { dmgBoost: 50, resPen: 25, teamAdvance: 35 }
+        },
+        {
+          id: "8007",
+          altIds: ["8008"],
+          nameRu: "Первопроходец: Радость",
+          nameEn: "Trailblazer: Elation",
+          icon: "icon/character/8007.png",
+          names: ["первопроходец", "гг", "trailblazer", "emc"],
+          roleRu: "Радость (Саппорт Радости)",
+          roleEn: "Elation (Elation Support)",
+          buffDescRu: "Статус «Certified Banger», разгон шкалы Панчлайнов, +50% урон Радости всему отряду",
+          buffValues: { dmgBoost: 50, teamAdvance: 30 }
         }
       ]
     }
   ],
   "999": [
     {
-      id: "sw999_elation_hyper_alias",
-      nameRu: "Отряд 1 (4.7): Ядро Радости (Авантюрин: Прибой + Яо Гуан + Искра)",
-      nameEn: "Team 1 (4.7): Pure Elation Core (Aventurine: Surging + Yao Guang + Sparxie)",
-      descRu: "Сборка Серебряного Волка ур. 999 как гиперкерри пути Радости в чисто радостном отряде: синергия со сетом «Миг радости бога», парные атаки Радости с Авантюрином Прибоем, ускорение фазы Aha Instant от Яо Гуан и генерация очков действий от Искры.",
-      descEn: "Silver Wolf Lv.999 as dedicated Elation Hypercarry in an all-Elation path squad: triggers God's Moment of Joy, coordinated strikes with Aventurine Surging, Aha Instant acceleration from Yao Guang and SP generation from Sparxie.",
+      id: "sw999_elation_premium_alias",
+      nameRu: "Отряд 1 (4.7): Премиум Радость (Спаркси + Яо Гуан + Гиацина)",
+      nameEn: "Team 1 (4.7): Premium Elation (Sparxie + Yao Guang + Hyacine)",
+      descRu: "Премиум отряд Серебряного Волка ур. 999: Спаркси активирует Mystery Boxes и заливает SP Радости через механику Thrill, Яо Гуан даёт +25% All-Type RES PEN и разгоняет шкалу Hidden Ranking для мгновенного входа в режим «Invincible Player», Гиацина обеспечивает выживание и баффает +12% КШ.",
+      descEn: "Premium Silver Wolf LV.999 squad: Sparxie procs Mystery Boxes & feeds Elation SP via Thrill, Yao Guang grants +25% All-Type RES PEN and accelerates Hidden Ranking into «Invincible Player» mode, Hyacine sustains and buffs +12% CR.",
       isEstimate: true,
       teammates: [
         {
-          id: "1513",
-          nameRu: "Авантюрин: Прибой",
-          nameEn: "Aventurine: Surging",
-          icon: "icon/character/1513.png",
-          names: ["авантюрин: прибой", "авантюрин прибой", "aventurine: surging", "aventurine surging", "прибой", "waveflair"],
-          roleRu: "Радость (Дамагер Радости / Ко-ДПС)",
-          roleEn: "Elation (Elation Co-DPS)",
-          buffDescRu: "Второй дамагер Радости: след «Revel in Surging Waves» (+100% статов Радости), комбо-атаки Радости, +15% крит. уязвимости цели",
-          buffValues: { carrySynergy: true, critVuln: 15, elationBuff: 100 }
+          id: "1501",
+          nameRu: "Спаркси",
+          nameEn: "Sparxie",
+          icon: "icon/character/1501.png",
+          names: ["спаркси", "искра", "sparxie", "еванесція", "evanescia"],
+          roleRu: "Радость (Саб-ДПС и Батарейка Радости)",
+          roleEn: "Elation (Sub-DPS & SP Battery)",
+          buffDescRu: "Саб-ДПС Радости: проки Mystery Boxes, конверсия Thrill в урон, генерация очков действий Радости, синергия сета «Миг радости бога»",
+          buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
         },
         {
           id: "1408",
@@ -124,22 +168,66 @@ export const TEAMS_47 = {
           nameEn: "Yao Guang",
           icon: "icon/character/1408.png",
           names: ["яо гуан", "яо", "yao guang", "yao"],
-          roleRu: "Радость (Саппорт Радости)",
-          roleEn: "Elation (Elation Support)",
-          buffDescRu: "Саппорт Радости: генерация Панчлайнов, разгон шкалы фазы Aha Instant, +50% урон Радости",
-          buffValues: { dmgBoost: 50, teamAdvance: 35 }
+          roleRu: "Радость (Премиум Саппорт Радости)",
+          roleEn: "Elation (Premier Elation Support)",
+          buffDescRu: "Главный саппорт Радости: +25% All-Type RES PEN, синхронный навык Радости для команды, быстрый вход в режим «Invincible Player»",
+          buffValues: { dmgBoost: 50, resPen: 25, teamAdvance: 35 }
         },
         {
+          id: "1409",
+          altIds: ["1217", "8007"],
+          nameRu: "Гиацина",
+          nameEn: "Hyacine",
+          icon: "icon/character/1409.png",
+          names: ["гиацина", "hyacine", "хохо", "huohuo", "первопроходец", "trailblazer"],
+          roleRu: "Сохранение (Лечение и КШ)",
+          roleEn: "Sustain (Heals & CR)",
+          buffDescRu: "Надёжное выживание отряда, исцеление, заливка энергии, +12% КШ команде (для оверкрита)",
+          buffValues: { crGrant: 12, energyFeed: 20 }
+        }
+      ]
+    },
+    {
+      id: "sw999_elation_full_joy_alias",
+      nameRu: "Отряд 2 (4.7): Чистый Квартет Радости (Спаркси + Яо Гуан + Первопроходец: Радость)",
+      nameEn: "Team 2 (4.7): Pure 4-Elation Party (Sparxie + Yao Guang + Trailblazer: Elation)",
+      descRu: "Максимальный разгон Пути Радости: 4 персонажа Радости на поле боя. Первопроходец Радости накладывает статус «Certified Banger», генерируя колоссальный поток Панчлайнов для максимального урона Серебряного Волка ур. 999.",
+      descEn: "Maximum Elation Path scaling: 4 Elation units on field. Elation Trailblazer grants «Certified Banger» status, feeding massive Punchlines for peak Silver Wolf LV.999 damage.",
+      isEstimate: true,
+      teammates: [
+        {
           id: "1501",
-          altIds: ["1505"],
-          nameRu: "Искра",
+          nameRu: "Спаркси",
           nameEn: "Sparxie",
           icon: "icon/character/1501.png",
-          names: ["искра", "sparxie", "спаркси", "еванесція", "evanescia"],
-          roleRu: "Радость (Генератор очков Радости)",
-          roleEn: "Elation (Elation SP Battery)",
-          buffDescRu: "Саппорт Радости: генерация очков действий Радости, разгон Панчлайнов, синергия сета «Миг радости бога», +50% урон",
+          names: ["спаркси", "искра", "sparxie"],
+          roleRu: "Радость (Саб-ДПС и Батарейка Радости)",
+          roleEn: "Elation (Sub-DPS & SP Battery)",
+          buffDescRu: "Саб-ДПС Радости: проки Mystery Boxes, конверсия Thrill, генерация очков действий Радости",
           buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
+        },
+        {
+          id: "1408",
+          nameRu: "Яо Гуан",
+          nameEn: "Yao Guang",
+          icon: "icon/character/1408.png",
+          names: ["яо гуан", "яо", "yao guang", "yao"],
+          roleRu: "Радость (Премиум Саппорт Радости)",
+          roleEn: "Elation (Premier Elation Support)",
+          buffDescRu: "+25% All-Type RES PEN, одновременный навык Радости, мгновенный вход в режим «Invincible Player»",
+          buffValues: { dmgBoost: 50, resPen: 25, teamAdvance: 35 }
+        },
+        {
+          id: "8007",
+          altIds: ["8008"],
+          nameRu: "Первопроходец: Радость",
+          nameEn: "Trailblazer: Elation",
+          icon: "icon/character/8007.png",
+          names: ["первопроходец", "гг", "trailblazer", "emc"],
+          roleRu: "Радость (Саппорт Радости)",
+          roleEn: "Elation (Elation Support)",
+          buffDescRu: "Статус «Certified Banger», разгон шкалы Панчлайнов, +50% урон Радости всему отряду",
+          buffValues: { dmgBoost: 50, teamAdvance: 30 }
         }
       ]
     }
@@ -286,14 +374,14 @@ export const TEAMS_47 = {
     }
   ],
 
-  // Арчер (1015) — СБАЛАНСИРОВАННЫЙ ОТРЯД С СУСТЕЙНОМ!
+  // Арчер (1015) — ОТДЕЛЬНЫЙ 0-ЦИКЛ ОТРЯД БЕЗ СУСТЕЙНА!
   "1015": [
     {
-      id: "archer_rin_sparkle_sustain",
-      nameRu: "Отряд 1 (4.7): Сбалансированный Гиперкерри (Рин Тосака + Искорка + Гиацина / Авантюрин)",
-      nameEn: "Team 1 (4.7): Balanced Hypercarry (Rin Tohsaka + Sparkle + Hyacine / Aventurine)",
-      descRu: "Полный жизнеспособный отряд Арчера: Рин Тосака заливает энергию и монеты, Искорка обеспечивает 7 очков действий (SP) и продвижение хода, Гиацина или Авантюрин гарантируют выживание команды.",
-      descEn: "Complete viable Archer squad with sustain: Rin Tohsaka provides energy & coins, Sparkle expands SP cap to 7 with advance, Hyacine or Aventurine guarantees team survival.",
+      id: "archer_rin_sparkle_nosustain",
+      nameRu: "Отряд 1 (4.7): 0-цикл Без Сустейна (Рин Тосака + Искорка + Воскресенье / СВ)",
+      nameEn: "Team 1 (4.7): 0-Cycle No Sustain (Rin Tohsaka + Sparkle + Sunday / SW)",
+      descRu: "Специализированный 0-цикл отряд Арчера без сустейна: Рин Тосака заливает энергию и драгоценные камни, Искорка даёт лимит 7 SP и 50% продвижение хода, Воскресенье или Серебряный Волк удваивают действия и срезают защиту для мгновенной зачистки волн.",
+      descEn: "Specialized 0-cycle no-sustain Archer squad: Rin Tohsaka feeds energy & gems, Sparkle expands SP cap to 7 with action advance, Sunday or Silver Wolf doubles actions and shreds DEF for instant wave clears.",
       isEstimate: true,
       teammates: [
         {
@@ -301,11 +389,11 @@ export const TEAMS_47 = {
           nameRu: "Рин Тосака",
           nameEn: "Rin Tohsaka",
           icon: "icon/character/1508.png",
-          names: ["рин тосака", "rin tohsaka"],
-          roleRu: "Саппорт (Энергия и Монеты)",
-          roleEn: "Support (Energy & Coins)",
-          buffDescRu: "Заливка энергии ультимейтов, генерация монет и усиление урона",
-          buffValues: { energyFeed: 30, dmgBoost: 25 }
+          names: ["рин тосака", "rin tohsaka", "рин", "tohsaka"],
+          roleRu: "Fate Саппорт (Энергия и Монеты)",
+          roleEn: "Fate Support (Energy & Coins)",
+          buffDescRu: "Заливка энергии ультимейтов, генерация драгоценных камней и +40% урон навыка",
+          buffValues: { energyFeed: 30, dmgBoost: 40 }
         },
         {
           id: "1306",
@@ -315,20 +403,20 @@ export const TEAMS_47 = {
           names: ["искорка", "sparkle"],
           roleRu: "Гармония (Продвижение и Лимит 7 SP)",
           roleEn: "Harmony (Advance & 7 SP Cap)",
-          buffDescRu: "+50% Продвижение, лимит 7 SP, передача КУ",
+          buffDescRu: "+50% Продвижение, лимит 7 SP, передача +102% КУ, +48% урон",
           buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48 }
         },
         {
-          id: "1409",
-          altIds: ["1304", "1217"],
-          nameRu: "Гиацина / Авантюрин",
-          nameEn: "Hyacine / Aventurine",
-          icon: "icon/character/1409.png",
-          names: ["гиацина", "hyacine", "авантюрин", "aventurine", "хохо", "huohuo"],
-          roleRu: "Сустейн (Щиты / Лечение)",
-          roleEn: "Sustain (Shields / Healing)",
-          buffDescRu: "Гарантированная защита отряда, парирование атак боссов, +КШ",
-          buffValues: { crGrant: 12 }
+          id: "1313",
+          altIds: ["1006", "1202"],
+          nameRu: "Воскресенье / СВ",
+          nameEn: "Sunday / Silver Wolf",
+          icon: "icon/character/1313.png",
+          names: ["воскресенье", "sunday", "серебряный волк", "silver wolf", "тинъюнь", "tingyun"],
+          roleRu: "Гармония / Дебафф (0-цикл Усиление)",
+          roleEn: "Harmony / Debuff (0-Cycle Amp)",
+          buffDescRu: "100% Продвижение хода или срез защиты цели, максимизация урона без сустейна",
+          buffValues: { targetAdvance: 100, dmgBoost: 50, defShred: 45 }
         }
       ]
     }
