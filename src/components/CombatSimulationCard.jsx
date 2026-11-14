@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { runCombatSimulation } from "../utils/simulation.js";
-import { CHARACTER_SQUADS, getGenericSquads, matchSquadWithShowcase, rankSquadsByShowcase } from "../utils/teamSynergy.js";
+import { CHARACTER_SQUADS, matchSquadWithShowcase, rankSquadsByShowcase } from "../utils/teamSynergy.js";
 import { runFullTeamRotationSimulation } from "../utils/rotationSimulation.js";
 import { iconUrl, handleImageFallback } from "../utils/audit.js";
 import { SwordIcon, ShieldIcon, SparklesIcon, CheckIcon, WarnIcon } from "./Icons.jsx";
@@ -12,31 +12,14 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const charId = String(character.id || "");
 
   const squads = useMemo(() => {
-    const rankForRoster = (candidates) => rankSquadsByShowcase(candidates, showcase);
-    if (CHARACTER_SQUADS[charId] && CHARACTER_SQUADS[charId].length > 0) {
-      return rankForRoster(CHARACTER_SQUADS[charId]);
-    }
+    const list = CHARACTER_SQUADS[charId] || CHARACTER_SQUADS[String(character?.id || "")];
+    if (list && list.length > 0) return rankSquadsByShowcase(list, showcase);
     const name = String(character?.name || "").toLowerCase();
     if (charId === "999" || charId === "1006" || name.includes("волк") || name.includes("silver")) {
-      return rankForRoster(CHARACTER_SQUADS["1006"] || CHARACTER_SQUADS["999"] || getGenericSquads(character, lang));
+      return rankSquadsByShowcase(CHARACTER_SQUADS["1006"] || CHARACTER_SQUADS["999"] || [], showcase);
     }
-    if (charId === "1513" || name.includes("прибой") || name.includes("waveflair")) {
-      return rankForRoster(CHARACTER_SQUADS["1513"] || getGenericSquads(character, lang));
-    }
-    if (charId === "1310" || name.includes("светляч") || name.includes("firefly")) {
-      return rankForRoster(CHARACTER_SQUADS["1310"] || getGenericSquads(character, lang));
-    }
-    if (charId === "1308" || name.includes("ахерон") || name.includes("acheron")) {
-      return rankForRoster(CHARACTER_SQUADS["1308"] || getGenericSquads(character, lang));
-    }
-    if (charId === "1015" || name.includes("арчер") || name.includes("archer")) {
-      return rankForRoster(CHARACTER_SQUADS["1015"] || getGenericSquads(character, lang));
-    }
-    if (charId === "1510" || name.includes("нова") || name.includes("nova")) {
-      return rankForRoster(CHARACTER_SQUADS["1510"] || getGenericSquads(character, lang));
-    }
-    return rankForRoster(getGenericSquads(character, lang));
-  }, [charId, character, lang, showcase]);
+    return rankSquadsByShowcase(CHARACTER_SQUADS[charId] || [], showcase);
+  }, [charId, character, showcase]);
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
   const [enemyMode, setEnemyMode] = useState("moc");
@@ -147,11 +130,12 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 type="button"
                 className={`squad-tab-btn ${selectedSquadIdx === idx ? "active" : ""}`}
                 onClick={() => setSelectedSquadIdx(idx)}
+                title={sq.sourceUrl ? `${sq.sourceVersion || ""} • ${sq.sourceUpdatedAt || ""} • ${sq.sourceUrl}` : ""}
               >
                 <span className="squad-tab-number">{idx + 1}</span>
                 <span className="squad-tab-title">
                   {isRu ? sq.nameRu : sq.nameEn}
-                  {sq.isEstimate && <em className="squad-estimate-tag">{isRu ? " оценка 4.7" : " est. 4.7"}</em>}
+                  {sq.isEstimate && <em className="squad-estimate-tag">{isRu ? ` оценка ${sq.sourceVersion || ""}` : ` est. ${sq.sourceVersion || ""}`}</em>}
                 </span>
               </button>
             ))}

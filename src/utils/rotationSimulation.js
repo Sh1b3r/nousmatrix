@@ -21,6 +21,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   let teamResPen = 0;
   let teamDefShred = 0;
   let teamVuln = 0;
+  let teamCritVuln = 0;
   let teamBreakVuln = 0;
   let teamBeBoost = 0;
   let teamSpd = 0;
@@ -35,11 +36,9 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     if (b.dmgBoost) teamDmgBoost += b.dmgBoost;
     if (b.resPen) teamResPen += b.resPen;
     if (b.defShred) teamDefShred += b.defShred;
-    if (b.ultVuln) teamVuln += b.ultVuln;
     if (b.allVuln) teamVuln += b.allVuln;
     if (b.vuln) teamVuln += b.vuln;
-    if (b.fuaVuln) teamVuln += b.fuaVuln;
-    if (b.critVuln) teamVuln += b.critVuln;
+    if (b.critVuln) teamCritVuln += b.critVuln;
     if (b.breakVuln) teamBreakVuln += b.breakVuln;
     if (b.beBoost) teamBeBoost += b.beBoost;
     if (b.teamSpd) teamSpd += b.teamSpd;
@@ -98,7 +97,11 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
 
   const combatCr = Math.min(1, rawTotalCr / 100);
   const combatCd = (baseCd + teamCdGrant + kitCd + normCdBonus + overcritBonusCd) / 100;
-  const critMultiplier = 1 + combatCr * combatCd;
+  // Crit vulnerability applies only to crit instances. Fold its expected value
+  // into the expected crit multiplier instead of inflating every hit.
+  const baseCritMultiplier = 1 + combatCr * combatCd;
+  const critMultiplier = baseCritMultiplier +
+    (combatCr * (1 + combatCd) * (teamCritVuln / 100)) / vulnMult;
   const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + normDmgBonus + elationSurgeBonus) / 100;
   const steps = [];
   let rotationTotalDamage = 0;

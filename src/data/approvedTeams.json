@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "4.7",
+  "updatedAt": "2026-11-14",
+  "teamsByCharacter": {
+    "1003": [
+      {
+        "id": "himeko_fugue_lingsha_dahlia",
+        "nameRu": "Пробитие: Фуга + Линша + Георгина",
+        "nameEn": "Break: Fugue + Lingsha + The Dahlia",
+        "descRu": "Подтверждённый состав для обычной Химеко: Фуга и Георгина усиливают пробитие, помогая чаще запускать бонус-атаки Химеко; Линша лечит и наносит дополнительный урон по стойкости.",
+        "descEn": "User-confirmed team for regular Himeko: Fugue and The Dahlia amplify Break to trigger Himeko's follow-ups more often; Lingsha sustains and adds Toughness damage.",
+        "sourceVersion": "4.7",
+        "sourceUpdatedAt": "2026-11-14",
+        "sourceLabel": "Подтверждено пользователем; рекомендация StarGuide",
+        "sourceUrl": "https://starguide.gg/character/himeko",
+        "isUserConfirmed": true,
+        "teammates": [
+          {
+            "id": "1225",
+            "nameRu": "Фуга",
+            "nameEn": "Fugue",
+            "icon": "icon/character/1225.png",
+            "roleRu": "Пробитие / суперпробитие",
+            "roleEn": "Break / Super Break",
+            "buffDescRu": "Добавляет экзостойкость и помогает чаще пробивать врагов.",
+            "buffDescEn": "Adds exo-toughness and helps break enemies more often.",
+            "buffValues": { "exoBreak": true, "beBoost": 40 }
+          },
+          {
+            "id": "1222",
+            "nameRu": "Линша",
+            "nameEn": "Lingsha",
+            "icon": "icon/character/1222.png",
+            "roleRu": "Сустейн / пробитие",
+            "roleEn": "Sustain / Break",
+            "buffDescRu": "Лечит отряд и часто наносит урон стойкости атаками и призывом.",
+            "buffDescEn": "Sustains the team and frequently reduces Toughness with attacks and her summon.",
+            "buffValues": { "breakVuln": 25 }
+          },
+          {
+            "id": "1505",
+            "nameRu": "Георгина",
+            "nameEn": "The Dahlia",
+            "icon": "icon/character/1505.png",
+            "roleRu": "Усиление пробития",
+            "roleEn": "Break amplifier",
+            "buffDescRu": "Усиливает урон пробития и эффективность истощения стойкости.",
+            "buffDescEn": "Amplifies Break damage and Toughness reduction.",
+            "buffValues": { "superBreakFactor": 1.8, "beBoost": 60, "breakEff": 50 }
+          }
+        ]
+      }
+    ],
+    "1308": [
+      {
+        "id": "acheron_e0_mortenax_welt_huohuo",
+        "nameRu": "E0: Мортенакс Блэйд + Вельт + Хохо",
+        "nameEn": "E0: Mortenax Blade + Welt + Huohuo",
+        "descRu": "Подтверждённый состав для E0 Ахерон: Мортенакс и Вельт дают двух союзников Небытия для полного бонуса её следа и регулярно накладывают ослабления; Хохо лечит и компенсирует расход HP Мортенакса.",
+        "descEn": "User-confirmed team for E0 Acheron: Mortenax and Welt provide the two Nihility teammates for her full Trace bonus and apply frequent debuffs; Huohuo sustains the team and offsets Mortenax's HP drain.",
+        "sourceVersion": "4.7",
+        "sourceUpdatedAt": "2026-11-14",
+        "sourceLabel": "Подтверждено пользователем; синергия Мортенакс + Вельт подтверждается свежими гайдами",
+        "sourceUrl": "https://www.hsrzone.com/characters/acheron-build-hsr/",
+        "sourceUrls": [
+          "https://www.hoyolab.com/article/47321914?reply=1",
+          "https://starguide.gg/character/acheron"
+        ],
+        "isUserConfirmed": true,
+        "teammates": [
+          {
+            "id": "1507",
+            "nameRu": "Мортенакс Блэйд",
+            "nameEn": "Mortenax Blade",
+            "icon": "icon/character/1507.png",
+            "roleRu": "Небытие / дебаффы и усиление",
+            "roleEn": "Nihility / debuffs and amplification",
+            "buffDescRu": "Зона позволяет атакам союзников накладывать ослабления и ускорять набор Слэшей Ахерон; также снижает защиту и повышает получаемый врагами урон.",
+            "buffDescEn": "His Zone lets ally attacks apply debuffs and accelerate Acheron's Slashed Dream stacks; he also shreds DEF and increases enemy damage taken.",
+            "buffValues": { "allVuln": 50, "defShred": 30 }
+          },
+          {
+            "id": "1004",
+            "nameRu": "Вельт",
+            "nameEn": "Welt",
+            "icon": "icon/character/1004.png",
+            "roleRu": "Небытие / срез защиты и задержка",
+            "roleEn": "Nihility / DEF shred and delay",
+            "buffDescRu": "Даёт второй слот Небытия для полного бонуса следа E0 Ахерон, снижает защиту и задерживает врагов.",
+            "buffDescEn": "Fills Acheron's second Nihility slot for her full E0 Trace bonus, shreds DEF and delays enemies.",
+            "buffValues": { "defShred": 40, "actionDelay": true }
+          },
+          {
+            "id": "1217",
+            "nameRu": "Хохо",
+            "nameEn": "Huohuo",
+            "icon": "icon/character/1217.png",
+            "roleRu": "Сустейн / лечение",
+            "roleEn": "Sustain / healer",
+            "buffDescRu": "Лечит команду и компенсирует расход HP Мортенакса.",
+            "buffDescEn": "Heals the team and offsets Mortenax's HP consumption.",
+            "buffValues": { "teamHeal": true, "teamCleanse": true, "energyFeed": 20, "atkGrant": 40 }
+          }
+        ]
+      }
+    ]
+  }
+}
