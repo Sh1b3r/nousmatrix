@@ -220,41 +220,53 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
 
       {/* Rotation Metrics Grid */}
       {rotationSim && (
-        <div className="combat-sim-metrics-grid rotation-metrics">
-          <div className="combat-sim-metric-box highlight-box">
-            <span className="sim-metric-label">
-              {isRu ? "Суммарный урон ротации" : "Full Rotation Total DMG"}
-            </span>
-            <span className="sim-metric-value text-accent big">
-              {Number(rotationSim.rotationTotalDamage || 0).toLocaleString("ru-RU")}
-            </span>
-            <span className="sim-metric-hint">
-              {isRu ? "Расчёт за полный цикл 4 союзников" : "Calculated 4-unit sequence"}
-            </span>
+        <>
+          <div className="combat-sim-metrics-grid rotation-metrics">
+            <div className="combat-sim-metric-box highlight-box">
+              <span className="sim-metric-label">
+                {isRu ? "Суммарный урон ротации" : "Full Rotation Total DMG"}
+              </span>
+              <span className="sim-metric-value text-accent big">
+                {Number(rotationSim.rotationTotalDamage || 0).toLocaleString("ru-RU")}
+              </span>
+              <span className="sim-metric-hint">
+                {isRu ? "Расчёт за полный цикл 4 союзников" : "Calculated 4-unit sequence"}
+              </span>
+            </div>
+            <div className="combat-sim-metric-box">
+              <span className="sim-metric-label">
+                {isRu ? "Пиковый удар под баффами" : "Peak Buffed Burst"}
+              </span>
+              <span className="sim-metric-value">
+                {Number(rotationSim.peakHitDamage || 0).toLocaleString("ru-RU")}
+              </span>
+              <span className="sim-metric-hint">
+                {isRu ? "Главная сверхспособность / удар" : "Max single ability impact"}
+              </span>
+            </div>
+            <div className="combat-sim-metric-box">
+              <span className="sim-metric-label">
+                {isRu ? "DPS за цикл (100 AV)" : "Cycle DPS (100 AV)"}
+              </span>
+              <span className="sim-metric-value">
+                {Number(rotationSim.teamCycleDps || 0).toLocaleString("ru-RU")}
+              </span>
+              <span className="sim-metric-hint">
+                {isRu ? "Скорость закрытия волн MoC" : "Wave clear tempo"}
+              </span>
+            </div>
           </div>
-          <div className="combat-sim-metric-box">
-            <span className="sim-metric-label">
-              {isRu ? "Пиковый удар под баффами" : "Peak Buffed Burst"}
-            </span>
-            <span className="sim-metric-value">
-              {Number(rotationSim.peakHitDamage || 0).toLocaleString("ru-RU")}
-            </span>
-            <span className="sim-metric-hint">
-              {isRu ? "Главная сверхспособность / удар" : "Max single ability impact"}
-            </span>
-          </div>
-          <div className="combat-sim-metric-box">
-            <span className="sim-metric-label">
-              {isRu ? "DPS за цикл (100 AV)" : "Cycle DPS (100 AV)"}
-            </span>
-            <span className="sim-metric-value">
-              {Number(rotationSim.teamCycleDps || 0).toLocaleString("ru-RU")}
-            </span>
-            <span className="sim-metric-hint">
-              {isRu ? "Скорость закрытия волн MoC" : "Wave clear tempo"}
-            </span>
-          </div>
-        </div>
+          {rotationSim.loopFactor > 1 && (
+            <div className="sim-loop-factor-notice">
+              <span className="sim-loop-notice-icon">ℹ</span>
+              <span className="sim-loop-notice-text">
+                {isRu
+                  ? `Энергетическая петля: в расчёт заложен множитель повторения ультимейта ×${rotationSim.loopFactor.toFixed(2)} за цикл (на основе СКОР и ВЭ). Это теоретическая модель темпа ротации, а не гарантированный боевой скрипт.`
+                  : `Energy loop: rotation DMG factors in an ultimate recast multiplier of x${rotationSim.loopFactor.toFixed(2)} per cycle (based on SPD & ERR). This is a theoretical model assumption, not guaranteed gameplay.`}
+              </span>
+            </div>
+          )}
+        </>
       )}
 
       {/* Sub-DPS section */}

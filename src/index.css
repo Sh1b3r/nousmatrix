@@ -5218,6 +5218,33 @@ main {
   gap: 6px;
 }
 
+.sim-loop-factor-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 229, 255, 0.05);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 4px;
+  padding: 7px 12px;
+  margin-top: -6px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.sim-loop-notice-icon {
+  color: #00E5FF;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.sim-loop-notice-text {
+  flex: 1;
+}
+
 .assumption-item {
   display: flex;
   align-items: flex-start;
