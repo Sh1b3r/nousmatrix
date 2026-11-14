@@ -71,10 +71,63 @@ function getInitialSessionData() {
     return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null };
   }
 }
+
+function getSavedCharacterPreference(uid) {
+  if (typeof window === "undefined") return null;
+  try {
+    if (uid) {
+      const perUid = localStorage.getItem(`nousmatrix_selected_char_${uid}`);
+      if (perUid) return JSON.parse(perUid);
+    }
+    const globalLast = localStorage.getItem("nousmatrix_last_selected_char");
+    if (globalLast) return JSON.parse(globalLast);
+  } catch {}
+  return null;
+}
+
+function saveCharacterPreference(uid, char) {
+  if (typeof window === "undefined" || !char) return;
+  try {
+    const payload = JSON.stringify({
+      id: String(char.id || ""),
+      name: char.name || ""
+    });
+    if (uid) {
+      localStorage.setItem(`nousmatrix_selected_char_${uid}`, payload);
+    }
+    localStorage.setItem("nousmatrix_last_selected_char", payload);
+  } catch {}
+}
+
+function findCharacterIndex(characters, preferred) {
+  if (!Array.isArray(characters) || characters.length === 0) return 0;
+  if (!preferred) return 0;
+  const targetId = String(preferred.id || "").trim();
+  const targetName = String(preferred.name || "").trim().toLowerCase();
+
+  if (targetId) {
+    const idx = characters.findIndex((c) => String(c.id || "").trim() === targetId);
+    if (idx !== -1) return idx;
+  }
+  if (targetName) {
+    const idx = characters.findIndex((c) => String(c.name || "").trim().toLowerCase() === targetName);
+    if (idx !== -1) return idx;
+  }
+  return 0;
+}
+
 export default function App() {
   const [initialData] = useState(getInitialSessionData);
   const [currentProfile, setCurrentProfile] = useState(initialData.initialProfile);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(() => {
+    if (initialData.initialProfile?.characters?.length) {
+      const uid = initialData.initialProfile.player?.uid || initialData.initialUrlUid;
+      const pref = getSavedCharacterPreference(uid);
+      return findCharacterIndex(initialData.initialProfile.characters, pref);
+    }
+    return 0;
+  });
+  const lastSelectedCharRef = useRef(null);
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
   const isTrophyOpenRef = useRef(false);
   const [relicsLayoutMode, setRelicsLayoutMode] = useState(() => {
@@ -148,9 +201,13 @@ export default function App() {
           cached = lastProfileRef.current;
         }
         if (cached && cached.characters && cached.characters.length > 0) {
+          const isSame = currentProfile?.player?.uid && String(currentProfile.player.uid) === String(urlUid);
+          const pref = isSame && lastSelectedCharRef.current
+            ? lastSelectedCharRef.current
+            : getSavedCharacterPreference(urlUid);
           setCurrentProfile(cached);
           lastProfileRef.current = cached;
-          setActiveIndex(0);
+          setActiveIndex(findCharacterIndex(cached.characters, pref));
           setErrorMsg("");
           setIsLoading(false);
           return;
@@ -207,9 +264,10 @@ export default function App() {
     const profileToRestore = lastProfileRef.current || Array.from(profileCacheRef.current.values())[0];
     if (profileToRestore) {
       const targetUid = String(profileToRestore.player?.uid || "");
+      const pref = lastSelectedCharRef.current || getSavedCharacterPreference(targetUid);
       setCurrentProfile(profileToRestore);
       lastProfileRef.current = profileToRestore;
-      setActiveIndex(0);
+      setActiveIndex(findCharacterIndex(profileToRestore.characters, pref));
       setErrorMsg("");
       setIsLoading(false);
       const targetUrl = targetUid ? `?uid=${targetUid}` : "";
@@ -295,9 +353,13 @@ export default function App() {
         cached = lastProfileRef.current;
       }
       if (cached && cached.characters && cached.characters.length > 0) {
+        const isSame = currentProfile?.player?.uid && String(currentProfile.player.uid) === String(cached.player?.uid || uid);
+        const pref = isSame && lastSelectedCharRef.current
+          ? lastSelectedCharRef.current
+          : getSavedCharacterPreference(cached.player?.uid || uid);
         setCurrentProfile(cached);
         lastProfileRef.current = cached;
-        setActiveIndex(0);
+        setActiveIndex(findCharacterIndex(cached.characters, pref));
         setErrorMsg("");
         setIsLoading(false);
         const resolvedUid = String(cached.player?.uid || uid);
@@ -410,12 +472,16 @@ export default function App() {
           if (data.player?.uid) {
             saveToCache(String(data.player.uid), data);
           }
+          const resolvedUid = String(data.player?.uid || uid);
+          const isSame = currentProfile?.player?.uid && String(currentProfile.player.uid) === resolvedUid;
+          const pref = isSame && lastSelectedCharRef.current
+            ? lastSelectedCharRef.current
+            : getSavedCharacterPreference(resolvedUid);
           setCurrentProfile(data);
           lastProfileRef.current = data;
-          setActiveIndex(0);
+          setActiveIndex(findCharacterIndex(data.characters, pref));
           setErrorMsg("");
           setIsLoading(false);
-          const resolvedUid = String(data.player?.uid || uid);
           const targetUrl = `?uid=${resolvedUid}`;
           if (shouldPushHistory) {
             const currentParams = new URLSearchParams(window.location.search);
@@ -453,9 +519,10 @@ export default function App() {
       if (localizedPresets && localizedPresets[demoUid]) {
         const demoData = localizedPresets[demoUid];
         saveToCache(demoUid, demoData);
+        const pref = getSavedCharacterPreference(demoUid);
         setCurrentProfile(demoData);
         lastProfileRef.current = demoData;
-        setActiveIndex(0);
+        setActiveIndex(findCharacterIndex(demoData.characters, pref));
         setErrorMsg("");
         setIsLoading(false);
         window.history.pushState({ view: "profile", uid: demoUid }, "", `?uid=${demoUid}`);
@@ -495,9 +562,33 @@ export default function App() {
     }
   }, [currentProfile?.player?.uid, isRefreshing, isLoading]);
 
-  const activeChar = currentProfile?.characters?.[activeIndex] || null;
+  const handleSelectCharacter = (idx) => {
+    setActiveIndex(idx);
+    const char = currentProfile?.characters?.[idx];
+    const uid = currentProfile?.player?.uid;
+    if (char) {
+      lastSelectedCharRef.current = {
+        id: String(char.id || ""),
+        name: char.name || ""
+      };
+      saveCharacterPreference(uid, char);
+    }
+  };
+
+  const activeChar = currentProfile?.characters?.[activeIndex] || currentProfile?.characters?.[0] || null;
   const audit = activeChar ? calculateCharacterAudit(activeChar, lang) : null;
   const player = currentProfile?.player || null;
+
+  useEffect(() => {
+    if (activeChar) {
+      lastSelectedCharRef.current = {
+        id: String(activeChar.id || ""),
+        name: activeChar.name || ""
+      };
+      const uid = currentProfile?.player?.uid;
+      saveCharacterPreference(uid, activeChar);
+    }
+  }, [activeChar, currentProfile?.player?.uid]);
   return (
     <div className="app-container">
       <Header onBackToHome={handleBackToHome} />
@@ -596,7 +687,7 @@ export default function App() {
             <ShowcaseRoster
               characters={currentProfile.characters}
               activeIndex={activeIndex}
-              onSelect={setActiveIndex}
+              onSelect={handleSelectCharacter}
               t={t}
               lang={lang}
             />
