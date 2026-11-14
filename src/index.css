@@ -2294,8 +2294,142 @@ main {
 
 
 @media (max-width: 1024px) {
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 20px 14px 60px !important;
+    box-sizing: border-box !important;
+  }
+
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .dashboard-col-left,
+  .dashboard-col-right {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .char-hero-card {
+    padding: 18px 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .char-hero-main-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+  }
+
+  .char-hero-left {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .lightcone-box {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .char-hero-verdict-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .verdict-score-block {
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+
+  .verdict-takeaways-group {
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .verdict-takeaway-item {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .relics-grid,
+  .planar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .relic-item-card {
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .combat-sim-metrics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .squad-teammates-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  /* Trophy / Build Card Modal Responsive on Tablets <1024px */
+  .trophy-modal-dialog {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .showcase-card {
+    padding: 18px 16px !important;
+  }
+
+  .showcase-main-layout {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .showcase-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+
+  .showcase-header-left {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .showcase-cone-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .showcase-score-box {
+    align-items: flex-start !important;
+    border-top: 1px solid var(--border-subtle) !important;
+    padding-top: 12px !important;
+    width: 100% !important;
+  }
+
+  .showcase-relics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .dashboard-nav-inner {
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 

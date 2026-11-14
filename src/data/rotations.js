@@ -9,6 +9,10 @@ export const ROTATIONS = {
   "1510": {
     hpScale: false,
     passiveDmgBoost: 20, // Navigator's Semaphore: +20% урона всем союзникам — учитывается как собственный аурный баф
+    // Талант «Of Fire and Far Faring» (Territory Starblazer): пока Химеко Нова на поле,
+    // её All-Type RES PEN +20% и CRIT DMG +80% — учитываются в личных множителях.
+    passiveCritDmg: 80,
+    passiveResPen: 20,
     ultLoop: true,
     instances: [
       {
@@ -25,11 +29,11 @@ export const ROTATIONS = {
         key: "pulse",
         phaseRu: "СВЕРХСПОСОБНОСТЬ — ORBITAL PULSE",
         phaseEn: "ULTIMATE — ORBITAL ANNIHILATION PULSE",
-        actionRu: "3 залпа «Орбитального уничтожения» (20% AoE + 30%×SE по случайным целям, до 762% по боссу)",
-        actionEn: "3x Orbital Annihilation Pulse (20% AoE + 30% per SE, up to 762% on boss)",
-        descRu: "20% ATK по всем + 2×30% ATK дополнительного урона за Source Energy. Суммарно до 762% по одной цели.",
-        descEn: "20% ATK AoE + 2x30% ATK bonus per Source Energy. Up to 762% total on one target.",
-        mv: 0.8, targets: 1, count: 3
+        actionRu: "3 залпа «Орбитального уничтожения» (20% AoE + 2×60%×SE по случайным целям, след A6: +30% к множителю случайных)",
+        actionEn: "3x Orbital Annihilation Pulse (20% AoE + 2x60% per SE randoms, A6 trace: +30% random multiplier)",
+        descRu: "20% ATK по всем + 2 случайных удара по 60% ATK (30% базово + 30% от следа A6 при 3 ед. Source Energy). До 140% ATK за залп по боссу.",
+        descEn: "20% ATK AoE + 2 random hits of 60% ATK (30% base + 30% from A6 trace at 3 Source Energy). Up to 140% ATK per volley on one target.",
+        mv: 1.4, targets: 1, count: 3
       },
       {
         key: "final",

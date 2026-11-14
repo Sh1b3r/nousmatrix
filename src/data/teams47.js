@@ -7,51 +7,54 @@
 // Воскресенье (1313), Зарянка (1309), Зарянка: Яснопея (1512), Авантюрин: Прибой (1513).
 
 export const TEAMS_47 = {
-  // Химеко: Нова — вариант отряда 4.7 с новыми саппортами (оценка)
+  // Химеко: Нова — синергия 4.7 (по иcи Veins/аналитике): Астральный Экспресс активирует её стансы
+  // Verdict/Decimation. Топ-союзники: Мортенакс Блэйд (дебафы), Воскресенье (энергия + продвижение),
+  // Первопроходец Памяти (Verdict-стенс, True DMG). Керидра/Кирена/Гиацина — НЕ её саппорты.
   "1510": [
     {
-      id: "himeko_nova_47_cyrene_cerydra_hyacine",
-      nameRu: "Отряд 2 (4.7): Мемо-саппорты (Керидра + Кирена + Гиацина)",
-      nameEn: "Team 2 (4.7): Memo Supports (Cerydra + Cyrene + Hyacine)",
-      descRu: "Оценка для 4.7: Керидра усиливает ультимейт, Кирена добавляет мемо-бафы, Гиацина лечит и повышает КШ. Числа бафов — консервативная оценка.",
-      descEn: "4.7 estimate: Cerydra empowers the Ultimate, Cyrene adds memo buffs, Hyacine heals and boosts CRIT. Buff numbers are a conservative estimate.",
+      id: "himeko_nova_47_mortenax_sunday_rmc",
+      nameRu: "Отряд 2 (4.7): Verdict-стенс (Мортенакс Блэйд + Воскресенье + Первопроходец (Память))",
+      nameEn: "Team 2 (4.7): Verdict Stance (Mortenax Blade + Sunday + Remembrance Trailblazer)",
+      descRu: "Синергия 4.7: Мортенакс Блэйд даёт сильные дебафы и поддерживает оба стенса, Воскресенье — энергию и быстрые ходы для частых Assist Skills, Первопроходец Памяти — главный Verdict-союзник (True DMG и ходы). Числа дебафов Мортенакса и True DMG RMC — оценка.",
+      descEn: "4.7 synergy: Mortenax Blade provides strong debuffs and supports both stances, Sunday gives Energy and fast turns for frequent Assist Skills, RMC is the premier Verdict ally (True DMG and turns). Mortenax debuff and RMC True DMG values estimated.",
       isEstimate: true,
       teammates: [
         {
-          id: "1412",
-          nameRu: "Керидра",
-          nameEn: "Cerydra",
-          icon: "icon/character/1412.png",
-          names: ["керидра", "cerydra"],
-          roleRu: "Саппорт (Мудрость / усиление ульты)",
-          roleEn: "Support (Wisdom / Ult Empower)",
-          buffDescRu: "Даёт Мудрость: баф КУ и урона для керри (оценка)",
-          buffDescEn: "Grants Wisdom: Crit DMG and DMG buff for the carry (estimate)",
-          buffValues: { dmgBoost: 40, cdGrant: 60 }
+          id: "1507",
+          nameRu: "Мортенакс Блэйд",
+          nameEn: "Mortenax Blade",
+          icon: "icon/character/1507.png",
+          names: ["мортенакс", "mortenax"],
+          roleRu: "Нихилия (Дебафы и атаки)",
+          roleEn: "Nihility (Debuffs and Attacks)",
+          buffDescRu: "Сильные дебафы для Химеко Новы, поддержка обоих стенсов (оценка значений)",
+          buffDescEn: "Strong debuffs for Himeko Nova, supports both stances (values estimated)",
+          buffValues: { allVuln: 25, defShred: 20 }
         },
         {
-          id: "1415",
-          nameRu: "Кирена",
-          nameEn: "Cyrene",
-          icon: "icon/character/1415.png",
-          names: ["кирена", "cyrene"],
-          roleRu: "Саппорт (Мемо-бафы)",
-          roleEn: "Support (Memo Buffs)",
-          buffDescRu: "Мемо-бафы и усиление урона (оценка)",
-          buffDescEn: "Memo buffs and DMG amplification (estimate)",
-          buffValues: { dmgBoost: 30, teamAdvance: 50 }
+          id: "1313",
+          nameRu: "Воскресенье",
+          nameEn: "Sunday",
+          icon: "icon/character/1313.png",
+          names: ["воскресенье", "sunday"],
+          roleRu: "Гармония (Энергия и продвижение)",
+          roleEn: "Harmony (Energy and Advance)",
+          buffDescRu: "Энергия и быстрые ходы подряд — чаще срабатывают Assist Skills",
+          buffDescEn: "Energy and back-to-back turns — more frequent Assist Skills",
+          buffValues: { targetAdvance: 100 }
         },
         {
-          id: "1409",
-          nameRu: "Гиацина",
-          nameEn: "Hyacine",
-          icon: "icon/character/1409.png",
-          names: ["гиацина", "hyacine"],
-          roleRu: "Сохранение (Лечение и КШ)",
-          roleEn: "Sustain (Heals and CR)",
-          buffDescRu: "Лечение, +КШ от лечения (оценка)",
-          buffDescEn: "Heals and grants CRIT Rate from healing (estimate)",
-          buffValues: { crGrant: 12, energyFeed: 20 }
+          id: "8007",
+          nameRu: "Первопроходец (Память)",
+          nameEn: "Trailblazer (Remembrance)",
+          icon: "icon/character/8007.png",
+          names: ["первопроходец", "trailblazer"],
+          altIds: ["8008"],
+          roleRu: "Память (Verdict-стенс, True DMG)",
+          roleEn: "Remembrance (Verdict Stance, True DMG)",
+          buffDescRu: "Главный Verdict-союзник: True DMG и abundance ходов (оценка True DMG)",
+          buffDescEn: "Premier Verdict ally: True DMG and plenty of turns (True DMG estimated)",
+          buffValues: { teamAdvance: 100, dmgBoost: 24 }
         }
       ]
     }
@@ -61,23 +64,22 @@ export const TEAMS_47 = {
   "1015": [
     {
       id: "archer_rin_robin_sparkie",
-      nameRu: "Отряд 1: Гиперкерри (Рин Тосака + Зарянка + Искра)",
-      nameEn: "Team 1: Hypercarry (Rin Tohsaka + Robin + Sparxie)",
-      descRu: "Самый частый отряд Арчера в AA 4.7 (0.69% всех битв): Искра даёт True DMG и КУ, Зарянка — атаку и продвижение, Рин Тосака — энергию и монеты.",
-      descEn: "Archer's most-played AA team in 4.7 (0.69% of all battles): Sparxie adds True DMG and CRIT DMG, Robin ATK and advance, Rin Tohsaka energy and coins.",
+      nameRu: "Отряд 1: Гиперкерри (Рин Тосака + Зарянка + Искорка)",
+      nameEn: "Team 1: Hypercarry (Rin Tohsaka + Robin + Sparkle)",
+      descRu: "Самый частый отряд Арчера в AA 4.7 (0.69% всех битв): Искорка даёт КУ и продвижение, Зарянка — атаку и продвижение, Рин Тосака — энергию и монеты.",
+      descEn: "Archer's most-played AA team in 4.7 (0.69% of all battles): Sparkle adds CRIT DMG and advance, Robin ATK and advance, Rin Tohsaka energy and coins.",
       teammates: [
         {
-          id: "1501",
-          nameRu: "Искра",
-          nameEn: "Sparxie",
-          icon: "icon/character/1501.png",
-          names: ["искра", "sparxie"],
-          altIds: ["1306"],
-          roleRu: "Саппорт (True DMG и КУ)",
-          roleEn: "Support (True DMG and CRIT DMG)",
-          buffDescRu: "True DMG, баф КУ (значение — оценка)",
-          buffDescEn: "True DMG, CRIT DMG buff (value estimated)",
-          buffValues: { dmgBoost: 45 }
+          id: "1306",
+          nameRu: "Искорка",
+          nameEn: "Sparkle",
+          icon: "icon/character/1306.png",
+          names: ["искорка", "sparkle"],
+          roleRu: "Гармония (КУ и продвижение)",
+          roleEn: "Harmony (CRIT DMG and Advance)",
+          buffDescRu: "+50% продвижение, передача КУ от собственного КУ, лимит SP",
+          buffDescEn: "+50% advance, CRIT DMG transfer from own CD, SP cap",
+          buffValues: { targetAdvance: 50, dmgBoost: 48 }
         },
         {
           id: "1309",

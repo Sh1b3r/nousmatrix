@@ -48,6 +48,10 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     if (b.targetAdvance) teamActionAdvances.push(b.targetAdvance);
     if (b.teamAdvance) teamActionAdvances.push(b.teamAdvance);
   });
+  // Kit-ротація виявляється ДО обчислення множників: пасиви кіта (КУ/RES PEN) входять у бойові стати
+  const kitRotation = ROTATIONS[charId] || null;
+  const kitCd = (kitRotation && kitRotation.passiveCritDmg) || 0;
+  const kitResPen = (kitRotation && kitRotation.passiveResPen) || 0;
   // Пресеты врагов по режимам: MoC (босс ур. 95, RES 20%), PF (мобы ур. 88, RES 20%), AS (ап-босс ур. 95, RES 40%)
   const enemyMode = options.enemyMode || "moc";
   const ENEMY_PRESETS = {
@@ -61,13 +65,13 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const enemyLv = enemy.lv;
   const defMult = (charLv + 20) / (charLv + 20 + (enemyLv + 20) * (1 - totalDefShred));
   const baseEnemyRes = enemy.res;
-  const effectiveRes = Math.max(-1, baseEnemyRes - teamResPen / 100);
+  const effectiveRes = Math.max(-1, baseEnemyRes - (teamResPen + kitResPen) / 100);
   const resMult = 1 - effectiveRes;
   const vulnMult = 1 + teamVuln / 100;
   const combatAtk = baseAtk + teamAtkGrant;
   const combatHp = baseHp;
   const combatCr = Math.min(1, (baseCr + teamCrGrant) / 100);
-  const combatCd = (baseCd + teamCdGrant) / 100;
+  const combatCd = (baseCd + teamCdGrant + kitCd) / 100;
   const critMultiplier = 1 + combatCr * combatCd;
   const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost) / 100;
   const steps = [];
@@ -107,7 +111,6 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const isArgenti = charId === "1302" || name.includes("аргенти") || name.includes("argenti");
   const isSupportRole = pathId === "shaman" || pathName.includes("harmony") || pathName.includes("гармон");
   const isSustainRole = pathId === "knight" || pathId === "priest" || pathName.includes("preservation") || pathName.includes("abundance") || pathName.includes("сохран") || pathName.includes("изобил");
-  const kitRotation = ROTATIONS[charId] || null;
   if (kitRotation) {
     const kitDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + (kitRotation.passiveDmgBoost || 0)) / 100;
     const scalingStat = Math.max(1200, kitRotation.hpScale ? combatHp : combatAtk);
