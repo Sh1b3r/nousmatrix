@@ -1967,7 +1967,11 @@ const SUPPORT_DEFAULT_STATS = {
   "1512": { atk: 3300, def: 1600, hp: 13000, cr: 5, cd: 130, be: 0 },   // Зарянка: Яснопея
   "1217": { atk: 2900, def: 1400, hp: 13000, cr: 5, cd: 100, be: 0 },   // Хохо
   "1414": { atk: 2400, def: 2000, hp: 14000, cr: 5, cd: 100, be: 0 },   // Дань Хэн • Освободитель Пустошей
-  "1409": { atk: 2600, def: 1500, hp: 13500, cr: 5, cd: 110, be: 0 }    // Гиацина
+  "1409": { atk: 2600, def: 1500, hp: 13500, cr: 5, cd: 110, be: 0 },   // Гиацина
+  "1513": { atk: 3200, def: 1400, hp: 12000, cr: 80, cd: 160, be: 0 },   // Авантюрин: Прибой
+  "1408": { atk: 2800, def: 1400, hp: 12000, cr: 70, cd: 140, be: 0 },   // Яо Гуан
+  "1501": { atk: 2600, def: 1400, hp: 12000, cr: 10, cd: 150, be: 0 },   // Искра (Спаркси)
+  "1006": { atk: 3400, def: 1400, hp: 12000, cr: 100, cd: 180, be: 0 }   // Серебряный Волк ур. 999
 };
 
 // Stat-dependent бафы саппорта: считаются от реальных статов из витрины,
@@ -1980,7 +1984,24 @@ function computeSupportBuffs(rec, s = {}) {
   let descEn = null;
   const num = (v) => (typeof v === "number" ? v : 0);
 
-  if (id === "1313" || tag.includes("воскресенье") || tag.includes("sunday")) {
+  if (id === "1513" || tag.includes("прибой") || tag.includes("waveflair")) {
+    buffs.critVuln = Math.max(num(buffs.critVuln), 15);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 40);
+    buffs.elationBuff = 100;
+    descRu = `Радость 4.7: комбо-атаки Радости, след «Revel in Surging Waves» (+100% статов Радости), +15% крит. уязвимости цели, фаза Aha Instant`;
+    descEn = `4.7 Elation: coordinated Elation strikes, «Revel in Surging Waves» (+100% Elation stats), +15% Crit Vuln, Aha Instant phase`;
+  } else if (id === "1408" || tag.includes("яо") || tag.includes("yao")) {
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
+    buffs.teamAdvance = Math.max(num(buffs.teamAdvance), 35);
+    descRu = `Саппорт Радости 4.7: генерация Панчлайнов, разгон шкалы Aha Instant, +50% урон Радости`;
+    descEn = `4.7 Elation Support: Punchline generation, Aha Instant acceleration, +50% Elation DMG`;
+  } else if (id === "1501" || tag.includes("спаркси") || tag.includes("sparxie") || (tag.includes("искра") && !tag.includes("искорка"))) {
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
+    buffs.teamAdvance = Math.max(num(buffs.teamAdvance), 50);
+    buffs.energyFeed = Math.max(num(buffs.energyFeed), 30);
+    descRu = `Саппорт Радости 4.7: генерация очков действий Радости, разгон Панчлайнов, синергия сета «Миг радости бога», +50% урон`;
+    descEn = `4.7 Elation Support: Elation SP battery, Punchlines, Moment of Joy synergy, +50% DMG`;
+  } else if (id === "1313" || tag.includes("воскресенье") || tag.includes("sunday")) {
     const cd = num(s.cd) || 170;
     const cdGrant = parseFloat((12 + cd * 0.3).toFixed(1));
     buffs.cdGrant = cdGrant;
@@ -2011,7 +2032,7 @@ function computeSupportBuffs(rec, s = {}) {
     buffs.beBoost = Math.max(num(buffs.beBoost), num(buffs.breakEff), 50);
     descRu = `+50% Эффективность пробития, +25% All-Type RES PEN, +10% SPD, +${dmg}% Урон (${be.toFixed(0)}% ЭП)`;
     descEn = `+50% Break Efficiency, +25% All-Type RES PEN, +10% SPD, +${dmg}% DMG (${be.toFixed(0)}% BE)`;
-  } else if (id === "1304" || tag.includes("авантюрин")) {
+  } else if ((id === "1304" || tag.includes("авантюрин")) && id !== "1513" && !tag.includes("прибой") && !tag.includes("waveflair")) {
     const def = num(s.def) || 3200;
     const crGrant = Math.min(48, Math.max(0, Math.round((def - 1600) * 0.02)));
     buffs.crGrant = crGrant;
@@ -2051,11 +2072,6 @@ function computeSupportBuffs(rec, s = {}) {
     buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 40);
     descRu = `Fate Саппорт: заливка +30 энергии, генерация монет, +40% урон навички`;
     descEn = `Fate Support: +30 energy feed, coins, +40% Skill DMG`;
-  } else if (id === "1513" || tag.includes("прибой") || tag.includes("waveflair")) {
-    buffs.critVuln = Math.max(num(buffs.critVuln), 15);
-    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 30);
-    descRu = `Радость 4.7: комбо-атаки Радости, +15% крит. уязвимости, +30% урона в фазе Aha Instant`;
-    descEn = `4.7 Elation: coordinated Elation strikes, +15% Crit Vuln, +30% DMG during Aha Instant`;
   } else if (id === "1006" || tag.includes("999")) {
     buffs.defShred = Math.max(num(buffs.defShred), 45);
     buffs.allVuln = Math.max(num(buffs.allVuln), 20);

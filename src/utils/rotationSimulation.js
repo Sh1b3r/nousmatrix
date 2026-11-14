@@ -419,6 +419,62 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       damage: ultDmg,
       isDamageAction: true
     });
+  } else if (isWolf999) {
+    const skillDmg = Math.round(combatAtk * 2.8 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+    const ultDmg = Math.round(combatAtk * 6.5 * (combatDmgBonus + 0.5) * (critMultiplier * 1.3) * defMult * resMult * vulnMult);
+    const lootBoxDmg = Math.round(combatAtk * 2.4 * combatDmgBonus * defMult * resMult * vulnMult);
+    rotationTotalDamage += skillDmg + ultDmg + lootBoxDmg;
+    peakHitDamage = ultDmg;
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? "ХОД ГИПЕРКЕРРИ РАДОСТИ (НАВЫК)" : "ELATION HYPERCARRY TURN (SKILL)",
+      actionNameRu: "Навык «Взлом кода Радости» (Взрывной урон + срез -45% DEF)",
+      actionNameEn: "Skill: Elation Code Hack (Burst DMG + -45% DEF Shred)",
+      damage: skillDmg,
+      isDamageAction: true
+    });
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? "ЗОНА «GOD MODE: ON!» (СВЕРХСПОСОБНОСТЬ)" : "«GOD MODE: ON!» ZONE (ULTIMATE)",
+      actionNameRu: "Сверхспособность «God Mode: ON!» (Массивный оверкрит-залп Радости)",
+      actionNameEn: "Ultimate: God Mode: ON! (Massive Elation Overcrit Burst)",
+      damage: ultDmg,
+      isDamageAction: true
+    });
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: isRu ? "Механика Топового Лутбокса" : "Top Loot Box Procs",
+      phase: isRu ? "ТОПОВЫЙ ЛУТБОКС (ЧИСТЫЙ УРОН)" : "TOP LOOT BOX (TRUE DMG)",
+      actionNameRu: "Активация Топового Лутбокса (Панчлайны + Чистый урон)",
+      actionNameEn: "Top Loot Box Activation (Punchlines + True DMG)",
+      damage: lootBoxDmg,
+      isDamageAction: true
+    });
+  } else if (isAvenSurging) {
+    const comboDmg = Math.round(combatAtk * 4.8 * (combatDmgBonus + 0.5) * critMultiplier * defMult * resMult * vulnMult);
+    const ahaInstantDmg = Math.round(combatAtk * 3.6 * (combatDmgBonus + 0.5) * critMultiplier * defMult * resMult * vulnMult);
+    rotationTotalDamage += comboDmg + ahaInstantDmg;
+    peakHitDamage = comboDmg;
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? "ХОД ДАМАГЕРА РАДОСТИ (КОМБО)" : "ELATION DPS TURN (COMBO)",
+      actionNameRu: "Навык «Ставка на прибой» (След «Revel in Surging Waves» +100% статов Радости)",
+      actionNameEn: "Skill: Waveflair Wager («Revel in Surging Waves» +100% Elation stats)",
+      damage: comboDmg,
+      isDamageAction: true
+    });
+    steps.push({
+      stepNumber: steps.length + 1,
+      charName: mainChar.name,
+      phase: isRu ? "ФАЗА AHA INSTANT (ЦЕПНЫЕ АТАКИ)" : "AHA INSTANT PHASE (CHAIN ATTACKS)",
+      actionNameRu: "Цепные атаки Радости в синергии со СВ ур. 999 (+15% крит. уязвимости)",
+      actionNameEn: "Chain Elation Strikes with SW Lv.999 (+15% Crit Vuln)",
+      damage: ahaInstantDmg,
+      isDamageAction: true
+    });
   } else if (isSupportRole) {
     const carryBenchmarkDmg = Math.round(3500 * 5.2 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     const personalImpact = Math.round(combatAtk * 1.8 * combatDmgBonus * defMult * resMult * vulnMult);

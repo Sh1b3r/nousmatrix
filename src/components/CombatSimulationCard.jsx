@@ -314,7 +314,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <SwordIcon size={13} />
             </span>
             <span className="combat-section-title">
-              {isRu ? "Личный боевой вклад (Sub-DPS)" : "Personal Combat Output (Sub-DPS)"}
+              {sim.type === "DPS"
+                ? (isRu ? "Личный боевой вклад (Main DPS)" : "Personal Output (Main DPS)")
+                : (isRu ? "Личный боевой вклад (Sub-DPS)" : "Personal Combat Output (Sub-DPS)")}
             </span>
           </div>
           <div className="combat-sim-metrics-grid sub-grid">

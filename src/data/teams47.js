@@ -7,10 +7,10 @@ export const TEAMS_47 = {
   "1513": [
     {
       id: "aventurine_surging_elation_core",
-      nameRu: "Отряд 1 (4.7): Ядро Радости (Серебряный Волк ур. 999 + Зарянка + Гиацина)",
-      nameEn: "Team 1 (4.7): Elation Core (Silver Wolf Lv.999 + Robin + Hyacine)",
-      descRu: "Мета 4.7 Радости: Авантюрин Прибой реализует путь Радости и планарку «Миг радости бога», Серебряный Волк ур. 999 наносит взрывной урон Радости и срезает защиту, Зарянка продвигает весь отряд, Гиацина лечит и баффает КШ.",
-      descEn: "4.7 Elation Meta: Aventurine Surging acts as Elation Main DPS triggering Moment of Joy, Silver Wolf Lv.999 deals Elation burst & shreds DEF, Robin advances team, Hyacine sustains.",
+      nameRu: "Отряд 1 (4.7): Ядро Радости (Серебряный Волк ур. 999 + Яо Гуан + Искра)",
+      nameEn: "Team 1 (4.7): Pure Elation Core (Silver Wolf Lv.999 + Yao Guang + Sparxie)",
+      descRu: "Мета 4.7 Радости: Авантюрин Прибой в отряде персонажей Радости реализует путь Радости и сет «Миг радости бога», Серебряный Волк ур. 999 наносит взрывной урон Радости и срезает защиту, Яо Гуан генерирует Панчлайны и разгоняет фазу Aha Instant, Искра обеспечивает отряд очками действий Радости.",
+      descEn: "4.7 Elation Meta: Aventurine Surging in pure Elation squad triggers Moment of Joy, Silver Wolf Lv.999 deals Elation burst & shreds DEF, Yao Guang generates Punchlines accelerating Aha Instant, Sparxie feeds Elation SP.",
       isEstimate: true,
       teammates: [
         {
@@ -21,32 +21,31 @@ export const TEAMS_47 = {
           names: ["серебряный волк", "silver wolf", "волк", "999"],
           roleRu: "Радость (Дамагер Радости / Срез DEF)",
           roleEn: "Elation (Elation DPS & DEF Shred)",
-          buffDescRu: "Взрывной урон Радости, внедрение уязвимостей и срез защиты цели",
-          buffValues: { defShred: 45, allVuln: 20 }
+          buffDescRu: "Взрывной урон Радости, внедрение уязвимостей, срез защиты -45% DEF, режим «God Mode: ON!»",
+          buffValues: { defShred: 45, allVuln: 20, carrySynergy: true }
         },
         {
-          id: "1309",
-          altIds: ["1512", "1313"],
-          nameRu: "Зарянка",
-          nameEn: "Robin",
-          icon: "icon/character/1309.png",
-          names: ["зарянка", "робин", "robin"],
-          roleRu: "Саппорт (100% Продвижение и Атака)",
-          roleEn: "Support (100% Advance & ATK)",
-          buffDescRu: "100% Продвижение ВСЕГО отряда, массивный бафф силы атаки под атаки Радости",
-          buffValues: { teamAdvance: 100, dmgBoost: 50 }
+          id: "1408",
+          nameRu: "Яо Гуан",
+          nameEn: "Yao Guang",
+          icon: "icon/character/1408.png",
+          names: ["яо гуан", "яо", "yao guang", "yao"],
+          roleRu: "Радость (Саппорт Радости)",
+          roleEn: "Elation (Elation Support)",
+          buffDescRu: "Саппорт Радости: генерация Панчлайнов, разгон шкалы фазы Aha Instant, +50% урон Радости",
+          buffValues: { dmgBoost: 50, teamAdvance: 35 }
         },
         {
-          id: "1409",
-          altIds: ["1217", "1301"],
-          nameRu: "Гиацина",
-          nameEn: "Hyacine",
-          icon: "icon/character/1409.png",
-          names: ["гиацина", "hyacine"],
-          roleRu: "Сохранение (Лечение и КШ)",
-          roleEn: "Sustain (Heals & CR)",
-          buffDescRu: "Надёжное выживание, щиты, +12% КШ команде",
-          buffValues: { crGrant: 12, energyFeed: 20 }
+          id: "1501",
+          altIds: ["1505"],
+          nameRu: "Искра",
+          nameEn: "Sparxie",
+          icon: "icon/character/1501.png",
+          names: ["искра", "sparxie", "спаркси", "еванесція", "evanescia"],
+          roleRu: "Радость (Генератор очков Радости)",
+          roleEn: "Elation (Elation SP Battery)",
+          buffDescRu: "Саппорт Радости: генерация очков действий Радости, разгон Панчлайнов, синергия сета «Миг радости бога», +50% урон",
+          buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
         }
       ]
     }
@@ -56,10 +55,10 @@ export const TEAMS_47 = {
   "1006": [
     {
       id: "sw999_elation_hyper",
-      nameRu: "Отряд 1 (4.7): Дамагер Радости (Авантюрин: Прибой + Зарянка + Гиацина)",
-      nameEn: "Team 1 (4.7): Elation Hypercarry (Aventurine: Surging + Robin + Hyacine)",
-      descRu: "Сборка Серебряного Волка ур. 999 как дамагера пути Радости: синергия со сетом «Миг радости бога», парные атаки Радости с Авантюрином Прибоем под продвижением Зарянки.",
-      descEn: "Silver Wolf Lv.999 as dedicated Elation DPS: triggers God's Moment of Joy, paired with Aventurine Surging and Robin's whole-team advance.",
+      nameRu: "Отряд 1 (4.7): Ядро Радости (Авантюрин: Прибой + Яо Гуан + Искра)",
+      nameEn: "Team 1 (4.7): Pure Elation Core (Aventurine: Surging + Yao Guang + Sparxie)",
+      descRu: "Сборка Серебряного Волка ур. 999 как гиперкерри пути Радости в чисто радостном отряде: синергия со сетом «Миг радости бога», парные атаки Радости с Авантюрином Прибоем, ускорение фазы Aha Instant от Яо Гуан и генерация очков действий от Искры.",
+      descEn: "Silver Wolf Lv.999 as dedicated Elation Hypercarry in an all-Elation path squad: triggers God's Moment of Joy, coordinated strikes with Aventurine Surging, Aha Instant acceleration from Yao Guang and SP generation from Sparxie.",
       isEstimate: true,
       teammates: [
         {
@@ -67,35 +66,34 @@ export const TEAMS_47 = {
           nameRu: "Авантюрин: Прибой",
           nameEn: "Aventurine: Surging",
           icon: "icon/character/1513.png",
-          names: ["авантюрин", "aventurine", "прибой"],
-          roleRu: "Радость (Дамагер Радости)",
-          roleEn: "Elation (Elation DPS)",
-          buffDescRu: "Второй дамагер Радости: координированные атаки Радости и срез стойкости",
-          buffValues: { carrySynergy: true, critVuln: 15 }
+          names: ["авантюрин: прибой", "авантюрин прибой", "aventurine: surging", "aventurine surging", "прибой", "waveflair"],
+          roleRu: "Радость (Дамагер Радости / Ко-ДПС)",
+          roleEn: "Elation (Elation Co-DPS)",
+          buffDescRu: "Второй дамагер Радости: след «Revel in Surging Waves» (+100% статов Радости), комбо-атаки Радости, +15% крит. уязвимости цели",
+          buffValues: { carrySynergy: true, critVuln: 15, elationBuff: 100 }
         },
         {
-          id: "1309",
-          altIds: ["1313"],
-          nameRu: "Зарянка",
-          nameEn: "Robin",
-          icon: "icon/character/1309.png",
-          names: ["зарянка", "робин", "robin"],
-          roleRu: "Саппорт (Атака и Продвижение)",
-          roleEn: "Support (ATK & Team Advance)",
-          buffDescRu: "100% Продвижение отряда, бафф урона и атаки",
-          buffValues: { teamAdvance: 100, dmgBoost: 50 }
+          id: "1408",
+          nameRu: "Яо Гуан",
+          nameEn: "Yao Guang",
+          icon: "icon/character/1408.png",
+          names: ["яо гуан", "яо", "yao guang", "yao"],
+          roleRu: "Радость (Саппорт Радости)",
+          roleEn: "Elation (Elation Support)",
+          buffDescRu: "Саппорт Радости: генерация Панчлайнов, разгон шкалы фазы Aha Instant, +50% урон Радости",
+          buffValues: { dmgBoost: 50, teamAdvance: 35 }
         },
         {
-          id: "1409",
-          altIds: ["1301", "1217"],
-          nameRu: "Гиацина",
-          nameEn: "Hyacine",
-          icon: "icon/character/1409.png",
-          names: ["гиацина", "hyacine"],
-          roleRu: "Сохранение (Лечение и КШ)",
-          roleEn: "Sustain (Heals & CR)",
-          buffDescRu: "Лечение, выживание отряда, +12% КШ",
-          buffValues: { crGrant: 12, energyFeed: 20 }
+          id: "1501",
+          altIds: ["1505"],
+          nameRu: "Искра",
+          nameEn: "Sparxie",
+          icon: "icon/character/1501.png",
+          names: ["искра", "sparxie", "спаркси", "еванесція", "evanescia"],
+          roleRu: "Радость (Генератор очков Радости)",
+          roleEn: "Elation (Elation SP Battery)",
+          buffDescRu: "Саппорт Радости: генерация очков действий Радости, разгон Панчлайнов, синергия сета «Миг радости бога», +50% урон",
+          buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
         }
       ]
     }
@@ -103,10 +101,10 @@ export const TEAMS_47 = {
   "999": [
     {
       id: "sw999_elation_hyper_alias",
-      nameRu: "Отряд 1 (4.7): Дамагер Радости (Авантюрин: Прибой + Зарянка + Гиацина)",
-      nameEn: "Team 1 (4.7): Elation Hypercarry (Aventurine: Surging + Robin + Hyacine)",
-      descRu: "Сборка Серебряного Волка ур. 999 как дамагера пути Радости: синергия со сетом «Миг радости бога», парные атаки Радости с Авантюрином Прибоем под продвижением Зарянки.",
-      descEn: "Silver Wolf Lv.999 as dedicated Elation DPS: triggers God's Moment of Joy, paired with Aventurine Surging and Robin's whole-team advance.",
+      nameRu: "Отряд 1 (4.7): Ядро Радости (Авантюрин: Прибой + Яо Гуан + Искра)",
+      nameEn: "Team 1 (4.7): Pure Elation Core (Aventurine: Surging + Yao Guang + Sparxie)",
+      descRu: "Сборка Серебряного Волка ур. 999 как гиперкерри пути Радости в чисто радостном отряде: синергия со сетом «Миг радости бога», парные атаки Радости с Авантюрином Прибоем, ускорение фазы Aha Instant от Яо Гуан и генерация очков действий от Искры.",
+      descEn: "Silver Wolf Lv.999 as dedicated Elation Hypercarry in an all-Elation path squad: triggers God's Moment of Joy, coordinated strikes with Aventurine Surging, Aha Instant acceleration from Yao Guang and SP generation from Sparxie.",
       isEstimate: true,
       teammates: [
         {
@@ -114,35 +112,34 @@ export const TEAMS_47 = {
           nameRu: "Авантюрин: Прибой",
           nameEn: "Aventurine: Surging",
           icon: "icon/character/1513.png",
-          names: ["авантюрин", "aventurine", "прибой"],
-          roleRu: "Радость (Дамагер Радости)",
-          roleEn: "Elation (Elation DPS)",
-          buffDescRu: "Второй дамагер Радости: координированные атаки Радости и срез стойкости",
-          buffValues: { carrySynergy: true, critVuln: 15 }
+          names: ["авантюрин: прибой", "авантюрин прибой", "aventurine: surging", "aventurine surging", "прибой", "waveflair"],
+          roleRu: "Радость (Дамагер Радости / Ко-ДПС)",
+          roleEn: "Elation (Elation Co-DPS)",
+          buffDescRu: "Второй дамагер Радости: след «Revel in Surging Waves» (+100% статов Радости), комбо-атаки Радости, +15% крит. уязвимости цели",
+          buffValues: { carrySynergy: true, critVuln: 15, elationBuff: 100 }
         },
         {
-          id: "1309",
-          altIds: ["1313"],
-          nameRu: "Зарянка",
-          nameEn: "Robin",
-          icon: "icon/character/1309.png",
-          names: ["зарянка", "робин", "robin"],
-          roleRu: "Саппорт (Атака и Продвижение)",
-          roleEn: "Support (ATK & Team Advance)",
-          buffDescRu: "100% Продвижение отряда, бафф урона и атаки",
-          buffValues: { teamAdvance: 100, dmgBoost: 50 }
+          id: "1408",
+          nameRu: "Яо Гуан",
+          nameEn: "Yao Guang",
+          icon: "icon/character/1408.png",
+          names: ["яо гуан", "яо", "yao guang", "yao"],
+          roleRu: "Радость (Саппорт Радости)",
+          roleEn: "Elation (Elation Support)",
+          buffDescRu: "Саппорт Радости: генерация Панчлайнов, разгон шкалы фазы Aha Instant, +50% урон Радости",
+          buffValues: { dmgBoost: 50, teamAdvance: 35 }
         },
         {
-          id: "1409",
-          altIds: ["1301", "1217"],
-          nameRu: "Гиацина",
-          nameEn: "Hyacine",
-          icon: "icon/character/1409.png",
-          names: ["гиацина", "hyacine"],
-          roleRu: "Сохранение (Лечение и КШ)",
-          roleEn: "Sustain (Heals & CR)",
-          buffDescRu: "Лечение, выживание отряда, +12% КШ",
-          buffValues: { crGrant: 12, energyFeed: 20 }
+          id: "1501",
+          altIds: ["1505"],
+          nameRu: "Искра",
+          nameEn: "Sparxie",
+          icon: "icon/character/1501.png",
+          names: ["искра", "sparxie", "спаркси", "еванесція", "evanescia"],
+          roleRu: "Радость (Генератор очков Радости)",
+          roleEn: "Elation (Elation SP Battery)",
+          buffDescRu: "Саппорт Радости: генерация очков действий Радости, разгон Панчлайнов, синергия сета «Миг радости бога», +50% урон",
+          buffValues: { dmgBoost: 50, teamAdvance: 50, energyFeed: 30 }
         }
       ]
     }
