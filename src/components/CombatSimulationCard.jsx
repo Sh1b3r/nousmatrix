@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { runCombatSimulation } from "../utils/simulation.js";
-import { CHARACTER_SQUADS, matchSquadWithShowcase, rankSquadsByShowcase } from "../utils/teamSynergy.js";
+import { CHARACTER_SQUADS, TEAM_DATA_BY_CHARACTER, TEAM_STATISTICS_SOURCES, matchSquadWithShowcase, rankSquadsByShowcase } from "../utils/teamSynergy.js";
 import { runFullTeamRotationSimulation } from "../utils/rotationSimulation.js";
 import { scoreAgainstCombatBenchmark } from "../utils/combatBenchmark.js";
 import { iconUrl, handleImageFallback } from "../utils/audit.js";
@@ -14,25 +14,30 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
 
   const squads = useMemo(() => {
     const list = CHARACTER_SQUADS[charId] || CHARACTER_SQUADS[String(character?.id || "")];
-    if (list && list.length > 0) return rankSquadsByShowcase(list, showcase);
-    const name = String(character?.name || "").toLowerCase();
-    if (charId === "999" || charId === "1006" || name.includes("волк") || name.includes("silver")) {
-      return rankSquadsByShowcase(CHARACTER_SQUADS["1006"] || CHARACTER_SQUADS["999"] || [], showcase);
-    }
-    return rankSquadsByShowcase(CHARACTER_SQUADS[charId] || [], showcase);
+    return rankSquadsByShowcase(list || [], showcase);
   }, [charId, character, showcase]);
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
   const [enemyMode, setEnemyMode] = useState("moc");
   const currentSquad = squads[selectedSquadIdx] || squads[0] || null;
+  const teamData = TEAM_DATA_BY_CHARACTER[charId] || null;
+  const mocDataSource = TEAM_STATISTICS_SOURCES.find((source) => source.id === "mocdata-processed")?.datasetUrl;
+  const noTeamDescription = teamData
+    ? (isRu
+      ? `Подтверждённая статистика не публикует для этого персонажа точную четвёрку. AstraVoy: ${teamData.pageStatus === "available" ? `${Number(teamData.observationCount || 0).toLocaleString("ru-RU")} наблюдений, командных строк — ${teamData.publishedTeamRows || 0}` : "страница персонажа с командами отсутствует"}. В MocDataProcessed 4.6.4 точных составов нет. Статистика 4.7 пока не опубликована; составы по аналогии не подставляются.`
+      : `The verified statistics don't publish an exact four-character lineup for this character. AstraVoy: ${teamData.pageStatus === "available" ? `${Number(teamData.observationCount || 0).toLocaleString("en-US")} observations, team rows: ${teamData.publishedTeamRows || 0}` : "no character team page"}. MocDataProcessed 4.6.4 has no exact lineup either. Version 4.7 team data is not published yet, so no team is inferred by analogy.`)
+    : (isRu
+      ? "Для этого персонажа пока нет проверенной команды. Автоматические замены по Пути или общей роли отключены; показанный расчёт не включает баффы союзников."
+      : "No validated team is available for this character yet. Path or broad-role substitutions are disabled; the displayed calculation does not include teammate buffs.");
 
   const matchedTeammates = useMemo(() => {
     return matchSquadWithShowcase(currentSquad, showcase, lang);
   }, [currentSquad, showcase, lang]);
 
   const missingTeammates = useMemo(() => {
-    return matchedTeammates.filter((tm) => !tm.isEquippedInShowcase);
+    return matchedTeammates.filter((tm) => !tm.isEquippedInShowcase && !tm.identityMismatch);
   }, [matchedTeammates]);
+  const identityMismatches = useMemo(() => matchedTeammates.filter((tm) => tm.identityMismatch), [matchedTeammates]);
 
   const rotationSim = useMemo(() => {
     return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode });
@@ -73,12 +78,14 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   if (!sim) return null;
 
   const isDual = Boolean(sim.hasDualOutput);
-  const isSupport = sim.type === "SUPPORT" || sim.type === "SUSTAIN" || sim.type === "HYBRID_SUBDPS";
+  const detectedRole = String(audit.detectedRole?.role || "").toUpperCase();
+  const isSupport = ["SUPPORT", "SUSTAIN"].includes(detectedRole)
+    || sim.type === "SUPPORT" || sim.type === "SUSTAIN" || sim.type === "HYBRID_SUBDPS";
 
   const roleBadgeLabel = () => {
     if (sim.type === "HYBRID_SUBDPS") return isRu ? "Саб-ДПС и поддержка" : "Hybrid Sub-DPS & Utility";
-    if (sim.type === "SUPPORT") return isRu ? "Поддержка отряда (Саппорт)" : "Team Support / Buffer";
-    if (sim.type === "SUSTAIN") return isRu ? "Выживание и защита (Сустейн)" : "Sustain & Mitigation";
+    if (detectedRole === "SUPPORT" || sim.type === "SUPPORT") return isRu ? "Поддержка отряда (Саппорт)" : "Team Support / Buffer";
+    if (detectedRole === "SUSTAIN" || sim.type === "SUSTAIN") return isRu ? "Выживание и защита (Сустейн)" : "Sustain & Mitigation";
     return isRu ? "Основной урон (Гиперкерри)" : "Main Damage Carry";
   };
 
@@ -93,7 +100,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   return (
     <div className="panel panel-combat-sim">
       <div className="panel-title">
-        <span>{isRu ? "Боевая симуляция ротации" : "Combat Rotation Simulation"}</span>
+        <span>{isRu ? "Модель боевого урона" : "Combat Damage Model"}</span>
         <div className="sim-header-controls">
           <span className="sim-provenance-tag" title={isRu ? "Расчёт использует оружие и характеристики из профиля" : "Calculation uses the profile's light cone and stats"}>
             {isRu ? "ДАННЫЕ ПРОФИЛЯ" : "PROFILE DATA"}
@@ -132,7 +139,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             </span>
           </div>
           <h3 className="combat-sim-heading">
-            {isRu ? "Симуляция боевой ротации отряда" : "Squad Combat Rotation Simulation"}
+            {isRu ? "Сценарная оценка урона отряда" : "Team Damage Scenario Estimate"}
           </h3>
         </div>
         <div className="combat-sim-tier-box" title={benchmark ? `${benchmark.gameVersion} • ${benchmark.source || "verified benchmark"}` : (isRu ? "Для этой конфигурации пока нет проверенного эталона" : "No validated benchmark exists for this configuration yet")}>
@@ -151,12 +158,14 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 type="button"
                 className={`squad-tab-btn ${selectedSquadIdx === idx ? "active" : ""}`}
                 onClick={() => setSelectedSquadIdx(idx)}
-                title={sq.sourceUrl ? `${sq.sourceVersion || ""} • ${sq.sourceUpdatedAt || ""} • ${sq.sourceUrl}` : ""}
+                title={sq.sourceUrl ? `${sq.sourceCoverage || sq.sourceVersion || ""} • ${sq.sourceUpdatedAt || ""} • ${(sq.sourceUrls || [sq.sourceUrl]).join(" • ")}` : ""}
               >
                 <span className="squad-tab-number">{idx + 1}</span>
                 <span className="squad-tab-title">
                   {isRu ? sq.nameRu : sq.nameEn}
-                  {sq.isEstimate && <em className="squad-estimate-tag">{isRu ? ` оценка ${sq.sourceVersion || ""}` : ` est. ${sq.sourceVersion || ""}`}</em>}
+                  {sq.status === "historical-statistics"
+                    ? <em className="squad-estimate-tag">{isRu ? sq.sourceBadgeRu : sq.sourceBadgeEn}</em>
+                    : sq.isEstimate && <em className="squad-estimate-tag">{isRu ? ` оценка ${sq.sourceVersion || ""}` : ` est. ${sq.sourceVersion || ""}`}</em>}
                 </span>
               </button>
             ))}
@@ -165,25 +174,33 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
         <p className="combat-squad-desc">{isRu ? currentSquad.descRu : currentSquad.descEn}</p>
 
         {/* Teammates sync notice */}
-        {missingTeammates.length > 0 ? (
+        {missingTeammates.length > 0 || identityMismatches.length > 0 ? (
           <div className="squad-showcase-alert warning">
             <div className="alert-icon-col">
               <WarnIcon size={16} />
             </div>
             <div className="alert-body-col">
               <span className="alert-title">
-                {isRu
-                  ? `${missingTeammates.length} из 3 союзников отсутствуют на витрине`
-                  : `${missingTeammates.length} of 3 teammates missing from showcase`}
+                {identityMismatches.length > 0
+                  ? (isRu
+                    ? `Не совпал ID у ${identityMismatches.length} союзника; его статы и эффекты отключены`
+                    : `${identityMismatches.length} teammate ID mismatch; their stats and effects are disabled`)
+                  : (isRu
+                    ? `${missingTeammates.length} из 3 союзников отсутствуют на витрине`
+                    : `${missingTeammates.length} of 3 teammates missing from showcase`)}
               </span>
               <p className="alert-text">
-                {isRu
-                  ? `Статы ${missingTeammates.length} союзников неизвестны; используются только явно заданные в карточке отряда баффы. Чтобы загрузить витринные данные, добавьте персонажей в профиль и нажмите «ОБНОВИТЬ»: [${missingTeammates
-                    .map((m) => m.nameRu || m.characterName || m.names[0])
-                    .join(", ")}]`
-                  : `Stats for ${missingTeammates.length} allies are unknown; only buffs explicitly configured in the team record are used. Add them to the profile and refresh to load showcase data: [${missingTeammates
-                    .map((m) => m.nameEn || m.characterName || m.names[0])
-                    .join(", ")}]`}
+                {identityMismatches.length > 0
+                  ? (isRu
+                    ? `Профиль содержит другой персонаж с этим ID: ${identityMismatches.map((m) => m.characterName).join(", ")}. Проверьте ID в данных команды; эффекты этого слота не участвуют в расчёте.`
+                    : `The profile resolves this ID to a different character: ${identityMismatches.map((m) => m.characterName).join(", ")}. Check the team data; this slot is excluded from calculations.`)
+                  : (isRu
+                    ? `Статы ${missingTeammates.length} союзников неизвестны; используются только явно заданные в карточке отряда баффы. Чтобы загрузить витринные данные, добавьте персонажей в профиль и нажмите «ОБНОВИТЬ»: [${missingTeammates
+                      .map((m) => m.nameRu || m.characterName || m.names[0])
+                      .join(", ")}]`
+                    : `Stats for ${missingTeammates.length} allies are unknown; only buffs explicitly configured in the team record are used. Add them to the profile and refresh to load showcase data: [${missingTeammates
+                      .map((m) => m.nameEn || m.characterName || m.names[0])
+                      .join(", ")}]`)}
               </p>
             </div>
           </div>
@@ -198,8 +215,8 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               </span>
               <p className="alert-text">
                 {isRu
-                  ? "Реальные статы доступны для тех баффов, которые настроены с зависимостью от профиля; длительность эффектов не моделируется."
-                  : "Real stats are available for buffs configured to scale from profile data; effect duration is not simulated."}
+                ? "Статы союзников загружены для просмотра, но пока не пересчитывают фиксированные баффы состава; длительность эффектов не моделируется."
+                : "Teammate stats are loaded for display but do not yet recalculate the team's fixed buffs; effect uptime is not modeled."}
               </p>
             </div>
           </div>
@@ -262,10 +279,22 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
       </div> : (
         <div className="combat-squad-section">
           <p className="combat-squad-desc">
-            {isRu
-              ? "Для этого персонажа пока нет проверенной команды. Автоматические замены по Пути или общей роли отключены; показанный расчёт не включает баффы союзников."
-              : "No validated team is available for this character yet. Path or broad-role substitutions are disabled; the displayed calculation does not include teammate buffs."}
+            {noTeamDescription}
           </p>
+          {teamData?.sourcePageUrl && teamData.pageStatus === "available" && (
+            <p className="combat-squad-desc">
+              <a href={teamData.sourcePageUrl} target="_blank" rel="noreferrer">
+                {isRu ? "Страница статистики AstraVoy" : "AstraVoy statistics page"}
+              </a>
+            </p>
+          )}
+          {mocDataSource && (
+            <p className="combat-squad-desc">
+              <a href={mocDataSource} target="_blank" rel="noreferrer">
+                {isRu ? "Проверить набор данных MocDataProcessed" : "Review the MocDataProcessed dataset"}
+              </a>
+            </p>
+          )}
         </div>
       )}
 
@@ -281,9 +310,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 {Number(rotationSim.rotationTotalDamage || 0).toLocaleString("ru-RU")}
               </span>
               <span className="sim-metric-hint">
-                {currentSquad
-                  ? (isRu ? "Ручная оценка для выбранного состава" : "Manual estimate for selected squad")
-                  : (isRu ? "Без баффов союзников" : "No teammate buffs applied")}
+                {rotationSim?.teamBuffStatus === "explicit-values-assumed-full-uptime"
+                  ? (isRu ? "Учтены только вручную заданные баффы; их полная длительность предполагается" : "Only explicitly configured buffs are included; full uptime is assumed")
+                  : (isRu ? "Баффы команды не заданы; рассчитан только урон основного персонажа" : "No team buffs are configured; only the lead character's damage is calculated")}
               </span>
             </div>
             <div className="combat-sim-metric-box">
@@ -398,7 +427,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <span>
                 {rotationSim?.buffTimingStatus === "verified-schedule"
                   ? (isRu ? "Баффы применены по проверенной таблице активности ударов." : "Buffs follow a verified per-hit uptime table.")
-                  : (isRu ? "Нет проверенного таймлайна баффов: заданные бонусы считаются активными на всех ударах." : "No verified buff timeline is available; configured buffs are assumed active on every hit.")}
+                  : rotationSim?.buffTimingStatus === "no-numeric-buffs-configured"
+                    ? (isRu ? "Численные баффы союзников не заданы, поэтому в урон они не добавлены." : "No numerical ally buffs are configured, so none are added to damage.")
+                    : (isRu ? "Нет проверенного таймлайна баффов: заданные бонусы считаются активными на всех ударах." : "No verified buff timeline is available; configured buffs are assumed active on every hit.")}
               </span>
             </div>
             <div className="assumption-item">

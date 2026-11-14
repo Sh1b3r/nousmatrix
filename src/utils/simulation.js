@@ -53,17 +53,20 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
   const isMortenax = charId === "1507" || name.includes("мортенакс") || name.includes("mortenax");
   const isHimeko = charId === "1003";
   const isSunday = charId === "1313" || name.includes("воскресенье") || name.includes("sunday");
-  const isYaoGuang = charId === "1408" || name.includes("яо") || name.includes("yao") || name.includes("гуан") || name.includes("爻光");
-  const isRobin = charId === "1309" || name.includes("зарянка") || name.includes("robin");
+  const isYaoGuang = charId === "1502" || name.includes("яо") || name.includes("yao") || name.includes("гуан") || name.includes("爻光");
+  const isRobinSummeretto = charId === "1512" || name.includes("summeretto");
+  const isRobin = charId === "1309" || (!isRobinSummeretto && (name.includes("зарянка") || name.includes("robin")));
   const isRuanMei = charId === "1303" || name.includes("жуань") || name.includes("ruan");
   const isSparkle = charId === "1306" || name.includes("искорка") || name.includes("sparkle");
   const isBronya = charId === "1101" || name.includes("броня") || name.includes("bronya");
   const isTingyun = charId === "1202" || name.includes("тиньъюнь") || name.includes("тинъюнь") || name.includes("tingyun");
   const isWelt = charId === "1004" || name.includes("вельт") || name.includes("welt");
-  const isSilverWolf = charId === "1006" || name.includes("волк") || name.includes("silver");
-  const isPela = charId === "1105" || name.includes("пела") || name.includes("pela");
+  const isSilverWolf999 = charId === "1506" || name.includes("999");
+  const isSilverWolf = charId === "1006" || (!isSilverWolf999 && (name.includes("волк") || name.includes("silver")));
+  const isPela = charId === "1106" || name.includes("пела") || name.includes("pela");
   const isJiaoqiu = charId === "1218" || name.includes("цзяоцю") || name.includes("jiaoqiu");
-  const isAventurine = charId === "1304" || name.includes("авантюрин") || name.includes("aventurine");
+  const isAventurineWaveflair = charId === "1513" || name.includes("waveflair") || name.includes("прибой");
+  const isAventurine = charId === "1304" || (!isAventurineWaveflair && (name.includes("авантюрин") || name.includes("aventurine")));
   const isFuXuan = charId === "1208" || name.includes("фу") || name.includes("fu");
   const isLingsha = charId === "1222" || name.includes("линша") || name.includes("lingsha");
   const isGallagher = charId === "1301" || name.includes("галлахер") || name.includes("gallagher");
@@ -426,7 +429,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
         {
           label: isRu ? "ПЕРЕДАЧА КРИТ. УРОНА" : "CRIT DMG CONVERSION",
           value: isRu ? `+${cdTransfer.toFixed(1)}% КУ от базы (${cd.toFixed(1)}% КУ)` : `+${cdTransfer.toFixed(1)}% CD (Sunday: ${cd.toFixed(1)}% CD)`,
-          desc: isRu ? "Масштабируется от собственного КУ Сандея: 12% + 30% от его крит. урона." : "Scales from Sunday's own CD: formula 12% + 30% of his CD."
+          desc: isRu ? "Масштабируется от собственного КУ Воскресенья: 12% + 30% от его крит. урона." : "Scales from Sunday's own CD: formula 12% + 30% of his CD."
         },
         {
           label: isRu ? "УСИЛЕНИЕ УРОНА НАВЫКА" : "DIRECT DMG BOOST",
@@ -813,6 +816,8 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
       ? "Estimate for one enhanced Skill against one target (168% Max HP) during Infinite Fury. Skill cannot be used at HP ≤ 1; current HP, incoming damage, and Huohuo's healing are not modeled, so no rotation total is shown."
       : "This is a rough single-hit estimate from a legacy formula. It does not model rotations, turn order, energy, or conditional effect uptime; no DPS or tier is assigned.",
     benchmarkStatus: "unavailable",
-    calculationPrecision: ROTATIONS[String(char?.id || "")] ? "configured-script-estimate" : "legacy-single-hit-estimate"
+    calculationPrecision: ROTATIONS[String(char?.id || "")]?.status === "verified"
+      ? "configured-script-estimate"
+      : "legacy-single-hit-estimate"
   };
 }

@@ -4662,10 +4662,25 @@ main {
   background: transparent;
 }
 
-.sub-eff.gold { color: #FFC83D; background: rgba(255, 200, 61, 0.12); }
-.sub-eff.good { color: #00E5FF; background: rgba(0, 229, 255, 0.10); }
-.sub-eff.ok   { color: #B8AECF; background: rgba(184, 174, 207, 0.10); }
-.sub-eff.low  { color: #7C7391; background: rgba(124, 115, 145, 0.12); }
+.sub-eff.gold {
+  color: #FFC83D;
+  background: rgba(255, 200, 61, 0.12);
+}
+
+.sub-eff.good {
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.10);
+}
+
+.sub-eff.ok {
+  color: #B8AECF;
+  background: rgba(184, 174, 207, 0.10);
+}
+
+.sub-eff.low {
+  color: #7C7391;
+  background: rgba(124, 115, 145, 0.12);
+}
 
 .relic-eff-badge {
   font-family: var(--font-mono);
@@ -4677,10 +4692,29 @@ main {
   letter-spacing: 0.4px;
 }
 
-.relic-eff-badge.gold { color: #FFC83D; background: rgba(255, 200, 61, 0.12); border: 1px solid rgba(255, 200, 61, 0.45); }
-.relic-eff-badge.good { color: #00E5FF; background: rgba(0, 229, 255, 0.10); border: 1px solid rgba(0, 229, 255, 0.40); }
-.relic-eff-badge.ok   { color: #B8AECF; background: rgba(184, 174, 207, 0.10); border: 1px solid rgba(184, 174, 207, 0.35); }
-.relic-eff-badge.low  { color: #7C7391; background: rgba(124, 115, 145, 0.12); border: 1px solid rgba(124, 115, 145, 0.35); }
+.relic-eff-badge.gold {
+  color: #FFC83D;
+  background: rgba(255, 200, 61, 0.12);
+  border: 1px solid rgba(255, 200, 61, 0.45);
+}
+
+.relic-eff-badge.good {
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.10);
+  border: 1px solid rgba(0, 229, 255, 0.40);
+}
+
+.relic-eff-badge.ok {
+  color: #B8AECF;
+  background: rgba(184, 174, 207, 0.10);
+  border: 1px solid rgba(184, 174, 207, 0.35);
+}
+
+.relic-eff-badge.low {
+  color: #7C7391;
+  background: rgba(124, 115, 145, 0.12);
+  border: 1px solid rgba(124, 115, 145, 0.35);
+}
 
 .sets-summary-row {
   display: flex;
@@ -4747,6 +4781,7 @@ main {
 }
 
 @media (min-width: 1200px) {
+
   #modal-trophy,
   .trophy-modal-backdrop {
     padding: 16px 24px;
@@ -5488,6 +5523,7 @@ main {
     display: none;
   }
 }
+
 .sim-header-controls {
   display: flex;
   align-items: center;
@@ -5544,6 +5580,15 @@ main {
 }
 
 @keyframes pulseDot {
-  0%, 100% { opacity: 0.4; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.2); }
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }

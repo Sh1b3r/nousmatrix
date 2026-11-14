@@ -36,9 +36,10 @@ export function getTeamBuffsForAction(squad, matchedTeammates, actionKey) {
     && profile.actions && typeof profile.actions === "object";
 
   if (!verifiedSchedule) {
+    const buffs = sumBuffSources(matchedTeammates);
     return {
-      buffs: sumBuffSources(matchedTeammates),
-      status: "assumed-full-uptime"
+      buffs,
+      status: Object.keys(buffs).length ? "assumed-full-uptime" : "no-numeric-buffs-configured"
     };
   }
 

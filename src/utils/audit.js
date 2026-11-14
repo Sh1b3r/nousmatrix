@@ -284,7 +284,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       targetArchetype: "CRIT_DPS"
     });
   }
-  const isWolf999 = charId === "1006" || charId === "999" || lowerName.includes("волк") || lowerName.includes("silver") || lowerName.includes("999");
+  const isWolf999 = charId === "1506" || charId === "999" || lowerName.includes("999");
   if (isWolf999) {
     return formatRoleResult({
       type: "DPS",
@@ -298,7 +298,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       targetArchetype: "CRIT_DPS"
     });
   }
-  const isDahlia = charId === "1505" || lowerName.includes("георгина") || lowerName.includes("dahlia");
+  const isDahlia = charId === "1321" || lowerName.includes("георгина") || lowerName.includes("dahlia");
   if (isDahlia) {
     return formatRoleResult({
       type: "SUPPORT",
@@ -308,6 +308,20 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       labelEn: "BREAK & SUPER BREAK SUPPORT",
       descRu: "Георгина: ключевой брейк-саппорт 4.7 для Светлячка. Включает урон Суперпробития по несломанным врагам, механика «Партнер по танцу», срез защиты и разгон ЭП.",
       descEn: "The Dahlia: premier 4.7 Break support for Firefly. Enables Super Break on unbroken enemies, Dance Partner synergy, DEF shred & massive BE boost.",
+      confidence: 99,
+      targetArchetype: "BREAK_DPS"
+    });
+  }
+  const isFugue = charId === "1225" || lowerName.includes("фуга") || lowerName.includes("fugue");
+  if (isFugue) {
+    return formatRoleResult({
+      type: "SUPPORT",
+      role: "SUPPORT",
+      icon: "break",
+      labelRu: "ПОДДЕРЖКА ПРОБИТИЯ",
+      labelEn: "BREAK SUPPORT",
+      descRu: "Фуга — поддержка Небытия для команд пробития: её статы оцениваются как сборка Эффекта пробития, а не как сборка Тинъюнь.",
+      descEn: "Fugue is a Nihility support for Break teams; her build is evaluated around Break Effect, not as a Tingyun build.",
       confidence: 99,
       targetArchetype: "BREAK_DPS"
     });
@@ -475,13 +489,14 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
 
   const isHarmony = path === "Shaman" || path === "Harmony";
   const isMemory = path === "Memory" || path === "Remembrance";
-  const isYaoGuangChar = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1408";
+  const isYaoGuangChar = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1502";
   const isSunday = charId === "1313" || lowerName.includes("воскресенье") || lowerName.includes("sunday");
-  const isRobin = charId === "1309" || lowerName.includes("зарянка") || lowerName.includes("robin");
+  const isRobinSummeretto = charId === "1512" || lowerName.includes("summeretto");
+  const isRobin = charId === "1309" || (!isRobinSummeretto && (lowerName.includes("зарянка") || lowerName.includes("robin")));
   const isRuanMei = charId === "1303" || lowerName.includes("жуань") || lowerName.includes("ruan");
   const isSparkle = charId === "1306" || lowerName.includes("искорка") || lowerName.includes("sparkle");
   const isBronya = charId === "1101" || lowerName.includes("броня") || lowerName.includes("bronya");
-  const isTingyun = charId === "1202" || lowerName.includes("тинъюнь") || lowerName.includes("тиньъюнь") || lowerName.includes("tingyun") || lowerName.includes("фугу") || lowerName.includes("fugue");
+  const isTingyun = charId === "1202" || lowerName.includes("тинъюнь") || lowerName.includes("тиньъюнь") || lowerName.includes("tingyun");
 
   const isSupportChar = isHarmony || isYaoGuangChar || isSunday || isRobin || isRuanMei || isSparkle || isBronya || isTingyun ||
     (isMemory && (isErrRope || hasSupportPlanar || (spd >= 145 && cr >= 45) || err > 0));
@@ -1152,7 +1167,8 @@ export function determineCharacterMetrics(char, archetype, stats) {
   const name = char?.name || "";
   const lowerName = name.toLowerCase();
   const charId = String(char?.id || "");
-  const isWolf = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
+  const isWolf999 = charId === "1506" || charId === "999" || lowerName.includes("999");
+  const isWolf = charId === "1006" || (!isWolf999 && (lowerName.includes("волк") || lowerName.includes("silver")));
   if (isWolf && cv >= 140) {
     const spdStatus = spd >= 160 ? "[160+ CAP]" : spd >= 145 ? "[145+ OK]" : spd >= 134 ? "[134+ OK]" : "[SLOW]";
     const cvStatus = cv >= 240 ? "[ELITE]" : cv >= 200 ? "[TOP]" : cv >= 160 ? "[OK]" : "[LOW]";
@@ -1237,7 +1253,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
       }
     };
   }
-  const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光");
+  const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1502";
   if (archetype === "HARMONY_SPD" || isYaoGuang) {
     const spdStatus = spd >= 160 ? "[160+ CAP]" : spd >= 145 ? "[145+ OK]" : spd >= 134 ? "[134+ OK]" : "[SLOW]";
     const crStatus = cr >= 70 ? "[70%+ ELITE]" : cr >= 50 ? "[50%+ TARGET]" : "[<50% LOW]";
@@ -1709,14 +1725,15 @@ export function calculateCharacterAudit(char, lang = "ru") {
   let archetype = detectedRole?.targetArchetype || "CRIT_DPS";
   const charId = String(char.id || "");
   const lowerName = name.toLowerCase();
-  const isWolfChar = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
+  const isRobinSummeretto = charId === "1512" || lowerName.includes("summeretto");
+  const isWolf999Char = charId === "1506" || charId === "999" || lowerName.includes("999");
+  const isWolfChar = charId === "1006" || (!isWolf999Char && (lowerName.includes("волк") || lowerName.includes("silver")));
   if (!detectedRole || detectedRole.role === "DPS") {
     const isAvenSurgingChar = charId === "1513" || lowerName.includes("прибой") || lowerName.includes("waveflair");
-    const isWolf999Char = charId === "1006" || charId === "999" || lowerName.includes("волк") || lowerName.includes("silver") || lowerName.includes("999");
-    const isDahliaChar = charId === "1505" || lowerName.includes("георгина") || lowerName.includes("dahlia");
+    const isDahliaChar = charId === "1321" || lowerName.includes("георгина") || lowerName.includes("dahlia");
     const isArcherChar = charId === "1015" || lowerName.includes("арчер") || lowerName.includes("archer");
     const isHyacineChar = charId === "1409" || lowerName.includes("гиацина") || lowerName.includes("hyacine");
-    const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光");
+    const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1502";
 
     if (isAvenSurgingChar) {
       archetype = "CRIT_DPS";
@@ -1748,7 +1765,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       archetype = "ABUNDANCE_ATK";
     } else if (charId === "1313" || lowerName.includes("воскресенье") || lowerName.includes("sunday") || lowerName.includes("искорка") || lowerName.includes("sparkle") || lowerName.includes("броня") || lowerName.includes("bronya")) {
       archetype = "HARMONY_CRIT";
-    } else if (charId === "1309" || lowerName.includes("зарянка") || lowerName.includes("robin") || lowerName.includes("тинъюнь") || lowerName.includes("tingyun")) {
+    } else if (charId === "1309" || (!isRobinSummeretto && (lowerName.includes("зарянка") || lowerName.includes("robin"))) || lowerName.includes("тинъюнь") || lowerName.includes("tingyun")) {
       archetype = "HARMONY_ATK";
     } else if (charId === "1303" || lowerName.includes("жуань") || lowerName.includes("ruan mei")) {
       archetype = "HARMONY_BREAK";
@@ -1869,7 +1886,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       break;
     }
     case "HARMONY_SPD": {
-      const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1408";
+      const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1502";
       const spdRatio = spd >= 160 ? 50 : spd >= 145 ? 40 : (spd / 145) * 30;
       const crBonus = isYaoGuang ? (cr >= 70 ? 25 : cr >= 50 ? 18 : (cr / 50) * 12) : 0;
       const errBonus = err >= 19.4 ? 20 : err > 0 ? 12 : 5;
