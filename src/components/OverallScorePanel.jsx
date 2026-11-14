@@ -62,7 +62,9 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
             <span className="score-number-denom">/100</span>
           </div>
           <span className="score-grade-pill" style={{ color: gradeInfo.color, borderColor: gradeInfo.color }}>
-            GRADE {gradeInfo.grade} • {isRu ? gradeInfo.labelRu : gradeInfo.labelEn}
+            <span className="grade-badge">GRADE {gradeInfo.grade}</span>
+            <span className="grade-sep">•</span>
+            <span className="grade-desc">{isRu ? gradeInfo.labelRu : gradeInfo.labelEn}</span>
           </span>
         </div>
         <div className="score-hero-right">

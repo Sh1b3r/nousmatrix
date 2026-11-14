@@ -469,7 +469,9 @@ export default function TrophyModal({
                 </div>
                 <div className="showcase-grade-row">
                   <span className="score-grade-pill" style={{ color: gradeInfo.color, borderColor: gradeInfo.color }}>
-                    GRADE {gradeInfo.grade} • {isRu ? gradeInfo.labelRu : gradeInfo.labelEn}
+                    <span className="grade-badge">GRADE {gradeInfo.grade}</span>
+                    <span className="grade-sep">•</span>
+                    <span className="grade-desc">{isRu ? gradeInfo.labelRu : gradeInfo.labelEn}</span>
                   </span>
                   <span className="score-verified-stamp">
                     <CheckIcon size={11} />

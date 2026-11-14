@@ -1941,12 +1941,31 @@ main {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   padding: 3px 8px;
   border: 1px solid currentColor;
   border-radius: 2px;
   background: rgba(0, 0, 0, 0.4);
   width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.score-grade-pill .grade-badge {
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.score-grade-pill .grade-sep {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.score-grade-pill .grade-desc {
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .score-hero-right {
@@ -2504,6 +2523,33 @@ main {
     justify-content: center !important;
     padding: 10px 8px !important;
     font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  .score-hero-container {
+    padding: 12px 14px !important;
+    gap: 10px !important;
+  }
+
+  .score-number-main {
+    font-size: 42px !important;
+  }
+
+  .score-number-denom {
+    font-size: 16px !important;
+  }
+
+  .score-grade-pill {
+    font-size: 10px !important;
+    padding: 2.5px 6px !important;
+    gap: 4px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .score-verified-stamp {
+    font-size: 9px !important;
+    padding: 2.5px 6px !important;
     white-space: nowrap !important;
   }
 
