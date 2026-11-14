@@ -5,6 +5,27 @@ import { formatStatName } from "../utils/i18n";
 import { resolveRelicSetInfo } from "../utils/setDefinitions";
 import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon, SparklesIcon, SphereIcon, RopeIcon, WarnIcon } from "./Icons.jsx";
 
+const SUBSTAT_MAX_PER_ROLL = {
+  percent: { hp: 0.0432, atk: 0.0432, def: 0.054, crit_rate: 0.0324, crit_dmg: 0.0648, effect_hit: 0.0432, effect_res: 0.0432, break_dmg: 0.0648 },
+  flat: { hp: 42.33751, atk: 21.168754, def: 21.168754, spd: 2.6 }
+};
+
+const getSubEfficiency = (sub) => {
+  const table = SUBSTAT_MAX_PER_ROLL[sub.percent ? "percent" : "flat"];
+  const maxPerRoll = table && table[sub.field];
+  const count = sub.count || 1;
+  if (!maxPerRoll || !sub.value) return null;
+  return Math.min(100, Math.round((sub.value / (maxPerRoll * count)) * 100));
+};
+
+const getRelicEfficiency = (piece) => {
+  const subs = (piece.sub_affix || []).map(getSubEfficiency).filter((v) => v !== null);
+  if (!subs.length) return null;
+  return Math.round(subs.reduce((a, b) => a + b, 0) / subs.length);
+};
+
+const effClass = (v) => (v >= 90 ? "gold" : v >= 75 ? "good" : v >= 60 ? "ok" : "low");
+
 const PROPERTY_ICONS = {
   hp: "icon/property/IconMaxHP.png",
   atk: "icon/property/IconAttack.png",
@@ -706,6 +727,7 @@ export default function TrophyModal({
 
                     const relicSetInfo = resolveRelicSetInfo(piece, lang);
                     const relicSetName = relicSetInfo?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
+                    const relicEff = getRelicEfficiency(piece);
 
                     return (
                       <div key={`relic-${slotIdx}`} className="showcase-relic-card">
@@ -730,6 +752,11 @@ export default function TrophyModal({
                             <div className="relic-slot-header-row">
                               <span className="relic-slot-tag">{slotTitle}</span>
                               <span className="relic-rarity-tag">{isOrnament ? (isRu ? "5★ ОРНАМЕНТ" : "5★ ORNAMENT") : (isRu ? "5★ РЕЛИКВИЯ" : "5★ RELIC")}</span>
+                              {relicEff !== null && (
+                                <span className={`relic-eff-badge ${effClass(relicEff)}`} title={isRu ? "Средняя эффективность роллов сабстатов" : "Average substat roll efficiency"}>
+                                  {isRu ? "КАЧЕСТВО" : "QUALITY"} {relicEff}%
+                                </span>
+                              )}
                             </div>
                             <span className="relic-name-truncate" title={relicSetName}>{relicSetName}</span>
                           </div>
@@ -754,6 +781,7 @@ export default function TrophyModal({
                         <div className="relic-subs-list">
                           {(piece.sub_affix || []).slice(0, 4).map((sub, sIdx) => {
                             const upgrades = Math.max(0, (sub.count || 1) - 1);
+                            const subEff = getSubEfficiency(sub);
                             const isKey = ["crit_rate", "crit_dmg", "spd"].includes(sub.field);
                             const subIcon = resolveAffixIcon(sub);
                             return (
@@ -772,6 +800,7 @@ export default function TrophyModal({
                                 </span>
                                 <span className="sub-val">
                                   <span className="relic-sub-num">{sub.display}</span>
+                                  {subEff !== null && <span className={`sub-eff ${effClass(subEff)}`}>{subEff}%</span>}
                                   {upgrades > 0 && <span className="sub-roll-tag">{`+${upgrades}`}</span>}
                                 </span>
                               </div>

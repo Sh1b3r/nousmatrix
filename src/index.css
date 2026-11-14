@@ -4481,6 +4481,35 @@ main {
   border-radius: 2px;
 }
 
+.sub-eff {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 2px;
+  margin-right: 2px;
+}
+
+.sub-eff.gold { color: #FFC83D; background: rgba(255, 200, 61, 0.12); }
+.sub-eff.good { color: #00E5FF; background: rgba(0, 229, 255, 0.10); }
+.sub-eff.ok   { color: #B8AECF; background: rgba(184, 174, 207, 0.10); }
+.sub-eff.low  { color: #7C7391; background: rgba(124, 115, 145, 0.12); }
+
+.relic-eff-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-left: auto;
+  letter-spacing: 0.4px;
+}
+
+.relic-eff-badge.gold { color: #FFC83D; background: rgba(255, 200, 61, 0.12); border: 1px solid rgba(255, 200, 61, 0.45); }
+.relic-eff-badge.good { color: #00E5FF; background: rgba(0, 229, 255, 0.10); border: 1px solid rgba(0, 229, 255, 0.40); }
+.relic-eff-badge.ok   { color: #B8AECF; background: rgba(184, 174, 207, 0.10); border: 1px solid rgba(184, 174, 207, 0.35); }
+.relic-eff-badge.low  { color: #7C7391; background: rgba(124, 115, 145, 0.12); border: 1px solid rgba(124, 115, 145, 0.35); }
+
 .sets-summary-row {
   display: flex;
   align-items: center;
