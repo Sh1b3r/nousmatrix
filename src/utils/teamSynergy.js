@@ -1666,13 +1666,19 @@ export const CHARACTER_SQUADS = {
   ]
 };
 
-// Мета-відряди 4.7: доповнення до CHARACTER_SQUADS («хто кому підходить»).
-// Для ключів, що існують в обох джерелах (напр. 1510, 1220) — нові відряди додаються в кінець масиву.
+// Мета-відряди 4.7: пріоритетні відряди («хто кому підходить у 4.7»).
+// Для ключів, що мають відряди 4.7 (напр. 1308, 1310, 1006, 1510) — нові відряди ставляться на ПЕРШІ місця (unshift),
+// щоб користувач завжди бачив найактуальніші склади версії 4.7.
 import { TEAMS_47 } from "../data/teams47.js";
 Object.entries(TEAMS_47).forEach(([ddId, squads]) => {
   if (!CHARACTER_SQUADS[ddId]) CHARACTER_SQUADS[ddId] = [];
-  squads.forEach((sq) => {
-    if (!CHARACTER_SQUADS[ddId].some((s) => s.id === sq.id)) CHARACTER_SQUADS[ddId].push(sq);
+  // Ставимо відряди 4.7 на перші місця
+  [...squads].reverse().forEach((sq) => {
+    const existingIdx = CHARACTER_SQUADS[ddId].findIndex((s) => s.id === sq.id);
+    if (existingIdx !== -1) {
+      CHARACTER_SQUADS[ddId].splice(existingIdx, 1);
+    }
+    CHARACTER_SQUADS[ddId].unshift(sq);
   });
 });
 

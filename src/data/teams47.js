@@ -7,6 +7,289 @@
 // Воскресенье (1313), Зарянка (1309), Зарянка: Яснопея (1512), Авантюрин: Прибой (1513).
 
 export const TEAMS_47 = {
+  // Ахерон (1308) — мета 4.7 (стенсы/память/саб-ДПС)
+  "1308": [
+    {
+      id: "acheron_47_mortenax_sunday_hyacine",
+      nameRu: "Отряд 1 (4.7): Дебафф-Гиперкерри (Мортенакс Блэйд + Воскресенье + Гиацина)",
+      nameEn: "Team 1 (4.7): Debuff Hypercarry (Mortenax Blade + Sunday + Hyacine)",
+      descRu: "Мета 4.7: Мортенакс Блэйд выступает топовым суб-ДПС и дебаффером Ахерон (быстрый набор Слэша при каждом действии), Воскресенье продвигает ход на 100% и заливает КУ, Гиацина обеспечивает выживание и баффает КШ.",
+      descEn: "4.7 meta: Mortenax Blade acts as premier Sub-DPS and debuffer for Acheron (fast Slash charging), Sunday gives 100% advance and Crit DMG, Hyacine sustains and buffs CRIT.",
+      isEstimate: true,
+      teammates: [
+        {
+          id: "1507",
+          nameRu: "Мортенакс Блэйд",
+          nameEn: "Mortenax Blade",
+          icon: "icon/character/1507.png",
+          names: ["мортенакс", "mortenax"],
+          roleRu: "Нихилия (Дебафы и суб-ДПС)",
+          roleEn: "Nihility (Debuffs & Sub-DPS)",
+          buffDescRu: "Срез защиты (-20%), уязвимость (+25%), быстрый набор зарядов для Ахерон",
+          buffDescEn: "DEF shred (-20%), vulnerability (+25%), rapid Slash charge generator",
+          buffValues: { allVuln: 25, defShred: 20 }
+        },
+        {
+          id: "1313",
+          nameRu: "Воскресенье",
+          nameEn: "Sunday",
+          icon: "icon/character/1313.png",
+          names: ["воскресенье", "sunday"],
+          roleRu: "Гармония (100% Продвижение и КУ)",
+          roleEn: "Harmony (100% Advance & Crit)",
+          buffDescRu: "100% Продвижение хода, передача КУ и энергии",
+          buffDescEn: "100% Action advance, Crit DMG & energy",
+          buffValues: { targetAdvance: 100, cdGrant: 80, dmgBoost: 50 }
+        },
+        {
+          id: "1409",
+          nameRu: "Гиацина",
+          nameEn: "Hyacine",
+          icon: "icon/character/1409.png",
+          names: ["гиацина", "hyacine"],
+          roleRu: "Сохранение (Лечение и КШ)",
+          roleEn: "Sustain (Heals & CR)",
+          buffDescRu: "Лечение, щиты, +12% КШ отряду (оценка 4.7)",
+          buffDescEn: "Healing, shields, +12% CRIT Rate to team",
+          buffValues: { crGrant: 12, energyFeed: 20 }
+        }
+      ]
+    },
+    {
+      id: "acheron_47_cyrene_tribbie_aventurine",
+      nameRu: "Отряд 2 (4.7): Мульти-дебафф Резонанс (Кирена + Трибби + Авантюрин: Прибой)",
+      nameEn: "Team 2 (4.7): Multi-Debuff Resonance (Cyrene + Tribbie + Aventurine Surging)",
+      descRu: "Кирена и Трибби заливают всестороннюю уязвимость (+24%) и дебаффы нового поколения, Авантюрин: Прибой защищает отряд и ретриггерит заряды.",
+      descEn: "Cyrene and Tribbie provide +24% universal vulnerability, Aventurine Surging sustains and re-triggers Knot stacks.",
+      isEstimate: true,
+      teammates: [
+        {
+          id: "1415",
+          nameRu: "Кирена",
+          nameEn: "Cyrene",
+          icon: "icon/character/1415.png",
+          names: ["кирена", "cyrene"],
+          roleRu: "Саппорт (Мемо-дебаффы)",
+          roleEn: "Support (Memo Debuffs)",
+          buffDescRu: "Мемо-бафы и дебаффы входящего урона",
+          buffDescEn: "Memo buffs and damage vulnerability",
+          buffValues: { dmgBoost: 30, teamAdvance: 50 }
+        },
+        {
+          id: "1403",
+          nameRu: "Трибби",
+          nameEn: "Tribbie",
+          icon: "icon/character/1403.png",
+          names: ["трибби", "tribbie"],
+          roleRu: "Саппорт (Уязвимость Всех Типов)",
+          roleEn: "Support (All-Type Vulnerability)",
+          buffDescRu: "+24% уязвимости всех типов, генерация дебаффов",
+          buffDescEn: "+24% All-Type vulnerability, continuous debuffs",
+          buffValues: { allVuln: 24 }
+        },
+        {
+          id: "1513",
+          altIds: ["1304", "1409"],
+          nameRu: "Авантюрин: Прибой",
+          nameEn: "Aventurine: Surging",
+          icon: "icon/character/1513.png",
+          names: ["авантюрин", "aventurine", "прибой"],
+          roleRu: "Сохранение (Щиты и Дебаффы)",
+          roleEn: "Preservation (Shields & Debuffs)",
+          buffDescRu: "Щиты, уязвимость к критическому урону, стабильный отпор атакам врагов",
+          buffValues: { critVuln: 15 }
+        }
+      ]
+    }
+  ],
+
+  // Светлячок (1310) — мета 4.7 (Экзо-стойкость и Пробитие Памяти)
+  "1310": [
+    {
+      id: "firefly_47_fugue_lingsha_rmc",
+      nameRu: "Отряд 1 (4.7): Экзо-Пробитие и Память (Фугу + Линша + Первопроходец Памяти)",
+      nameEn: "Team 1 (4.7): Exo-Break & Remembrance (Fugue + Lingsha + RMC)",
+      descRu: "Мета 4.7 для Светлячка: Фугу накладывает Экзо-стойкость (позволяет пробивать врагов без ожидания естественной уязвимости), Первопроходец Памяти наносит True DMG и ускоряет ходы, Линша даёт максимальный урон суперпробития зайцем.",
+      descEn: "4.7 meta for Firefly: Fugue inflicts Cloud-pinned Exo-toughness, Remembrance Trailblazer deals True DMG and pushes turns, Lingsha maximizes team Super Break output.",
+      isEstimate: true,
+      teammates: [
+        {
+          id: "1404",
+          nameRu: "Фугу",
+          nameEn: "Fugue",
+          icon: "icon/character/1404.png",
+          names: ["фугу", "fugue"],
+          roleRu: "Дебаффер / Саппорт (Экзо-стойкость)",
+          roleEn: "Nihility / Harmony (Exo-Toughness)",
+          buffDescRu: "Внедрение Экзо-стойкости, усиление суперпробития отряда, +40% ЭП",
+          buffDescEn: "Cloud-pinned Exo-toughness, team Super Break amplification, +40% BE",
+          buffValues: { exoBreak: true, beBoost: 40 }
+        },
+        {
+          id: "8007",
+          altIds: ["8005"],
+          nameRu: "Первопроходец (Память)",
+          nameEn: "Trailblazer (Remembrance)",
+          icon: "icon/character/8007.png",
+          names: ["первопроходец", "trailblazer"],
+          roleRu: "Память (True DMG и Продвижение)",
+          roleEn: "Remembrance (True DMG & Advance)",
+          buffDescRu: "Продвижение отряда, True DMG по сломанной стойкости",
+          buffDescEn: "Team advance, True DMG on broken targets",
+          buffValues: { teamAdvance: 100, dmgBoost: 24 }
+        },
+        {
+          id: "1222",
+          nameRu: "Линша",
+          nameEn: "Lingsha",
+          icon: "icon/character/1222.png",
+          names: ["линша", "lingsha"],
+          roleRu: "Изобилие (Суперпробитие)",
+          roleEn: "Abundance (Super Break)",
+          buffDescRu: "+25% Уязвимость к пробитию, AoE атаки кролика накладывают огненное пробитие",
+          buffDescEn: "+25% Break Vulnerability, bunny AoE fire break triggers",
+          buffValues: { breakVuln: 25 }
+        }
+      ]
+    },
+    {
+      id: "firefly_47_cerydra_tribbie_lingsha",
+      nameRu: "Отряд 2 (4.7): Усиленный Сверх-Взрыв (Керидра + Трибби + Линша)",
+      nameEn: "Team 2 (4.7): Empowered Super Burst (Cerydra + Tribbie + Lingsha)",
+      descRu: "Керидра максимально усиливает стойку полного сгорания Светлячка, Трибби срезает резисты всех типов (+24% уязвимости), Линша закрывает выживание.",
+      descEn: "Cerydra empowers Firefly's Complete Combustion stance, Tribbie reduces all-type resistances, Lingsha sustains.",
+      isEstimate: true,
+      teammates: [
+        {
+          id: "1412",
+          nameRu: "Керидра",
+          nameEn: "Cerydra",
+          icon: "icon/character/1412.png",
+          names: ["керидра", "cerydra"],
+          roleRu: "Саппорт (Мудрость / Усиление стойки)",
+          roleEn: "Support (Wisdom / Stance Empower)",
+          buffDescRu: "Усиление боевой стойки, +40% урона, +60% КУ",
+          buffDescEn: "Stance amplification, +40% DMG, +60% CD",
+          buffValues: { dmgBoost: 40, cdGrant: 60 }
+        },
+        {
+          id: "1403",
+          nameRu: "Трибби",
+          nameEn: "Tribbie",
+          icon: "icon/character/1403.png",
+          names: ["трибби", "tribbie"],
+          roleRu: "Саппорт (Уязвимость Всех Типов)",
+          roleEn: "Support (All-Type Vulnerability)",
+          buffDescRu: "+24% уязвимости всех типов",
+          buffDescEn: "+24% All-Type vulnerability",
+          buffValues: { allVuln: 24 }
+        },
+        {
+          id: "1222",
+          nameRu: "Линша",
+          nameEn: "Lingsha",
+          icon: "icon/character/1222.png",
+          names: ["линша", "lingsha"],
+          roleRu: "Изобилие (Суперпробитие)",
+          roleEn: "Abundance (Super Break)",
+          buffDescRu: "+25% Уязвимость к пробитию, AoE лечение",
+          buffValues: { breakVuln: 25 }
+        }
+      ]
+    }
+  ],
+
+  // Серебряный Волк (1006) — мета 4.7
+  "1006": [
+    {
+      id: "sw_47_mortenax_sunday_hyacine",
+      nameRu: "Отряд 1 (4.7): Тотальный Срез Защиты (Мортенакс Блэйд + Воскресенье + Гиацина)",
+      nameEn: "Team 1 (4.7): 100% DEF Shred Cap (Mortenax Blade + Sunday + Hyacine)",
+      descRu: "Мета 4.7: Серебряный Волк вместе с Мортенаксом Блэйдом доводят срез защиты босса до предельного капа 100% DEF Shred и внедряют уязвимость, Воскресенье и Гиацина разгоняют темп отряда.",
+      descEn: "4.7 meta: Silver Wolf and Mortenax Blade stack DEF shred to the 100% hard cap while implanting weaknesses.",
+      isEstimate: true,
+      teammates: [
+        {
+          id: "1507",
+          nameRu: "Мортенакс Блэйд",
+          nameEn: "Mortenax Blade",
+          icon: "icon/character/1507.png",
+          names: ["мортенакс", "mortenax"],
+          roleRu: "Нихилия (Дебафы и суб-ДПС)",
+          roleEn: "Nihility (Debuffs & Sub-DPS)",
+          buffDescRu: "Суммирует дебаффы с Волком до 100% DEF Shred, наносит высокий личный урон",
+          buffDescEn: "Stacks debuffs with SW up to 100% DEF shred, deals strong personal damage",
+          buffValues: { allVuln: 25, defShred: 20 }
+        },
+        {
+          id: "1313",
+          nameRu: "Воскресенье",
+          nameEn: "Sunday",
+          icon: "icon/character/1313.png",
+          names: ["воскресенье", "sunday"],
+          roleRu: "Гармония (100% Продвижение и КУ)",
+          roleEn: "Harmony (100% Advance & Crit)",
+          buffDescRu: "100% Продвижение хода, заливка энергии",
+          buffValues: { targetAdvance: 100, cdGrant: 80, dmgBoost: 50 }
+        },
+        {
+          id: "1409",
+          nameRu: "Гиацина",
+          nameEn: "Hyacine",
+          icon: "icon/character/1409.png",
+          names: ["гиацина", "hyacine"],
+          roleRu: "Сохранение (Лечение и КШ)",
+          roleEn: "Sustain (Heals & CR)",
+          buffDescRu: "Лечение, щиты, +12% КШ",
+          buffValues: { crGrant: 12, energyFeed: 20 }
+        }
+      ]
+    },
+    {
+      id: "sw_47_archer_rin_sparkle",
+      nameRu: "Отряд 2 (4.7): Квантово-Стрелковый Срез (Арчер + Рин Тосака + Искорка)",
+      nameEn: "Team 2 (4.7): Archer Quantum Sniper (Archer + Rin Tohsaka + Sparkle)",
+      descRu: "Волк внедряет квантовую уязвимость для Арчера и срезает защиту соло-босса, Рин Тосака даёт энергию, Искорка генерирует очки действий.",
+      descEn: "Silver Wolf implants weakness for Archer and destroys single-target boss DEF, Rin Tohsaka batteries, Sparkle generates SP.",
+      isEstimate: true,
+      teammates: [
+        {
+          id: "1015",
+          nameRu: "Арчер",
+          nameEn: "Archer",
+          icon: "icon/character/1015.png",
+          names: ["арчер", "archer"],
+          roleRu: "Охота (Главный Керри)",
+          roleEn: "Hunt (Main Carry)",
+          buffDescRu: "Реализует срез защиты Волка в колоссальный соло-урон",
+          buffValues: { carrySynergy: true }
+        },
+        {
+          id: "1508",
+          nameRu: "Рин Тосака",
+          nameEn: "Rin Tohsaka",
+          icon: "icon/character/1508.png",
+          names: ["рин тосака", "rin tohsaka"],
+          roleRu: "Саппорт (Энергия и Монеты)",
+          roleEn: "Support (Energy & Coins)",
+          buffDescRu: "Заливка энергии ультимейтов, усиление урона",
+          buffValues: { energyFeed: 30, dmgBoost: 25 }
+        },
+        {
+          id: "1306",
+          nameRu: "Искорка",
+          nameEn: "Sparkle",
+          icon: "icon/character/1306.png",
+          names: ["искорка", "sparkle"],
+          roleRu: "Гармония (Продвижение и SP)",
+          roleEn: "Harmony (Advance & SP)",
+          buffDescRu: "+50% Продвижение, лимит 7 SP, +102% КУ",
+          buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48 }
+        }
+      ]
+    }
+  ],
+
   // Химеко: Нова — синергия 4.7 (по иcи Veins/аналитике): Астральный Экспресс активирует её стансы
   // Verdict/Decimation. Топ-союзники: Мортенакс Блэйд (дебафы), Воскресенье (энергия + продвижение),
   // Первопроходец Памяти (Verdict-стенс, True DMG). Керидра/Кирена/Гиацина — НЕ её саппорты.
