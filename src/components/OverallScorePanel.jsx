@@ -49,16 +49,41 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
         </span>
       </div>
 
-      <div className="score-hero-container">
+      <div className="score-hero-container" style={{ minHeight: "88px", padding: "18px 20px" }}>
         <div className="score-hero-left">
           <div className="score-number-wrap">
             <span className="score-number-main">{audit.score}</span>
             <span className="score-number-denom">/100</span>
           </div>
-          <span className="score-grade-pill" style={{ color: gradeInfo.color, borderColor: gradeInfo.color }}>
-            <span className="grade-badge">GRADE {gradeInfo.grade}</span>
-            <span className="grade-sep">•</span>
-            <span className="grade-desc">{isRu ? gradeInfo.labelRu : gradeInfo.labelEn}</span>
+          <span
+            className="score-grade-pill"
+            style={{
+              color: gradeInfo.color,
+              borderColor: gradeInfo.color,
+              padding: "5px 10px 7px 10px",
+              lineHeight: 1,
+              display: "inline-flex",
+              alignItems: "center",
+              boxSizing: "border-box"
+            }}
+          >
+            <span className="grade-badge" style={{ fontFamily: "var(--font-mono)", fontWeight: 900, lineHeight: 1 }}>
+              GRADE {gradeInfo.grade}
+            </span>
+            <span className="grade-sep" style={{ opacity: 0.6, lineHeight: 1, margin: "0 2px" }}>•</span>
+            <span
+              className="grade-desc"
+              style={{
+                fontFamily: "var(--font-grotesk), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                fontWeight: 700,
+                lineHeight: 1,
+                display: "inline-block",
+                transform: "translateY(-1px)",
+                whiteSpace: "nowrap"
+              }}
+            >
+              {isRu ? gradeInfo.labelRu : gradeInfo.labelEn}
+            </span>
           </span>
         </div>
         <div className="score-hero-right">
@@ -71,10 +96,17 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
             }
           >
             <span className="tier-prefix">{isRu ? "ГЛОБАЛЬНЫЙ РАНГ" : "GLOBAL RANK"}</span>
-            <span className="tier-percent">TOP {audit.topPercent}%</span>
+            <span className="tier-percent">TOP {audit.topPercent || "—"}%</span>
           </div>
           <div
             className="score-verified-stamp"
+            style={{
+              padding: "5px 9px 6px 9px",
+              lineHeight: 1,
+              display: "inline-flex",
+              alignItems: "center",
+              boxSizing: "border-box"
+            }}
             title={
               isRu
                 ? "Фактические характеристики и экипировка получены напрямую из профиля игрока через Hoyoverse API"
@@ -82,7 +114,18 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
             }
           >
             <CheckIcon size={12} />
-            <span>{isRu ? "Синхронизировано из HSR" : "Synchronized with HSR"}</span>
+            <span
+              style={{
+                fontFamily: "var(--font-grotesk), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                fontWeight: 700,
+                lineHeight: 1,
+                display: "inline-block",
+                transform: "translateY(-1px)",
+                whiteSpace: "nowrap"
+              }}
+            >
+              {isRu ? "Синхронизировано из HSR" : "Synchronized with HSR"}
+            </span>
           </div>
         </div>
       </div>
@@ -199,11 +242,10 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
             <div
               className={`metric-bar-fill ${isSpdOk ? "success" : "warning"}`}
               style={{
-                width: `${
-                  audit.secondaryMetric
-                    ? audit.secondaryMetric.percent
-                    : Math.min(100, (parseFloat(audit.spd) / 160) * 100)
-                }%`
+                width: `${audit.secondaryMetric
+                  ? audit.secondaryMetric.percent
+                  : Math.min(100, (parseFloat(audit.spd) / 160) * 100)
+                  }%`
               }}
             />
           </div>

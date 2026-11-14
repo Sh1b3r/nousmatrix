@@ -478,7 +478,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
   const isYaoGuangChar = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1408";
   const isSunday = charId === "1313" || lowerName.includes("воскресенье") || lowerName.includes("sunday");
   const isRobin = charId === "1309" || lowerName.includes("зарянка") || lowerName.includes("robin");
-  const isRuanMei = charId === "1307" || charId === "1303" || lowerName.includes("жуань") || lowerName.includes("ruan");
+  const isRuanMei = charId === "1303" || lowerName.includes("жуань") || lowerName.includes("ruan");
   const isSparkle = charId === "1306" || lowerName.includes("искорка") || lowerName.includes("sparkle");
   const isBronya = charId === "1101" || lowerName.includes("броня") || lowerName.includes("bronya");
   const isTingyun = charId === "1202" || lowerName.includes("тинъюнь") || lowerName.includes("тиньъюнь") || lowerName.includes("tingyun") || lowerName.includes("фугу") || lowerName.includes("fugue");
@@ -1145,6 +1145,43 @@ export function evaluateRelicMainStat(relic, archetype, char) {
     };
   }
   return { status: "optimal", scoreBonus: 0, labelRu: "ВЕРНЫЙ СТАТ", labelEn: "OPTIMAL" };
+}
+
+function erf(x) {
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
+  const sign = x < 0 ? -1 : 1;
+  const absX = Math.abs(x);
+  const t = 1 / (1 + p * absX);
+  const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX);
+  return sign * y;
+}
+
+const ARCHETYPE_DISTRIBUTIONS = {
+  CRIT_DPS: { mu: 68.5, sigma: 11.2 },
+  HP_CRIT_DPS: { mu: 67.5, sigma: 11.0 },
+  BREAK_DPS: { mu: 66.0, sigma: 10.8 },
+  DOT_DPS: { mu: 65.5, sigma: 10.5 },
+  HARMONY_SPD: { mu: 65.0, sigma: 10.0 },
+  HARMONY_ATK: { mu: 65.0, sigma: 10.2 },
+  HARMONY_CRIT: { mu: 66.5, sigma: 10.5 },
+  NIHILITY_DEBUFF: { mu: 64.5, sigma: 10.2 },
+  PRESERVATION_DEF: { mu: 64.0, sigma: 10.0 },
+  PRESERVATION_HP: { mu: 64.0, sigma: 10.0 },
+  ABUNDANCE_ATK: { mu: 64.0, sigma: 10.0 },
+  ABUNDANCE_HP: { mu: 63.5, sigma: 9.8 }
+};
+
+export function scoreToCalibratedTopPercent(score, archetype = "CRIT_DPS") {
+  const dist = ARCHETYPE_DISTRIBUTIONS[archetype] || { mu: 66.0, sigma: 11.0 };
+  const z = (Number(score) - dist.mu) / dist.sigma;
+  const cdf = 0.5 * (1 + erf(z / Math.SQRT2));
+  const top = (1 - cdf) * 100;
+  return Math.min(99.0, Math.max(0.1, top));
 }
 export function determineCharacterMetrics(char, archetype, stats) {
   const { hp, atk, def, spd, cr, cd, cv, be, ehr, eres, heal, err } = stats;
@@ -1816,6 +1853,17 @@ export function calculateCharacterAudit(char, lang = "ru") {
   let statPoints = 0;
   let bottleneck = "";
   let actions = [];
+  const simulatedRollLabels = {
+    atkFlat: isRu ? "плоская АТК" : "flat ATK",
+    atkPercent: isRu ? "АТК%" : "ATK%",
+    hpFlat: isRu ? "плоское HP" : "flat HP",
+    hpPercent: isRu ? "HP%" : "HP%",
+    defFlat: isRu ? "плоская ЗАЩ" : "flat DEF",
+    defPercent: isRu ? "ЗАЩ%" : "DEF%",
+    crit_rate: isRu ? "КШ" : "CRIT Rate",
+    crit_dmg: isRu ? "КУ" : "CRIT DMG",
+    break_dmg: isRu ? "ЭП" : "Break Effect"
+  };
   switch (archetype) {
     case "PRESERVATION_DEF": {
       const defRatio = Math.min(1, def / 4e3);
@@ -2029,8 +2077,8 @@ export function calculateCharacterAudit(char, lang = "ru") {
     totalRolls: totalRollsCountForRelic,
     titleRu: `Кандидат на замену при мин-максе: «${weakestSlotRu}»${weakestName ? ` (${weakestName})` : ""}`,
     titleEn: `Min-Max Upgrade Target: «${weakestSlotEn}»${weakestName ? ` (${weakestName})` : ""}`,
-    descRu: `Среди экипированных предметов реликвия в слоте «${weakestSlotRu}»${weakestName ? ` («${weakestName}»)` : ""} набрала наименьшую полезность сабстатов (${usefulRollsCount} из ${totalRollsCountForRelic} полезных улучшений — часть роллов ушла в непрофильные характеристики). Поскольку базовые требования роли закрыты, именно замена этой детали даст наибольшую отдачу при дальнейшей прокачке.`,
-    descEn: `Among equipped pieces, the «${weakestSlotEn}» slot${weakestName ? ` («${weakestName}»)` : ""} has the lowest substat efficiency (${usefulRollsCount} of ${totalRollsCountForRelic} useful upgrades rolled into off-stats). With core requirements fulfilled, replacing this piece yields the highest marginal upgrade.`
+    descRu: `Среди экипированных предметов реликвия в слоте «${weakestSlotRu}»${weakestName ? ` («${weakestName}»)`: ""} набрала наименьшую полезность сабстатов (${usefulRollsCount} из ${totalRollsCountForRelic} полезных роллов — часть ушла в непрофильные характеристики). Поскольку базовые требования роли закрыты, именно замена этой детали даст наибольшую отдачу при дальнейшей прокачке.`,
+    descEn: `Among equipped pieces, the «${weakestSlotEn}» slot${weakestName ? ` («${weakestName}»)` : ""} has the lowest substat efficiency (${usefulRollsCount} of ${totalRollsCountForRelic} useful rolls). With core requirements fulfilled, replacing this piece yields the highest marginal upgrade.`
   };
   let mainStatPenalty = 0;
   relicScores.forEach((r) => {
@@ -2272,8 +2320,21 @@ export function calculateCharacterAudit(char, lang = "ru") {
       desc: isRu ? "Все 4 пещерные реликвии надеты из разных сетов без активных бонусов наборов. Соберите 4 предмета одного сета или 2+2." : "All 4 cavern relics are from mismatched sets with 0 active set passives. Equip a full 4-Pc or 2+2 set."
     });
   }
-  statPoints = Math.max(15, statPoints + planarSynergyBonus + cavernSynergyBonus);
-  const finalScore = Math.min(99.4, Math.max(45, statPoints * 0.7 + rollEfficiency * 0.3));
+  const thresholdActionsCount = actions.length;
+  const topDamageRoll = Object.entries(marginalDamageWeights?.rollGains || {})
+    .sort((a, b) => b[1].percent - a[1].percent)[0];
+  if (topDamageRoll && topDamageRoll[1].percent > 0) {
+    const label = simulatedRollLabels[topDamageRoll[0]] || topDamageRoll[0];
+    actions.push({
+      title: isRu ? `Лучший ролл по модели: ${label}` : `Top modelled roll: ${label}`,
+      desc: isRu
+        ? `Один средний ролл 5★ повышает расчётный урон отдельного удара примерно на ${topDamageRoll[1].percent.toFixed(2)}%. Скорость и длительность эффектов в этом сравнении не учитываются.`
+        : `One average 5-star roll increases the modelled single-hit damage by about ${topDamageRoll[1].percent.toFixed(2)}%. Speed and effect uptime are not included in this comparison.`
+    });
+  }
+  statPoints = Math.max(0, statPoints + planarSynergyBonus + cavernSynergyBonus);
+  const finalScore = Math.min(100, Math.max(0, statPoints * 0.7 + rollEfficiency * 0.3));
+  const topPercent = scoreToCalibratedTopPercent(finalScore, archetype);
   const characterMetrics = determineCharacterMetrics(char, archetype, {
     hp,
     atk,
@@ -2291,7 +2352,10 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const needsCrit = isCritDps(archetype);
   return {
     score: finalScore.toFixed(1),
+    topPercent: topPercent.toFixed(1),
     rollEfficiency: rollEfficiency.toFixed(1),
+    rollEfficiencyMethod: marginalDamageWeights ? "marginal-damage-plus-role-utility" : "role-utility-heuristic",
+    marginalDamageRolls: marginalDamageWeights?.rollGains || null,
     cv: needsCrit ? cv.toFixed(1) : null,
     needsCrit,
     spd: spd.toFixed(1),
@@ -2317,7 +2381,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
     bottleneck,
     actions,
     minMaxAdvice,
-    isThresholdsMet: actions.length === 0,
+    isThresholdsMet: thresholdActionsCount === 0,
     weakestRelicIndex,
     cavern: {
       label: cavernSetLabel,

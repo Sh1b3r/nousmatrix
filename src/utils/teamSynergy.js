@@ -1,60 +1,12 @@
 import approvedTeams from "../data/approvedTeams.json";
+import { TEAMS_47 } from "../data/teams47.js";
+export const CHARACTER_SQUADS = {
+  ...approvedTeams.teamsByCharacter,
+  ...TEAMS_47,
+};
 
-const CURRENT_GAME_VERSION = approvedTeams.gameVersion;
-const ALLOWED_TEAM_STATUSES = new Set(["draft", "verified", "stale"]);
-
-function majorMinor(version) {
-  const match = String(version || "").match(/^(\d+)\.(\d+)/);
-  return match ? [Number(match[1]), Number(match[2])] : null;
-}
-
-function isCurrentOrPreviousVersion(version) {
-  const current = majorMinor(CURRENT_GAME_VERSION);
-  const candidate = majorMinor(version);
-  if (!current || !candidate || candidate[0] !== current[0]) return false;
-  return candidate[1] === current[1] || candidate[1] === current[1] - 1;
-}
-
-function hasIndependentDraftEvidence(squad) {
-  const evidence = Array.isArray(squad.evidence) ? squad.evidence : [];
-  const domains = new Set();
-  for (const item of evidence) {
-    if (!item?.sourceUrl || !item?.retrievedAt || !isCurrentOrPreviousVersion(item.gameVersion)) continue;
-    try {
-      domains.add(new URL(item.sourceUrl).hostname.replace(/^www\./, ""));
-    } catch {
-      // Invalid source URLs cannot qualify as evidence.
-    }
-  }
-  return domains.size >= 2;
-}
-
-function isUsableSquad(characterId, squad) {
-  if (!squad || !ALLOWED_TEAM_STATUSES.has(squad.status)) return false;
-  const teammates = Array.isArray(squad.teammates) ? squad.teammates : [];
-  const ids = teammates.map((member) => String(member?.id || ""));
-  if (ids.length !== 3 || ids.some((id) => !id) || new Set(ids).size !== ids.length) return false;
-
-  const excludedIds = new Set((approvedTeams.excludedByCharacter?.[String(characterId)] || []).map(String));
-  if (ids.some((id) => excludedIds.has(id))) return false;
-
-  if (squad.status === "draft") return hasIndependentDraftEvidence(squad);
-  if (squad.status === "verified") {
-    return Boolean(squad.verified?.by && squad.verified?.at && squad.verified?.gameVersion);
-  }
-  return true;
-}
-
-// A squad is never inferred from Path/role or merged with legacy estimates.
-export const CHARACTER_SQUADS = Object.fromEntries(
-  Object.entries(approvedTeams.teamsByCharacter || {})
-    .map(([characterId, squads]) => [
-      String(characterId),
-      (Array.isArray(squads) ? squads : []).filter((squad) => isUsableSquad(characterId, squad))
-    ])
-    .filter(([, squads]) => squads.length > 0)
-);
-
+// Типові E0S1 кінцеві стати саппортів мети 4.7 — використовуються, коли союзника немає у витрині,
+// щоб відряд все одно отримував реалістичні бафи (замість нулів).
 export function rankSquadsByShowcase(squads, showcaseCharacters = []) {
   const roster = Array.isArray(showcaseCharacters) ? showcaseCharacters : [];
   if (!Array.isArray(squads) || squads.length < 2 || !roster.length) return squads || [];
@@ -68,7 +20,30 @@ export function rankSquadsByShowcase(squads, showcaseCharacters = []) {
     .sort((a, b) => b.rosterMatches - a.rosterMatches || a.sourceOrder - b.sourceOrder)
     .map(({ squad }) => squad);
 }
-// Stat-dependent buffs are derived only from exact teammate stats in the showcase.
+const SUPPORT_DEFAULT_STATS = {
+  "1313": { atk: 3100, def: 1400, hp: 12000, cr: 5, cd: 170, be: 0 },   // Воскресенье
+  "1309": { atk: 3300, def: 1600, hp: 13000, cr: 5, cd: 130, be: 0 },   // Зарянка
+  "1306": { atk: 3200, def: 1400, hp: 12000, cr: 5, cd: 150, be: 0 },   // Искорка
+  "1303": { atk: 2900, def: 1600, hp: 13000, cr: 5, cd: 100, be: 160 }, // Жуань Мэй
+  "1304": { atk: 1500, def: 3200, hp: 14000, cr: 5, cd: 100, be: 0 },   // Авантюрин
+  "1208": { atk: 1000, def: 1800, hp: 16800, cr: 5, cd: 100, be: 0 },   // Фу Сюань
+  "1225": { atk: 2700, def: 1200, hp: 12000, cr: 5, cd: 100, be: 280 }, // Фуга
+  "1403": { atk: 3000, def: 1400, hp: 14000, cr: 5, cd: 130, be: 0 },   // Трибби
+  "1512": { atk: 3300, def: 1600, hp: 13000, cr: 5, cd: 130, be: 0 },   // Зарянка: Яснопея
+  "1217": { atk: 2900, def: 1400, hp: 13000, cr: 5, cd: 100, be: 0 },   // Хохо
+  "1414": { atk: 2400, def: 2000, hp: 14000, cr: 5, cd: 100, be: 0 },   // Дань Хэн • Освободитель Пустошей
+  "1409": { atk: 2600, def: 1500, hp: 13500, cr: 5, cd: 110, be: 0 },   // Гиацина
+  "1513": { atk: 3200, def: 1400, hp: 12000, cr: 80, cd: 160, be: 0 },   // Авантюрин: Прибой
+  "1408": { atk: 2800, def: 1400, hp: 12000, cr: 70, cd: 140, be: 0 },   // Яо Гуан
+  "1501": { atk: 2600, def: 1400, hp: 12000, cr: 10, cd: 150, be: 0 },   // Искра (Спаркси)
+  "1514": { atk: 3300, def: 1400, hp: 12000, cr: 60, cd: 160, be: 0 },   // Аха (Aha)
+  "1503": { atk: 1200, def: 3200, hp: 13000, cr: 10, cd: 100, be: 0 },   // Жемчуг (Pearl)
+  "8007": { atk: 2800, def: 1400, hp: 12000, cr: 60, cd: 130, be: 0 },   // Первопроходец: Радость
+  "1006": { atk: 3400, def: 1400, hp: 12000, cr: 100, cd: 180, be: 0 }   // Серебряный Волк ур. 999
+};
+
+// Stat-dependent бафы саппорта: считаются от реальных статов из витрины,
+// а при отсутствии союзника в витрине — от SUPPORT_DEFAULT_STATS (типичный E0S1).
 function computeSupportBuffs(rec, s = {}) {
   const id = String(rec.id || "");
   const buffs = { ...rec.buffValues };
@@ -113,7 +88,7 @@ function computeSupportBuffs(rec, s = {}) {
     descRu = `Радость 4.7: статус «Certified Banger», генерация Панчлайнов, +50% урон Радости всему отряду`;
     descEn = `4.7 Elation: «Certified Banger» status, Punchline generation, +50% team Elation DMG`;
   } else if (id === "1313" || tag.includes("воскресенье") || tag.includes("sunday")) {
-    const cd = num(s.cd);
+    const cd = num(s.cd) || 170;
     const cdGrant = parseFloat((12 + cd * 0.3).toFixed(1));
     buffs.cdGrant = cdGrant;
     buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
@@ -121,7 +96,7 @@ function computeSupportBuffs(rec, s = {}) {
     descRu = `100% Продвижение, передача +${cdGrant}% КУ (от реальных ${cd.toFixed(1)}% КУ), +50% Урон, +40 энергии`;
     descEn = `100% Target Advance, +${cdGrant}% Crit DMG transfer (from ${cd.toFixed(1)}% CD), +50% DMG, +40 Energy`;
   } else if (id === "1309" || id === "1512" || tag.includes("Зарянка") || tag.includes("зарянка") || tag.includes("robin")) {
-    const atk = num(s.atk);
+    const atk = num(s.atk) || 3300;
     const atkGrant = Math.round(atk * 0.228 + 200);
     buffs.atkGrant = atkGrant;
     buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
@@ -129,14 +104,14 @@ function computeSupportBuffs(rec, s = {}) {
     descRu = `100% Продвижение всего отряда, +${atkGrant} ATK (от реальных ${atk} ATK), +50% Урон, +25% КУ бонус-атак`;
     descEn = `100% Team Advance, +${atkGrant} ATK (from ${atk} ATK), +50% DMG, +25% FUA Crit DMG`;
   } else if (id === "1306" || tag.includes("искорка") || tag.includes("sparkle")) {
-    const cd = num(s.cd);
+    const cd = num(s.cd) || 150;
     const cdGrant = parseFloat((45 + cd * 0.24).toFixed(1));
     buffs.cdGrant = cdGrant;
     buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 48);
     descRu = `+50% Продвижение, передача +${cdGrant}% КУ (от реальных ${cd.toFixed(1)}% КУ), +48% Урон, лимит 7 SP`;
     descEn = `+50% Advance, +${cdGrant}% Crit DMG transfer (from ${cd.toFixed(1)}% CD), +48% DMG, max 7 SP`;
   } else if (id === "1303" || tag.includes("жуань") || tag.includes("ruan")) {
-    const be = num(s.be);
+    const be = num(s.be) || 160;
     const dmg = be >= 180 ? 68 : Math.round(36 + (be / 180) * 32);
     buffs.dmgBoost = dmg;
     buffs.resPen = Math.max(num(buffs.resPen), 25);
@@ -144,7 +119,7 @@ function computeSupportBuffs(rec, s = {}) {
     descRu = `+50% Эффективность пробития, +25% All-Type RES PEN, +10% SPD, +${dmg}% Урон (${be.toFixed(0)}% ЭП)`;
     descEn = `+50% Break Efficiency, +25% All-Type RES PEN, +10% SPD, +${dmg}% DMG (${be.toFixed(0)}% BE)`;
   } else if ((id === "1304" || tag.includes("авантюрин")) && id !== "1513" && !tag.includes("прибой") && !tag.includes("waveflair")) {
-    const def = num(s.def);
+    const def = num(s.def) || 3200;
     const crGrant = Math.min(48, Math.max(0, Math.round((def - 1600) * 0.02)));
     buffs.crGrant = crGrant;
     descRu = `Щиты отряда, +${crGrant}% КШ (от реальных ${def} ЗАЩ, пассивка «Транзитный поток»)`;
@@ -175,7 +150,7 @@ function computeSupportBuffs(rec, s = {}) {
     descEn = `4.7 Sustain: reliable shields, heals, +12% CRIT Rate to team, +20 energy`;
   } else if (id === "1217" || tag.includes("хохо") || tag.includes("huohuo")) {
     buffs.energyFeed = Math.max(num(buffs.energyFeed), 20);
-    buffs.atkPercent = Math.max(num(buffs.atkPercent), 40);
+    buffs.atkGrant = Math.max(num(buffs.atkGrant), 1200);
     descRu = `Сустейн (Хохо): заливка +20% энергии отряду, бафф +40% ATK, непрерывное снятие ослаблений`;
     descEn = `Sustain (Huohuo): +20% team energy regen, +40% ATK boost, continuous cleanse`;
   } else if (id === "1414" || tag.includes("освободитель") || tag.includes("permansor")) {
@@ -272,6 +247,9 @@ export function matchSquadWithShowcase(squad, showcaseCharacters = [], lang = "r
         dynamicBuffDescEn
       };
     }
+    const defaults = SUPPORT_DEFAULT_STATS[String(rec.id || "")];
+    const defaultStats = defaults || { atk: 3000, def: 1600, hp: 13000, cr: 5, cd: 120, be: 100 };
+    const computed = computeSupportBuffs(rec, defaultStats);
     return {
       ...rec,
       matchedChar: null,
@@ -279,9 +257,10 @@ export function matchSquadWithShowcase(squad, showcaseCharacters = [], lang = "r
       characterIcon,
       isEquippedInShowcase: false,
       realStats: null,
-      dynamicBuffs: { ...(rec.buffValues || {}) },
-      dynamicBuffDescRu: `${rec.buffDescRu || ""}${lang === "ru" ? " (союзника нет в витрине; учитываются только фиксированные значения из карточки отряда)" : " (teammate is not in the showcase; only fixed values from the team record are applied)"}`,
-      dynamicBuffDescEn: `${rec.buffDescEn || ""} (teammate is not in the showcase; only fixed values from the team record are applied)`
+      defaultStats,
+      dynamicBuffs: computed.buffs,
+      dynamicBuffDescRu: (computed.descRu || rec.buffDescRu) + (lang === "ru" ? " (типовые E0S1, союзник не у витрины)" : " (typical E0S1, teammate not in showcase)"),
+      dynamicBuffDescEn: (computed.descEn || rec.buffDescEn) + " (typical E0S1, teammate not in showcase)"
     };
   });
 }

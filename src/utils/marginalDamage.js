@@ -87,11 +87,18 @@ export function calculateMarginalDamageWeights(character, stats, archetype, lang
   }
 
   if (maxGain <= 0) return null;
-  return Object.fromEntries(Object.entries(gains).map(([key, gain]) => [key, gain / maxGain]));
+  return {
+    baseDamage,
+    weights: Object.fromEntries(Object.entries(gains).map(([key, gain]) => [key, gain / maxGain])),
+    rollGains: Object.fromEntries(Object.entries(gains).map(([key, gain]) => [key, {
+      damage: gain,
+      percent: gain / baseDamage * 100
+    }]))
+  };
 }
 
-export function getMarginalDamageRollWeight(substat, weights) {
-  if (!weights) return null;
+export function getMarginalDamageRollWeight(substat, result) {
+  if (!result?.weights) return null;
   const key = rollKey(substat);
-  return Object.hasOwn(weights, key) ? weights[key] : null;
+  return Object.hasOwn(result.weights, key) ? result.weights[key] : null;
 }

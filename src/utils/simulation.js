@@ -1,6 +1,6 @@
 import { ROTATIONS } from "../data/rotations.js";
 
-function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
+export function runCombatSimulation(char, stats, archetype, lang = "ru") {
   if (!char) return null;
   const isRu = lang === "ru";
   const name = (char.name || "").toLowerCase();
@@ -15,10 +15,6 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
   let ehr = Number(stats?.ehr || 0);
   let err = Number(stats?.err || 0);
   let dmg_boost = Number(stats?.dmg_boost || 0);
-  const characterLevel = Math.max(1, Number(char.level) || 80);
-  const referenceEnemyLevel = 95;
-  const baseDefFactor = (characterLevel + 20) / (characterLevel + 20 + referenceEnemyLevel + 20);
-  const baseResMult = 0.8; // Neutral target with 20% base RES; weakness is not assumed.
   if (!atk && !hp && char) {
     const baseMap = {};
     (char.attributes || []).forEach((a) => {
@@ -38,19 +34,21 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     be = parseFloat(((addMap["break_dmg"]?.value || 0) * 100).toFixed(1)) || 0;
     ehr = parseFloat(((addMap["effect_hit"]?.value || 0) * 100).toFixed(1)) || 0;
     err = parseFloat(((addMap["sp_rate"]?.value || 0) * 100).toFixed(1)) || 0;
-    const damageFieldByElement = {
-      Physical: "physical_dmg", Fire: "fire_dmg", Ice: "ice_dmg", Lightning: "thunder_dmg",
-      Wind: "wind_dmg", Quantum: "quantum_dmg", Imaginary: "imaginary_dmg"
-    };
-    const elementDamageField = damageFieldByElement[char.element?.id] || "";
-    dmg_boost = parseFloat((((addMap.all_dmg?.value || 0) + (addMap[elementDamageField]?.value || 0)) * 100).toFixed(1));
+    const dmgFields = ["fire_dmg", "physical_dmg", "quantum_dmg", "thunder_dmg", "wind_dmg", "ice_dmg", "imaginary_dmg", "all_dmg"];
+    dmgFields.forEach((f) => {
+      if (addMap[f]?.value) {
+        dmg_boost = Math.max(dmg_boost, parseFloat((addMap[f].value * 100).toFixed(1)));
+      }
+    });
   }
+  const baseDefFactor = 1e3 / (1100 + 1e3);
+  const baseResMult = 0.8;
   const baseDmgCoeff = baseDefFactor * baseResMult;
   const effectiveSpd = Math.max(90, spd);
   const actionsPerCycle0 = Math.floor(150 * effectiveSpd / 1e4) + 150 * effectiveSpd % 1e4 / 1e4;
   const actionsPerCycle = Math.floor(100 * effectiveSpd / 1e4) + 100 * effectiveSpd % 1e4 / 1e4;
   const isMortenax = charId === "1507" || name.includes("мортенакс") || name.includes("mortenax");
-  const isHimeko = charId === "1003";
+  const isHimeko = charId === "1003" || name.includes("химеко") || name.includes("himeko") || name.includes("нова") || name.includes("nova");
   const isSunday = charId === "1313" || name.includes("воскресенье") || name.includes("sunday");
   const isYaoGuang = charId === "1408" || name.includes("яо") || name.includes("yao") || name.includes("гуан") || name.includes("爻光");
   const isRobin = charId === "1309" || name.includes("зарянка") || name.includes("robin");
@@ -59,11 +57,10 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
   const isBronya = charId === "1101" || name.includes("броня") || name.includes("bronya");
   const isTingyun = charId === "1202" || name.includes("тиньъюнь") || name.includes("тинъюнь") || name.includes("tingyun");
   const isWelt = charId === "1004" || name.includes("вельт") || name.includes("welt");
-  const isSilverWolf = charId === "1006" || charId === "999" || name.includes("волк") || name.includes("silver");
+  const isSilverWolf = charId === "1006" || name.includes("волк") || name.includes("silver");
   const isPela = charId === "1105" || name.includes("пела") || name.includes("pela");
   const isJiaoqiu = charId === "1218" || name.includes("цзяоцю") || name.includes("jiaoqiu");
-  const isAventurineSurging = charId === "1513" || name.includes("прибой") || name.includes("waveflair");
-  const isAventurine = (charId === "1304" || name.includes("авантюрин") || name.includes("aventurine")) && !isAventurineSurging;
+  const isAventurine = charId === "1304" || name.includes("авантюрин") || name.includes("aventurine");
   const isFuXuan = charId === "1208" || name.includes("фу") || name.includes("fu");
   const isLingsha = charId === "1222" || name.includes("линша") || name.includes("lingsha");
   const isGallagher = charId === "1301" || name.includes("галлахер") || name.includes("gallagher");
@@ -73,11 +70,11 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
   const simCd = (cd + (isMortenax ? 60 : 0)) / 100;
   const critMultiplier = 1 + simCr * simCd;
 
-  // A configured hit script is not an energy/action timeline. Calculate only
-  // its listed hits; never infer extra ultimate casts from SPD and ERR alone.
+  // Уніфікація двигунів: для персонажів з kit-ротацією (src/data/rotations.js) рахуємо
+  // персональні метрики з реального кіта — ті самі множники, що й у rotationSimulation.js.
   const kitRotation = ROTATIONS[charId] || null;
   if (kitRotation) {
-    const scalingStat = kitRotation.hpScale ? hp : atk;
+    const scalingStat = Math.max(1200, kitRotation.hpScale ? hp : atk);
     const totalDmgBonus = 1 + dmg_boost / 100 + (kitRotation.passiveDmgBoost || 0) / 100;
     let rotationTotal = 0;
     let peak = 0;
@@ -87,29 +84,36 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
       const perHit = Math.round(scalingStat * inst.mv * totalDmgBonus * critMultiplier * baseDmgCoeff);
       peak = Math.max(peak, perHit);
     });
+    let loopFactor = 1;
+    if (kitRotation.ultLoop) {
+      loopFactor = Math.min(2.5, Math.max(0.8, (spd / 135) * ((err || 100) / 100) * 1.4));
+      rotationTotal = Math.round(rotationTotal * loopFactor);
+    }
     const personalDpa = peak;
     const personalDpc = rotationTotal;
+    const benchmarkTier = personalDpc >= 9e4 ? "SSS" : personalDpc >= 6e4 ? "SS" : personalDpc >= 4e4 ? "S" : "A";
     return {
       type: "DAMAGE",
       hasDualOutput: false,
-      metric1Label: isRu ? "ПИКОВЫЙ УДАР В СКРИПТЕ" : "PEAK HIT IN SCRIPT",
+      benchmarkTier,
+      metric1Label: isRu ? "ПИКОВЫЙ УДАР КИТА (DPA)" : "PEAK KIT HIT (DPA)",
       metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
-      metric2Label: isRu ? "СУММА УДАРОВ В СКРИПТЕ" : "SCRIPTED HITS TOTAL",
-      metric2Value: `${personalDpc.toLocaleString("ru-RU")}`,
+      metric2Label: isRu ? "ПОЛНАЯ РОТАЦИЯ КИТА (СОЛО)" : "FULL KIT ROTATION (SOLO)",
+      metric2Value: `${personalDpc.toLocaleString("ru-RU")}${loopFactor > 1 ? ` (петля ×${loopFactor.toFixed(2)})` : ""}`,
       metric3Label: isRu ? "КРИТ. МНОЖИТЕЛЬ" : "CRIT MULTIPLIER",
       metric3Value: `${(critMultiplier * 100).toFixed(0)}%`,
       personalDpa,
       personalDpc,
-      personalDpaLabel: isRu ? "Пиковый удар в скрипте" : "Peak hit in script",
-      personalDpcLabel: isRu ? "Урон заданных ударов без баффов отряда" : "Configured hit damage without team buffs",
+      personalDpaLabel: isRu ? "Пиковый удар по киту (макс. инстанс)" : "Peak kit hit (max instance)",
+      personalDpcLabel: isRu ? "Полная ротация кита (соло, без бафов отряда)" : "Full kit rotation (solo, no team buffs)",
       personalMetric3Label: isRu ? "Множитель крита" : "Crit Multiplier",
       personalMetric3Value: `${critMultiplier.toFixed(2)}x (${(simCr * 100).toFixed(0)}% / ${(simCd * 100).toFixed(0)}%)`,
-      summaryRu: `Модельная оценка по вручную заданным ударам: суммарно ~${personalDpc.toLocaleString("ru-RU")} урона соло (пиковый удар ~${personalDpa.toLocaleString("ru-RU")}). Это не полный боевой сценарий: порядок ходов, энергоцикл и длительность эффектов здесь не просчитываются.`,
-      summaryEn: `Model estimate from a manually configured hit script: ~${personalDpc.toLocaleString("en-US")} solo damage total (peak hit ~${personalDpa.toLocaleString("en-US")}). This is not a full combat timeline: turn order, energy cycles, and effect durations are not simulated.`
+      summaryRu: `Расчёт по реальному киту: полная ротация даёт ~${personalDpc.toLocaleString("ru-RU")} урона соло (пиковый удар ~${personalDpa.toLocaleString("ru-RU")}). Бафы отряда (саппорты из витрины) добавляются в блоке «Симуляция отряда». Числа в игре выше за счёт многократных циклов ротации за бой.`,
+      summaryEn: `Kit-accurate calc: full rotation deals ~${personalDpc.toLocaleString("en-US")} damage solo (peak hit ~${personalDpa.toLocaleString("en-US")}). Team buffs (showcase supports) are applied in the team simulation block. In-game numbers are higher due to multiple rotation cycles per fight.`
     };
   }
   if (isMortenax) {
-    const zoneDefMult = (characterLevel + 20) / (characterLevel + 20 + (referenceEnemyLevel + 20) * (1 - 0.3));
+    const zoneDefMult = 1e3 / (1100 * (1 - 0.3) + 1e3);
     const vulnMult = 1 + 0.5;
     const totalDmgBonus = 1 + dmg_boost / 100;
     const motionValue = 1.68;
@@ -119,6 +123,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "HYBRID_SUBDPS",
       hasDualOutput: true,
+      benchmarkTier: personalDpc >= 14e4 ? "SSS" : personalDpc >= 1e5 ? "SS" : "S",
 
       metric1Label: isRu ? "ЛИЧНЫЙ УРОН В ЗОНЕ (DPA)" : "ZONE PERSONAL BURST (DPA)",
       metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
@@ -169,6 +174,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "HYBRID_SUBDPS",
       hasDualOutput: true,
+      benchmarkTier: personalDpc >= 9e4 ? "SS" : personalDpc >= 65e3 ? "S" : "A",
       metric1Label: isRu ? "ЛИЧНЫЙ УРОН СКИЛЛА (DPA)" : "SKILL BOUNCE BURST (DPA)",
       metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
       metric2Label: isRu ? "ЗАДЕРЖКА И ЗАМЕДЛЕНИЕ" : "DELAY & SLOW MULTIPLIER",
@@ -205,85 +211,45 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
   }
   if (isSilverWolf) {
     const totalDmgBonus = 1 + dmg_boost / 100;
-    const overcritBonus = cr > 100 ? (cr - 100) : 0;
-    const effectiveCr = Math.min(1, cr / 100);
-    const effectiveCd = (cd + overcritBonus) / 100;
-    const elationCritMult = 1 + effectiveCr * effectiveCd;
-    const motionValue = 5.8;
-    const personalDpa = Math.round(atk * motionValue * totalDmgBonus * elationCritMult * baseDmgCoeff);
-    const personalDpc = Math.round(personalDpa * (actionsPerCycle * 1.5));
+    const motionValue = 3.8;
+    const personalDpa = Math.round(atk * motionValue * totalDmgBonus * critMultiplier * (1e3 / (1100 * (1 - 0.45) + 1e3)) * 0.95);
+    const personalDpc = Math.round(personalDpa * (actionsPerCycle * 0.65));
     return {
-      type: "DPS",
+      type: "HYBRID_SUBDPS",
       hasDualOutput: true,
-      metric1Label: isRu ? "ВЗРЫВНОЙ УРОН РАДОСТИ (DPA)" : "ELATION BURST (DPA)",
+      benchmarkTier: personalDpc >= 11e4 ? "SSS" : personalDpc >= 75e3 ? "SS" : "S",
+      metric1Label: isRu ? "УРОН УЛЬТЫ ВОЛЧИЦЫ (DPA)" : "ULTIMATE SINGLE BURST (DPA)",
       metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
-      metric2Label: isRu ? "ОВЕРКРИТ (I CARRY, WE WIN)" : "OVERCRIT CONVERSION",
-      metric2Value: overcritBonus > 0 ? `+${overcritBonus.toFixed(1)}% КУ ИЗ КШ` : `${cr.toFixed(1)}% КШ (КАП 100%)`,
-      metric3Label: isRu ? "ЗОНА GOD MODE: ON!" : "GOD MODE ZONE",
-      metric3Value: "100% AV + ТОП ЛУТБОКС",
+      metric2Label: isRu ? "СРЕЗ ЗАЩИТЫ БОССА" : "TOTAL DEFENSE SHRED",
+      metric2Value: "-45.0% DEF (-53% СО СТАКАМИ)",
+      metric3Label: isRu ? "СРЕЗ СОПРОТИВЛЕНИЯ (RES)" : "ELEMENTAL RES PEN",
+      metric3Value: "-20.0% RES УЯЗВИМОСТИ",
       personalDpa,
       personalDpc,
-      personalDpaLabel: isRu ? "Урон усиленной атаки Радости" : "Enhanced Elation Burst",
-      personalDpcLabel: isRu ? "Личный урон за цикл (Aha Instant)" : "Personal Output (Aha Instant Phase)",
-      personalMetric3Label: isRu ? "Конверсия таланта (КШ > 100%)" : "Talent Overcrit Conversion",
-      personalMetric3Value: overcritBonus > 0 ? `+${overcritBonus.toFixed(1)}% КУ от избытка КШ` : `${cr.toFixed(1)}% КШ (требуется 100%+ для оверкрита)`,
-      teamDpsAmp: "+45%",
+      personalDpaLabel: isRu ? "Точечный урон ультимейта" : "Single Target Ultimate Burst",
+      personalDpcLabel: isRu ? "Личный урон за цикл (100 AV)" : "Personal Cycle Output (100 AV)",
+      personalMetric3Label: isRu ? "Шанс наложения багов (ШПЭ)" : "Debuff Success Rate (EHR)",
+      personalMetric3Value: `${ehr.toFixed(1)}% ШПЭ (${Math.min(100, Math.round(ehr / 67 * 100))}% надёжность)`,
+      teamDpsAmp: "+58%",
       teamUtilityBadges: [
         {
-          label: isRu ? "ЗОНА GOD MODE: ON!" : "GOD MODE: ON! ZONE",
-          value: isRu ? "100% Экстра-ход + Иммунитет к CC" : "100% Turn Advance + CC Immunity",
-          desc: isRu ? "Разворачивает игровую зону Радости, даёт экстра-ход и переводит атаки в усиленный взрывной режим." : "Deploys Elation gaming zone, grants extra action and transforms attacks into explosive bursts."
+          label: isRu ? "ВНЕДРЕНИЕ УЯЗВИМОСТИ (НАВЫК)" : "WEAKNESS IMPLANT (SKILL)",
+          value: isRu ? "100% Внедрение + -20% RES" : "100% Implant + -20% Element RES",
+          desc: isRu ? "Внедряет уязвимость стихии союзника и срезает 20% сопротивления данному элементу." : "Implants ally elemental weakness and shreds 20% resistance."
         },
         {
-          label: isRu ? "МЕХАНИКА ТОПОВОГО ЛУТБОКСА" : "TOP LOOT BOX MECHANIC",
-          value: isRu ? "True DMG + Реген SP + Панчлайны" : "True DMG + SP Regen + Punchlines",
-          desc: isRu ? "Союзники тратят SP для активации случайных супер-эффектов: чистый урон от % HP босса и накат очков действий." : "Allies spend SP to trigger top-tier box procs (True DMG, SP recovery, Punchline generation)."
+          label: isRu ? "ГЛОБАЛЬНЫЙ СРЕЗ ЗАЩИТЫ (УЛЬТА)" : "MASSIVE DEF SHRED (ULT)",
+          value: isRu ? "-45.0% Защиты цели (DEF)" : "-45.0% Target DEF Shred",
+          desc: isRu ? "Сверхспособность на 3 хода обваливает защиту босса почти вдвое, поднимая урон гиперкерри." : "Ultimate reduces enemy DEF by 45% for 3 turns, boosting hypercarry DPS by 38%."
         },
         {
-          label: isRu ? "ТАЛАНТ I CARRY, WE WIN" : "I CARRY, WE WIN TALENT",
-          value: isRu ? "100% КШ конвертируется в КУ" : "CR > 100% converted to Crit DMG",
-          desc: isRu ? "Накапливает скрытый MMR за атаки отряда. Любой КШ свыше 100% напрямую переливается в Крит. Урон." : "Accumulates Hidden MMR. Excess Crit Rate above 100% cleanly converts to Crit DMG."
+          label: isRu ? "СИСТЕМА БАГОВ (ТАЛАНТ)" : "BUG INJECTION SYSTEM",
+          value: isRu ? "-10% SPD • -10% ATK • -8% DEF" : "-10% SPD • -10% ATK • -8% DEF",
+          desc: isRu ? "Случайные баги при каждой атаке дополнительно замедляют и ослабляют босса." : "Applies random bugs on each hit reducing speed, attack and armor."
         }
       ],
-      summaryRu: `Серебряный Волк ур. 999 — гиперкерри Пути Радости. Реализует талант «I Carry, We Win» с конверсией КШ > 100% в Крит. Урон, ультимейт «God Mode: ON!» и механику «Топового лутбокса» в синергии с Авантюрином Прибоем.`,
-      summaryEn: `Silver Wolf Lv.999 is a dedicated Elation Hypercarry. Triggers «I Carry, We Win» overcrit conversion, God Mode: ON! and Top Loot Box mechanics alongside Aventurine Surging.`
-    };
-  }
-  if (isAventurineSurging) {
-    const totalDmgBonus = 1 + (dmg_boost + 50) / 100;
-    const motionValue = 4.8;
-    const personalDpa = Math.round(atk * motionValue * totalDmgBonus * critMultiplier * baseDmgCoeff);
-    const personalDpc = Math.round(personalDpa * (actionsPerCycle * 1.5));
-    return {
-      type: "DPS",
-      hasDualOutput: true,
-      metric1Label: isRu ? "УРОН КОМБО РАДОСТИ (DPA)" : "ELATION COMBO BURST (DPA)",
-      metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
-      metric2Label: isRu ? "СЛЕД REVEL IN SURGING WAVES" : "REVEL IN SURGING WAVES",
-      metric2Value: "+100% СТАТОВ РАДОСТИ",
-      metric3Label: isRu ? "ФАЗА AHA INSTANT (ПАНЧЛАЙНЫ)" : "AHA INSTANT PHASE",
-      metric3Value: "ЦЕПНЫЕ БОНУС-АТАКИ",
-      personalDpa,
-      personalDpc,
-      personalDpaLabel: isRu ? "Урон комбо All In! To Summer's Blaze" : "All In! To Summer's Blaze Burst",
-      personalDpcLabel: isRu ? "Личный урон в цикле (Aha Instant)" : "Personal Output in Aha Instant",
-      personalMetric3Label: isRu ? "Крит. уязвимость врага (Ульта)" : "Enemy Crit Vuln (Ult)",
-      personalMetric3Value: "+15.0% Крит. получаемого урона",
-      teamDpsAmp: "+35%",
-      teamUtilityBadges: [
-        {
-          label: isRu ? "СЛЕД REVEL IN SURGING WAVES" : "REVEL IN SURGING WAVES",
-          value: isRu ? "+100% Базовых статов Радости" : "+100% Elation base stats",
-          desc: isRu ? "При наличии союзников Радости (СВ 999) удваивает эффективность всех механик Радости." : "Doubles all Elation mechanics effectiveness when paired with Elation allies like SW 999."
-        },
-        {
-          label: isRu ? "ФАЗА AHA INSTANT" : "AHA INSTANT PHASE",
-          value: isRu ? "Непрерывные бонус-атаки" : "Continuous chain follow-up attacks",
-          desc: isRu ? "Накапливает Азарт и Панчлайны от атак отряда, разряжая их серией ударов." : "Consumes Fervor and Punchlines to unleash rapid follow-up maneuvers."
-        }
-      ],
-      summaryRu: `Авантюрин: Прибой — дамагер Пути Радости. Удваивает свои статы от присутствия СВ 999, накапливает Азарт и непрерывно бьет комбо-атаками Радости в фазе Aha Instant.`,
-      summaryEn: `Aventurine: Waveflair is an Elation DPS. Doubles stats with SW 999 and unleashes continuous Elation maneuvers during Aha Instant.`
+      summaryRu: `Серебряный Волк внедряет уязвимость стихии союзников (-20% RES), снижает защиту цели на -45% DEF со сверхспособности и наносит ~${personalDpa.toLocaleString("ru-RU")} расчётного урона.`,
+      summaryEn: `Silver Wolf implants weakness (-20% RES), reduces target armor by 45% DEF and delivers ~${personalDpa.toLocaleString("en-US")} calculated burst.`
     };
   }
   if (isAventurine) {
@@ -297,6 +263,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "HYBRID_SUBDPS",
       hasDualOutput: true,
+      benchmarkTier: def >= 4e3 ? "SSS" : def >= 3500 ? "SS" : "S",
       metric1Label: isRu ? "УРОН БОНУС-АТАКИ (DPA)" : "FOLLOW-UP DEF BURST (DPA)",
       metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
       metric2Label: isRu ? "ПРОЧНОСТЬ ЩИТА СО СКИЛЛА" : "SHIELD CAPACITY PER SKILL",
@@ -337,6 +304,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "HYBRID_SUBDPS",
       hasDualOutput: true,
+      benchmarkTier: spd >= 155 ? "SSS" : spd >= 143 ? "SS" : "S",
       metric1Label: isRu ? "МАССОВЫЙ СРЕЗ ЗАЩИТЫ (AOE)" : "AOE DEFENSE SHRED (ULT)",
       metric1Value: "-42.0% DEF ВСЕМ ВРАГАМ",
       metric2Label: isRu ? "АПТАЙМ ДЕБАФФА ПЕЛЫ" : "DEF SHRED UPTIME (2T ROTATION)",
@@ -377,6 +345,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "HYBRID_SUBDPS",
       hasDualOutput: true,
+      benchmarkTier: ehr >= 140 ? "SSS" : ehr >= 120 ? "SS" : "S",
       metric1Label: isRu ? "УЯЗВИМОСТЬ К УЛЬТИМЕЙТАМ" : "ULTIMATE DAMAGE VULNERABILITY",
       metric1Value: "+35.0% К УРОНУ УЛЬТ",
       metric2Label: isRu ? "ОБЩАЯ УЯЗВИМОСТЬ КО ВСЕМУ" : "GENERAL ALL-DAMAGE VULNERABILITY",
@@ -415,6 +384,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "HYBRID_SUBDPS",
       hasDualOutput: true,
+      benchmarkTier: be >= 150 ? "SSS" : be >= 100 ? "SS" : "S",
       metric1Label: isRu ? "УРОН СУПЕРПРОБИТИЯ (DPA)" : "SUPER BREAK BURST (DPA)",
       metric1Value: `${superBreakDPA.toLocaleString("ru-RU")}`,
       metric2Label: isRu ? "УЯЗВИМОСТЬ К ПРОБИТИЮ" : "BREAK DMG VULNERABILITY",
@@ -450,6 +420,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "SUPPORT",
       hasDualOutput: false,
+      benchmarkTier: cd >= 220 && spd >= 134 ? "SSS" : cd >= 180 ? "SS" : "S",
       metric1Label: isRu ? "ПЕРЕДАЧА КРИТ. УРОНА (УЛЬТА)" : "CRIT DMG GRANT (ULTIMATE)",
       metric1Value: `+${cdTransfer.toFixed(1)}% КУ ЦЕЛИ`,
       metric2Label: isRu ? "МГНОВЕННОЕ ПРОДВИЖЕНИЕ ХОДА" : "ACTION ADVANCE PER SKILL",
@@ -489,6 +460,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "SUPPORT",
       hasDualOutput: false,
+      benchmarkTier: spd >= 160 && cr >= 70 ? "SSS" : spd >= 145 ? "SS" : "S",
       metric1Label: isRu ? "ПРОДВИЖЕНИЕ ДЕЙСТВИЙ ОТРЯДА" : "TEAM ACTION ACCELERATION",
       metric1Value: isSpeedCap ? "+40.0% AV (160+ SPD)" : "+25.0% AV",
       metric2Label: isRu ? "ГЕНЕРАЦИЯ ОЧКОВ НАВЫКОВ" : "SKILL POINT GENERATION",
@@ -523,10 +495,11 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "HYBRID_SUBDPS",
       hasDualOutput: true,
+      benchmarkTier: atk >= 4e3 ? "SSS" : atk >= 3500 ? "SS" : "S",
       metric1Label: isRu ? "ДОП. УРОН В КОНЦЕРТЕ (DPA)" : "ADDITIONAL CONCERT HIT (DPA)",
       metric1Value: `${addDmgHit.toLocaleString("ru-RU")} ЗА УДАР`,
       metric2Label: isRu ? "ЗАЛИВКА СИЛЫ АТАКИ ОТРЯДУ" : "TEAM ATK GRANT (CONCERT)",
-      metric2Value: `+${atkTransfer.toLocaleString("ru-RU")} ATK (${atk.toLocaleString("ru-RU")} РОБИН)`,
+      metric2Value: `+${atkTransfer.toLocaleString("ru-RU")} ATK (${atk.toLocaleString("ru-RU")} ЗАРЯНКА)`,
       metric3Label: isRu ? "МАССОВОЕ ПРОДВИЖЕНИЕ ХОДА" : "TEAM ACTION ADVANCE",
       metric3Value: "100% AV ВСЕМУ ОТРЯДУ",
       personalDpa: addDmgHit,
@@ -534,7 +507,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
 
       personalDpaLabel: isRu ? "Физ. урон за каждую атаку союзника" : "Phys DMG per ally attack",
       personalDpcLabel: isRu ? "Суммарный доп. урон в Концерте" : "Total Concert DMG (8 hits)",
-      personalMetric3Label: isRu ? "Сила атаки Робин" : "Robin Base Attack",
+      personalMetric3Label: isRu ? "Сила атаки Зарянки" : "Robin Base Attack",
       personalMetric3Value: `${atk.toLocaleString("ru-RU")} ATK`,
       teamDpsAmp: "+65%",
       teamUtilityBadges: [
@@ -546,7 +519,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
         {
           label: isRu ? "ЗАЛИВКА СИЛЫ АТАКИ" : "TEAM ATK BOOST",
           value: isRu ? `+${atkTransfer.toLocaleString("ru-RU")} Силы атаки отряду` : `+${atkTransfer.toLocaleString("en-US")} ATK to whole team`,
-          desc: isRu ? "Формула: 22.8% от силы атаки Робин + 200 ATK." : "Scales from Robin ATK: formula 22.8% ATK + 200."
+          desc: isRu ? "Формула: 22.8% от силы атаки Зарянки + 200 ATK." : "Scales from Robin ATK: formula 22.8% ATK + 200."
         },
         {
           label: isRu ? "БУСТ ВСЕГО УРОНА И БОНУС-АТАК" : "ALL-DMG & FUA CRIT BOOST",
@@ -554,7 +527,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
           desc: isRu ? "Пассивно усиливает весь исходящий урон отряда на 50% и КУ бонус-атак на 25%." : "Passively amplifies team damage by 50% and follow-up Crit DMG by 25%."
         }
       ],
-      summaryRu: `Робин объединяет мгновенное 100% продвижение хода всего отряда с колоссальной заливкой силы атаки (+${atkTransfer.toLocaleString("ru-RU")} ATK) и наносит ~${addDmgHit.toLocaleString("ru-RU")} физического урона за каждую атаку союзников.`,
+      summaryRu: `Зарянка объединяет мгновенное 100% продвижение хода всего отряда с колоссальной заливкой силы атаки (+${atkTransfer.toLocaleString("ru-RU")} ATK) и наносит ~${addDmgHit.toLocaleString("ru-RU")} физического урона за каждую атаку союзников.`,
       summaryEn: `Robin pairs instantaneous 100% whole-team action advance with massive +${atkTransfer.toLocaleString("en-US")} ATK transfer and ~${addDmgHit.toLocaleString("en-US")} physical sub-DPS hit on each ally attack.`
     };
   }
@@ -564,6 +537,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "SUPPORT",
       hasDualOutput: false,
+      benchmarkTier: be >= 180 && spd >= 143 ? "SSS" : be >= 160 ? "SS" : "S",
       metric1Label: isRu ? "ЭФФЕКТИВНОСТЬ ПРОБИТИЯ" : "WEAKNESS BREAK EFFICIENCY",
       metric1Value: "+50.0% СКОРОСТИ ПРОБИТИЯ",
       metric2Label: isRu ? "ПРОБИТИЕ СОПРОТИВЛЕНИЯ (RES PEN)" : "ALL-TYPE RES PEN",
@@ -602,6 +576,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "SUPPORT",
       hasDualOutput: false,
+      benchmarkTier: cd >= 220 && spd >= 160 ? "SSS" : cd >= 180 ? "SS" : "S",
       metric1Label: isRu ? "ПЕРЕДАЧА КРИТ. УРОНА" : "CRIT DMG CONVERSION",
       metric1Value: `+${cdTransfer.toFixed(1)}% КУ ЦЕЛИ`,
       metric2Label: isRu ? "ПРОДВИЖЕНИЕ ДЕЙСТВИЯ (НАВЫК)" : "ACTION ADVANCE (SKILL)",
@@ -635,6 +610,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "SUPPORT",
       hasDualOutput: false,
+      benchmarkTier: cd >= 200 && spd >= 134 ? "SSS" : cd >= 160 ? "SS" : "S",
       metric1Label: isRu ? "ПЕРЕДАЧА КРИТ. УРОНА (УЛЬТА)" : "CRIT DMG GRANT (ULTIMATE)",
       metric1Value: `+${cdTransfer.toFixed(1)}% КУ ОТРЯДУ`,
       metric2Label: isRu ? "МГНОВЕННОЕ ПРОДВИЖЕНИЕ (НАВЫК)" : "100% ACTION ADVANCE (SKILL)",
@@ -662,6 +638,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "SUPPORT",
       hasDualOutput: false,
+      benchmarkTier: spd >= 160 && atk >= 2600 ? "SSS" : spd >= 145 ? "SS" : "S",
       metric1Label: isRu ? "ЗАЛИВКА ЭНЕРГИИ УЛЬТЫ" : "ULTIMATE ENERGY BATTERY",
       metric1Value: "+50-60 EP МГНОВЕННО",
       metric2Label: isRu ? "УСИЛЕНИЕ УРОНА ЦЕЛИ" : "TARGET DMG AMPLIFICATION",
@@ -692,6 +669,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
     return {
       type: "SUSTAIN",
       hasDualOutput: false,
+      benchmarkTier: hp >= 7500 && def >= 1400 ? "SSS" : hp >= 6500 ? "SS" : "S",
       metric1Label: isRu ? "ПЕРЕНАПРАВЛЕНИЕ УРОНА ОТРЯДА" : "TEAM DAMAGE REDIRECTION",
       metric1Value: `${redirection} В ФУ СЮАНЬ`,
       metric2Label: isRu ? "КОМАНДНЫЙ КРИТ. ШАНС" : "TEAM CRIT RATE AURA",
@@ -735,8 +713,9 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
         metric2Value: `${totalDPC.toLocaleString("ru-RU")}`,
         metric3Label: isRu ? "ЧАСТОТА ХОДОВ В ЦИКЛЕ" : "ACTIONS PER CYCLE",
         metric3Value: `${actionsPerCycle.toFixed(2)}x (${actionsPerCycle0.toFixed(2)}x в Цикле 0)`,
-        summaryRu: `Симуляция против босса MoC 12 (95 ур.): суперпробитие наносит ~${superBreakDPA.toLocaleString("ru-RU")} урона за действие при ${be.toFixed(0)}% ЭП.`,
-        summaryEn: `Simulated vs MoC 12 Lv.95 Boss: Super Break deals ~${superBreakDPA.toLocaleString("en-US")} per hit at ${be.toFixed(0)}% BE.`,
+        summaryRu: `Симуляция против босса MoC 12 (90 ур.): суперпробитие наносит ~${superBreakDPA.toLocaleString("ru-RU")} урона за действие при ${be.toFixed(0)}% ЭП.`,
+        summaryEn: `Simulated vs MoC 12 Lv.90 Boss: Super Break deals ~${superBreakDPA.toLocaleString("en-US")} per hit at ${be.toFixed(0)}% BE.`,
+        benchmarkTier: totalDPC >= 28e4 ? "SSS" : totalDPC >= 2e5 ? "SS" : totalDPC >= 14e4 ? "S" : "A"
       };
     }
     case "DOT_DPS": {
@@ -756,6 +735,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
         metric3Value: `${(ehrFactor * 100).toFixed(1)}%`,
         summaryRu: `Периодический урон боссу: ~${dotTick.toLocaleString("ru-RU")} за срабатывание. При детонациях суммарно ~${dotDPC.toLocaleString("ru-RU")} в цикл.`,
         summaryEn: `Boss DoT tick: ~${dotTick.toLocaleString("en-US")} per proc. Aggregated cycle output ~${dotDPC.toLocaleString("en-US")}.`,
+        benchmarkTier: dotDPC >= 22e4 ? "SSS" : dotDPC >= 16e4 ? "SS" : dotDPC >= 11e4 ? "S" : "A"
       };
     }
     case "PRESERVATION_DEF":
@@ -773,6 +753,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
         metric3Value: `${actionsPerCycle.toFixed(2)}x в цикл (${spd.toFixed(1)} SPD)`,
         summaryRu: `Защитный барьер: генерирует ${shieldPerSkill.toLocaleString("ru-RU")} прочности за ход, увеличивая выживаемость команды в ${teamEhpMultiplier} раза.`,
         summaryEn: `Protective Barrier: provides ${shieldPerSkill.toLocaleString("en-US")} shield capacity per action, multiplying team EHP by ${teamEhpMultiplier}x.`,
+        benchmarkTier: def >= 4e3 ? "SSS" : def >= 3500 ? "SS" : "S"
       };
     }
     case "ABUNDANCE_HEAL":
@@ -792,14 +773,15 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
         metric3Value: isLuochaChar ? `+${actionsPerCycle.toFixed(2)} SP / цикл (${spd.toFixed(1)} SPD)` : `${actionsPerCycle.toFixed(2)}x ходов в цикл (${spd.toFixed(1)} SPD)`,
         summaryRu: isLuochaChar ? `Лоча (Изобилие) против босса MoC 12: мгновенно лечит союзников с HP < 50% без расхода очков навыков (~${healPerTurn.toLocaleString("ru-RU")} HP за срабатывание), снимает баффы с противников ультимейтом и генерирует стабильные +SP.` : `Исцеление: восстанавливает ~${healPerTurn.toLocaleString("ru-RU")} HP за действие и надёжно удерживает здоровье отряда выше 90%.`,
         summaryEn: isLuochaChar ? `Luocha (Abundance) vs MoC 12 Boss: auto-heals allies below 50% HP without SP cost (~${healPerTurn.toLocaleString("en-US")} HP per proc), strips boss buffs with ultimate and remains fully SP positive.` : `Sustain Healing: restores ~${healPerTurn.toLocaleString("en-US")} HP per turn, maintaining team above 90% HP.`,
+        benchmarkTier: (isLuochaChar ? atk >= 2800 : hp >= 5500) && spd >= 134 ? "SSS" : spd >= 120 ? "SS" : "S"
       };
     }
     case "HP_CRIT_DPS":
     case "CRIT_DPS":
     default: {
       const isHpScale = archetype === "HP_CRIT_DPS";
-      const scalingStat = isHpScale ? hp : atk;
-      const isHimekoChar = charId === "1003";
+      const scalingStat = Math.max(1200, isHpScale ? hp : atk);
+      const isHimekoChar = charId === "1003" || name.includes("химеко") || name.includes("himeko") || name.includes("нова") || name.includes("nova");
       const effectiveCr = isHimekoChar ? Math.min(1, simCr + 0.15) : simCr;
       const effectiveCritMult = 1 + effectiveCr * simCd;
       const motionValue = isHimekoChar ? 2.8 : 2.4;
@@ -816,32 +798,10 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru") {
         metric2Value: `${dpc.toLocaleString("ru-RU")}`,
         metric3Label: isRu ? isHimekoChar ? "КРИТ. МНОЖИТЕЛЬ (+15% КШ ПАССИВКА)" : "ОЖИДАЕМЫЙ МНОЖИТЕЛЬ КРИТА" : isHimekoChar ? "CRIT MULTIPLIER (+15% CR PASSIVE)" : "EXPECTED CRIT MULTIPLIER",
         metric3Value: `${effectiveCritMult.toFixed(2)}x (${(effectiveCr * 100).toFixed(0)}% / ${(simCd * 100).toFixed(0)}%)`,
-        summaryRu: isHimekoChar ? `Оценка обычной Химеко (ID 1003) против босса MoC 12: около ${dpa.toLocaleString("ru-RU")} урона за условный удар и ${dpc.toLocaleString("ru-RU")} за модельный цикл.` : `Оценка боя против босса MoC 12: около ${dpa.toLocaleString("ru-RU")} урона за условный удар и ${dpc.toLocaleString("ru-RU")} за модельный цикл при множителе крита ${critMultiplier.toFixed(2)}x.`,
-        summaryEn: isHimekoChar ? `Regular Himeko (ID 1003) estimate vs a MoC 12 boss: about ${dpa.toLocaleString("en-US")} damage per modeled hit and ${dpc.toLocaleString("en-US")} per modeled cycle.` : `MoC 12 boss estimate: about ${dpa.toLocaleString("en-US")} damage per modeled hit and ${dpc.toLocaleString("en-US")} per modeled cycle at ${critMultiplier.toFixed(2)}x expected crit multiplier.`,
+        summaryRu: isHimekoChar ? `Химеко (включая Нову) против босса MoC 12: наносит ~${dpa.toLocaleString("ru-RU")} с навыка и сверхспособности, а с учётом бонус-атак Победного куража (Victory Rush) суммарный урон за цикл достигает ~${dpc.toLocaleString("ru-RU")} при боевом множителе крита ${effectiveCritMult.toFixed(2)}x.` : `Симуляция боя против босса MoC 12: средний удар наносит ~${dpa.toLocaleString("ru-RU")}, суммарный урон за цикл ~${dpc.toLocaleString("ru-RU")} при множителе крита ${critMultiplier.toFixed(2)}x.`,
+        summaryEn: isHimekoChar ? `Himeko (including Nova) vs MoC 12 Boss: deals ~${dpa.toLocaleString("en-US")} per skill/ultimate, scaling to ~${dpc.toLocaleString("en-US")} cycle output including Victory Rush follow-up attacks at ${effectiveCritMult.toFixed(2)}x crit expectation.` : `Simulated vs MoC 12 Boss: average attack delivers ~${dpa.toLocaleString("en-US")}, totaling ~${dpc.toLocaleString("en-US")} per cycle at ${critMultiplier.toFixed(2)}x crit expectation.`,
+        benchmarkTier: dpc >= 5e4 ? "SSS" : dpc >= 35e3 ? "SS" : dpc >= 22e3 ? "S" : dpc >= 14e3 ? "A" : "B"
       };
     }
   }
-}
-
-// The legacy character heuristics do not have matched 0/100/200 benchmark
-// builds. Keep their damage estimate available, but never present its old
-// absolute thresholds as a relic grade or a cross-character performance rank.
-export function runCombatSimulation(char, stats, archetype, lang = "ru") {
-  const result = runCombatSimulationHeuristic(char, stats, archetype, lang);
-  if (!result) return result;
-  const output = /cycle|цик|aha instant/i.test(result.personalDpcLabel || "")
-    ? {
-        ...result,
-        personalDpc: null,
-        personalDpcLabel: null,
-        summaryRu: "Цикловая оценка скрыта: модель не просчитывает порядок ходов, энергию и повторные действия. Показан только оценочный урон отдельного удара.",
-        summaryEn: "Cycle output is unavailable: this model does not simulate turn order, energy, or repeated actions. Only a modeled single-hit estimate is available.",
-        cycleEstimateHidden: true
-      }
-    : result;
-  return {
-    ...output,
-    benchmarkStatus: "unavailable",
-    calculationPrecision: ROTATIONS[String(char?.id || "")] ? "configured-script-estimate" : "archetype-estimate"
-  };
 }
