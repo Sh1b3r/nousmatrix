@@ -83,12 +83,12 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
 
   // Специфика таланта СВ ур. 999 («I Carry, We Win»):
   // Избыточный КШ > 100% конвертируется в Крит. Урон
-  const isWolf999 = (charId === "1006" && (charName.toLowerCase().includes("999") || mainChar.path?.name === "Elation" || mainChar.path?.id === "Elation")) || charName.toLowerCase().includes("999");
+  const isWolf999 = (charId === "1006" && (name.includes("999") || mainChar.path?.name === "Elation" || mainChar.path?.id === "Elation")) || name.includes("999");
   const overcritBonusCd = (isWolf999 && rawTotalCr > 100) ? (rawTotalCr - 100) : 0;
 
   // Специфика следа Авантюрина: Прибой («Revel in Surging Waves»):
   // +100% базовой эффективности Радости при наличии союзника Радости
-  const isAvenSurging = charId === "1513" || charName.toLowerCase().includes("прибой") || charName.toLowerCase().includes("waveflair");
+  const isAvenSurging = charId === "1513" || name.includes("прибой") || name.includes("waveflair");
   const hasElationTeammate = matchedTeammates.some(tm => {
     const tmId = String(tm.id || "");
     const tmRole = `${tm.roleRu || ""} ${tm.roleEn || ""}`.toLowerCase();
