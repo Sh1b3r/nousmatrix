@@ -238,36 +238,174 @@ export const CHARACTER_SQUADS = {
 
   "1308": [
     {
-      id: "acheron_nihility_bis",
-      nameRu: "Отряд 1: Премиум Двойное Небытие (Цзяоцю + Волк)",
-      nameEn: "Team 1: Premium Dual Nihility",
-      descRu: "Золотой стандарт Ахерон: непрерывная генерация зарядов Слэша при каждом ходе любого врага и максимальный срез защиты.",
-      descEn: "The undisputed gold standard for Acheron: feeds Slashed Dream charges on enemy turns and shreds defense.",
+      id: "acheron_meta_pela_sunday_gallagher",
+      nameRu: "Отряд 1: Актуальная Мета (Пела + Воскресенье + Галлахер)",
+      nameEn: "Team 1: Modern Meta (Pela + Sunday + Gallagher)",
+      descRu: "Актуальный соревновательный отряд Ахерон: Пела даёт постоянный AoE срез защиты (-42% DEF) и заряды Слэша, Воскресенье заливает 100% продвижение и КУ, Галлахер накладывает дебаффы Ошеломления и генерирует SP без расхода очков.",
+      descEn: "Contemporary Acheron meta setup: Pela ensures 100% uptime AoE DEF shred (-42%) and Slash charge feeds, Sunday provides 100% action advance and Crit DMG, while Gallagher inflicts Besotted debuffs and prints SP.",
       teammates: [
         {
-          id: "1218",
-          nameRu: "Цзяоцю",
-          nameEn: "Jiaoqiu",
-          icon: "icon/character/1218.png",
-          names: ["цзяоцю", "jiaoqiu"],
-          roleRu: "Небытие (Уязвимость Ульт)",
-          roleEn: "Nihility (Ult Vulnerability)",
-          buffDescRu: "+35.0% Урон ультимейтов, +15.0% Входящий урон, генерация зарядов каждый ход врага",
-          buffDescEn: "+35% Ult DMG taken, +15% All DMG taken, charge feed on enemy actions",
-          buffValues: { ultVuln: 35, allVuln: 15, slashFeed: true }
+          id: "1105",
+          nameRu: "Пела",
+          nameEn: "Pela",
+          icon: "icon/character/1105.png",
+          names: ["пела", "pela"],
+          roleRu: "Небытие (AoE Срез Защиты)",
+          roleEn: "Nihility (AoE DEF Shred)",
+          buffDescRu: "-42.0% Защиты всем врагам с ультимейта каждые 2 хода (с конусом «Решимость»), стабильная заливка Багровых узлов",
+          buffDescEn: "-42% AoE DEF shred every 2 turns, stable Crimson Knot generator",
+          buffValues: { defShred: 42, allVuln: 16 }
         },
         {
-          id: "1006",
-          altIds: ["1105"],
-          nameRu: "Серебряный Волк",
-          nameEn: "Silver Wolf",
-          icon: "icon/character/1006.png",
-          names: ["серебряный волк", "silver wolf", "волк", "пела", "pela"],
+          id: "1313",
+          altIds: ["1306"],
+          nameRu: "Воскресенье",
+          nameEn: "Sunday",
+          icon: "icon/character/1313.png",
+          names: ["воскресенье", "sunday", "искорка", "sparkle"],
+          roleRu: "Саппорт (100% Продвижение и КУ)",
+          roleEn: "Support (100% Advance & Crit)",
+          buffDescRu: "100% Продвижение хода, заливка энергии, передача +70-100% КУ и +50% общего урона",
+          buffDescEn: "100% Action Advance, +70-100% Crit DMG transfer, and +50% DMG boost",
+          buffValues: { targetAdvance: 100, cdGrant: 80, dmgBoost: 50 }
+        },
+        {
+          id: "1301",
+          altIds: ["1208", "1217"],
+          nameRu: "Галлахер",
+          nameEn: "Gallagher",
+          icon: "icon/character/1301.png",
+          names: ["галлахер", "gallagher", "фу сюань", "fu xuan", "хохо", "huohuo"],
+          roleRu: "Изобилие (Дебаффы и Генератор SP)",
+          roleEn: "Abundance (Debuffs & SP Engine)",
+          buffDescRu: "Статус «Ошеломление» (+12% входящего урона пробития), дебафф атаки с усиленной базовой атаки, даёт 2 заряда Ахерон за связку Ульт+Базовая",
+          buffDescEn: "Besotted status, ATK debuff on enhanced basic, feeds 2 Crimson Knots via Ult + Enhanced Basic combo",
+          buffValues: { allVuln: 12, breakVuln: 12 }
+        }
+      ]
+    },
+    {
+      id: "acheron_dual_nihility_classic",
+      nameRu: "Отряд 2: Чистое Небытие (Пела + Черный Лебедь / Гуйнайфэнь + Фу Сюань)",
+      nameEn: "Team 2: Pure Nihility Core (Pela + Black Swan / Guinaifen + Fu Xuan)",
+      descRu: "Активация полного следа «Бездна» (160% множитель урона за 2 персонажей Небытия): Пела + второй дебаффер накладывают статус уязвимости и срез защиты, обеспечивая гарантированную заливку ультимейта без просадок по выживанию.",
+      descEn: "Full Abyss trace activation (160% damage multiplier for 2 Nihility allies): Pela + secondary debuffer ensure steady Crimson Knot feeds and maximum DEF reduction.",
+      teammates: [
+        {
+          id: "1105",
+          nameRu: "Пела",
+          nameEn: "Pela",
+          icon: "icon/character/1105.png",
+          names: ["пела", "pela"],
           roleRu: "Небытие (Срез защиты)",
           roleEn: "Nihility (DEF Shred)",
-          buffDescRu: "-45.0% Защиты цели со Сверхспособности, -20.0% RES внедрённого элемента",
-          buffDescEn: "-45% DEF Shred from Ult, -20% Elemental RES reduction",
-          buffValues: { defShred: 45, resPen: 20 }
+          buffDescRu: "-42% Защиты всем целям, наложение дебаффов каждым действием",
+          buffDescEn: "-42% AoE DEF shred, feeds charges on every action",
+          buffValues: { defShred: 42 }
+        },
+        {
+          id: "1307",
+          altIds: ["1210"],
+          nameRu: "Чёрный Лебедь / Гуйнайфэнь",
+          nameEn: "Black Swan / Guinaifen",
+          icon: "icon/character/1307.png",
+          names: ["чёрный лебедь", "black swan", "гуйнайфэнь", "guinaifen"],
+          roleRu: "Небытие (Дебаффы и Уязвимость)",
+          roleEn: "Nihility (Debuffs & Vulnerability)",
+          buffDescRu: "До +20.8% входящего урона (Арканы/Огненный поцелуй), -20.8% защиты цели, стабильные заряды ультимейта Ахерон",
+          buffDescEn: "Up to +20.8% Vulnerability (Arcana / Fire Kiss), -20.8% DEF, constant Knot procs",
+          buffValues: { allVuln: 20.8, defShred: 20.8 }
+        },
+        {
+          id: "1208",
+          altIds: ["1301", "1203"],
+          nameRu: "Фу Сюань",
+          nameEn: "Fu Xuan",
+          icon: "icon/character/1208.png",
+          names: ["фу сюань", "fu xuan", "галлахер", "gallagher", "лоча", "luocha"],
+          roleRu: "Сохранение (Крит. Шанс и Защита)",
+          roleEn: "Preservation (Crit Rate & Matrix)",
+          buffDescRu: "+12.0% Крит. шанс всей команде, блокировка контроля, поглощение 65% урона отряда (с «Трендом» — наложение горения)",
+          buffDescEn: "+12% CRIT Rate to team, CC block, absorbs 65% team damage",
+          buffValues: { crGrant: 12 }
+        }
+      ]
+    }
+  ],
+
+  "1006": [
+    {
+      id: "sw_quantum_mono",
+      nameRu: "Отряд 1: Моно-Квант (Зеле + Искорка + Фу Сюань)",
+      nameEn: "Team 1: Mono-Quantum (Seele + Sparkle + Fu Xuan)",
+      descRu: "Классический моно-квантовый отряд: Серебряный Волк гарантированно внедряет квантовую уязвимость (100%), снимает до 53% защиты цели со сверхспособности и таланта, разгоняя гиперкерри Зеле.",
+      descEn: "Classic Mono-Quantum: Silver Wolf guarantees 100% Quantum weakness implant, shreds up to 53% DEF via Ultimate and bugs, propelling Seele to max output.",
+      teammates: [
+        {
+          id: "1102",
+          altIds: ["1211"],
+          nameRu: "Зеле / Цинцюэ",
+          nameEn: "Seele / Qingque",
+          icon: "icon/character/1102.png",
+          names: ["зеле", "seele", "цинцюэ", "qingque"],
+          roleRu: "Квантовый Керри",
+          roleEn: "Quantum Main Carry",
+          buffDescRu: "Реализует внедрённую квантовую уязвимость и срез защиты Волка",
+          buffValues: { carrySynergy: true }
+        },
+        {
+          id: "1306",
+          nameRu: "Искорка",
+          nameEn: "Sparkle",
+          icon: "icon/character/1306.png",
+          names: ["искорка", "sparkle"],
+          roleRu: "Саппорт (Продвижение и КУ)",
+          roleEn: "Harmony (Advance & Crit DMG)",
+          buffDescRu: "+50% Продвижение хода, передача +102% КУ, +48% Урон отряду",
+          buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48 }
+        },
+        {
+          id: "1208",
+          nameRu: "Фу Сюань",
+          nameEn: "Fu Xuan",
+          icon: "icon/character/1208.png",
+          names: ["фу сюань", "fu xuan"],
+          roleRu: "Сохранение (Матрица Прорицания)",
+          roleEn: "Preservation (Crit Rate & Matrix)",
+          buffDescRu: "+12.0% Крит. шанс команде, поглощение входящего урона",
+          buffValues: { crGrant: 12 }
+        }
+      ]
+    },
+    {
+      id: "sw_ratio_hyper",
+      nameRu: "Отряд 2: Дебафф-Гиперкерри (Д-р Рацио + Воскресенье + Авантюрин)",
+      nameEn: "Team 2: Debuff Hypercarry (Dr. Ratio + Sunday + Aventurine)",
+      descRu: "Серебряный Волк в одиночку мгновенно накладывает 5 различных дебаффов (уязвимость, срез защиты, баги на атаку, скорость и защиту), гарантируя 100% шанс бонус-атак Доктора Рацио и максимальный крит-бонус.",
+      descEn: "Silver Wolf single-handedly inflicts up to 5 unique debuffs, guaranteeing 100% Dr. Ratio follow-up triggers and max talent damage stacks.",
+      teammates: [
+        {
+          id: "1305",
+          nameRu: "Д-р Рацио",
+          nameEn: "Dr. Ratio",
+          icon: "icon/character/1305.png",
+          names: ["рацио", "ratio", "д-р рацио", "dr. ratio"],
+          roleRu: "Охота (Главный ДПС)",
+          roleEn: "Hunt (Main Carry)",
+          buffDescRu: "Наносит частые бонус-атаки с максимальным бонусом урона от дебаффов Волка",
+          buffValues: { carrySynergy: true }
+        },
+        {
+          id: "1313",
+          altIds: ["1306", "1309"],
+          nameRu: "Воскресенье",
+          nameEn: "Sunday",
+          icon: "icon/character/1313.png",
+          names: ["воскресенье", "sunday", "искорка", "sparkle", "робин", "robin"],
+          roleRu: "Саппорт (Продвижение и КУ)",
+          roleEn: "Harmony (Advance & Crit)",
+          buffDescRu: "100% Продвижение хода, передача КУ и энергии",
+          buffValues: { targetAdvance: 100, cdGrant: 75, dmgBoost: 50 }
         },
         {
           id: "1304",
@@ -276,59 +414,14 @@ export const CHARACTER_SQUADS = {
           nameEn: "Aventurine",
           icon: "icon/character/1304.png",
           names: ["авантюрин", "aventurine", "галлахер", "gallagher", "фу сюань", "fu xuan"],
-          roleRu: "Сохранение (Тренд / Дебаффы)",
-          roleEn: "Preservation (Trend / Debuffs)",
-          buffDescRu: "Щиты отряда, +15% Крит. уязвимость, наложение дебаффов для зарядов Ахерон",
-          buffValues: { critVuln: 15, debuffProcs: true }
-        }
-      ]
-    },
-    {
-      id: "acheron_sparkle_e2",
-      nameRu: "Отряд 2: Гиперкерри с Продвижением (Искорка/Сандей)",
-      nameEn: "Team 2: Action Advance Hypercarry",
-      descRu: "Для Э2+ Ахерон или ротаций через гиперскоростных буферов действий для частых ультимейтов.",
-      descEn: "Optimized for E2+ Acheron or hyperspeed buffer rotations for rapid ultimate cycles.",
-      teammates: [
-        {
-          id: "1306",
-          altIds: ["1313"],
-          nameRu: "Искорка",
-          nameEn: "Sparkle",
-          icon: "icon/character/1306.png",
-          names: ["искорка", "sparkle", "воскресенье", "sunday"],
-          roleRu: "Саппорт (Продвижение и КУ)",
-          roleEn: "Harmony (Advance & Crit)",
-          buffDescRu: "+50% Продвижение, передача +102% КУ, +48% Урон, расширение до 7 SP",
-          buffValues: { targetAdvance: 50, cdGrant: 102, dmgBoost: 48, spBurst: 4 }
-        },
-        {
-          id: "1218",
-          altIds: ["1105"],
-          nameRu: "Цзяоцю",
-          nameEn: "Jiaoqiu",
-          icon: "icon/character/1218.png",
-          names: ["цзяоцю", "jiaoqiu", "пела", "pela"],
-          roleRu: "Небытие (Срез / Уязвимость)",
-          roleEn: "Nihility (Shred & Vuln)",
-          buffDescRu: "+35% Урон ультимейтов или -42% Срез защиты AoE",
-          buffValues: { ultVuln: 35, defShred: 42 }
-        },
-        {
-          id: "1304",
-          nameRu: "Авантюрин",
-          nameEn: "Aventurine",
-          icon: "icon/character/1304.png",
-          names: ["авантюрин", "aventurine"],
-          roleRu: "Сохранение (Танк)",
-          roleEn: "Preservation (Tank)",
-          buffDescRu: "Щиты, +15% Крит. уязвимость босса",
+          roleRu: "Сохранение (Щиты и Крит. Уязвимость)",
+          roleEn: "Preservation (Shields & Crit Vuln)",
+          buffDescRu: "Щиты отряду, +15% Крит. уязвимость врага",
           buffValues: { critVuln: 15 }
         }
       ]
     }
   ],
-
   "1310": [
     {
       id: "firefly_break_meta",

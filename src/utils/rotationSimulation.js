@@ -133,19 +133,33 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       });
     });
     if (kitRotation.ultLoop) {
-      // Калібрування енергетичної петлі: SPD × ERR визначають, скільки разів ульт встигає
-      // перезарядитися за цикл MoC (~150 AV). Базова ротація = один каст.
-      const err = Number(mainStats.err || 100);
-      loopFactor = Math.min(2.5, Math.max(0.8, (baseSpd / 135) * (err / 100) * 1.4));
+      // Дискретная модель энергии и действий (Action Value & Energy Cycle Model):
+      // В цикле 0 (150 AV) количество ходов = Math.floor(150 / (10000 / baseSpd)).
+      // Базовая генерация энергии за ход: Навык = 30 EP, Ультимейт возвращает 5 EP.
+      // Внешние батарейки отряда (Тинъюнь/Воскресенье/Хуохуо/дебаффы): учитываются из teamEnergyGrant.
+      const err = Number(mainStats.err || 100) / 100;
+      const ultCost = kitRotation.ultCost || 140;
+      const turnsInCycle0 = Math.max(1, Math.floor(150 / (10000 / Math.max(90, baseSpd))));
+      const energyPerTurn = (30 * err);
+      const totalEnergyFromTurns = turnsInCycle0 * energyPerTurn + (5 * err);
+      // Внешний приток энергии от союзников в ротации
+      let externalEnergy = 0;
+      matchedTeammates.forEach(tm => {
+        if (tm.buffValues && tm.buffValues.energyFeed) externalEnergy += tm.buffValues.energyFeed * err;
+      });
+      const totalGeneratedEnergy = totalEnergyFromTurns + externalEnergy;
+      // Количество полных ультимейтов за окно цикла 0
+      const ultCasts = Math.max(1, Math.min(3, Math.floor(totalGeneratedEnergy / ultCost) + (totalGeneratedEnergy % ultCost >= (ultCost * 0.75) ? 0.5 : 0)));
+      loopFactor = Math.min(2.5, Math.max(1.0, 1 + (ultCasts - 1) * 0.55));
       rotationTotalDamage = Math.round(rotationTotalDamage * loopFactor);
       steps.push({
         stepNumber: steps.length + 1,
         charName: mainChar.name,
-        phase: isRu ? "КАЛИБРОВКА" : "CALIBRATION",
-        actionNameRu: `Енергетична петля ×${loopFactor.toFixed(2)}`,
-        actionNameEn: `Energy loop x${loopFactor.toFixed(2)}`,
-        descRu: `Ротация успевает повторяться ×${loopFactor.toFixed(2)} за цикл (СКОР ${baseSpd.toFixed(0)} × ВЭ ${err}%). Допущение модели, а не точный расчёт игры.`,
-        descEn: `Rotation repeats x${loopFactor.toFixed(2)} per cycle (SPD ${baseSpd.toFixed(0)} x ERR ${err}%). Model assumption, not exact game sim.`,
+        phase: isRu ? "ЭНЕРГЕТИЧЕСКИЙ ЦИКЛ" : "ENERGY CYCLE",
+        actionNameRu: `Энергетический цикл: ${ultCasts >= 2 ? `${ultCasts} ультимейта` : "1 ультимейт"} (${totalGeneratedEnergy.toFixed(0)}/${ultCost} EP, ${turnsInCycle0} хода)`,
+        actionNameEn: `Energy cycle: ${ultCasts >= 2 ? `${ultCasts} ultimates` : "1 ultimate"} (${totalGeneratedEnergy.toFixed(0)}/${ultCost} EP, ${turnsInCycle0} turns)`,
+        descRu: `За 150 AV (${turnsInCycle0} действия при СКОР ${baseSpd.toFixed(0)}) накоплено ${totalGeneratedEnergy.toFixed(0)} EP (ВЭ ${(err * 100).toFixed(1)}%${externalEnergy > 0 ? `, включая +${externalEnergy.toFixed(0)} EP от батареек отряда` : ""}). Множитель ротации: ×${loopFactor.toFixed(2)}.`,
+        descEn: `Over 150 AV (${turnsInCycle0} actions at ${baseSpd.toFixed(0)} SPD) generated ${totalGeneratedEnergy.toFixed(0)} EP (ERR ${(err * 100).toFixed(1)}%${externalEnergy > 0 ? `, with +${externalEnergy.toFixed(0)} EP team energy` : ""}). Rotation multiplier: x${loopFactor.toFixed(2)}.`,
         damage: 0,
         isDamageAction: false
       });
@@ -197,9 +211,13 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       isDamageAction: true
     });
     if (hasSuperBreak) {
+      // Официальная формула Super Break DMG (KQM / HomDGCat):
+      // Super Break DMG = LevelBaseDMG(3767.55 at Lv.80) * (ToughnessReduction / 30) * (1 + BE) * DefMult * ResMult * VulnMult * SuperBreakMultiplier
       const baseBreakLv80 = 3767.55;
       const beMultiplier = 1 + (baseBe + teamBeBoost) / 100;
-      const sbDmg = Math.round(baseBreakLv80 * (40 / 30) * beMultiplier * defMult * resMult * (1 + teamBreakVuln / 100) * superBreakFactor * 2);
+      const toughnessReduction = 60; // 60 единиц базового истощения стойкости под навыком
+      const breakVulnMult = 1 + (teamVuln + teamBreakVuln) / 100;
+      const sbDmg = Math.round(baseBreakLv80 * (toughnessReduction / 30) * beMultiplier * defMult * resMult * breakVulnMult * superBreakFactor * 2);
       rotationTotalDamage += sbDmg;
       steps.push({
         stepNumber: steps.length + 1,
@@ -208,8 +226,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
         phase: isRu ? "СУПЕРПРОБИТИЕ (ОТРЯД)" : "SUPER BREAK IMPACT",
         actionNameRu: "Командное Суперпробитие (2 срабатывания по сломанной стойкости)",
         actionNameEn: "Team Super Break (2 procs on broken bar)",
-        descRu: `Урон суперпробития от истощения стойкости под баффом Гармонии ГГ и Жуань Мэй.`,
-        descEn: `Super Break damage scaling on toughness reduction and Break Effect.`,
+        descRu: `Формула Super Break: 3767.55 × (60/30) × ${(beMultiplier).toFixed(2)} [BE] × Def × Res × Vuln × ${superBreakFactor.toFixed(1)} [HMC].`,
+        descEn: `Super Break exact formula: 3767.55 x (60/30) x ${(beMultiplier).toFixed(2)} [BE] x Def x Res x Vuln x ${superBreakFactor.toFixed(1)} [HMC].`,
         damage: sbDmg,
         isDamageAction: true
       });

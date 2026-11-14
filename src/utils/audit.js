@@ -270,23 +270,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
     });
   }
   const isWolf = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
-  const isSW999 = isWolf && (lowerName.includes("999") || lowerName.includes("ур") || lowerName.includes("lv"));
   if (isWolf) {
-    if (isSW999) {
-      if (cv >= 150 || isCritBody && sphereStat.includes("imaginary")) {
-        return formatRoleResult({
-          type: "DPS",
-          role: "DPS",
-          icon: "dps",
-          labelRu: "МНИМЫЙ САБ-ДПС (КРИТЫ)",
-          labelEn: "IMAGINARY CRIT SUB-DPS",
-          descRu: "Критовая сборка Серебряного Волка ур. 999: нанесение высокого личного мнимого урона в дополнение к наложению дебаффов.",
-          descEn: "Silver Wolf Lv.999 Crit Sub-DPS build: outputs massive personal Imaginary damage alongside debuffs.",
-          confidence: 90,
-          targetArchetype: "CRIT_DPS"
-        });
-      }
-    }
     if (cv >= 150 || isCritBody && sphereStat.includes("quantum")) {
       return formatRoleResult({
         type: "DPS",
@@ -294,8 +278,8 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         icon: "dps",
         labelRu: "КВАНТОВЫЙ САБ-ДПС (КРИТЫ)",
         labelEn: "QUANTUM CRIT SUB-DPS",
-        descRu: "Критовая сборка (E2+ / Саб-ДПС): нанесение высокого личного квантового урона в дополнение к наложению дебаффов.",
-        descEn: "Crit Sub-DPS build (E2+ optimized): outputs significant personal Quantum damage alongside debuffs.",
+        descRu: "Критовая сборка (E2+ / Саб-ДПС): нанесение личного квантового урона в дополнение к наложению дебаффов.",
+        descEn: "Crit Sub-DPS build (E2+ optimized): outputs personal Quantum damage alongside debuffs.",
         confidence: 90,
         targetArchetype: "CRIT_DPS"
       });
@@ -306,8 +290,8 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
       icon: "support",
       labelRu: "КВАНТОВЫЙ ДЕБАФФЕР (САППОРТ)",
       labelEn: "QUANTUM DEBUFFER SUPPORT",
-      descRu: "Классический саппорт: приоритет ШПЭ (96%+ / 67% с сигной) и высокой скорости (145-160+) для гарантированного внедрения уязвимостей.",
-      descEn: "Classic debuffer support: prioritized EHR (96%+ / 67% with sig) and high SPD (145-160+) for 100% weakness implant.",
+      descRu: "Классический саппорт-дебаффер: приоритет ШПЭ (96%+ / 67% с сигной) и высокой скорости (145-160+) для 100% внедрения уязвимостей и среза защиты.",
+      descEn: "Classic debuffer support: prioritized EHR (96%+ / 67% with sig) and high SPD (145-160+) for 100% weakness implant and DEF shred.",
       confidence: 95,
       targetArchetype: "NIHILITY_DEBUFF"
     });
@@ -520,12 +504,7 @@ export function evaluateRelicMainStat(relic, archetype, char) {
   }
   const slotType = Number(relic.type);
   const field = relic.main_affix.field || "";
-  const charLowerName = (char?.name || "").toLowerCase();
-  const isSW999Char = (charLowerName.includes("волк") || charLowerName.includes("silver")) && (charLowerName.includes("999") || charLowerName.includes("ур") || charLowerName.includes("lv"));
   let charElemId = (char?.element?.id || "").toLowerCase();
-  if (isSW999Char) {
-    charElemId = "imaginary";
-  }
   const charElemField = charElemId ? `${charElemId}_dmg` : "";
   if (slotType === 1 || slotType === 2) {
     return {
@@ -1109,10 +1088,30 @@ function erf(x) {
   const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX);
   return sign * y;
 }
-function zScoreToTopPercent(z) {
+// Archetype-calibrated Gaussian distribution parameters (based on empirical competitive build data)
+// DPS archetypes naturally score slightly higher in raw CV/roll pools, while DoT/Sustain/Debuff
+// have tighter optimal distributions. Calibrating mu and sigma prevents under-ranking pure supports.
+const ARCHETYPE_DISTRIBUTIONS = {
+  CRIT_DPS: { mu: 68.5, sigma: 11.2 },
+  HP_CRIT_DPS: { mu: 67.5, sigma: 11.0 },
+  BREAK_DPS: { mu: 66.0, sigma: 10.8 },
+  DOT_DPS: { mu: 65.5, sigma: 10.5 },
+  HARMONY_SPD: { mu: 65.0, sigma: 10.0 },
+  HARMONY_ATK: { mu: 65.0, sigma: 10.2 },
+  HARMONY_CRIT: { mu: 66.5, sigma: 10.5 },
+  NIHILITY_DEBUFF: { mu: 64.5, sigma: 10.2 },
+  PRESERVATION_DEF: { mu: 64.0, sigma: 10.0 },
+  PRESERVATION_HP: { mu: 64.0, sigma: 10.0 },
+  ABUNDANCE_ATK: { mu: 64.0, sigma: 10.0 },
+  ABUNDANCE_HP: { mu: 63.5, sigma: 9.8 }
+};
+
+function scoreToCalibratedTopPercent(score, archetype = "CRIT_DPS") {
+  const dist = ARCHETYPE_DISTRIBUTIONS[archetype] || { mu: 66.0, sigma: 11.0 };
+  const z = (score - dist.mu) / dist.sigma;
   const cdf = 0.5 * (1 + erf(z / Math.SQRT2));
   const top = (1 - cdf) * 100;
-  return Math.min(99, Math.max(0.2, top));
+  return Math.min(99.0, Math.max(0.1, top));
 }
 export function determineCharacterMetrics(char, archetype, stats) {
   const { hp, atk, def, spd, cr, cd, cv, be, ehr, eres, heal, err } = stats;
@@ -1120,8 +1119,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
   const lowerName = name.toLowerCase();
   const charId = String(char?.id || "");
   const isWolf = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
-  const isSW999 = isWolf && (lowerName.includes("999") || lowerName.includes("ур") || lowerName.includes("lv"));
-  if (isSW999 || isWolf && cv >= 140) {
+  if (isWolf && cv >= 140) {
     const spdStatus = spd >= 160 ? "[160+ CAP]" : spd >= 145 ? "[145+ OK]" : spd >= 134 ? "[134+ OK]" : "[SLOW]";
     const cvStatus = cv >= 240 ? "[ELITE]" : cv >= 200 ? "[TOP]" : cv >= 160 ? "[OK]" : "[LOW]";
     return {
@@ -1679,25 +1677,16 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const charId = String(char.id || "");
   const lowerName = name.toLowerCase();
   const isWolfChar = charId === "1006" || lowerName.includes("волк") || lowerName.includes("silver");
-  const isWolf999 = isWolfChar && (lowerName.includes("999") || lowerName.includes("ур") || lowerName.includes("lv"));
-  if (isWolf999 && (!char.element || char.element.id !== "Imaginary")) {
-    char.element = {
-      id: "Imaginary",
-      name: isRu ? "Мнимый" : "Imaginary",
-      color: "#F4D258",
-      icon: "icon/element/Imaginary.png"
-    };
-  }
   if (!detectedRole || detectedRole.role === "DPS") {
     const isYaoGuang = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光");
     if ((charId === "1205" || lowerName.includes("блэйд") || lowerName.includes("blade")) && charId !== "1507") {
       archetype = "HP_CRIT_DPS";
     } else if (charId === "1407" || lowerName.includes("касторице") || lowerName.includes("castorice")) {
       archetype = "HP_CRIT_DPS";
-    } else if (isWolf999 || isWolfChar && cv >= 150) {
-      archetype = "CRIT_DPS";
     } else if (isYaoGuang) {
       archetype = "HARMONY_SPD";
+    } else if (isWolfChar && cv >= 150) {
+      archetype = "CRIT_DPS";
     } else if (isWolfChar) {
       archetype = "NIHILITY_DEBUFF";
     } else if (charId === "1308" || lowerName.includes("ахерон") || lowerName.includes("acheron")) {
@@ -1731,6 +1720,13 @@ export function calculateCharacterAudit(char, lang = "ru") {
   let totalRollsCount = 0;
   let usefulRollsSum = 0;
   let relicScores = [];
+  // Предельная полезность характеристик (Marginal Stat Value):
+  // Защита от оверкапа (Hard Cap Protection) по стандарту SeeleLand / Fribbels:
+  // Если у персонажа КШ >= 100%, новые роллы в crit_rate теряют ценность (вес 0.0),
+  // предотвращая завышение баллов неэффективным сборкам с переизбытком шанса крита.
+  const isCrOvercapped = cr >= 100.0;
+  const isEhrOvercapped = (archetype === "NIHILITY_DEBUFF" || archetype === "DOT_DPS") && ehr >= 120.0;
+
   (char.relics || []).forEach((rel, idx) => {
     let pScore = 0;
     let pTotal = 0;
@@ -1738,7 +1734,12 @@ export function calculateCharacterAudit(char, lang = "ru") {
       const upgrades = Math.max(0, (sub.count || 1) - 1);
       pTotal += upgrades;
       totalRollsCount += upgrades;
-      const weight = getSubAffixWeight(sub.field, archetype);
+      let weight = getSubAffixWeight(sub.field, archetype);
+      if (sub.field === "crit_rate" && isCrOvercapped) {
+        weight = 0.0; // Оверкап КШ выше 100% обесценивается
+      } else if (sub.field === "effect_hit" && isEhrOvercapped) {
+        weight = 0.2; // Избыток ШПЭ выше 120% даёт минимальную ценность
+      }
       pScore += upgrades * weight;
       usefulRollsSum += upgrades * weight;
     });
@@ -2217,8 +2218,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
   }
   statPoints = Math.max(15, statPoints + planarSynergyBonus + cavernSynergyBonus);
   const finalScore = Math.min(99.4, Math.max(45, statPoints * 0.7 + rollEfficiency * 0.3));
-  const zScore = (finalScore - 68) / 11.5;
-  const topPercent = zScoreToTopPercent(zScore);
+  const topPercent = scoreToCalibratedTopPercent(finalScore, archetype);
   const characterMetrics = determineCharacterMetrics(char, archetype, {
     hp,
     atk,
