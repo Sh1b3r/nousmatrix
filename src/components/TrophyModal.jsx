@@ -800,8 +800,16 @@ export default function TrophyModal({
                                 </span>
                                 <span className="sub-val">
                                   <span className="relic-sub-num">{sub.display}</span>
-                                  {subEff !== null && <span className={`sub-eff ${effClass(subEff)}`}>{subEff}%</span>}
-                                  {upgrades > 0 && <span className="sub-roll-tag">{`+${upgrades}`}</span>}
+                                  {subEff !== null ? (
+                                    <span className={`sub-eff ${effClass(subEff)}`}>{subEff}%</span>
+                                  ) : (
+                                    <span className="sub-eff empty" aria-hidden="true">0%</span>
+                                  )}
+                                  {upgrades > 0 ? (
+                                    <span className="sub-roll-tag">{`+${upgrades}`}</span>
+                                  ) : (
+                                    <span className="sub-roll-tag empty" aria-hidden="true">+0</span>
+                                  )}
                                 </span>
                               </div>
                             );

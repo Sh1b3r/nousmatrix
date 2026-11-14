@@ -4450,6 +4450,7 @@ main {
   align-items: center;
   font-size: 11px;
   color: var(--text-secondary);
+  gap: 8px;
 }
 
 .relic-sub-item.key-sub {
@@ -4461,33 +4462,75 @@ main {
   display: flex;
   align-items: center;
   gap: 5px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
 }
 
 .relic-sub-item .sub-val {
   font-family: var(--font-mono);
   font-size: 11px;
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: 48px 36px 24px;
   align-items: center;
-  gap: 5px;
+  justify-items: end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.relic-sub-item .relic-sub-num {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-align: right;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .sub-roll-tag {
+  font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
   color: var(--accent);
   background: var(--accent-dim);
   border: 1px solid var(--accent);
-  padding: 1px 4px;
+  padding: 1px 0;
+  width: 24px;
+  text-align: center;
   border-radius: 2px;
+  box-sizing: border-box;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.sub-roll-tag.empty {
+  visibility: hidden;
+  pointer-events: none;
+  border-color: transparent;
+  background: transparent;
 }
 
 .sub-eff {
   font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
-  padding: 1px 4px;
+  padding: 1px 0;
+  width: 36px;
+  text-align: center;
   border-radius: 2px;
-  margin-right: 2px;
+  box-sizing: border-box;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.sub-eff.empty {
+  visibility: hidden;
+  pointer-events: none;
+  background: transparent;
 }
 
 .sub-eff.gold { color: #FFC83D; background: rgba(255, 200, 61, 0.12); }
