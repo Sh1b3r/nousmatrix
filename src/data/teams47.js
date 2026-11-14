@@ -52,10 +52,57 @@ export const TEAMS_47 = {
     }
   ],
 
-  // Серебряный Волк ур. 999 (1006) — ДАМАГЕР РАДОСТИ
+  // Серебряный Волк ур. 999 (1006 / 999) — ДАМАГЕР РАДОСТИ
   "1006": [
     {
       id: "sw999_elation_hyper",
+      nameRu: "Отряд 1 (4.7): Дамагер Радости (Авантюрин: Прибой + Зарянка + Гиацина)",
+      nameEn: "Team 1 (4.7): Elation Hypercarry (Aventurine: Surging + Robin + Hyacine)",
+      descRu: "Сборка Серебряного Волка ур. 999 как дамагера пути Радости: синергия со сетом «Миг радости бога», парные атаки Радости с Авантюрином Прибоем под продвижением Зарянки.",
+      descEn: "Silver Wolf Lv.999 as dedicated Elation DPS: triggers God's Moment of Joy, paired with Aventurine Surging and Robin's whole-team advance.",
+      isEstimate: true,
+      teammates: [
+        {
+          id: "1513",
+          nameRu: "Авантюрин: Прибой",
+          nameEn: "Aventurine: Surging",
+          icon: "icon/character/1513.png",
+          names: ["авантюрин", "aventurine", "прибой"],
+          roleRu: "Радость (Дамагер Радости)",
+          roleEn: "Elation (Elation DPS)",
+          buffDescRu: "Второй дамагер Радости: координированные атаки Радости и срез стойкости",
+          buffValues: { carrySynergy: true, critVuln: 15 }
+        },
+        {
+          id: "1309",
+          altIds: ["1313"],
+          nameRu: "Зарянка",
+          nameEn: "Robin",
+          icon: "icon/character/1309.png",
+          names: ["зарянка", "робин", "robin"],
+          roleRu: "Саппорт (Атака и Продвижение)",
+          roleEn: "Support (ATK & Team Advance)",
+          buffDescRu: "100% Продвижение отряда, бафф урона и атаки",
+          buffValues: { teamAdvance: 100, dmgBoost: 50 }
+        },
+        {
+          id: "1409",
+          altIds: ["1301", "1217"],
+          nameRu: "Гиацина",
+          nameEn: "Hyacine",
+          icon: "icon/character/1409.png",
+          names: ["гиацина", "hyacine"],
+          roleRu: "Сохранение (Лечение и КШ)",
+          roleEn: "Sustain (Heals & CR)",
+          buffDescRu: "Лечение, выживание отряда, +12% КШ",
+          buffValues: { crGrant: 12, energyFeed: 20 }
+        }
+      ]
+    }
+  ],
+  "999": [
+    {
+      id: "sw999_elation_hyper_alias",
       nameRu: "Отряд 1 (4.7): Дамагер Радости (Авантюрин: Прибой + Зарянка + Гиацина)",
       nameEn: "Team 1 (4.7): Elation Hypercarry (Aventurine: Surging + Robin + Hyacine)",
       descRu: "Сборка Серебряного Волка ур. 999 как дамагера пути Радости: синергия со сетом «Миг радости бога», парные атаки Радости с Авантюрином Прибоем под продвижением Зарянки.",

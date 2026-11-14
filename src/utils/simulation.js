@@ -57,10 +57,11 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
   const isBronya = charId === "1101" || name.includes("броня") || name.includes("bronya");
   const isTingyun = charId === "1202" || name.includes("тиньъюнь") || name.includes("тинъюнь") || name.includes("tingyun");
   const isWelt = charId === "1004" || name.includes("вельт") || name.includes("welt");
-  const isSilverWolf = charId === "1006" || name.includes("волк") || name.includes("silver");
+  const isSilverWolf = charId === "1006" || charId === "999" || name.includes("волк") || name.includes("silver");
   const isPela = charId === "1105" || name.includes("пела") || name.includes("pela");
   const isJiaoqiu = charId === "1218" || name.includes("цзяоцю") || name.includes("jiaoqiu");
-  const isAventurine = charId === "1304" || name.includes("авантюрин") || name.includes("aventurine");
+  const isAventurineSurging = charId === "1513" || name.includes("прибой") || name.includes("waveflair");
+  const isAventurine = (charId === "1304" || name.includes("авантюрин") || name.includes("aventurine")) && !isAventurineSurging;
   const isFuXuan = charId === "1208" || name.includes("фу") || name.includes("fu");
   const isLingsha = charId === "1222" || name.includes("линша") || name.includes("lingsha");
   const isGallagher = charId === "1301" || name.includes("галлахер") || name.includes("gallagher");
@@ -211,45 +212,87 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
   }
   if (isSilverWolf) {
     const totalDmgBonus = 1 + dmg_boost / 100;
-    const motionValue = 3.8;
-    const personalDpa = Math.round(atk * motionValue * totalDmgBonus * critMultiplier * (1e3 / (1100 * (1 - 0.45) + 1e3)) * 0.95);
-    const personalDpc = Math.round(personalDpa * (actionsPerCycle * 0.65));
+    const overcritBonus = cr > 100 ? (cr - 100) : 0;
+    const effectiveCr = Math.min(1, cr / 100);
+    const effectiveCd = (cd + overcritBonus) / 100;
+    const elationCritMult = 1 + effectiveCr * effectiveCd;
+    const motionValue = 5.8;
+    const personalDpa = Math.round(atk * motionValue * totalDmgBonus * elationCritMult * baseDmgCoeff);
+    const personalDpc = Math.round(personalDpa * (actionsPerCycle * 1.5));
     return {
-      type: "HYBRID_SUBDPS",
+      type: "DPS",
       hasDualOutput: true,
-      benchmarkTier: personalDpc >= 11e4 ? "SSS" : personalDpc >= 75e3 ? "SS" : "S",
-      metric1Label: isRu ? "УРОН УЛЬТЫ ВОЛЧИЦЫ (DPA)" : "ULTIMATE SINGLE BURST (DPA)",
+      benchmarkTier: personalDpc >= 14e4 ? "SSS" : personalDpc >= 95e3 ? "SS" : "S",
+      metric1Label: isRu ? "ВЗРЫВНОЙ УРОН РАДОСТИ (DPA)" : "ELATION BURST (DPA)",
       metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
-      metric2Label: isRu ? "СРЕЗ ЗАЩИТЫ БОССА" : "TOTAL DEFENSE SHRED",
-      metric2Value: "-45.0% DEF (-53% СО СТАКАМИ)",
-      metric3Label: isRu ? "СРЕЗ СОПРОТИВЛЕНИЯ (RES)" : "ELEMENTAL RES PEN",
-      metric3Value: "-20.0% RES УЯЗВИМОСТИ",
+      metric2Label: isRu ? "ОВЕРКРИТ (I CARRY, WE WIN)" : "OVERCRIT CONVERSION",
+      metric2Value: overcritBonus > 0 ? `+${overcritBonus.toFixed(1)}% КУ ИЗ КШ` : `${cr.toFixed(1)}% КШ (КАП 100%)`,
+      metric3Label: isRu ? "ЗОНА GOD MODE: ON!" : "GOD MODE ZONE",
+      metric3Value: "100% AV + ТОП ЛУТБОКС",
       personalDpa,
       personalDpc,
-      personalDpaLabel: isRu ? "Точечный урон ультимейта" : "Single Target Ultimate Burst",
-      personalDpcLabel: isRu ? "Личный урон за цикл (100 AV)" : "Personal Cycle Output (100 AV)",
-      personalMetric3Label: isRu ? "Шанс наложения багов (ШПЭ)" : "Debuff Success Rate (EHR)",
-      personalMetric3Value: `${ehr.toFixed(1)}% ШПЭ (${Math.min(100, Math.round(ehr / 67 * 100))}% надёжность)`,
-      teamDpsAmp: "+58%",
+      personalDpaLabel: isRu ? "Урон усиленной атаки Радости" : "Enhanced Elation Burst",
+      personalDpcLabel: isRu ? "Личный урон за цикл (Aha Instant)" : "Personal Output (Aha Instant Phase)",
+      personalMetric3Label: isRu ? "Конверсия таланта (КШ > 100%)" : "Talent Overcrit Conversion",
+      personalMetric3Value: overcritBonus > 0 ? `+${overcritBonus.toFixed(1)}% КУ от избытка КШ` : `${cr.toFixed(1)}% КШ (требуется 100%+ для оверкрита)`,
+      teamDpsAmp: "+45%",
       teamUtilityBadges: [
         {
-          label: isRu ? "ВНЕДРЕНИЕ УЯЗВИМОСТИ (НАВЫК)" : "WEAKNESS IMPLANT (SKILL)",
-          value: isRu ? "100% Внедрение + -20% RES" : "100% Implant + -20% Element RES",
-          desc: isRu ? "Внедряет уязвимость стихии союзника и срезает 20% сопротивления данному элементу." : "Implants ally elemental weakness and shreds 20% resistance."
+          label: isRu ? "ЗОНА GOD MODE: ON!" : "GOD MODE: ON! ZONE",
+          value: isRu ? "100% Экстра-ход + Иммунитет к CC" : "100% Turn Advance + CC Immunity",
+          desc: isRu ? "Разворачивает игровую зону Радости, даёт экстра-ход и переводит атаки в усиленный взрывной режим." : "Deploys Elation gaming zone, grants extra action and transforms attacks into explosive bursts."
         },
         {
-          label: isRu ? "ГЛОБАЛЬНЫЙ СРЕЗ ЗАЩИТЫ (УЛЬТА)" : "MASSIVE DEF SHRED (ULT)",
-          value: isRu ? "-45.0% Защиты цели (DEF)" : "-45.0% Target DEF Shred",
-          desc: isRu ? "Сверхспособность на 3 хода обваливает защиту босса почти вдвое, поднимая урон гиперкерри." : "Ultimate reduces enemy DEF by 45% for 3 turns, boosting hypercarry DPS by 38%."
+          label: isRu ? "МЕХАНИКА ТОПОВОГО ЛУТБОКСА" : "TOP LOOT BOX MECHANIC",
+          value: isRu ? "True DMG + Реген SP + Панчлайны" : "True DMG + SP Regen + Punchlines",
+          desc: isRu ? "Союзники тратят SP для активации случайных супер-эффектов: чистый урон от % HP босса и накат очков действий." : "Allies spend SP to trigger top-tier box procs (True DMG, SP recovery, Punchline generation)."
         },
         {
-          label: isRu ? "СИСТЕМА БАГОВ (ТАЛАНТ)" : "BUG INJECTION SYSTEM",
-          value: isRu ? "-10% SPD • -10% ATK • -8% DEF" : "-10% SPD • -10% ATK • -8% DEF",
-          desc: isRu ? "Случайные баги при каждой атаке дополнительно замедляют и ослабляют босса." : "Applies random bugs on each hit reducing speed, attack and armor."
+          label: isRu ? "ТАЛАНТ I CARRY, WE WIN" : "I CARRY, WE WIN TALENT",
+          value: isRu ? "100% КШ конвертируется в КУ" : "CR > 100% converted to Crit DMG",
+          desc: isRu ? "Накапливает скрытый MMR за атаки отряда. Любой КШ свыше 100% напрямую переливается в Крит. Урон." : "Accumulates Hidden MMR. Excess Crit Rate above 100% cleanly converts to Crit DMG."
         }
       ],
-      summaryRu: `Серебряный Волк внедряет уязвимость стихии союзников (-20% RES), снижает защиту цели на -45% DEF со сверхспособности и наносит ~${personalDpa.toLocaleString("ru-RU")} расчётного урона.`,
-      summaryEn: `Silver Wolf implants weakness (-20% RES), reduces target armor by 45% DEF and delivers ~${personalDpa.toLocaleString("en-US")} calculated burst.`
+      summaryRu: `Серебряный Волк ур. 999 — гиперкерри Пути Радости. Реализует талант «I Carry, We Win» с конверсией КШ > 100% в Крит. Урон, ультимейт «God Mode: ON!» и механику «Топового лутбокса» в синергии с Авантюрином Прибоем.`,
+      summaryEn: `Silver Wolf Lv.999 is a dedicated Elation Hypercarry. Triggers «I Carry, We Win» overcrit conversion, God Mode: ON! and Top Loot Box mechanics alongside Aventurine Surging.`
+    };
+  }
+  if (isAventurineSurging) {
+    const totalDmgBonus = 1 + (dmg_boost + 50) / 100;
+    const motionValue = 4.8;
+    const personalDpa = Math.round(atk * motionValue * totalDmgBonus * critMultiplier * baseDmgCoeff);
+    const personalDpc = Math.round(personalDpa * (actionsPerCycle * 1.5));
+    return {
+      type: "DPS",
+      hasDualOutput: true,
+      benchmarkTier: personalDpc >= 13e4 ? "SSS" : personalDpc >= 9e4 ? "SS" : "S",
+      metric1Label: isRu ? "УРОН КОМБО РАДОСТИ (DPA)" : "ELATION COMBO BURST (DPA)",
+      metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
+      metric2Label: isRu ? "СЛЕД REVEL IN SURGING WAVES" : "REVEL IN SURGING WAVES",
+      metric2Value: "+100% СТАТОВ РАДОСТИ",
+      metric3Label: isRu ? "ФАЗА AHA INSTANT (ПАНЧЛАЙНЫ)" : "AHA INSTANT PHASE",
+      metric3Value: "ЦЕПНЫЕ БОНУС-АТАКИ",
+      personalDpa,
+      personalDpc,
+      personalDpaLabel: isRu ? "Урон комбо All In! To Summer's Blaze" : "All In! To Summer's Blaze Burst",
+      personalDpcLabel: isRu ? "Личный урон в цикле (Aha Instant)" : "Personal Output in Aha Instant",
+      personalMetric3Label: isRu ? "Крит. уязвимость врага (Ульта)" : "Enemy Crit Vuln (Ult)",
+      personalMetric3Value: "+15.0% Крит. получаемого урона",
+      teamDpsAmp: "+35%",
+      teamUtilityBadges: [
+        {
+          label: isRu ? "СЛЕД REVEL IN SURGING WAVES" : "REVEL IN SURGING WAVES",
+          value: isRu ? "+100% Базовых статов Радости" : "+100% Elation base stats",
+          desc: isRu ? "При наличии союзников Радости (СВ 999) удваивает эффективность всех механик Радости." : "Doubles all Elation mechanics effectiveness when paired with Elation allies like SW 999."
+        },
+        {
+          label: isRu ? "ФАЗА AHA INSTANT" : "AHA INSTANT PHASE",
+          value: isRu ? "Непрерывные бонус-атаки" : "Continuous chain follow-up attacks",
+          desc: isRu ? "Накапливает Азарт и Панчлайны от атак отряда, разряжая их серией ударов." : "Consumes Fervor and Punchlines to unleash rapid follow-up maneuvers."
+        }
+      ],
+      summaryRu: `Авантюрин: Прибой — дамагер Пути Радости. Удваивает свои статы от присутствия СВ 999, накапливает Азарт и непрерывно бьет комбо-атаками Радости в фазе Aha Instant.`,
+      summaryEn: `Aventurine: Waveflair is an Elation DPS. Doubles stats with SW 999 and unleashes continuous Elation maneuvers during Aha Instant.`
     };
   }
   if (isAventurine) {

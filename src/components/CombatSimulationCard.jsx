@@ -12,7 +12,29 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const charId = String(character.id || "");
 
   const squads = useMemo(() => {
-    return CHARACTER_SQUADS[charId] || getGenericSquads(character, lang);
+    if (CHARACTER_SQUADS[charId] && CHARACTER_SQUADS[charId].length > 0) {
+      return CHARACTER_SQUADS[charId];
+    }
+    const name = String(character?.name || "").toLowerCase();
+    if (charId === "999" || charId === "1006" || name.includes("волк") || name.includes("silver")) {
+      return CHARACTER_SQUADS["1006"] || CHARACTER_SQUADS["999"] || getGenericSquads(character, lang);
+    }
+    if (charId === "1513" || name.includes("прибой") || name.includes("waveflair")) {
+      return CHARACTER_SQUADS["1513"] || getGenericSquads(character, lang);
+    }
+    if (charId === "1310" || name.includes("светляч") || name.includes("firefly")) {
+      return CHARACTER_SQUADS["1310"] || getGenericSquads(character, lang);
+    }
+    if (charId === "1308" || name.includes("ахерон") || name.includes("acheron")) {
+      return CHARACTER_SQUADS["1308"] || getGenericSquads(character, lang);
+    }
+    if (charId === "1015" || name.includes("арчер") || name.includes("archer")) {
+      return CHARACTER_SQUADS["1015"] || getGenericSquads(character, lang);
+    }
+    if (charId === "1510" || name.includes("нова") || name.includes("nova")) {
+      return CHARACTER_SQUADS["1510"] || getGenericSquads(character, lang);
+    }
+    return getGenericSquads(character, lang);
   }, [charId, character, lang]);
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
