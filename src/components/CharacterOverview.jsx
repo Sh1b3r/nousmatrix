@@ -206,13 +206,9 @@ export default function CharacterOverview({ character, audit, t, lang = "ru" }) 
             </span>
             <span
               className="verdict-rank-pill"
-              title={
-                isRu
-                  ? "Ориентировочное положение на кривой распределения билдов (μ=68, σ=11.5). Не является живой переписью серверов."
-                  : "Estimated position on theoretical distribution (μ=68, σ=11.5), not a live server census."
-              }
+              title={isRu ? "Модельный индекс, не перцентиль игроков" : "Model index, not a player percentile"}
             >
-              TOP {audit.topPercent}%
+              {isRu ? "Индекс" : "Index"} {audit.score}/100
             </span>
           </div>
 

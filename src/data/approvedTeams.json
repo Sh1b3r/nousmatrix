@@ -1,7 +1,10 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "gameVersion": "4.7",
   "updatedAt": "2026-11-14",
+  "excludedByCharacter": {
+    "1510": ["1303", "1222"]
+  },
   "teamsByCharacter": {
     "1003": [
       {
@@ -12,8 +15,12 @@
         "descEn": "User-confirmed team for regular Himeko: Fugue and The Dahlia amplify Break to trigger Himeko's follow-ups more often; Lingsha sustains and adds Toughness damage.",
         "sourceVersion": "4.7",
         "sourceUpdatedAt": "2026-11-14",
-        "sourceLabel": "Подтверждено пользователем; рекомендация StarGuide",
-        "sourceUrl": "https://starguide.gg/character/himeko",
+        "status": "verified",
+        "assumptions": { "eidolon": "any", "mode": "any" },
+        "evidence": [
+          { "source": "user-confirmed", "sourceUrl": null, "gameVersion": "4.7", "retrievedAt": "2026-11-14", "metric": "roster-confirmation", "note": "Пользователь подтвердил состав обычной Химеко." }
+        ],
+        "verified": { "by": "user", "at": "2026-11-14", "gameVersion": "4.7", "scope": "roster" },
         "isUserConfirmed": true,
         "teammates": [
           {
@@ -61,12 +68,12 @@
         "descEn": "User-confirmed team for E0 Acheron: Mortenax and Welt provide the two Nihility teammates for her full Trace bonus and apply frequent debuffs; Huohuo sustains the team and offsets Mortenax's HP drain.",
         "sourceVersion": "4.7",
         "sourceUpdatedAt": "2026-11-14",
-        "sourceLabel": "Подтверждено пользователем; синергия Мортенакс + Вельт подтверждается свежими гайдами",
-        "sourceUrl": "https://www.hsrzone.com/characters/acheron-build-hsr/",
-        "sourceUrls": [
-          "https://www.hoyolab.com/article/47321914?reply=1",
-          "https://starguide.gg/character/acheron"
+        "status": "verified",
+        "assumptions": { "eidolon": "E0", "mode": "any" },
+        "evidence": [
+          { "source": "user-confirmed", "sourceUrl": null, "gameVersion": "4.7", "retrievedAt": "2026-11-14", "metric": "roster-confirmation", "note": "Пользователь подтвердил состав Ахерон E0." }
         ],
+        "verified": { "by": "user", "at": "2026-11-14", "gameVersion": "4.7", "scope": "roster" },
         "isUserConfirmed": true,
         "teammates": [
           {
@@ -100,7 +107,7 @@
             "roleEn": "Sustain / healer",
             "buffDescRu": "Лечит команду и компенсирует расход HP Мортенакса.",
             "buffDescEn": "Heals the team and offsets Mortenax's HP consumption.",
-            "buffValues": { "teamHeal": true, "teamCleanse": true, "energyFeed": 20, "atkGrant": 40 }
+            "buffValues": { "teamHeal": true, "teamCleanse": true, "energyFeed": 20, "atkPercent": 40 }
           }
         ]
       }

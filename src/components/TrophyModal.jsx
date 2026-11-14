@@ -459,7 +459,7 @@ export default function TrophyModal({
                 <div className="showcase-score-top-row">
                   <div className="showcase-rank-tag">
                     <TrophyIcon size={13} />
-                    <span>{isRu ? "ГЛОБАЛЬНЫЙ ТОП " : "GLOBAL TOP "}{audit.topPercent}{isRu ? "%" : "%"}</span>
+                    <span>{isRu ? "МОДЕЛЬНЫЙ ИНДЕКС " : "MODEL INDEX "}{audit.score}/100</span>
                   </div>
                   <span className="showcase-uid">UID: {uid}</span>
                 </div>
@@ -675,7 +675,7 @@ export default function TrophyModal({
                         <SparklesIcon size={13} />
                         <span>{isRu ? "БОЕВАЯ СИМУЛЯЦИЯ MOC 12" : "MOC 12 COMBAT SIMULATION"}</span>
                       </span>
-                      <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>
+                      {combatSim.benchmarkTier && <span className="sim-tier-badge">{combatSim.benchmarkTier}</span>}
                     </div>
                     <div className="showcase-sim-body">
                       <div className="showcase-sim-metric-line">

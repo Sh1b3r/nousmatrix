@@ -1,4 +1,5 @@
-// Rotațiion models per character (kit-accurate damage instances).
+// Hand-configured damage-instance scripts. These are draft model inputs, not
+// validated game-engine rotations (timing, energy, and conditional uptime are absent).
 // Each instance: { mv, targets, count, phase, actionName, desc }
 // mv = motion value (multiplier of scaling stat per hit), targets = how many enemies each hit covers
 // (1 = single target, 3 = boss + 2 adds), count = number of repeated hits.
@@ -7,13 +8,18 @@
 export const ROTATIONS = {
   // Химеко: Нова (1510) — полный цикл сверхспособности «Starblazer» по реальному киту (4.7)
   "1510": {
+    status: "draft",
+    gameVersion: "4.7",
+    evidence: [],
+    buffUptimeStatus: "unverified",
+    noteRu: "Нет проверенной временной шкалы ходов, энергии и длительности эффектов.",
+    noteEn: "No verified action, energy, or effect-duration timeline is available.",
     hpScale: false,
     passiveDmgBoost: 20, // Navigator's Semaphore: +20% урона всем союзникам — учитывается как собственный аурный баф
     // Талант «Of Fire and Far Faring» (Territory Starblazer): пока Химеко Нова на поле,
     // её All-Type RES PEN +20% и CRIT DMG +80% — учитываются в личных множителях.
     passiveCritDmg: 80,
     passiveResPen: 20,
-    ultLoop: true,
     instances: [
       {
         key: "beams",

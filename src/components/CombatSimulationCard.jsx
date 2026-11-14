@@ -93,9 +93,8 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
         <div className="combat-sim-title-group">
           <div className="combat-sim-badge-row">
             <span
-              className={`combat-sim-badge ${
-                sim.type === "HYBRID_SUBDPS" ? "hybrid" : isSupport ? "support" : "dps"
-              }`}
+              className={`combat-sim-badge ${sim.type === "HYBRID_SUBDPS" ? "hybrid" : isSupport ? "support" : "dps"
+                }`}
             >
               {sim.type === "HYBRID_SUBDPS" ? (
                 <SparklesIcon size={12} />
@@ -158,11 +157,11 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <p className="alert-text">
                 {isRu
                   ? `Для них используются эталонные допущения (базовые софт-капы следов). Чтобы подтянуть реальные характеристики снаряжения [${missingTeammates
-                      .map((m) => m.nameRu || m.characterName || m.names[0])
-                      .join(", ")}], выставьте их на витрину в игре и нажмите «ОБНОВИТЬ».`
+                    .map((m) => m.nameRu || m.characterName || m.names[0])
+                    .join(", ")}], выставьте их на витрину в игре и нажмите «ОБНОВИТЬ».`
                   : `Default baseline assumptions are used for missing allies. Place [${missingTeammates
-                      .map((m) => m.nameEn || m.characterName || m.names[0])
-                      .join(", ")}] on showcase for live gear calculation.`}
+                    .map((m) => m.nameEn || m.characterName || m.names[0])
+                    .join(", ")}] on showcase for live gear calculation.`}
               </p>
             </div>
           </div>
@@ -345,13 +344,13 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 ? enemyMode === "pf"
                   ? "Допущения и параметры симуляции (PF / Мобы 88 ур.)"
                   : enemyMode === "as"
-                  ? "Допущения и параметры симуляции (AS / Ап-босс 95 ур.)"
-                  : "Допущения и параметры симуляции (MoC 12 / Босс 95 ур.)"
+                    ? "Допущения и параметры симуляции (AS / Ап-босс 95 ур.)"
+                    : "Допущения и параметры симуляции (MoC 12 / Босс 95 ур.)"
                 : enemyMode === "pf"
-                ? "Simulation Assumptions & Parameters (PF / Lv.88 Waves)"
-                : enemyMode === "as"
-                ? "Simulation Assumptions & Parameters (AS / Lv.95 Boss)"
-                : "Simulation Assumptions & Parameters (MoC 12 / Lv.95 Boss)"}
+                  ? "Simulation Assumptions & Parameters (PF / Lv.88 Waves)"
+                  : enemyMode === "as"
+                    ? "Simulation Assumptions & Parameters (AS / Lv.95 Boss)"
+                    : "Simulation Assumptions & Parameters (MoC 12 / Lv.95 Boss)"}
             </span>
           </summary>
           <div className="sim-assumptions-list">
@@ -362,13 +361,13 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                   ? enemyMode === "pf"
                     ? "Цель: волны мобов 88 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
                     : enemyMode === "as"
-                    ? "Цель: босс 95 уровня, базовое сопротивление 40%; защита считается по уровням персонажа и врага."
-                    : "Цель: босс 95 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
+                      ? "Цель: босс 95 уровня, базовое сопротивление 40%; защита считается по уровням персонажа и врага."
+                      : "Цель: босс 95 уровня, базовое сопротивление 20%; защита считается по уровням персонажа и врага."
                   : enemyMode === "pf"
-                  ? "Target: Lv. 88 waves, 20% base RES; DEF multiplier uses character and enemy levels."
-                  : enemyMode === "as"
-                  ? "Target: Lv. 95 boss, 40% base RES; DEF multiplier uses character and enemy levels."
-                  : "Target: Lv. 95 boss, 20% base RES; DEF multiplier uses character and enemy levels."}
+                    ? "Target: Lv. 88 waves, 20% base RES; DEF multiplier uses character and enemy levels."
+                    : enemyMode === "as"
+                      ? "Target: Lv. 95 boss, 40% base RES; DEF multiplier uses character and enemy levels."
+                      : "Target: Lv. 95 boss, 20% base RES; DEF multiplier uses character and enemy levels."}
               </span>
             </div>
             <div className="assumption-item">
@@ -403,8 +402,8 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                     ? `Союзники: для ${missingTeammates.length} союзников не с витрины применены стандартные эталонные уровни следов и баффов.`
                     : "Союзники: все 3 союзника найдены на витрине — расчёт использует реальные статы их реликвий."
                   : missingTeammates.length > 0
-                  ? `Teammates: ${missingTeammates.length} missing allies use standard soft-cap trace assumptions.`
-                  : "Teammates: all 3 allies found on showcase, using live relic stats."}
+                    ? `Teammates: ${missingTeammates.length} missing allies use standard soft-cap trace assumptions.`
+                    : "Teammates: all 3 allies found on showcase, using live relic stats."}
               </span>
             </div>
             <div className="assumption-item">

@@ -1,4 +1,5 @@
 import { resolveRelicSetInfo } from "./setDefinitions.js";
+import { calculateMarginalDamageWeights, getMarginalDamageRollWeight } from "./marginalDamage.js";
 export const CDN_MIRRORS = [
   "https://cdn.jsdelivr.net/gh/Mar-7th/StarRailRes@master/",
   "https://testingcf.jsdelivr.net/gh/Mar-7th/StarRailRes@master/",
@@ -1145,44 +1146,6 @@ export function evaluateRelicMainStat(relic, archetype, char) {
   }
   return { status: "optimal", scoreBonus: 0, labelRu: "ВЕРНЫЙ СТАТ", labelEn: "OPTIMAL" };
 }
-function erf(x) {
-  const a1 = 0.254829592;
-  const a2 = -0.284496736;
-  const a3 = 1.421413741;
-  const a4 = -1.453152027;
-  const a5 = 1.061405429;
-  const p = 0.3275911;
-  const sign = x < 0 ? -1 : 1;
-  const absX = Math.abs(x);
-  const t = 1 / (1 + p * absX);
-  const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX);
-  return sign * y;
-}
-// Archetype-calibrated Gaussian distribution parameters (based on empirical competitive build data)
-// DPS archetypes naturally score slightly higher in raw CV/roll pools, while DoT/Sustain/Debuff
-// have tighter optimal distributions. Calibrating mu and sigma prevents under-ranking pure supports.
-const ARCHETYPE_DISTRIBUTIONS = {
-  CRIT_DPS: { mu: 68.5, sigma: 11.2 },
-  HP_CRIT_DPS: { mu: 67.5, sigma: 11.0 },
-  BREAK_DPS: { mu: 66.0, sigma: 10.8 },
-  DOT_DPS: { mu: 65.5, sigma: 10.5 },
-  HARMONY_SPD: { mu: 65.0, sigma: 10.0 },
-  HARMONY_ATK: { mu: 65.0, sigma: 10.2 },
-  HARMONY_CRIT: { mu: 66.5, sigma: 10.5 },
-  NIHILITY_DEBUFF: { mu: 64.5, sigma: 10.2 },
-  PRESERVATION_DEF: { mu: 64.0, sigma: 10.0 },
-  PRESERVATION_HP: { mu: 64.0, sigma: 10.0 },
-  ABUNDANCE_ATK: { mu: 64.0, sigma: 10.0 },
-  ABUNDANCE_HP: { mu: 63.5, sigma: 9.8 }
-};
-
-function scoreToCalibratedTopPercent(score, archetype = "CRIT_DPS") {
-  const dist = ARCHETYPE_DISTRIBUTIONS[archetype] || { mu: 66.0, sigma: 11.0 };
-  const z = (score - dist.mu) / dist.sigma;
-  const cdf = 0.5 * (1 + erf(z / Math.SQRT2));
-  const top = (1 - cdf) * 100;
-  return Math.min(99.0, Math.max(0.1, top));
-}
 export function determineCharacterMetrics(char, archetype, stats) {
   const { hp, atk, def, spd, cr, cd, cv, be, ehr, eres, heal, err } = stats;
   const name = char?.name || "";
@@ -1786,7 +1749,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       archetype = "HARMONY_CRIT";
     } else if (charId === "1309" || lowerName.includes("зарянка") || lowerName.includes("robin") || lowerName.includes("тинъюнь") || lowerName.includes("tingyun")) {
       archetype = "HARMONY_ATK";
-    } else if (charId === "1307" || lowerName.includes("жуань") || lowerName.includes("ruan mei")) {
+    } else if (charId === "1303" || lowerName.includes("жуань") || lowerName.includes("ruan mei")) {
       archetype = "HARMONY_BREAK";
     } else if (charId === "1310" || lowerName.includes("светлячок") || lowerName.includes("firefly") || lowerName.includes("бутхилл") || lowerName.includes("boothill") || lowerName.includes("раппа") || lowerName.includes("rappa") || be > 180) {
       archetype = "BREAK_DPS";
@@ -1806,27 +1769,35 @@ export function calculateCharacterAudit(char, lang = "ru") {
   let usefulRollsSum = 0;
   let relicScores = [];
   // Предельная полезность характеристик (Marginal Stat Value):
-  // Защита от оверкапа (Hard Cap Protection) по стандарту SeeleLand / Fribbels:
+  // In-game overcap handling: excess stats beyond the character's breakpoint do not add value:
   // Если у персонажа КШ >= 100%, новые роллы в crit_rate теряют ценность (вес 0.0),
   // предотвращая завышение баллов неэффективным сборкам с переизбытком шанса крита.
   const isCrOvercapped = cr >= 100.0;
   const isEhrOvercapped = (archetype === "NIHILITY_DEBUFF" || archetype === "DOT_DPS") && ehr >= 120.0;
+  const marginalDamageWeights = calculateMarginalDamageWeights(char, {
+    hp, atk, def, spd, cr, cd, be, ehr, eres, heal, err, dmg_boost
+  }, archetype, lang);
+  const getRollWeight = (sub) => {
+    const simulatedWeight = getMarginalDamageRollWeight(sub, marginalDamageWeights);
+    if (simulatedWeight !== null) return simulatedWeight;
+    return getSubAffixWeight(sub.field, archetype);
+  };
 
   (char.relics || []).forEach((rel, idx) => {
     let pScore = 0;
     let pTotal = 0;
     (rel.sub_affix || []).forEach((sub) => {
-      const upgrades = Math.max(0, (sub.count || 1) - 1);
-      pTotal += upgrades;
-      totalRollsCount += upgrades;
-      let weight = getSubAffixWeight(sub.field, archetype);
-      if (sub.field === "crit_rate" && isCrOvercapped) {
+      const rollCount = Math.max(0, Number(sub.count) || 1);
+      pTotal += rollCount;
+      totalRollsCount += rollCount;
+      let weight = getRollWeight(sub);
+      if (!marginalDamageWeights && sub.field === "crit_rate" && isCrOvercapped) {
         weight = 0.0; // Оверкап КШ выше 100% обесценивается
-      } else if (sub.field === "effect_hit" && isEhrOvercapped) {
+      } else if (!marginalDamageWeights && sub.field === "effect_hit" && isEhrOvercapped) {
         weight = 0.2; // Избыток ШПЭ выше 120% даёт минимальную ценность
       }
-      pScore += upgrades * weight;
-      usefulRollsSum += upgrades * weight;
+      pScore += rollCount * weight;
+      usefulRollsSum += rollCount * weight;
     });
     const mainEval = evaluateRelicMainStat(rel, archetype, char);
     rel.main_eval = mainEval;
@@ -1841,7 +1812,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       weakestRelicIndex = r.idx;
     }
   });
-  const rollEfficiency = totalRollsCount > 0 ? usefulRollsSum / totalRollsCount * 100 : 75;
+  const rollEfficiency = totalRollsCount > 0 ? usefulRollsSum / totalRollsCount * 100 : 0;
   let statPoints = 0;
   let bottleneck = "";
   let actions = [];
@@ -2085,14 +2056,14 @@ export function calculateCharacterAudit(char, lang = "ru") {
   let planarCv = 0;
   planarRelics.forEach((r) => {
     (r.sub_affix || []).forEach((sub) => {
-      const upgrades = Math.max(0, (sub.count || 1) - 1);
+      const upgrades = Math.max(0, Number(sub.count) || 1);
       planarRollsTotal += upgrades;
       if (sub.field === "crit_rate") {
         planarCv += (sub.value || 0) * 200;
       } else if (sub.field === "crit_dmg") {
         planarCv += (sub.value || 0) * 100;
       }
-      const weight = getSubAffixWeight(sub.field, archetype);
+      const weight = getRollWeight(sub);
       if (weight >= 0.5) {
         planarUsefulRolls += upgrades;
       }
@@ -2103,7 +2074,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const pInfo1 = planarRelics.length > 1 ? resolveRelicSetInfo(planarRelics[1], isRu ? "ru" : "en") : null;
   const planarSet = pInfo0?.name || (planarRelics.length > 0 ? planarRelics[0].set_name || "" : "");
   const isPlanarSetComplete = planarRelics.length === 2 && (planarRelics[0].set_id === planarRelics[1].set_id || pInfo0?.name && pInfo0.name === pInfo1?.name);
-  const planarEfficiency = planarRollsTotal > 0 ? Math.min(100, Math.round((planarUsefulRollsWeighted / planarRollsTotal) * 100)) : 75;
+  const planarEfficiency = planarRollsTotal > 0 ? Math.min(100, Math.round((planarUsefulRollsWeighted / planarRollsTotal) * 100)) : 0;
   let planarCondition = "";
   let isConditionMet = true;
   if (/Салсотто|Salsotto/i.test(planarSet)) {
@@ -2244,21 +2215,21 @@ export function calculateCharacterAudit(char, lang = "ru") {
   let cavernCv = 0;
   cavernRelics.forEach((r) => {
     (r.sub_affix || []).forEach((sub) => {
-      const upgrades = Math.max(0, (sub.count || 1) - 1);
+      const upgrades = Math.max(0, Number(sub.count) || 1);
       cavernRollsTotal += upgrades;
       if (sub.field === "crit_rate") {
         cavernCv += (sub.value || 0) * 200;
       } else if (sub.field === "crit_dmg") {
         cavernCv += (sub.value || 0) * 100;
       }
-      const weight = getSubAffixWeight(sub.field, archetype);
+      const weight = getRollWeight(sub);
       if (weight >= 0.5) {
         cavernUsefulRolls += upgrades;
       }
       cavernUsefulRollsWeighted += upgrades * weight;
     });
   });
-  const cavernEfficiency = cavernRollsTotal > 0 ? Math.min(100, Math.round((cavernUsefulRollsWeighted / cavernRollsTotal) * 100)) : 75;
+  const cavernEfficiency = cavernRollsTotal > 0 ? Math.min(100, Math.round((cavernUsefulRollsWeighted / cavernRollsTotal) * 100)) : 0;
   const cavernSetCounts = {};
   cavernRelics.forEach((r) => {
     const info = resolveRelicSetInfo(r, isRu ? "ru" : "en");
@@ -2303,7 +2274,6 @@ export function calculateCharacterAudit(char, lang = "ru") {
   }
   statPoints = Math.max(15, statPoints + planarSynergyBonus + cavernSynergyBonus);
   const finalScore = Math.min(99.4, Math.max(45, statPoints * 0.7 + rollEfficiency * 0.3));
-  const topPercent = scoreToCalibratedTopPercent(finalScore, archetype);
   const characterMetrics = determineCharacterMetrics(char, archetype, {
     hp,
     atk,
@@ -2321,7 +2291,6 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const needsCrit = isCritDps(archetype);
   return {
     score: finalScore.toFixed(1),
-    topPercent: topPercent.toFixed(1),
     rollEfficiency: rollEfficiency.toFixed(1),
     cv: needsCrit ? cv.toFixed(1) : null,
     needsCrit,

@@ -1,20 +1,19 @@
 import { ROTATIONS } from "../data/rotations.js";
+import { getTeamBuffsForAction } from "./buffTimeline.js";
 
 export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matchedTeammates = [], lang = "ru", options = {}) {
   if (!mainChar || !mainStats) return null;
   const isRu = lang === "ru";
   const name = (mainChar.name || "").toLowerCase();
-  const charId = String(mainChar.id || "");  const pathId = String(mainChar.path?.id || "").toLowerCase();
-  const pathName = String(mainChar.path?.name || "").toLowerCase();
+  const charId = String(mainChar.id || "");
   let baseAtk = Number(mainStats.atk || 0);
   let baseHp = Number(mainStats.hp || 0);
-  let baseDef = Number(mainStats.def || 0);
-  let baseSpd = Number(mainStats.spd || 100);
   let baseCr = Number(mainStats.cr || 5);
   let baseCd = Number(mainStats.cd || 50);
   let baseBe = Number(mainStats.be || 0);
   let baseDmgBoost = Number(mainStats.dmg_boost || 0);
   let teamAtkGrant = 0;
+  let teamAtkPercent = 0;
   let teamCdGrant = 0;
   let teamCrGrant = 0;
   let teamDmgBoost = 0;
@@ -24,13 +23,13 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   let teamCritVuln = 0;
   let teamBreakVuln = 0;
   let teamBeBoost = 0;
-  let teamSpd = 0;
-  let loopFactor = 1;
-  let hasSuperBreak = false;  let superBreakFactor = 1;
-  let teamActionAdvances = [];
+  let hasSuperBreak = false;
+  let superBreakFactor = 1;
+  let buffTimingStatus = "assumed-full-uptime";
   matchedTeammates.forEach((tm) => {
     const b = tm.dynamicBuffs || {};
     if (b.atkGrant) teamAtkGrant += b.atkGrant;
+    if (b.atkPercent) teamAtkPercent += b.atkPercent;
     if (b.cdGrant) teamCdGrant += b.cdGrant;
     if (b.crGrant) teamCrGrant += b.crGrant;
     if (b.dmgBoost) teamDmgBoost += b.dmgBoost;
@@ -41,13 +40,10 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     if (b.critVuln) teamCritVuln += b.critVuln;
     if (b.breakVuln) teamBreakVuln += b.breakVuln;
     if (b.beBoost) teamBeBoost += b.beBoost;
-    if (b.teamSpd) teamSpd += b.teamSpd;
     if (b.superBreakFactor) {
       hasSuperBreak = true;
       superBreakFactor = b.superBreakFactor;
     }
-    if (b.targetAdvance) teamActionAdvances.push(b.targetAdvance);
-    if (b.teamAdvance) teamActionAdvances.push(b.teamAdvance);
   });
   // Kit-ротація виявляється ДО обчислення множників: пасиви кіта (КУ/RES PEN) входять у бойові стати
   const kitRotation = ROTATIONS[charId] || null;
@@ -69,14 +65,11 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const effectiveRes = Math.max(-1, baseEnemyRes - (teamResPen + kitResPen) / 100);
   const resMult = 1 - effectiveRes;
   const vulnMult = 1 + teamVuln / 100;
-  const isNormalized = Boolean(options.isNormalized);
-  // Normalized E0S1 Benchmark: стандартизированный эталон конуса S1 (как на Akasha)
-  // Уравнивает оружие всех игроков к эталону 5* S1 для объективного сравнения силы реликвий.
-  const normAtkBonus = isNormalized ? 400 : 0;
-  const normDmgBonus = isNormalized ? 24 : 0;
-  const normCdBonus = isNormalized ? 32 : 0;
-
-  const combatAtk = baseAtk + teamAtkGrant + normAtkBonus;
+  // Use profile stats and explicit team buffs only. There is no universal
+  // E0S1 light-cone stat package across characters or signature passives.
+  const baseAttackForPercent = Number(mainStats.base_atk || mainStats.baseAtk || mainChar.baseAtk || mainChar.baseStats?.atk || 0);
+  const percentAttackGrant = baseAttackForPercent * teamAtkPercent / 100;
+  const combatAtk = baseAtk + teamAtkGrant + percentAttackGrant;
   const combatHp = baseHp;
   const rawTotalCr = (baseCr + teamCrGrant);
 
@@ -96,13 +89,13 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const elationSurgeBonus = (isAvenSurging && hasElationTeammate) ? 50 : 0;
 
   const combatCr = Math.min(1, rawTotalCr / 100);
-  const combatCd = (baseCd + teamCdGrant + kitCd + normCdBonus + overcritBonusCd) / 100;
+  const combatCd = (baseCd + teamCdGrant + kitCd + overcritBonusCd) / 100;
   // Crit vulnerability applies only to crit instances. Fold its expected value
   // into the expected crit multiplier instead of inflating every hit.
   const baseCritMultiplier = 1 + combatCr * combatCd;
   const critMultiplier = baseCritMultiplier +
     (combatCr * (1 + combatCd) * (teamCritVuln / 100)) / vulnMult;
-  const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + normDmgBonus + elationSurgeBonus) / 100;
+  const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + elationSurgeBonus) / 100;
   const steps = [];
   let rotationTotalDamage = 0;
   let peakHitDamage = 0;
@@ -121,8 +114,10 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       isEquipped: tm.isEquippedInShowcase
     });
   });
-  const isHimeko = charId === "1003" || name.includes("химеко") || name.includes("himeko") || name.includes("нова");
-  const isAcheron = charId === "1308" || name.includes("ахерон") || name.includes("acheron");
+  // Character-specific kits must use exact IDs. Himeko: Nova (1510) has its
+  // own configured script and must never fall through to regular Himeko (1003).
+  const isHimeko = charId === "1003";
+  const isAcheron = charId === "1308";
   const isFirefly = charId === "1310" || name.includes("светлячок") || name.includes("firefly");
   const isFeixiao = charId === "1220" || name.includes("фэйсяо") || name.includes("feixiao");
   const isMortenax = charId === "1507" || name.includes("мортенакс") || name.includes("mortenax");
@@ -138,15 +133,30 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const isBlade = charId === "1205" || name.includes("блейд") && !isMortenax || name.includes("blade") && !isMortenax;
   const isJingYuan = charId === "1204" || name.includes("цзин юань") || name.includes("jing yuan");
   const isArgenti = charId === "1302" || name.includes("аргенти") || name.includes("argenti");
-  const isSupportRole = pathId === "shaman" || pathName.includes("harmony") || pathName.includes("гармон");
-  const isSustainRole = pathId === "knight" || pathId === "priest" || pathName.includes("preservation") || pathName.includes("abundance") || pathName.includes("сохран") || pathName.includes("изобил");
   if (kitRotation) {
-    const kitDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + (kitRotation.passiveDmgBoost || 0)) / 100;
-    const scalingStat = Math.max(1200, kitRotation.hpScale ? combatHp : combatAtk);
+    const actionBuffStatuses = new Set();
     kitRotation.instances.forEach((inst) => {
-      const instDmg = Math.round(scalingStat * inst.mv * inst.count * inst.targets * kitDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+      const actionTeamBuffs = getTeamBuffsForAction(squad, matchedTeammates, inst.key);
+      actionBuffStatuses.add(actionTeamBuffs.status);
+      const b = actionTeamBuffs.buffs;
+      const actionAtkPercent = baseAttackForPercent * (Number(b.atkPercent) || 0) / 100;
+      const actionAtk = baseAtk + (Number(b.atkGrant) || 0) + actionAtkPercent;
+      const actionCr = Math.min(1, (baseCr + (Number(b.crGrant) || 0)) / 100);
+      const actionCd = (baseCd + (Number(b.cdGrant) || 0) + kitCd) / 100;
+      const actionCritMult = 1 + actionCr * actionCd;
+      const actionDmgBonus = 1 + (baseDmgBoost + (Number(b.dmgBoost) || 0) + (kitRotation.passiveDmgBoost || 0)) / 100;
+      const actionDefShred = Math.min(1, (Number(b.defShred) || 0) / 100);
+      const actionDefMult = (charLv + 20) / (charLv + 20 + (enemyLv + 20) * (1 - actionDefShred));
+      const actionRes = Math.max(-1, baseEnemyRes - ((Number(b.resPen) || 0) + kitResPen) / 100);
+      const actionResMult = 1 - actionRes;
+      const actionVulnMult = 1 + ((Number(b.allVuln) || 0) + (Number(b.vuln) || 0)) / 100;
+      const actionCritVulnFactor = actionCr * (1 + actionCd) * ((Number(b.critVuln) || 0) / 100);
+      const actionCritMultiplier = actionCritMult + actionCritVulnFactor / actionVulnMult;
+      const actionScalingStat = kitRotation.hpScale ? combatHp : actionAtk;
+      const actionKitDmgBonus = actionDmgBonus;
+      const instDmg = Math.round(actionScalingStat * inst.mv * inst.count * inst.targets * actionKitDmgBonus * actionCritMultiplier * actionDefMult * actionResMult * actionVulnMult);
       rotationTotalDamage += instDmg;
-      const perHit = Math.round(scalingStat * inst.mv * kitDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+      const perHit = Math.round(actionScalingStat * inst.mv * actionKitDmgBonus * actionCritMultiplier * actionDefMult * actionResMult * actionVulnMult);
       peakHitDamage = Math.max(peakHitDamage, perHit);
       steps.push({
         stepNumber: steps.length + 1,
@@ -161,43 +171,10 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
         isDamageAction: true
       });
     });
-    if (kitRotation.ultLoop) {
-      // Дискретная модель энергии и действий (Action Value & Energy Cycle Model):
-      // В цикле 0 (150 AV) базовая скорость с учетом баффов команды и сетов (напр. Сет 329, Жуань Мэй)
-      const combatSpd = Math.max(90, baseSpd * (1 + teamSpd / 100));
-      let totalAdvanceBonusAV = 0;
-      teamActionAdvances.forEach((adv) => {
-        totalAdvanceBonusAV += (10000 / combatSpd) * (Math.min(100, adv) / 100);
-      });
-      // Количество ходов в цикле 0 (150 AV + сэкономленный AV от продвижения действий):
-      const effectiveAVWindow = 150 + totalAdvanceBonusAV;
-      const turnsInCycle0 = Math.max(1, Math.floor(effectiveAVWindow / (10000 / combatSpd)));
-      const err = Number(mainStats.err || 100) / 100;
-      const ultCost = kitRotation.ultCost || 140;
-      const energyPerTurn = (30 * err);
-      const totalEnergyFromTurns = turnsInCycle0 * energyPerTurn + (5 * err);
-      // Внешний приток энергии от союзников в ротации
-      let externalEnergy = 0;
-      matchedTeammates.forEach(tm => {
-        if (tm.buffValues && tm.buffValues.energyFeed) externalEnergy += tm.buffValues.energyFeed * err;
-      });
-      const totalGeneratedEnergy = totalEnergyFromTurns + externalEnergy;
-      // Количество полных ультимейтов за окно цикла 0
-      const ultCasts = Math.max(1, Math.min(3, Math.floor(totalGeneratedEnergy / ultCost) + (totalGeneratedEnergy % ultCost >= (ultCost * 0.75) ? 0.5 : 0)));
-      loopFactor = Math.min(2.5, Math.max(1.0, 1 + (ultCasts - 1) * 0.55));
-      rotationTotalDamage = Math.round(rotationTotalDamage * loopFactor);
-      steps.push({
-        stepNumber: steps.length + 1,
-        charName: mainChar.name,
-        phase: isRu ? "ЭНЕРГЕТИЧЕСКИЙ ЦИКЛ" : "ENERGY CYCLE",
-        actionNameRu: `Энергетический цикл: ${ultCasts >= 2 ? `${ultCasts} ультимейта` : "1 ультимейт"} (${totalGeneratedEnergy.toFixed(0)}/${ultCost} EP, ${turnsInCycle0} хода)`,
-        actionNameEn: `Energy cycle: ${ultCasts >= 2 ? `${ultCasts} ultimates` : "1 ultimate"} (${totalGeneratedEnergy.toFixed(0)}/${ultCost} EP, ${turnsInCycle0} turns)`,
-        descRu: `За 150 AV (${turnsInCycle0} действия при боевой СКОР ${combatSpd.toFixed(0)}${totalAdvanceBonusAV > 0 ? `, включая +${totalAdvanceBonusAV.toFixed(0)} AV от продвижения` : ""}) накоплено ${totalGeneratedEnergy.toFixed(0)} EP (ВЭ ${(err * 100).toFixed(1)}%${externalEnergy > 0 ? `, включая +${externalEnergy.toFixed(0)} EP от батареек отряда` : ""}). Множитель ротации: ×${loopFactor.toFixed(2)}.`,
-        descEn: `Over 150 AV (${turnsInCycle0} actions at combat SPD ${combatSpd.toFixed(0)}${totalAdvanceBonusAV > 0 ? `, with +${totalAdvanceBonusAV.toFixed(0)} AV advance` : ""}) generated ${totalGeneratedEnergy.toFixed(0)} EP (ERR ${(err * 100).toFixed(1)}%${externalEnergy > 0 ? `, with +${externalEnergy.toFixed(0)} EP team energy` : ""}). Rotation multiplier: x${loopFactor.toFixed(2)}.`,
-        damage: 0,
-        isDamageAction: false
-      });
+    if (actionBuffStatuses.size === 1 && actionBuffStatuses.has("verified-schedule")) {
+      buffTimingStatus = "verified-schedule";
     }
+    // Repeated ultimates need a real action-value and energy timeline. This fixed script represents only its listed damage instances.
   } else if (isHimeko) {
     const skillDmg = Math.round(combatAtk * 3.6 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += skillDmg;
@@ -399,7 +376,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       isDamageAction: true
     });
   } else if (isMortenax || isBlade) {
-    const hpStat = combatHp || baseHp || 7e3;
+    const hpStat = combatHp;
     const skillDmg = Math.round(hpStat * 1.68 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     const ultDmg = Math.round(hpStat * 2.2 * (combatDmgBonus + 0.3) * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += skillDmg + ultDmg;
@@ -478,88 +455,17 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       damage: ahaInstantDmg,
       isDamageAction: true
     });
-  } else if (isSupportRole) {
-    const carryBenchmarkDmg = Math.round(3500 * 5.2 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
-    const personalImpact = Math.round(combatAtk * 1.8 * combatDmgBonus * defMult * resMult * vulnMult);
-    rotationTotalDamage = carryBenchmarkDmg + personalImpact;
-    peakHitDamage = carryBenchmarkDmg;
-    steps.push({
-      stepNumber: steps.length + 1,
-      charName: isRu ? "Поддерживаемый Керри" : "Empowered Carry",
-      phase: isRu ? "УДАР КЕРРИ ПОД ВАШИМИ БАФФАМИ" : "BUFFED CARRY STRIKE",
-      actionNameRu: "Полный прокаст основного керри с переданными баффами",
-      actionNameEn: "Carry Full Cast with Transferred Buffs",
-      damage: carryBenchmarkDmg,
-      isDamageAction: true
-    });
-    if (personalImpact > 0) {
-      steps.push({
-        stepNumber: steps.length + 1,
-        charName: mainChar.name,
-        phase: isRu ? "ЛИЧНЫЙ ВКЛАД САППОРТА" : "PERSONAL OUTPUT",
-        actionNameRu: "Дополнительный урон (Концерт / Командная синергия)",
-        actionNameEn: "Additional Co-op Damage Trigger",
-        damage: personalImpact,
-        isDamageAction: true
-      });
-    }
-  } else if (isSustainRole) {
-    const personalDmg = Math.round(Math.max(baseAtk, baseDef, baseHp * 0.4) * 2.8 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
-    const teamCoverDmg = Math.round(3200 * 4.4 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
-    rotationTotalDamage = teamCoverDmg + personalDmg;
-    peakHitDamage = teamCoverDmg;
-    steps.push({
-      stepNumber: steps.length + 1,
-      charName: mainChar.name,
-      phase: isRu ? "САБ-ДПС ВКЛАД СУСТЕЙНА" : "SUSTAIN SUB-DPS HIT",
-      actionNameRu: "Бонус-атака / Контрудар / Ультимейт выживания",
-      actionNameEn: "Sustain Sub-DPS / Counter / Ultimate Impact",
-      damage: personalDmg,
-      isDamageAction: true
-    });
-    steps.push({
-      stepNumber: steps.length + 1,
-      charName: isRu ? "Отряд под защитой" : "Protected Team",
-      phase: isRu ? "УРОН ОТРЯДА ПОД ДЕБАФФАМИ" : "TEAM DAMAGE UNDER PROTECTION",
-      actionNameRu: "Урон отряда с учётом крит-уязвимости и щитов",
-      actionNameEn: "Team Output Enabled by Mitigation & Vulnerability",
-      damage: teamCoverDmg,
-      isDamageAction: true
-    });
   } else {
-    const scalingStat = Math.max(1200, combatAtk || combatHp);
-    const skillDmg = Math.round(scalingStat * 2.2 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
-    const ultDmg = Math.round(scalingStat * 3.4 * (combatDmgBonus + 0.3) * critMultiplier * defMult * resMult * vulnMult);
-    rotationTotalDamage += skillDmg + ultDmg;
-    peakHitDamage = Math.max(skillDmg, ultDmg);
-    steps.push({
-      stepNumber: steps.length + 1,
-      charName: mainChar.name,
-      phase: isRu ? "ХОД ДПС (НАВЫК)" : "DPS TURN (SKILL)",
-      actionNameRu: "Усиленный боевой навык",
-      actionNameEn: "Enhanced Combat Skill",
-      damage: skillDmg,
-      isDamageAction: true
-    });
-    steps.push({
-      stepNumber: steps.length + 1,
-      charName: mainChar.name,
-      phase: isRu ? "СВЕРХСПОСОБНОСТЬ" : "ULTIMATE BURST",
-      actionNameRu: "Сверхспособность (Полный прокаст под баффами)",
-      actionNameEn: "Ultimate Burst (Full Team Buffs)",
-      damage: ultDmg,
-      isDamageAction: true
-    });
+    // Unknown kits and role-based placeholder damage must not be presented as
+    // a character rotation. Add an explicit, sourced kit profile first.
+    return null;
   }
-  const actionsPerCycle = Math.max(1, 100 * baseSpd / 1e4);
-  const teamCycleDps = Math.round(rotationTotalDamage / 2 * actionsPerCycle);
   return {
     rotationTotalDamage,
     peakHitDamage,
-    teamCycleDps,
     steps,
     enemyMode,
-    loopFactor,
+    buffTimingStatus,
     combatStats: {
       combatAtk,
       combatHp,
@@ -569,6 +475,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       totalDefShred: (totalDefShred * 100).toFixed(1),
       resMult: resMult.toFixed(2),
       vulnMult: vulnMult.toFixed(2)
-    }
+    },
+    hasUnmodeledAtkPercent: teamAtkPercent > 0 && baseAttackForPercent <= 0
   };
 }

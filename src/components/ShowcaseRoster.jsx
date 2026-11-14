@@ -100,7 +100,7 @@ export default function ShowcaseRoster({ characters, activeIndex, onSelect, t, l
                   {t.lvl} {char.level} • E{char.rank}
                 </div>
                 <div className="roster-score-pill">
-                  TOP {audit.topPercent}% • {audit.score}
+                  {isRu ? "Индекс " : "Index "}{audit.score}/100
                 </div>
               </div>
             );
