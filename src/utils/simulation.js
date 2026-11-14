@@ -1,3 +1,5 @@
+import { ROTATIONS } from "../data/rotations.js";
+
 export function runCombatSimulation(char, stats, archetype, lang = "ru") {
   if (!char) return null;
   const isRu = lang === "ru";
@@ -67,6 +69,49 @@ export function runCombatSimulation(char, stats, archetype, lang = "ru") {
   const simCr = Math.min(1, (cr + (isMortenax ? 20 : 0)) / 100);
   const simCd = (cd + (isMortenax ? 60 : 0)) / 100;
   const critMultiplier = 1 + simCr * simCd;
+
+  // Уніфікація двигунів: для персонажів з kit-ротацією (src/data/rotations.js) рахуємо
+  // персональні метрики з реального кіта — ті самі множники, що й у rotationSimulation.js.
+  const kitRotation = ROTATIONS[charId] || null;
+  if (kitRotation) {
+    const scalingStat = Math.max(1200, kitRotation.hpScale ? hp : atk);
+    const totalDmgBonus = 1 + dmg_boost / 100 + (kitRotation.passiveDmgBoost || 0) / 100;
+    let rotationTotal = 0;
+    let peak = 0;
+    kitRotation.instances.forEach((inst) => {
+      const instDmg = Math.round(scalingStat * inst.mv * inst.count * inst.targets * totalDmgBonus * critMultiplier * baseDmgCoeff);
+      rotationTotal += instDmg;
+      const perHit = Math.round(scalingStat * inst.mv * totalDmgBonus * critMultiplier * baseDmgCoeff);
+      peak = Math.max(peak, perHit);
+    });
+    let loopFactor = 1;
+    if (kitRotation.ultLoop) {
+      loopFactor = Math.min(2.5, Math.max(0.8, (spd / 135) * ((err || 100) / 100) * 1.4));
+      rotationTotal = Math.round(rotationTotal * loopFactor);
+    }
+    const personalDpa = peak;
+    const personalDpc = rotationTotal;
+    const benchmarkTier = personalDpc >= 9e4 ? "SSS" : personalDpc >= 6e4 ? "SS" : personalDpc >= 4e4 ? "S" : "A";
+    return {
+      type: "DAMAGE",
+      hasDualOutput: false,
+      benchmarkTier,
+      metric1Label: isRu ? "ПИКОВЫЙ УДАР КИТА (DPA)" : "PEAK KIT HIT (DPA)",
+      metric1Value: `${personalDpa.toLocaleString("ru-RU")}`,
+      metric2Label: isRu ? "ПОЛНАЯ РОТАЦИЯ КИТА (СОЛО)" : "FULL KIT ROTATION (SOLO)",
+      metric2Value: `${personalDpc.toLocaleString("ru-RU")}${loopFactor > 1 ? ` (петля ×${loopFactor.toFixed(2)})` : ""}`,
+      metric3Label: isRu ? "КРИТ. МНОЖИТЕЛЬ" : "CRIT MULTIPLIER",
+      metric3Value: `${(critMultiplier * 100).toFixed(0)}%`,
+      personalDpa,
+      personalDpc,
+      personalDpaLabel: isRu ? "Пиковый удар по киту (макс. инстанс)" : "Peak kit hit (max instance)",
+      personalDpcLabel: isRu ? "Полная ротация кита (соло, без бафов отряда)" : "Full kit rotation (solo, no team buffs)",
+      personalMetric3Label: isRu ? "Множитель крита" : "Crit Multiplier",
+      personalMetric3Value: `${critMultiplier.toFixed(2)}x (${(simCr * 100).toFixed(0)}% / ${(simCd * 100).toFixed(0)}%)`,
+      summaryRu: `Расчёт по реальному киту: полная ротация даёт ~${personalDpc.toLocaleString("ru-RU")} урона соло (пиковый удар ~${personalDpa.toLocaleString("ru-RU")}). Бафы отряда (саппорты из витрины) добавляются в блоке «Симуляция отряда». Числа в игре выше за счёт многократных циклов ротации за бой.`,
+      summaryEn: `Kit-accurate calc: full rotation deals ~${personalDpc.toLocaleString("en-US")} damage solo (peak hit ~${personalDpa.toLocaleString("en-US")}). Team buffs (showcase supports) are applied in the team simulation block. In-game numbers are higher due to multiple rotation cycles per fight.`
+    };
+  }
   if (isMortenax) {
     const zoneDefMult = 1e3 / (1100 * (1 - 0.3) + 1e3);
     const vulnMult = 1 + 0.5;

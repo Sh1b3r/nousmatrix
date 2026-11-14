@@ -1,9 +1,10 @@
-export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matchedTeammates = [], lang = "ru") {
+import { ROTATIONS } from "../data/rotations.js";
+
+export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matchedTeammates = [], lang = "ru", options = {}) {
   if (!mainChar || !mainStats) return null;
   const isRu = lang === "ru";
   const name = (mainChar.name || "").toLowerCase();
-  const charId = String(mainChar.id || "");
-  const pathId = String(mainChar.path?.id || "").toLowerCase();
+  const charId = String(mainChar.id || "");  const pathId = String(mainChar.path?.id || "").toLowerCase();
   const pathName = String(mainChar.path?.name || "").toLowerCase();
   let baseAtk = Number(mainStats.atk || 0);
   let baseHp = Number(mainStats.hp || 0);
@@ -22,8 +23,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   let teamVuln = 0;
   let teamBreakVuln = 0;
   let teamBeBoost = 0;
-  let hasSuperBreak = false;
-  let superBreakFactor = 1;
+  let loopFactor = 1;
+  let hasSuperBreak = false;  let superBreakFactor = 1;
   let teamActionAdvances = [];
   matchedTeammates.forEach((tm) => {
     const b = tm.dynamicBuffs || {};
@@ -35,6 +36,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     if (b.defShred) teamDefShred += b.defShred;
     if (b.ultVuln) teamVuln += b.ultVuln;
     if (b.allVuln) teamVuln += b.allVuln;
+    if (b.vuln) teamVuln += b.vuln;
     if (b.fuaVuln) teamVuln += b.fuaVuln;
     if (b.critVuln) teamVuln += b.critVuln;
     if (b.breakVuln) teamBreakVuln += b.breakVuln;
@@ -46,11 +48,19 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     if (b.targetAdvance) teamActionAdvances.push(b.targetAdvance);
     if (b.teamAdvance) teamActionAdvances.push(b.teamAdvance);
   });
+  // Пресеты врагов по режимам: MoC (босс ур. 95, RES 20%), PF (мобы ур. 88, RES 20%), AS (ап-босс ур. 95, RES 40%)
+  const enemyMode = options.enemyMode || "moc";
+  const ENEMY_PRESETS = {
+    moc: { lv: 95, res: 0.2 },
+    pf: { lv: 88, res: 0.2 },
+    as: { lv: 95, res: 0.4 }
+  };
+  const enemy = ENEMY_PRESETS[enemyMode] || ENEMY_PRESETS.moc;
   const totalDefShred = Math.min(1, teamDefShred / 100);
   const charLv = Number(mainChar.level || 80);
-  const enemyLv = 90;
+  const enemyLv = enemy.lv;
   const defMult = (charLv + 20) / (charLv + 20 + (enemyLv + 20) * (1 - totalDefShred));
-  const baseEnemyRes = 0.2;
+  const baseEnemyRes = enemy.res;
   const effectiveRes = Math.max(-1, baseEnemyRes - teamResPen / 100);
   const resMult = 1 - effectiveRes;
   const vulnMult = 1 + teamVuln / 100;
@@ -97,7 +107,47 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const isArgenti = charId === "1302" || name.includes("аргенти") || name.includes("argenti");
   const isSupportRole = pathId === "shaman" || pathName.includes("harmony") || pathName.includes("гармон");
   const isSustainRole = pathId === "knight" || pathId === "priest" || pathName.includes("preservation") || pathName.includes("abundance") || pathName.includes("сохран") || pathName.includes("изобил");
-  if (isHimeko) {
+  const kitRotation = ROTATIONS[charId] || null;
+  if (kitRotation) {
+    const kitDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + (kitRotation.passiveDmgBoost || 0)) / 100;
+    const scalingStat = Math.max(1200, kitRotation.hpScale ? combatHp : combatAtk);
+    kitRotation.instances.forEach((inst) => {
+      const instDmg = Math.round(scalingStat * inst.mv * inst.count * inst.targets * kitDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+      rotationTotalDamage += instDmg;
+      const perHit = Math.round(scalingStat * inst.mv * kitDmgBonus * critMultiplier * defMult * resMult * vulnMult);
+      peakHitDamage = Math.max(peakHitDamage, perHit);
+      steps.push({
+        stepNumber: steps.length + 1,
+        charName: mainChar.name,
+        avatar: mainChar.avatar?.icon || null,
+        phase: isRu ? inst.phaseRu : inst.phaseEn,
+        actionNameRu: inst.actionRu,
+        actionNameEn: inst.actionEn,
+        descRu: inst.descRu,
+        descEn: inst.descEn,
+        damage: instDmg,
+        isDamageAction: true
+      });
+    });
+    if (kitRotation.ultLoop) {
+      // Калібрування енергетичної петлі: SPD × ERR визначають, скільки разів ульт встигає
+      // перезарядитися за цикл MoC (~150 AV). Базова ротація = один каст.
+      const err = Number(mainStats.err || 100);
+      loopFactor = Math.min(2.5, Math.max(0.8, (baseSpd / 135) * (err / 100) * 1.4));
+      rotationTotalDamage = Math.round(rotationTotalDamage * loopFactor);
+      steps.push({
+        stepNumber: steps.length + 1,
+        charName: mainChar.name,
+        phase: isRu ? "КАЛИБРОВКА" : "CALIBRATION",
+        actionNameRu: `Енергетична петля ×${loopFactor.toFixed(2)}`,
+        actionNameEn: `Energy loop x${loopFactor.toFixed(2)}`,
+        descRu: `Ротация успевает повторяться ×${loopFactor.toFixed(2)} за цикл (СКОР ${baseSpd.toFixed(0)} × ВЭ ${err}%). Допущение модели, а не точный расчёт игры.`,
+        descEn: `Rotation repeats x${loopFactor.toFixed(2)} per cycle (SPD ${baseSpd.toFixed(0)} x ERR ${err}%). Model assumption, not exact game sim.`,
+        damage: 0,
+        isDamageAction: false
+      });
+    }
+  } else if (isHimeko) {
     const skillDmg = Math.round(combatAtk * 3.6 * combatDmgBonus * critMultiplier * defMult * resMult * vulnMult);
     rotationTotalDamage += skillDmg;
     peakHitDamage = Math.max(peakHitDamage, skillDmg);
@@ -397,6 +447,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     peakHitDamage,
     teamCycleDps,
     steps,
+    enemyMode,
+    loopFactor,
     combatStats: {
       combatAtk,
       combatHp,

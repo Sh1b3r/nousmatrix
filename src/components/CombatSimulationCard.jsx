@@ -16,6 +16,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   }, [charId, character, lang]);
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
+  const [enemyMode, setEnemyMode] = useState("moc");
   const currentSquad = squads[selectedSquadIdx] || squads[0];
 
   const matchedTeammates = useMemo(() => {
@@ -27,8 +28,8 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   }, [matchedTeammates]);
 
   const rotationSim = useMemo(() => {
-    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang);
-  }, [character, stats, currentSquad, matchedTeammates, lang]);
+    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode });
+  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode]);
 
   const sim = runCombatSimulation(character, stats || {}, archetype, lang);
   if (!sim) return null;
@@ -55,7 +56,16 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
     <div className="panel panel-combat-sim">
       <div className="panel-title">
         <span>{isRu ? "Боевая симуляция ротации" : "Combat Rotation Simulation"}</span>
-        <span className="sim-boss-badge">{isRu ? "Допущение: MoC 12 // Босс 90 ур." : "Assumption: MoC 12 // Lv.90 Boss"}</span>
+        <select
+          className="sim-mode-select"
+          value={enemyMode}
+          onChange={(e) => setEnemyMode(e.target.value)}
+          title={isRu ? "Режим концовки: уровень врага и сопротивление" : "Endgame mode: enemy level and resistance"}
+        >
+          <option value="moc">{isRu ? "MoC • Босс 95 ур." : "MoC • Lv.95 Boss"}</option>
+          <option value="pf">{isRu ? "PF • Мобы 88 ур." : "PF • Lv.88 Waves"}</option>
+          <option value="as">{isRu ? "AS • Ап-босс 95 ур. (40% RES)" : "AS • Lv.95 Boss (40% RES)"}</option>
+        </select>
       </div>
 
       <div className="combat-sim-header">
@@ -101,7 +111,10 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 onClick={() => setSelectedSquadIdx(idx)}
               >
                 <span className="squad-tab-number">{idx + 1}</span>
-                <span className="squad-tab-title">{isRu ? sq.nameRu : sq.nameEn}</span>
+                <span className="squad-tab-title">
+                  {isRu ? sq.nameRu : sq.nameEn}
+                  {sq.isEstimate && <em className="squad-estimate-tag">{isRu ? " оценка 4.7" : " est. 4.7"}</em>}
+                </span>
               </button>
             ))}
           </div>
@@ -283,19 +296,49 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
           <summary className="sim-params-summary">
             <span>
               {isRu
-                ? "Допущения и параметры симуляции (MoC 12 / Босс 90 ур.)"
-                : "Simulation Assumptions & Parameters (MoC 12 / Lv.90 Boss)"}
+                ? enemyMode === "pf"
+                  ? "Допущения и параметры симуляции (PF / Мобы 88 ур.)"
+                  : enemyMode === "as"
+                  ? "Допущения и параметры симуляции (AS / Ап-босс 95 ур.)"
+                  : "Допущения и параметры симуляции (MoC 12 / Босс 95 ур.)"
+                : enemyMode === "pf"
+                ? "Simulation Assumptions & Parameters (PF / Lv.88 Waves)"
+                : enemyMode === "as"
+                ? "Simulation Assumptions & Parameters (AS / Lv.95 Boss)"
+                : "Simulation Assumptions & Parameters (MoC 12 / Lv.95 Boss)"}
             </span>
           </summary>
           <div className="sim-assumptions-list">
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
-              <span>{isRu ? "Цель симуляции: босс 90 уровня (Зал Забвения 12 / Апокалипсис), защитный фактор 1100, базовая устойчивость 20% RES." : "Target: Lv. 90 Boss (MoC 12), 1100 DEF factor, 20% Base RES."}</span>
+              <span>
+                {isRu
+                  ? enemyMode === "pf"
+                    ? "Цель симуляции: волны мобов 88 уровня (Чистый Вымысел), защитный фактор 1100, базовая устойчивость 20% RES."
+                    : enemyMode === "as"
+                    ? "Цель симуляции: ап-босс 95 уровня (Апокалипсис Постоянства), защитный фактор 1100, устойчивость 40% RES."
+                    : "Цель симуляции: босс 95 уровня (Зал Забвения 12), защитный фактор 1100, базовая устойчивость 20% RES."
+                  : enemyMode === "pf"
+                  ? "Target: Lv. 88 mob waves (Pure Fiction), 1100 DEF factor, 20% Base RES."
+                  : enemyMode === "as"
+                  ? "Target: Lv. 95 Apocalyptic Shadow boss, 1100 DEF factor, 40% RES."
+                  : "Target: Lv. 95 Boss (MoC 12), 1100 DEF factor, 20% Base RES."}
+              </span>
             </div>
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
               <span>{isRu ? "Окно действия: 100 AV (150 AV в цикле 0)." : "Action window: 100 AV (150 AV in Cycle 0)."}</span>
             </div>
+            {rotationSim?.loopFactor > 1 && (
+              <div className="assumption-item">
+                <span className="assumption-bullet">•</span>
+                <span>
+                  {isRu
+                    ? `Энергетическая петля ×${rotationSim.loopFactor.toFixed(2)}: ультимейт успевает перезарядиться несколько раз за цикл (СКОР × ВЭ). Это допущение модели, а не точный расчёт игры.`
+                    : `Energy loop x${rotationSim.loopFactor.toFixed(2)}: the ultimate recasts several times per cycle (SPD x ERR). This is a model assumption, not an exact game sim.`}
+                </span>
+              </div>
+            )}
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
               <span>
