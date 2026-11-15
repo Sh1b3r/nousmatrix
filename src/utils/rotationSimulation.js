@@ -131,7 +131,11 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     }
   });
   // Kit-ротація виявляється ДО обчислення множників: пасиви кіта (КУ/RES PEN) входять у бойові стати
+  // Статуси ротації: "verified" (повна часова шкала підтверджена) або "kit-verified"
+  // (множники й енергія з офіційного кіта, число повторів за цикл — документований допущення).
+  const KIT_ROTATION_STATUSES = new Set(["verified", "kit-verified"]);
   const kitRotation = ROTATIONS[charId] || null;
+  const kitRotationSupported = kitRotation && KIT_ROTATION_STATUSES.has(kitRotation.status);
   const kitCd = (kitRotation && kitRotation.passiveCritDmg) || 0;
   const kitResPen = (kitRotation && kitRotation.passiveResPen) || 0;
   const primaryEnemy = enemyScenario.targets[0];
@@ -317,7 +321,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   });
   // Character-specific kits must use exact IDs. Himeko: Nova (1510) has its
   // own configured script and must never fall through to regular Himeko (1003).
-  if (!usesExplicitTimeline && kitRotation?.status !== "verified" && !SUPPORTED_MANUAL_SCENARIOS.has(charId)) return null;
+  if (!usesExplicitTimeline && !kitRotationSupported && !SUPPORTED_MANUAL_SCENARIOS.has(charId)) return null;
   const isHimeko = charId === "1003";
   const isAcheron = charId === "1308";
   const isFirefly = charId === "1310" || name.includes("светлячок") || name.includes("firefly");
@@ -367,8 +371,18 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
           isDamageAction: outgoingHits.length > 0
         });
       });
-  } else if (kitRotation?.status === "verified") {
+  } else if (kitRotationSupported) {
     const actionBuffStatuses = new Set();
+    if (kitRotation.status === "kit-verified") {
+      calculationWarnings.push(isRu
+        ? "Ротация построена по официальным множителям и энергии кита (Prydwen, обновление из OSPROD). Число повторов за цикл — документированное допущение; условные пассивы с неподтверждённым аптаймом и энергия союзников не учитываются."
+        : "The rotation uses official kit multipliers and energy (Prydwen, OSPROD-sourced). Per-cycle repeat counts are a documented assumption; conditional passives with unverified uptime and ally energy feed are not modeled.");
+    }
+    // Эффект пробития (BE) в долях, ограниченный явным капом кита (например, 360% у Светлячка).
+    const beCapFraction = kitRotation.beCapPercent != null
+      ? Math.max(0, Number(kitRotation.beCapPercent)) / 100
+      : Number.POSITIVE_INFINITY;
+    const beFraction = Math.min(Math.max(0, Number(mainStats.be || 0)) / 100, beCapFraction);
     kitRotation.instances.forEach((inst) => {
       const actionTeamBuffs = getTeamBuffsForAction(squad, matchedTeammates, inst.key);
       actionBuffStatuses.add(actionTeamBuffs.status);
@@ -386,16 +400,25 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       const actionScalingStat = kitRotation.hpScale ? combatHp : actionAtk;
       const actionKitDmgBonus = actionDmgBonus;
       const selectedTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, Number(inst.targets) || 1)));
-      const actionTargetFactors = selectedTargets.map((target) => getTargetDamageFactors(target, {
-        defShredPercent: Number(b.defShred) || 0,
-        resPenPercent: (Number(b.resPen) || 0) + kitResPen,
-        vulnerabilityPercent: (Number(b.allVuln) || 0) + (Number(b.vuln) || 0)
-      }));
-      const instDmg = Math.round(actionScalingStat * inst.mv * inst.count * actionKitDmgBonus
-        * actionCritMultiplier * actionTargetFactors.reduce((sum, factors) => sum + factors.damageFactor, 0));
+      // Множитель на цель: главный таргет — inst.mv (+ BE-часть), остальные — adjacentMv
+      // (для AoE без adjacentMv значения совпадают со старым поведением).
+      const primaryMv = Number(inst.mv) + (Number(inst.beScale) || 0) * beFraction;
+      const adjacentMvBase = inst.adjacentMv !== undefined ? Number(inst.adjacentMv) : Number(inst.mv);
+      const adjacentBeScale = inst.beScaleAdjacent !== undefined ? Number(inst.beScaleAdjacent) : (Number(inst.beScale) || 0);
+      const targetMotionValues = selectedTargets.map((target, index) => {
+        const mv = index === 0 ? primaryMv : adjacentMvBase + adjacentBeScale * beFraction;
+        const factors = getTargetDamageFactors(target, {
+          defShredPercent: Number(b.defShred) || 0,
+          resPenPercent: (Number(b.resPen) || 0) + kitResPen,
+          vulnerabilityPercent: (Number(b.allVuln) || 0) + (Number(b.vuln) || 0)
+        });
+        return mv * factors.damageFactor;
+      });
+      const instDmg = Math.round(actionScalingStat * inst.count * actionKitDmgBonus
+        * actionCritMultiplier * targetMotionValues.reduce((sum, weighted) => sum + weighted, 0));
       rotationTotalDamage += instDmg;
-      const perHit = Math.max(0, ...actionTargetFactors.map((factors) =>
-        Math.round(actionScalingStat * inst.mv * actionKitDmgBonus * actionCritMultiplier * factors.damageFactor)
+      const perHit = Math.max(0, ...targetMotionValues.map((weighted) =>
+        Math.round(actionScalingStat * inst.count * actionKitDmgBonus * actionCritMultiplier * weighted)
       ));
       peakHitDamage = Math.max(peakHitDamage, perHit);
       steps.push({
@@ -411,6 +434,21 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
         isDamageAction: true
       });
     });
+    // Проверка энергетического баланса цикла: суммарный прирост энергии заполнителей
+    // должен покрывать стоимость сверхспособности (без учёта энергии союзников — намеренно).
+    const energyCycle = kitRotation.energy;
+    if (energyCycle && Number(energyCycle.ultCost) > 0) {
+      const fillerGain = kitRotation.instances
+        .filter((inst) => !inst.isUlt)
+        .reduce((sum, inst) => sum + (Number(inst.energyGain) || 0), 0);
+      const startEnergy = Number(energyCycle.startEnergyPercent || 0) / 100 * Number(energyCycle.ultCost)
+        + (Number(energyCycle.startEnergyFlat) || 0);
+      if (fillerGain + startEnergy < Number(energyCycle.ultCost)) {
+        calculationWarnings.push(isRu
+          ? `Энергетический цикл не замыкается без энергии союзников: ${Math.round(fillerGain + startEnergy)} < ${Math.round(energyCycle.ultCost)}.`
+          : `The energy cycle does not close without ally energy feed: ${Math.round(fillerGain + startEnergy)} < ${Math.round(energyCycle.ultCost)}.`);
+      }
+    }
     if (actionBuffStatuses.size === 1 && actionBuffStatuses.has("verified-schedule")) {
       buffTimingStatus = "verified-schedule";
     } else if (actionBuffStatuses.size === 1 && actionBuffStatuses.has("no-numeric-buffs-configured")) {
