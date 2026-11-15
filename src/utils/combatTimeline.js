@@ -47,17 +47,24 @@ function normalizeAction(action, actorId, index) {
 
 function normalizeActor(raw, index, warnings) {
   const id = String(raw?.id || `actor-${index + 1}`);
-  const speed = asFiniteNumber(raw?.speed);
-  if (!raw || typeof raw !== "object" || speed === null || speed <= 0) {
-    warnings.push(`Actor ${id} omitted: a positive explicit speed is required.`);
+  if (!raw || typeof raw !== "object") {
+    warnings.push(`Actor ${id} omitted: actor input must be an object.`);
     return null;
   }
-
-  const interval = ACTION_GAUGE / speed;
+  const speed = asFiniteNumber(raw?.speed);
+  const hasUsableSpeed = speed !== null && speed > 0;
+  const interval = hasUsableSpeed ? ACTION_GAUGE / speed : null;
   const maxHp = asFiniteNumber(raw.maxHp);
   const currentHp = asFiniteNumber(raw.currentHp, maxHp);
   const maxToughness = asFiniteNumber(raw.maxToughness);
-  const currentToughness = asFiniteNumber(raw.currentToughness, maxToughness);
+  const explicitCurrentToughness = asFiniteNumber(raw.currentToughness);
+  const currentToughness = explicitCurrentToughness
+    ?? (raw.isBroken === true ? 0 : maxToughness);
+  const toughnessStateFromBar = currentToughness === null ? null : currentToughness <= 0;
+  if (typeof raw.isBroken === "boolean" && toughnessStateFromBar !== null
+    && raw.isBroken !== toughnessStateFromBar) {
+    warnings.push(`Actor ${id}: isBroken conflicts with current Toughness; current Toughness is used.`);
+  }
   const combatStats = raw.combatStats && typeof raw.combatStats === "object"
     ? raw.combatStats
     : raw.stats && typeof raw.stats === "object" ? raw.stats : {};
@@ -68,8 +75,8 @@ function normalizeActor(raw, index, warnings) {
     .map((action, actionIndex) => normalizeAction(action, id, actionIndex))
     .filter(Boolean);
 
-  if (actions.length === 0) {
-    warnings.push(`Actor ${id} omitted: at least one explicit action is required.`);
+  if (actions.length > 0 && !hasUsableSpeed) {
+    warnings.push(`Actor ${id} omitted: scripted actions require a positive explicit speed.`);
     return null;
   }
 
@@ -79,9 +86,9 @@ function normalizeActor(raw, index, warnings) {
     kind: raw.kind === "enemy" ? "enemy" : "ally",
     level,
     combatStats,
-    speed,
+    speed: hasUsableSpeed ? speed : null,
     interval,
-    nextActionAt: Math.max(0, asFiniteNumber(raw.initialActionValue, interval)),
+    nextActionAt: actions.length > 0 ? Math.max(0, asFiniteNumber(raw.initialActionValue, interval)) : null,
     maxHp: maxHp !== null && maxHp > 0 ? maxHp : null,
     hp: maxHp !== null && maxHp > 0
       ? clamp(currentHp ?? maxHp, 0, maxHp)
@@ -90,15 +97,12 @@ function normalizeActor(raw, index, warnings) {
     toughness: maxToughness !== null && maxToughness >= 0
       ? clamp(currentToughness ?? maxToughness, 0, maxToughness)
       : null,
-    isBroken: typeof raw.isBroken === "boolean"
-      ? raw.isBroken
-      : maxToughness !== null && maxToughness >= 0
-        ? (currentToughness ?? maxToughness) <= 0
-        : null,
+    isBroken: toughnessStateFromBar ?? (typeof raw.isBroken === "boolean" ? raw.isBroken : null),
     weaknesses: Array.isArray(raw.weaknesses) ? raw.weaknesses : [],
     resistancesPercent: raw.resistancesPercent && typeof raw.resistancesPercent === "object"
       ? raw.resistancesPercent
       : null,
+    resistanceDataComplete: raw.resistanceDataComplete === true,
     resistancePercent: asFiniteNumber(raw.resistancePercent),
     vulnerabilityPercent: asFiniteNumber(raw.vulnerabilityPercent, 0),
     critVulnerabilityPercent: asFiniteNumber(raw.critVulnerabilityPercent, 0),
@@ -135,13 +139,15 @@ function readCombatStat(stats, ...keys) {
 
 function resolveTargetResistancePercent(target, element) {
   if (element && target.resistancesPercent) {
+    const lowercase = String(element).toLowerCase();
     const aliases = element === "Thunder" ? ["Lightning", "thunder", "lightning"]
       : element === "Lightning" ? ["Thunder", "thunder", "lightning"] : [];
-    for (const key of [element, ...aliases]) {
+    for (const key of [element, lowercase, ...aliases]) {
       const value = asFiniteNumber(target.resistancesPercent[key]);
       if (value !== null) return value;
     }
   }
+  if (element && target.resistanceDataComplete) return 0;
   if (target.resistancePercent !== null) return target.resistancePercent;
   if (element && target.weaknesses.includes(element)) return 0;
   return null;
@@ -292,7 +298,9 @@ function calculateDirectDamage(actor, target, effect, warnings, now) {
 }
 
 function setActorSpeed(actor, newSpeed, now) {
-  if (!Number.isFinite(newSpeed) || newSpeed <= 0 || newSpeed === actor.speed) return false;
+  if (!Number.isFinite(newSpeed) || newSpeed <= 0 || newSpeed === actor.speed
+    || !Number.isFinite(actor.interval) || actor.interval <= 0
+    || !Number.isFinite(actor.nextActionAt)) return false;
   const oldInterval = actor.interval;
   const newInterval = ACTION_GAUGE / newSpeed;
   const remainingAt = Math.max(0, actor.nextActionAt - now);
@@ -375,9 +383,17 @@ function applyActionEffects(action, actor, actorsById, state) {
       const nextSpeed = effect.mode === "set" ? amount : target.speed + amount;
       if (!setActorSpeed(target, nextSpeed, state.now)) continue;
     } else if (effect.type === "advance") {
+      if (!Number.isFinite(target.nextActionAt) || !Number.isFinite(target.interval)) {
+        warnings.push(`${action.key}: Action Advance target '${target.id}' has no scheduled actions.`);
+        continue;
+      }
       const fraction = clamp(asFiniteNumber(effect.fraction, 0), 0, 1);
       target.nextActionAt = Math.max(state.now, target.nextActionAt - target.interval * fraction);
     } else if (effect.type === "delay") {
+      if (!Number.isFinite(target.nextActionAt) || !Number.isFinite(target.interval)) {
+        warnings.push(`${action.key}: Action Delay target '${target.id}' has no scheduled actions.`);
+        continue;
+      }
       const fraction = Math.max(0, asFiniteNumber(effect.fraction, 0));
       target.nextActionAt += target.interval * fraction;
     } else if (effect.type === "modifier") {
@@ -622,7 +638,7 @@ export function simulateCombatTimeline({
       vulnerabilityPercent: actor.vulnerabilityPercent,
       critVulnerabilityPercent: actor.critVulnerabilityPercent,
       defenseReductionPercent: actor.defenseReductionPercent,
-      nextActionValue: Number(actor.nextActionAt.toFixed(6)),
+      nextActionValue: Number.isFinite(actor.nextActionAt) ? Number(actor.nextActionAt.toFixed(6)) : null,
       turns: actor.turnCount,
       hp: actor.hp,
       maxHp: actor.maxHp,
@@ -636,6 +652,7 @@ export function simulateCombatTimeline({
     })),
     assumptions: [
       "Only explicitly supplied actors and action scripts are simulated.",
+      "Actors without action scripts remain valid as targets, but do not take turns or trigger automatic enemy behavior.",
       "Action Value uses 10000 divided by the supplied speed; the horizon is explicit and no game-mode cycle limit is inferred.",
       "Damage effects can use a direct-damage formula when attacker stats, target level and RES, element, CRIT stats, motion value, and break state are supplied; flat damage remains supported for externally validated values.",
       "Raw damage is the calculated hit amount; effective damage is limited by remaining HP and shield. Hits against already-defeated targets are skipped.",

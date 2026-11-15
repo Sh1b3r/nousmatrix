@@ -31,8 +31,39 @@ function extractMotionValues(description, characterName) {
 export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matchedTeammates = [], lang = "ru", options = {}) {
   if (!mainChar || !mainStats) return null;
   const isRu = lang === "ru";
+  const enemyMode = options.enemyMode || "moc";
+  const enemyScenario = resolveEnemyScenario(options, enemyMode, mainChar.element?.id || mainChar.element || "");
+  const timelineInputActors = Array.isArray(options.timelineScenario?.actors)
+    ? options.timelineScenario.actors
+    : [];
+  const hasTimelineEnemyActors = timelineInputActors.some((actor) => actor?.kind === "enemy");
+  const timelineSeedEnemies = options.timelineScenario && !hasTimelineEnemyActors
+    && enemyScenario.status === "explicit-targets"
+    ? enemyScenario.targets.map((target) => ({
+      id: target.id,
+      name: target.name || target.id,
+      kind: "enemy",
+      level: target.isLevelExplicit ? target.level : null,
+      maxHp: target.maxHp,
+      currentHp: target.currentHp,
+      maxToughness: target.maxToughness,
+      currentToughness: target.isToughnessExplicit ? target.currentToughness : null,
+      isBroken: target.isBreakStateExplicit ? target.isBroken : null,
+      weaknesses: target.weaknesses,
+      resistancePercent: target.isScalarResistanceExplicit ? target.resistancePercent : null,
+      resistancesPercent: target.resistancesPercent,
+      resistanceDataComplete: target.resistanceDataComplete,
+      vulnerabilityPercent: target.vulnerabilityPercent,
+      critVulnerabilityPercent: target.critVulnerabilityPercent,
+      defenseReductionPercent: target.defenseReductionPercent,
+      actions: []
+    }))
+    : [];
   const combatTimeline = options.timelineScenario && typeof options.timelineScenario === "object"
-    ? simulateCombatTimeline(options.timelineScenario)
+    ? simulateCombatTimeline({
+      ...options.timelineScenario,
+      actors: [...timelineInputActors, ...timelineSeedEnemies]
+    })
     : null;
   const usesExplicitTimeline = Boolean(combatTimeline && combatTimeline.status !== "invalid-input");
   const timelineEnemyActors = usesExplicitTimeline
@@ -103,8 +134,6 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const kitRotation = ROTATIONS[charId] || null;
   const kitCd = (kitRotation && kitRotation.passiveCritDmg) || 0;
   const kitResPen = (kitRotation && kitRotation.passiveResPen) || 0;
-  const enemyMode = options.enemyMode || "moc";
-  const enemyScenario = resolveEnemyScenario(options, enemyMode, mainChar.element?.id || mainChar.element || "");
   const primaryEnemy = enemyScenario.targets[0];
   const enemy = {
     lv: primaryEnemy.level,

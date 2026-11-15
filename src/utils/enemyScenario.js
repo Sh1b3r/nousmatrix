@@ -12,13 +12,15 @@ function finiteNumber(value, fallback) {
   return Number.isFinite(number) ? number : fallback;
 }
 
-function getElementResistance(target, elementId, fallbackPercent) {
-  if (target.resistancePercent !== null && target.resistancePercent !== undefined
-    && Number.isFinite(Number(target.resistancePercent))) return Number(target.resistancePercent);
-  if (target.allTypeResistancePercent !== null && target.allTypeResistancePercent !== undefined
-    && Number.isFinite(Number(target.allTypeResistancePercent))) return Number(target.allTypeResistancePercent);
+function hasFiniteExplicitValue(value) {
+  return value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
+}
 
-  const resistances = target.resistances;
+function getElementResistance(target, elementId, fallbackPercent) {
+  if (hasFiniteExplicitValue(target.resistancePercent)) return Number(target.resistancePercent);
+  if (hasFiniteExplicitValue(target.allTypeResistancePercent)) return Number(target.allTypeResistancePercent);
+
+  const resistances = target.resistances || target.resistancesPercent;
   const elementAliases = {
     Thunder: ["Lightning", "thunder", "lightning"],
     Lightning: ["Thunder", "lightning", "thunder"]
@@ -34,14 +36,15 @@ function getElementResistance(target, elementId, fallbackPercent) {
 
 function hasElementResistance(target, elementId) {
   if (target.resistanceDataComplete === true) return true;
-  if (target.resistancePercent !== null && target.resistancePercent !== undefined
-    || target.allTypeResistancePercent !== null && target.allTypeResistancePercent !== undefined) return true;
+  if (hasFiniteExplicitValue(target.resistancePercent)
+    || hasFiniteExplicitValue(target.allTypeResistancePercent)) return true;
   const aliases = elementId === "Thunder" ? ["Lightning", "thunder", "lightning"]
     : elementId === "Lightning" ? ["Thunder", "lightning", "thunder"] : [];
   const keys = [elementId, String(elementId).toLowerCase(), ...aliases];
+  const resistances = target.resistances || target.resistancesPercent;
   return keys.some((key) => {
-    const value = target.resistances?.[key];
-    return value !== null && value !== undefined && Number.isFinite(Number(value));
+    const value = resistances?.[key];
+    return hasFiniteExplicitValue(value);
   });
 }
 
@@ -76,8 +79,16 @@ function normalizeTarget(target = {}, index, defaults, elementId, fallbackBroken
     name: target.name || null,
     level: Math.max(1, level),
     isLevelExplicit: target.level !== null && target.level !== undefined
-      || target.enemyLevel !== null && target.enemyLevel !== undefined,
+      && target.level !== ""
+      || target.enemyLevel !== null && target.enemyLevel !== undefined && target.enemyLevel !== "",
     resistancePercent: Math.max(-100, Math.min(90, resistancePercent)),
+    resistancesPercent: (target.resistances || target.resistancesPercent)
+      && typeof (target.resistances || target.resistancesPercent) === "object"
+      ? target.resistances || target.resistancesPercent
+      : null,
+    resistanceDataComplete: target.resistanceDataComplete === true,
+    isScalarResistanceExplicit: hasFiniteExplicitValue(target.resistancePercent)
+      || hasFiniteExplicitValue(target.allTypeResistancePercent),
     isResistanceExplicit: hasElementResistance(target, elementId),
     resistanceDataStatus: target.resistanceDataStatus || null,
     weaknesses: Array.isArray(target.weaknesses) ? target.weaknesses : [],
@@ -104,6 +115,8 @@ function normalizeTarget(target = {}, index, defaults, elementId, fallbackBroken
     isDefenseReduced: typeof target.isDefenseReduced === "boolean" ? target.isDefenseReduced : null,
     aetherCodeActive: typeof target.aetherCodeActive === "boolean" ? target.aetherCodeActive : null,
     vulnerabilityPercent: finiteNumber(target.vulnerabilityPercent, 0),
+    critVulnerabilityPercent: finiteNumber(target.critVulnerabilityPercent, 0),
+    defenseReductionPercent: finiteNumber(target.defenseReductionPercent, 0),
     baseStats: target.baseStats || null,
     speed: finiteNumber(target.speed ?? target.derivedStats?.speed, null),
     derivedStats: target.derivedStats || null,
@@ -112,15 +125,15 @@ function normalizeTarget(target = {}, index, defaults, elementId, fallbackBroken
     isBreakStateExplicit: typeof target.isBroken === "boolean" || typeof target.broken === "boolean"
       || currentToughness !== null || typeof fallbackBroken === "boolean",
     isExplicit: Boolean(target.name || target.level || target.enemyLevel
-      || target.resistancePercent !== null && target.resistancePercent !== undefined
-      || target.allTypeResistancePercent !== null && target.allTypeResistancePercent !== undefined
-      || target.resistances || target.weaknesses
+      || hasFiniteExplicitValue(target.resistancePercent)
+      || hasFiniteExplicitValue(target.allTypeResistancePercent)
+      || target.resistances || target.resistancesPercent || target.weaknesses
       || target.hpPercent !== null && target.hpPercent !== undefined
       || target.healthPercent !== null && target.healthPercent !== undefined
-      || target.currentHp !== null && target.currentHp !== undefined
-      || target.hp !== null && target.hp !== undefined
-      || target.maxHp !== null && target.maxHp !== undefined
-      || target.maxHP !== null && target.maxHP !== undefined
+      || hasFiniteExplicitValue(target.currentHp)
+      || hasFiniteExplicitValue(target.hp)
+      || hasFiniteExplicitValue(target.maxHp)
+      || hasFiniteExplicitValue(target.maxHP)
       || typeof target.isBroken === "boolean" || typeof target.broken === "boolean"
       || currentToughness !== null || debuffCount !== null || typeof target.debuffed === "boolean"
       || typeof target.isSlowed === "boolean" || typeof target.isDefenseReduced === "boolean"
