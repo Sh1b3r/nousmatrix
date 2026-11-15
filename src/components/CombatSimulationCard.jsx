@@ -49,7 +49,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
 
   const sim = runCombatSimulation(character, stats || {}, archetype, lang, { enemyMode, language: lang });
   const benchmark = useMemo(() => {
-    if (!rotationSim) return null;
+    if (rotationSim?.calculationStatus !== "verified-combat-simulation") return null;
     const teamSignature = [
       {
         id: charId,
