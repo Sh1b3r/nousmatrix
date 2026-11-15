@@ -4,6 +4,10 @@ import { resolveCombatEquipmentEffects } from "./combatEquipmentEffects.js";
 import { resolveEnemyScenario } from "./enemyScenario.js";
 import { simulateCombatTimeline } from "./combatTimeline.js";
 import {
+  BREAK_DOT_CONFIG,
+  BREAK_INSTANT_ELEMENT_MULTIPLIERS,
+  calculateBreakBaseDamage,
+  calculateBreakInstantDamage,
   calculateDefenseMultiplier,
   calculateExpectedCritMultiplier,
   calculateResistanceMultiplier,
@@ -996,6 +1000,103 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     // Unknown kits and role-based placeholder damage must not be presented as
     // a character rotation. Add an explicit, sourced kit profile first.
     return null;
+  }
+  // Явные пробития (options.breakProcs): каждое — удар Weakness Break по официальной
+  // формуле (уровень 80, мгновенный множитель стихии, (1+ЭП), DEF/RES/уязвимость),
+  // плюс DoT-тики стандартного дебаффа пробития. Число пробитий — явный ввод
+  // сценария; движок сам их не придумывает.
+  const configuredBreakProcs = Math.max(0, Math.floor(Number(options.breakProcs) || 0));
+  if (configuredBreakProcs > 0) {
+    const breakElement = String(mainChar.element?.id || mainChar.element || "");
+    const breakMaxToughness = Number(primaryEnemy.maxToughness);
+    const breakBePercent = baseBe + teamBeBoost;
+    if (!BREAK_INSTANT_ELEMENT_MULTIPLIERS[breakElement]) {
+      calculationWarnings.push(isRu
+        ? `Пробитие пропущено: стихия '${breakElement}' не распознана в таблице мгновенных множителей пробития.`
+        : `Break omitted: element '${breakElement}' is not in the instant-break multiplier table.`);
+    } else if (!(breakMaxToughness > 0)) {
+      calculationWarnings.push(isRu
+        ? "Пробитие пропущено: у цели этапа нет подтверждённой максимальной стойкости."
+        : "Break omitted: the stage target has no confirmed max Toughness.");
+    } else {
+      const breakFactors = getTargetDamageFactors(primaryEnemy, {
+        vulnerabilityPercent: teamVuln + teamBreakVuln,
+        includeToughness: false
+      });
+      const instantBreakDamage = calculateBreakInstantDamage({
+        attackerLevel: charLv,
+        maxToughness: breakMaxToughness,
+        element: breakElement,
+        breakEffectPercent: breakBePercent,
+        defenseMultiplier: breakFactors.defMult,
+        resistanceMultiplier: breakFactors.resMult,
+        vulnerabilityMultiplier: breakFactors.vulnMult,
+        mitigationMultiplier: breakFactors.damageReductionMultiplier
+      });
+      if (instantBreakDamage === null) {
+        calculationWarnings.push(isRu
+          ? "Пробитие пропущено: не хватает данных цели (макс. стойкость/стихия)."
+          : "Break omitted: target data is incomplete (max Toughness/element).");
+      } else {
+        const breakTotal = instantBreakDamage * configuredBreakProcs;
+        rotationTotalDamage += breakTotal;
+        peakHitDamage = Math.max(peakHitDamage, instantBreakDamage);
+        steps.push({
+          stepNumber: steps.length + 1,
+          charName: mainChar.name,
+          avatar: mainChar.avatar?.icon || null,
+          phase: isRu ? "СЛАБОСТЬ ПРОБИТА (ЗАДАННЫЕ ПРОБИТИЯ)" : "WEAKNESS BREAK (CONFIGURED PROCS)",
+          actionNameRu: `Weakness Break ×${configuredBreakProcs} (${(BREAK_INSTANT_ELEMENT_MULTIPLIERS[breakElement]).toFixed(1)}× ${breakElement})`,
+          actionNameEn: `Weakness Break x${configuredBreakProcs} (${(BREAK_INSTANT_ELEMENT_MULTIPLIERS[breakElement]).toFixed(1)}x ${breakElement})`,
+          descRu: `Официальная формула: база ур. 80 × (0,5 + стойкость ${breakMaxToughness}/40) × множитель стихии × (1+ЭП ${(breakBePercent / 100).toFixed(2)}) × Защита × Сопротивление × Уязвимость. Без крита.`,
+          descEn: `Official formula: Lv80 base x (0.5 + toughness ${breakMaxToughness}/40) x element coefficient x (1+BE ${(breakBePercent / 100).toFixed(2)}) x DEF x RES x vulnerability. No crit.`,
+          damage: breakTotal,
+          isDamageAction: true
+        });
+        // DoT от пробития — тики стандартного дебаффа по верифицированным множителям.
+        const dotConfig = BREAK_DOT_CONFIG[breakElement];
+        if (dotConfig) {
+          let dotPerTick;
+          let dotDescRu;
+          let dotDescEn;
+          if (dotConfig.bleedMaxHpPercent) {
+            const enemyMaxHp = Number(primaryEnemy.maxHp);
+            const bleedCap = 2 * calculateBreakBaseDamage(charLv) * breakMaxToughness;
+            if (Number.isFinite(enemyMaxHp) && enemyMaxHp > 0) {
+              dotPerTick = Math.min(enemyMaxHp * dotConfig.bleedMaxHpPercent / 100, bleedCap);
+              dotDescRu = `Кровотечение: ${(dotConfig.bleedMaxHpPercent).toFixed(0)}% макс. HP цели за тик (кап ${Math.round(bleedCap)}), ×(1+ЭП).`;
+              dotDescEn = `Bleed: ${(dotConfig.bleedMaxHpPercent).toFixed(0)}% of target Max HP per tick (cap ${Math.round(bleedCap)}), x(1+BE).`;
+            }
+          } else {
+            const stacks = dotConfig.eliteStacks || 1;
+            dotPerTick = calculateBreakBaseDamage(charLv) * dotConfig.perTurnMultiplier * stacks
+              * (1 + breakBePercent / 100);
+            dotDescRu = `Стандартный DoT пробития: ×${dotConfig.perTurnMultiplier}${stacks > 1 ? `×${stacks} стаков` : ""} от базы ур. 80, ×(1+ЭП).`;
+            dotDescEn = `Standard break DoT: x${dotConfig.perTurnMultiplier}${stacks > 1 ? ` x${stacks} stacks` : ""} of the Lv80 base, x(1+BE).`;
+          }
+          if (Number.isFinite(dotPerTick) && dotPerTick > 0) {
+            // DoT не проходит проверку стойкости (цель уже пробита) и не может критовать.
+            const dotTickDamage = Math.round(dotPerTick * breakFactors.defMult
+              * breakFactors.resMult * breakFactors.vulnMult
+              * breakFactors.damageReductionMultiplier);
+            const dotTotal = dotTickDamage * dotConfig.turns * configuredBreakProcs;
+            rotationTotalDamage += dotTotal;
+            steps.push({
+              stepNumber: steps.length + 1,
+              charName: mainChar.name,
+              avatar: mainChar.avatar?.icon || null,
+              phase: isRu ? "DoT ПРОБИТИЯ (ТИКИ)" : "BREAK DoT (TICKS)",
+              actionNameRu: `${dotConfig.turns} тик(а) за пробитие ×${configuredBreakProcs}`,
+              actionNameEn: `${dotConfig.turns} tick(s) per break x${configuredBreakProcs}`,
+              descRu: dotDescRu,
+              descEn: dotDescEn,
+              damage: dotTotal,
+              isDamageAction: true
+            });
+          }
+        }
+      }
+    }
   }
   const timelinePrimaryEnemy = timelineEnemyActors[0] || null;
   const timelineEnemyResistancePercent = timelinePrimaryEnemy?.resistancePercent ?? null;

@@ -1,4 +1,6 @@
 import {
+  BREAK_INSTANT_ELEMENT_MULTIPLIERS,
+  calculateBreakBaseDamage,
   calculateDefenseMultiplier,
   calculateExpectedCritMultiplier,
   calculateResistanceMultiplier,
@@ -397,6 +399,128 @@ function calculateDirectDamage(actor, target, effect, warnings, now) {
   };
 }
 
+/**
+ * Official Weakness Break instant damage for the action that zeroes a target's
+ * Toughness. Formula (HoYoWiki "Break DMG: Break Effect", consistent with KQM):
+ * base(level) x (0.5 + maxToughness/40) x element coefficient x (1 + BE)
+ * x DEF x RES x vulnerability x mitigation. Break damage cannot crit and does
+ * not use ATK or DMG% bonus. Returns a damage result with calculation.type
+ * "break", or null when required data is missing.
+ */
+function calculateBreakHit(actor, target, element, toughnessBefore, warnings, now, actionKey) {
+  const fail = (reason) => {
+    warnings.push(`${actionKey || "Break"}: Weakness Break damage omitted; ${reason}.`);
+    return null;
+  };
+  const elementKey = String(element || "");
+  const elementMultiplier = BREAK_INSTANT_ELEMENT_MULTIPLIERS[elementKey];
+  if (!elementMultiplier) {
+    return fail(`element '${elementKey || "unspecified"}' has no instant-break coefficient`);
+  }
+  const maxToughness = target.maxToughness !== null ? target.maxToughness
+    : Number.isFinite(toughnessBefore) ? toughnessBefore : null;
+  if (maxToughness === null || maxToughness <= 0) return fail("the target has no positive max Toughness");
+  const attackerLevel = actor.level;
+  if (attackerLevel === null) return fail("the attacker level is missing");
+  const targetLevel = target.level;
+  if (targetLevel === null) return fail("the target level is missing");
+
+  // Break Effect stat: mihomo-style "be" (percent) or explicit breakEffectPercent,
+  // plus timed break-damage modifiers that model BE increases during the timeline.
+  const beStat = readCombatStat(actor.combatStats, "breakEffectPercent", "be");
+  if (beStat === null) return fail("the attacker Break Effect stat is missing");
+  const breakEffectPercent = beStat + activeModifierTotal(actor, "breakDamagePercent", now);
+
+  const resistancePercent = resolveTargetResistancePercent(target, elementKey);
+  if (resistancePercent === null) return fail(`target RES for ${elementKey} is missing`);
+  const defenseReductionPercent = (readCombatStat(actor.combatStats, "defenseReductionPercent") || 0)
+    + activeModifierTotal(actor, "defenseReductionPercent", now)
+    + target.defenseReductionPercent
+    + activeModifierTotal(target, "defenseReductionPercent", now);
+  const defenseIgnorePercent = (readCombatStat(actor.combatStats, "defenseIgnorePercent") || 0)
+    + activeModifierTotal(actor, "defenseIgnorePercent", now);
+  const targetDefensePercent = (readCombatStat(target.combatStats, "defensePercent") || 0)
+    + activeModifierTotal(target, "defensePercent", now);
+  const resistancePenetrationPercent = (readCombatStat(actor.combatStats, "resistancePenetrationPercent") || 0)
+    + activeModifierTotal(actor, "resistancePenetrationPercent", now);
+  const vulnerabilityPercent = (readCombatStat(actor.combatStats, "vulnerabilityPercent") || 0)
+    + activeModifierTotal(actor, "vulnerabilityPercent", now);
+  const targetVulnerability = target.vulnerabilityPercent
+    + activeModifierTotal(target, "vulnerabilityPercent", now)
+    + activeModifierTotal(target, "elementalDamageTakenPercent", now)
+    + (asFiniteNumber(target.elementalDamageTakenPercent?.[elementKey], 0) || 0);
+  const damageReductionPercent = Math.max(0, Math.min(100,
+    (target.damageReductionPercent || readCombatStat(target.combatStats, "damageReductionPercent") || 0)
+      + activeModifierTotal(target, "damageReductionPercent", now)));
+  const universalDamageReductionPercent = Math.max(0, Math.min(100,
+    (target.universalDamageReductionPercent
+      || readCombatStat(target.combatStats, "universalDamageReductionPercent") || 0)
+      + activeModifierTotal(target, "universalDamageReductionPercent", now)));
+  const weakenPercent = Math.max(0, Math.min(100,
+    (target.weakenPercent || readCombatStat(target.combatStats, "weakenPercent") || 0)
+      + activeModifierTotal(target, "weakenPercent", now)));
+
+  const defenseMultiplier = calculateDefenseMultiplier(attackerLevel, targetLevel,
+    defenseReductionPercent, defenseIgnorePercent, targetDefensePercent);
+  const resistanceMultiplier = calculateResistanceMultiplier(resistancePercent / 100,
+    resistancePenetrationPercent);
+  const vulnerabilityMultiplier = Math.max(0, 1 + (vulnerabilityPercent + targetVulnerability) / 100);
+  const damageReductionMultiplier = Math.max(0, 1 - damageReductionPercent / 100)
+    * Math.max(0, 1 - universalDamageReductionPercent / 100);
+  const weakenMultiplier = Math.max(0, 1 - weakenPercent / 100);
+  const beMultiplier = 1 + breakEffectPercent / 100;
+  const toughnessMultiplier = 0.5 + maxToughness / 40;
+  const baseDamage = calculateBreakBaseDamage(attackerLevel);
+  const amount = Math.max(0, Math.round(baseDamage * toughnessMultiplier * elementMultiplier * beMultiplier
+    * defenseMultiplier * resistanceMultiplier * vulnerabilityMultiplier
+    * damageReductionMultiplier * weakenMultiplier));
+  const shieldAbsorbed = Math.min(target.shield, amount);
+  target.shield -= shieldAbsorbed;
+  const hpDamage = target.hp === null ? amount - shieldAbsorbed : Math.min(target.hp, amount - shieldAbsorbed);
+  if (target.hp !== null) target.hp = Math.max(0, target.hp - (amount - shieldAbsorbed));
+
+  return {
+    sourceActorId: actor.id,
+    sourceActorKind: actor.kind,
+    targetId: target.id,
+    targetKind: target.kind,
+    amount,
+    shieldAbsorbed,
+    hpDamage,
+    overkill: target.hp !== null ? Math.max(0, amount - shieldAbsorbed - hpDamage) : 0,
+    calculation: {
+      type: "break",
+      element: elementKey,
+      damageType: "break",
+      baseDamage,
+      maxToughness,
+      toughnessMultiplier,
+      elementMultiplier,
+      breakEffectPercent,
+      canCrit: false,
+      defenseReductionPercent,
+      defenseIgnorePercent,
+      targetDefensePercent,
+      resistancePercent,
+      resistancePenetrationPercent,
+      vulnerabilityPercent: vulnerabilityPercent + targetVulnerability,
+      damageReductionPercent,
+      universalDamageReductionPercent,
+      weakenPercent,
+      beMultiplier,
+      defenseMultiplier,
+      resistanceMultiplier,
+      vulnerabilityMultiplier,
+      damageReductionMultiplier,
+      weakenMultiplier
+    },
+    toughnessDamage: 0,
+    targetWasBroken: false,
+    targetIsBroken: true,
+    brokeTarget: false
+  };
+}
+
 function setActorSpeed(actor, newSpeed, now) {
   if (!Number.isFinite(newSpeed) || newSpeed <= 0 || newSpeed === actor.speed
     || !Number.isFinite(actor.interval) || actor.interval <= 0
@@ -603,8 +727,7 @@ function applyActionEffects(action, actor, actorsById, state) {
         continue;
       }
       const formulaResult = effect.formula ? calculateDirectDamage(actor, target, effect, warnings, state.now) : null;
-      if (effect.formula && !formulaResult) continue;
-      const damageAmount = formulaResult ? formulaResult.amount : Math.max(0, amount);
+      if (effect.formula && !formulaResult) continue;      const damageAmount = formulaResult ? formulaResult.amount : Math.max(0, amount);
       let remainingDamage = damageAmount;
       const absorbed = Math.min(target.shield, remainingDamage);
       target.shield -= absorbed;
@@ -648,6 +771,16 @@ function applyActionEffects(action, actor, actorsById, state) {
         }
       }
       state.damageResults.push(damageResult);
+      if (damageResult.brokeTarget) {
+        // Official Weakness Break instant damage: base(level) x (0.5 + maxToughness/40)
+        // x element coefficient x (1+BE) x DEF x RES x vulnerability x mitigation.
+        // No crit, no ATK/DMG% bonus. Break DoT ticks are not scheduled yet.
+        const breakResult = calculateBreakHit(
+          actor, target, effect.element || effect.formula?.element,
+          damageResult.toughnessBefore, warnings, state.now, action.key
+        );
+        if (breakResult) state.damageResults.push(breakResult);
+      }
     } else {
       warnings.push(`${action.key}: unsupported effect type '${effect.type}'.`);
       continue;
@@ -838,7 +971,7 @@ export function simulateCombatTimeline({
       "Healing, shields, and HP costs can use an explicit fixed amount, Max HP percentage, or current HP percentage. An action HP threshold only applies when requiresHpAbove is explicitly configured.",
       "Timed stat modifiers are explicit additive percentage-point effects with Action Value durations. A stackingKey refreshes one effect by default; stackMode 'stack' retains multiple stacks, optionally capped by maxStacks.",
       "When target Max HP or Toughness is supplied and current values are omitted, the timeline initializes them at full. Weakness damage only reduces Toughness for a listed weakness unless the action explicitly ignores weakness.",
-      "Break damage itself is not calculated yet; a weakness break only changes target state for later actions.",
+      "Zeroing Toughness deals official Weakness Break damage: base(level) x (0.5 + maxToughness/40) x element coefficient x (1+BE) x DEF x RES x vulnerability x mitigation. It cannot crit and uses no ATK or DMG% bonus; Break DoT ticks and Super Break are not scheduled.",
       "Timed modifiers apply only when their field, value, and Action Value duration are explicit. Ultimate quick-casts, DoT ticks, and trigger conditions are not inferred."
     ],
     warnings: [...new Set(warnings)]

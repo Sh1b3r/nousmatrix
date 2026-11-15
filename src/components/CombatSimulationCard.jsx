@@ -20,6 +20,10 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
   const [enemyMode, setEnemyMode] = useState("moc");
+  // Явное число срабатываний Weakness Break в сценарии ротации. Движок не
+  // прогнозирует пробития сам: пользователь задаёт их как допущение сценария.
+  const [breakProcsInput, setBreakProcsInput] = useState("");
+  const breakProcs = Math.max(0, Math.floor(Number(breakProcsInput) || 0));
   const currentSquad = squads[selectedSquadIdx] || squads[0] || null;
   const teamData = TEAM_DATA_BY_CHARACTER[charId] || null;
   const mocDataSource = TEAM_STATISTICS_SOURCES.find((source) => source.id === "mocdata-processed")?.datasetUrl;
@@ -41,8 +45,12 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const identityMismatches = useMemo(() => matchedTeammates.filter((tm) => tm.identityMismatch), [matchedTeammates]);
 
   const rotationSim = useMemo(() => {
-    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, { enemyMode, language: lang });
-  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode]);
+    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, {
+      enemyMode,
+      language: lang,
+      breakProcs
+    });
+  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode, breakProcs]);
   const equipmentCoverage = useMemo(() => resolveCombatEquipmentEffects(character, matchedTeammates, {
     targetCount: enemyMode === "pf" ? 5 : 3
   }), [character, matchedTeammates, enemyMode]);
@@ -184,6 +192,21 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             <option value="pf">{isRu ? "PF • Активный этаж" : "PF • Active Floor"}</option>
             <option value="as">{isRu ? "AS • Активный этаж" : "AS • Active Floor"}</option>
           </select>
+          {!isTimelineCalculation && (
+            <label className="sim-break-procs" title={isRu ? "Явное число срабатываний слабостного пробития в сценарии; урон по официальной формуле пробития, без крита" : "Explicit number of Weakness Break procs in the scenario; damage uses the official break formula, no crit"}>
+              <span>{isRu ? "Пробития" : "Breaks"}</span>
+              <input
+                className="sim-break-procs-input"
+                type="number"
+                min={0}
+                max={20}
+                step={1}
+                placeholder="0"
+                value={breakProcsInput}
+                onChange={(e) => setBreakProcsInput(e.target.value)}
+              />
+            </label>
+          )}
         </div>
       </div>
 
