@@ -88,6 +88,33 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const isTimelineCalculation = rotationSim?.calculationStatus === "explicit-timeline-simulation";
   const displayEnemyInfo = isTimelineCalculation ? null : rotationSim?.enemyScenarioInfo || sim.enemyScenarioInfo;
   const displayEnemyTargets = rotationSim?.enemyTargets || (sim.enemyTarget ? [sim.enemyTarget] : []);
+  const timelineActorsById = new Map((rotationSim?.combatTimeline?.actors || [])
+    .map((actor) => [String(actor.id), actor.name || actor.id]));
+  const damageBreakdown = isTimelineCalculation
+    ? (rotationSim.combatTimeline?.events || []).flatMap((event) => (event.damage || []).map((hit, index) => ({
+      key: `${event.eventIndex}:${hit.targetId}:${index}`,
+      phase: `AV ${event.actionValue} · ${event.actorName}`,
+      actionName: event.actionName,
+      targetName: timelineActorsById.get(String(hit.targetId)) || hit.targetId,
+      rawDamage: Number(hit.amount || 0),
+      effectiveDamage: Number(hit.hpDamage || 0) + Number(hit.shieldAbsorbed || 0),
+      hpDamage: Number(hit.hpDamage || 0),
+      shieldAbsorbed: Number(hit.shieldAbsorbed || 0),
+      overkill: Number(hit.overkill || 0)
+    })))
+    : (rotationSim?.steps || [])
+      .filter((step) => step.isDamageAction && Number.isFinite(Number(step.damage)))
+      .map((step, index) => ({
+        key: `${step.stepNumber || index}:${step.actionNameRu || step.actionNameEn || "hit"}`,
+        phase: step.phase || "",
+        actionName: isRu ? step.actionNameRu || step.actionNameEn : step.actionNameEn || step.actionNameRu,
+        targetName: null,
+        rawDamage: Number(step.damage),
+        effectiveDamage: Number(step.damage),
+        hpDamage: null,
+        shieldAbsorbed: null,
+        overkill: null
+      }));
   const selectedEnemySummary = displayEnemyInfo || isTimelineCalculation
     ? displayEnemyTargets.map((target) => {
       const derived = target.derivedStats || {};
@@ -328,29 +355,60 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
           <div className="combat-sim-metrics-grid rotation-metrics">
             <div className="combat-sim-metric-box highlight-box">
               <span className="sim-metric-label">
-                {isRu ? "Сумма заданных ударов" : "Configured Hits Total"}
+                {isTimelineCalculation
+                  ? (isRu ? "Урон по врагам (HP + щит)" : "Enemy Damage (HP + Shield)")
+                  : isRu ? "Сумма заданных ударов" : "Configured Hits Total"}
               </span>
               <span className="sim-metric-value text-accent big">
-                {Number(rotationSim.rotationTotalDamage || 0).toLocaleString("ru-RU")}
+                {Number(rotationSim.rotationTotalDamage || 0).toLocaleString(isRu ? "ru-RU" : "en-US")}
               </span>
               <span className="sim-metric-hint">
-                {rotationSim?.teamBuffStatus === "explicit-values-assumed-full-uptime"
+                {isTimelineCalculation
+                  ? (isRu ? "По заданным событиям; HP цели учитывается, если задано" : "From configured events; target HP is applied when provided")
+                  : rotationSim?.teamBuffStatus === "explicit-values-assumed-full-uptime"
                   ? (isRu ? "Учтены только вручную заданные баффы; их полная длительность предполагается" : "Only explicitly configured buffs are included; full uptime is assumed")
                   : (isRu ? "Баффы команды не заданы; рассчитан только урон основного персонажа" : "No team buffs are configured; only the lead character's damage is calculated")}
               </span>
             </div>
             <div className="combat-sim-metric-box">
               <span className="sim-metric-label">
-                {isRu ? "Максимальный урон действия" : "Peak Ability Damage"}
+                {isTimelineCalculation
+                  ? (isRu ? "Максимум одного попадания" : "Peak Hit Damage")
+                  : isRu ? "Максимальный урон действия" : "Peak Ability Damage"}
               </span>
               <span className="sim-metric-value">
-                {Number(rotationSim.peakHitDamage || 0).toLocaleString("ru-RU")}
+                {Number(rotationSim.peakHitDamage || 0).toLocaleString(isRu ? "ru-RU" : "en-US")}
               </span>
               <span className="sim-metric-hint">
-                {isRu ? "Может суммировать цели AoE" : "May sum AoE targets"}
+                {isTimelineCalculation
+                  ? (isRu ? "Фактически снятые HP и щит" : "Effective HP and shield damage")
+                  : isRu ? "Может суммировать цели AoE" : "May sum AoE targets"}
               </span>
             </div>
           </div>
+          {damageBreakdown.length > 0 && (
+            <details className="sim-params-disclosure">
+              <summary className="sim-params-summary">
+                {isTimelineCalculation
+                  ? (isRu ? `Урон по событиям (${damageBreakdown.length})` : `Damage by event (${damageBreakdown.length})`)
+                  : (isRu ? `Разбивка расчётных попаданий (${damageBreakdown.length})` : `Estimated hit breakdown (${damageBreakdown.length})`)}
+              </summary>
+              <div className="sim-assumptions-list">
+                {damageBreakdown.map((entry) => (
+                  <div className="assumption-item" key={entry.key}>
+                    <span className="assumption-bullet">•</span>
+                    <span>
+                      {entry.phase ? `${entry.phase}: ` : ""}
+                      {entry.actionName || (isRu ? "Удар" : "Hit")}
+                      {entry.targetName ? ` → ${entry.targetName}` : ""}: {isTimelineCalculation
+                        ? `${isRu ? "расчётный" : "calculated"} ${entry.rawDamage.toLocaleString(isRu ? "ru-RU" : "en-US")}; ${isRu ? "снято" : "applied"} ${entry.effectiveDamage.toLocaleString(isRu ? "ru-RU" : "en-US")} (${isRu ? "HP" : "HP"} ${entry.hpDamage.toLocaleString(isRu ? "ru-RU" : "en-US")} + ${isRu ? "щит" : "shield"} ${entry.shieldAbsorbed.toLocaleString(isRu ? "ru-RU" : "en-US")}${entry.overkill > 0 ? `; ${isRu ? "избыток" : "overkill"} ${entry.overkill.toLocaleString(isRu ? "ru-RU" : "en-US")}` : ""})`
+                        : `~${entry.rawDamage.toLocaleString(isRu ? "ru-RU" : "en-US")}`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
         </>
       )}
 
