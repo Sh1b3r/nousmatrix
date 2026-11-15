@@ -34,6 +34,26 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const combatTimeline = options.timelineScenario && typeof options.timelineScenario === "object"
     ? simulateCombatTimeline(options.timelineScenario)
     : null;
+  const usesExplicitTimeline = Boolean(combatTimeline && combatTimeline.status !== "invalid-input");
+  const timelineEnemyActors = usesExplicitTimeline
+    ? combatTimeline.actors.filter((actor) => actor.kind === "enemy")
+    : [];
+  const timelineEnemyTargets = timelineEnemyActors.map((actor) => ({
+    id: actor.id,
+    name: actor.name,
+    level: actor.level,
+    resistancePercent: actor.resistancePercent,
+    resistances: actor.resistancesPercent,
+    weaknesses: actor.weaknesses,
+    isBroken: actor.isBroken,
+    currentHp: actor.hp,
+    maxHp: actor.maxHp,
+    currentToughness: actor.toughness,
+    maxToughness: actor.maxToughness,
+    vulnerabilityPercent: actor.vulnerabilityPercent,
+    derivedStats: null,
+    derivedStatsStatus: "explicit-timeline-input"
+  }));
   const name = (mainChar.name || "").toLowerCase();
   const charId = String(mainChar.id || "");
   let baseAtk = Number(mainStats.atk || 0);
@@ -58,7 +78,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   let hasSuperBreak = false;
   let superBreakFactor = 1;
   let buffTimingStatus = "assumed-full-uptime";
-  matchedTeammates.forEach((tm) => {
+  if (!usesExplicitTimeline) matchedTeammates.forEach((tm) => {
     const b = tm.dynamicBuffs || {};
     if (b.atkGrant) teamAtkGrant += b.atkGrant;
     if (b.atkPercent) teamAtkPercent += b.atkPercent;
@@ -198,7 +218,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     }, { total: 0, peak: 0 });
   const steps = [];
   const calculationWarnings = [];
-  if (enemyScenario.isGenericAssumption) {
+  if (!usesExplicitTimeline && enemyScenario.isGenericAssumption) {
     calculationWarnings.push(isRu
       ? "Для врагов используются общие допущения режима; для точных уровней, сопротивлений и пробития нужны параметры каждого противника."
       : "Enemy lineup uses generic mode assumptions; supply options.enemies for stage-specific levels, elemental RES, and break states");
@@ -207,7 +227,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
         ? "Снимок игровых данных 4.7.0 больше не попадает в окно активного цикла; обновите каталог врагов, прежде чем использовать его как актуальный."
         : "The 4.7.0 game-data snapshot is outside its active challenge window; refresh the enemy catalog before treating it as current.");
     }
-  } else if (enemyScenario.status === "official-stage-targets" && enemyScenario.officialEncounter) {
+  } else if (!usesExplicitTimeline && enemyScenario.status === "official-stage-targets" && enemyScenario.officialEncounter) {
     const encounter = enemyScenario.officialEncounter;
     const modeNameRu = { moc: "MoC", pf: "Чистый вымысел", as: "Апокалиптическая тень" }[encounter.mode] || encounter.mode;
     const modeNameEn = { moc: "MoC", pf: "Pure Fiction", as: "Apocalyptic Shadow" }[encounter.mode] || encounter.mode;
@@ -217,22 +237,22 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     calculationWarnings.push(isRu
       ? "Итоговые HP, скорость и стойкость врагов рассчитаны по игровым конфигам. Они пока не управляют очерёдностью ходов, входящими атаками или моментом гибели в симуляции; урон использует уровень, RES и слабости."
       : "Final enemy HP, speed, and Toughness are derived from game configs. They do not yet drive turn order, enemy attacks, or defeat timing; damage currently uses level, RES, and weaknesses.");
-  } else if (enemyScenario.status === "custom-generic-targets") {
+  } else if (!usesExplicitTimeline && enemyScenario.status === "custom-generic-targets") {
     calculationWarnings.push(isRu
       ? "Список врагов всё ещё условный; заданы только отдельные параметры уровня, сопротивления или числа целей."
       : "Enemy targets still use a generic roster; only explicitly supplied level, RES, or count overrides the mode preset");
   }
-  if (enemyScenario.targets.some((target) => !target.weaknesses.length)) {
+  if (!usesExplicitTimeline && enemyScenario.targets.some((target) => !target.weaknesses.length)) {
     calculationWarnings.push(isRu
       ? "Не заданы слабости врагов: время пробития и эффекты, зависящие от него, не рассчитываются."
       : "Enemy weakness data is incomplete; weakness-break timing and break-triggered effects are not simulated");
   }
-  if (enemyScenario.targets.some((target) => target.isBroken === null)) {
+  if (!usesExplicitTimeline && enemyScenario.targets.some((target) => target.isBroken === null)) {
     calculationWarnings.push(isRu
       ? "Состояние стойкости врагов не задано; прямой урон рассчитан для целой шкалы стойкости."
       : "Enemy break state is unspecified; direct damage assumes an intact Toughness bar");
   }
-  if (["explicit-targets", "official-stage-targets"].includes(enemyScenario.status) && enemyScenario.targets.some((target) =>
+  if (!usesExplicitTimeline && ["explicit-targets", "official-stage-targets"].includes(enemyScenario.status) && enemyScenario.targets.some((target) =>
     !target.isLevelExplicit || !target.isResistanceExplicit
   )) {
     calculationWarnings.push(isRu
@@ -241,7 +261,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   }
   let rotationTotalDamage = 0;
   let peakHitDamage = 0;
-  matchedTeammates.forEach((tm) => {
+  if (!usesExplicitTimeline) matchedTeammates.forEach((tm) => {
     steps.push({
       stepNumber: steps.length + 1,
       charName: tm.characterName || (isRu ? tm.nameRu || tm.names[0] : tm.nameEn || tm.names[1] || tm.names[0]),
@@ -258,7 +278,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   });
   // Character-specific kits must use exact IDs. Himeko: Nova (1510) has its
   // own configured script and must never fall through to regular Himeko (1003).
-  if (kitRotation?.status !== "verified" && !SUPPORTED_MANUAL_SCENARIOS.has(charId)) return null;
+  if (!usesExplicitTimeline && kitRotation?.status !== "verified" && !SUPPORTED_MANUAL_SCENARIOS.has(charId)) return null;
   const isHimeko = charId === "1003";
   const isAcheron = charId === "1308";
   const isFirefly = charId === "1310" || name.includes("светлячок") || name.includes("firefly");
@@ -276,7 +296,39 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const isBlade = charId === "1205" || name.includes("блейд") && !isMortenax || name.includes("blade") && !isMortenax;
   const isJingYuan = charId === "1204" || name.includes("цзин юань") || name.includes("jing yuan");
   const isArgenti = charId === "1302" || name.includes("аргенти") || name.includes("argenti");
-  if (kitRotation?.status === "verified") {
+  if (usesExplicitTimeline) {
+    rotationTotalDamage = combatTimeline.alliedEffectiveDamageTotal ?? combatTimeline.alliedDamageTotal ?? 0;
+    buffTimingStatus = "timeline-scenario";
+    calculationWarnings.push(...combatTimeline.warnings);
+    calculationWarnings.push(...(combatTimeline.assumptions || []));
+    calculationWarnings.push(isRu
+      ? "Конусы, эйдолоны и пассивные бонусы профиля не добавляются в пользовательский таймлайн автоматически; их итоговые боевые статы и эффекты должны быть явно заданы в сценарии."
+      : "Light Cones, Eidolons, and profile passives are not injected into a custom timeline; their final combat stats and effects must be explicit in the scenario.");
+    combatTimeline.events
+      .filter((event) => event.actorKind === "ally")
+      .forEach((event) => {
+        const outgoingHits = event.damage.filter((hit) => hit.targetKind === "enemy");
+        const effectiveDamage = (hit) => Number(hit.hpDamage || 0) + Number(hit.shieldAbsorbed || 0);
+        const damage = outgoingHits.reduce((sum, hit) => sum + effectiveDamage(hit), 0);
+        peakHitDamage = Math.max(peakHitDamage, ...outgoingHits.map(effectiveDamage));
+        steps.push({
+          stepNumber: steps.length + 1,
+          charName: event.actorName,
+          avatar: event.actorId === charId ? mainChar.avatar?.icon || null : null,
+          phase: `${isRu ? "ХОД" : "ACTION"} ${event.turn} · AV ${event.actionValue}`,
+          actionNameRu: event.actionName,
+          actionNameEn: event.actionName,
+          descRu: event.status === "blocked"
+            ? `Действие пропущено: ${event.blockedBy || "ресурс недоступен"}.`
+            : `Энергия после действия: ${event.energyAfter ?? "—"}; ОН после действия: ${event.skillPointsAfter ?? "—"}.`,
+          descEn: event.status === "blocked"
+            ? `Action blocked: ${event.blockedBy || "resource unavailable"}.`
+            : `Energy after action: ${event.energyAfter ?? "—"}; SP after action: ${event.skillPointsAfter ?? "—"}.`,
+          damage,
+          isDamageAction: outgoingHits.length > 0
+        });
+      });
+  } else if (kitRotation?.status === "verified") {
     const actionBuffStatuses = new Set();
     kitRotation.instances.forEach((inst) => {
       const actionTeamBuffs = getTeamBuffsForAction(squad, matchedTeammates, inst.key);
@@ -868,27 +920,35 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     // a character rotation. Add an explicit, sourced kit profile first.
     return null;
   }
+  const timelinePrimaryEnemy = timelineEnemyActors[0] || null;
+  const timelineEnemyResistancePercent = timelinePrimaryEnemy?.resistancePercent ?? null;
   return {
     rotationTotalDamage,
     peakHitDamage,
     steps,
     enemyMode,
-    enemyScenarioStatus: enemyScenario.status,
-    enemyScenarioInfo: enemyScenario.officialEncounter,
-    enemyTargets: enemy.targetData,
-    targetCount: enemy.targets,
-    enemyLevel: enemyLv,
-    baseEnemyRes,
-    enemyResistancePercent: baseEnemyRes * 100,
+    enemyScenarioStatus: usesExplicitTimeline ? "explicit-timeline-actors" : enemyScenario.status,
+    enemyScenarioInfo: usesExplicitTimeline ? null : enemyScenario.officialEncounter,
+    enemyTargets: usesExplicitTimeline ? timelineEnemyTargets : enemy.targetData,
+    targetCount: usesExplicitTimeline ? timelineEnemyActors.length : enemy.targets,
+    enemyLevel: usesExplicitTimeline ? timelinePrimaryEnemy?.level ?? null : enemyLv,
+    baseEnemyRes: usesExplicitTimeline
+      ? (timelineEnemyResistancePercent === null ? null : timelineEnemyResistancePercent / 100)
+      : baseEnemyRes,
+    enemyResistancePercent: usesExplicitTimeline
+      ? timelineEnemyResistancePercent
+      : baseEnemyRes * 100,
     buffTimingStatus,
     equipmentEffects,
     calculationWarnings,
     combatTimeline,
     combatTimelineStatus: combatTimeline?.status || "not-configured",
-    teamBuffStatus: buffTimingStatus === "verified-schedule"
+    teamBuffStatus: usesExplicitTimeline
+      ? "explicit-timeline-modifier-events"
+      : buffTimingStatus === "verified-schedule"
       ? "verified-per-hit-schedule"
       : hasAppliedTeamBuffValues ? "explicit-values-assumed-full-uptime" : "no-numeric-buffs-configured",
-    calculationStatus: "manual-script-estimate",
+    calculationStatus: usesExplicitTimeline ? "explicit-timeline-simulation" : "manual-script-estimate",
     combatStats: {
       combatAtk,
       combatHp,

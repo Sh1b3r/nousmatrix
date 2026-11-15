@@ -85,16 +85,24 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const detectedRole = String(audit.detectedRole?.role || "").toUpperCase();
   const isSupport = ["SUPPORT", "SUSTAIN"].includes(detectedRole)
     || sim.type === "SUPPORT" || sim.type === "SUSTAIN" || sim.type === "HYBRID_SUBDPS";
-  const displayEnemyInfo = rotationSim?.enemyScenarioInfo || sim.enemyScenarioInfo;
+  const isTimelineCalculation = rotationSim?.calculationStatus === "explicit-timeline-simulation";
+  const displayEnemyInfo = isTimelineCalculation ? null : rotationSim?.enemyScenarioInfo || sim.enemyScenarioInfo;
   const displayEnemyTargets = rotationSim?.enemyTargets || (sim.enemyTarget ? [sim.enemyTarget] : []);
-  const selectedEnemySummary = displayEnemyInfo
+  const selectedEnemySummary = displayEnemyInfo || isTimelineCalculation
     ? displayEnemyTargets.map((target) => {
       const derived = target.derivedStats || {};
       const locale = isRu ? "ru-RU" : "en-US";
       const derivedSummary = target.derivedStatsStatus === "calculated-from-pinned-game-config"
         ? `; ${isRu ? "HP" : "HP"} ${Number(derived.hp || 0).toLocaleString(locale)}, ${isRu ? "СКОР" : "SPD"} ${Number(derived.speed || 0).toLocaleString(locale)}, ${isRu ? "стойкость" : "Toughness"} ${Number(derived.toughness || 0).toLocaleString(locale)}`
         : "";
-      return `${target.name || target.id} (Lv. ${target.level}, ${target.resistancePercent.toFixed(0)}% RES${derivedSummary})`;
+      const hasResistance = target.resistancePercent !== null
+        && target.resistancePercent !== undefined
+        && target.resistancePercent !== ""
+        && Number.isFinite(Number(target.resistancePercent));
+      const resistance = hasResistance
+        ? `${Number(target.resistancePercent).toFixed(0)}% RES`
+        : (isRu ? "RES не задано" : "RES missing");
+      return `${target.name || target.id} (Lv. ${target.level ?? "—"}, ${resistance}${derivedSummary})`;
     }).join("; ")
     : null;
 
@@ -387,7 +395,11 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
       {/* Summary and collapsible technical parameters */}
       <div className="combat-sim-summary">
         <p className="sim-summary-text">
-          {rotationSim
+          {isTimelineCalculation
+            ? (isRu
+              ? "Урон рассчитан по явно заданным действиям, статам и целям. Применяются только модификаторы с заданными значениями и длительностью; эффекты персонажей не переносятся в сценарий автоматически."
+              : "Damage uses the explicitly configured actions, stats, and targets. Only modifiers with explicit values and durations apply; character effects are not inserted automatically.")
+            : rotationSim
             ? (isRu
               ? "Сумма вручную заданных попаданий по упрощённой формуле. Это оценка сценария, а не полная боевая симуляция: порядок ходов, энергия, частота срабатываний и длительность баффов не рассчитываются."
               : "Sum of manually configured hits using a simplified formula. This is a scenario estimate, not a full combat simulation: turn order, energy, trigger frequency, and buff duration are not calculated.")
@@ -407,7 +419,13 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
               <span>
-                {displayEnemyInfo
+                {isTimelineCalculation
+                  ? (displayEnemyTargets.length
+                    ? (isRu
+                      ? `Цели заданы прямо в таймлайне: ${selectedEnemySummary}. Их характеристики берутся из сценария.`
+                      : `Targets are defined directly in the timeline: ${selectedEnemySummary}. Their parameters come from the scenario.`)
+                    : (isRu ? "В сценарии таймлайна не заданы цели-враги." : "The timeline scenario has no enemy targets."))
+                  : displayEnemyInfo
                   ? (isRu
                     ? `Цели выбранной волны: ${selectedEnemySummary}. Данные 4.7.0: этаж ${displayEnemyInfo.floor}, сторона ${displayEnemyInfo.sideNumber}, этап ${displayEnemyInfo.stageId}, волна ${displayEnemyInfo.waveNumber}/${displayEnemyInfo.waveCount}. Бафф испытания ${displayEnemyInfo.challengeBuffId} не включён.`
                     : `Selected wave targets: ${selectedEnemySummary}. 4.7.0 data: floor ${displayEnemyInfo.floor}, side ${displayEnemyInfo.sideNumber}, stage ${displayEnemyInfo.stageId}, wave ${displayEnemyInfo.waveNumber}/${displayEnemyInfo.waveCount}. Challenge buff ${displayEnemyInfo.challengeBuffId} is excluded.`)
@@ -420,7 +438,11 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <div className="assumption-item">
                 <span className="assumption-bullet">•</span>
                 <span>
-                  {rotationSim?.enemyScenarioInfo
+                  {isTimelineCalculation
+                    ? (isRu
+                      ? `В явном таймлайне задано врагов: ${rotationSim.targetCount}. Входящие атаки учитываются только если они включены в сценарий.`
+                      : `Enemies defined in the explicit timeline: ${rotationSim.targetCount}. Incoming attacks count only when present in the scenario.`)
+                    : rotationSim?.enemyScenarioInfo
                     ? (isRu
                       ? `В этой волне ${rotationSim.targetCount} целей. Слабости и сопротивления применяются отдельно к каждой; состояние стойкости не задано, поэтому прямой урон считает шкалу целой (×0,9).`
                       : `This wave has ${rotationSim.targetCount} targets. Weaknesses and RES are resolved per target; break state is unknown, so direct hits assume intact Toughness (×0.9).`)
@@ -446,7 +468,11 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <div className="assumption-item">
                 <span className="assumption-bullet">•</span>
                 <span>
-                  {isRu
+                {isTimelineCalculation
+                  ? (isRu
+                    ? `Конус и эйдолоны: правила найдены для ${equipmentCoverage.applied.length} условий, но автоматически в сценарий не добавлены; вне модели: ${equipmentCoverage.notModeled.length}.`
+                    : `Light Cone and Eidolons: ${equipmentCoverage.applied.length} rules are available but not injected into this scenario; ${equipmentCoverage.notModeled.length} conditions remain outside the model.`)
+                  : isRu
                     ? `Конус и эйдолоны: статы профиля учтены; правил E/S применено: ${equipmentCoverage.applied.length}; условий вне этой модели: ${equipmentCoverage.notModeled.length}.`
                     : `Light Cone and Eidolons: profile stats are included; E/S rules applied: ${equipmentCoverage.applied.length}; conditions outside this model: ${equipmentCoverage.notModeled.length}.`}
                 </span>
@@ -454,13 +480,17 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             )}
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
-              <span>{isRu ? "Показаны только вручную заданные попадания; порядок ходов, энергия и число повторных действий не моделируются." : "Only manually configured hits are included; turn order, energy, and repeated action counts are not simulated."}</span>
+              <span>{isTimelineCalculation
+                ? (isRu ? "Показаны события заданного таймлайна; поведение и действия, которых нет в сценарии, не достраиваются автоматически." : "Configured timeline events are shown; behavior and actions absent from the scenario are not inferred.")
+                : isRu ? "Показаны только вручную заданные попадания; порядок ходов, энергия и число повторных действий не моделируются." : "Only manually configured hits are included; turn order, energy, and repeated action counts are not simulated."}</span>
             </div>
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>
               <span>
                 {rotationSim?.buffTimingStatus === "verified-schedule"
                   ? (isRu ? "Баффы применены по проверенной таблице активности ударов." : "Buffs follow a verified per-hit uptime table.")
+                  : rotationSim?.buffTimingStatus === "timeline-scenario"
+                    ? (isRu ? "Применяются только заданные в таймлайне модификаторы с точным значением и длительностью; остальные баффы команды не достраиваются." : "Only timeline modifiers with explicit values and durations apply; other team buffs are not inferred.")
                   : rotationSim?.buffTimingStatus === "no-numeric-buffs-configured"
                     ? (isRu ? "Численные баффы союзников не заданы, поэтому в урон они не добавлены." : "No numerical ally buffs are configured, so none are added to damage.")
                     : (isRu ? "Нет проверенного таймлайна баффов: заданные бонусы считаются активными на всех ударах." : "No verified buff timeline is available; configured buffs are assumed active on every hit.")}

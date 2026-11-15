@@ -1,5 +1,17 @@
+import {
+  calculateDefenseMultiplier,
+  calculateExpectedCritMultiplier,
+  calculateResistanceMultiplier,
+  calculateToughnessMultiplier
+} from "./damageFormula.js";
+
 const ACTION_GAUGE = 10000;
 const DEFAULT_MAX_EVENTS = 1000;
+const TIMED_MODIFIER_FIELDS = new Set([
+  "attackFlat", "attackPercent", "hpFlat", "hpPercent", "defenseFlat", "defensePercent",
+  "critRatePercent", "critDamagePercent", "damageBonusPercent", "defenseReductionPercent",
+  "resistancePenetrationPercent", "vulnerabilityPercent", "critVulnerabilityPercent"
+]);
 
 function asFiniteNumber(value, fallback = null) {
   if (value === null || value === undefined || value === "") return fallback;
@@ -9,6 +21,16 @@ function asFiniteNumber(value, fallback = null) {
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
+}
+
+function activeModifierTotal(actor, field, now) {
+  return (actor.modifiers || [])
+    .filter((modifier) => modifier.field === field && modifier.expiresAt > now)
+    .reduce((sum, modifier) => sum + modifier.value, 0);
+}
+
+function expireActorModifiers(actor, now) {
+  actor.modifiers = (actor.modifiers || []).filter((modifier) => modifier.expiresAt > now);
 }
 
 function normalizeAction(action, actorId, index) {
@@ -34,6 +56,12 @@ function normalizeActor(raw, index, warnings) {
   const interval = ACTION_GAUGE / speed;
   const maxHp = asFiniteNumber(raw.maxHp);
   const currentHp = asFiniteNumber(raw.currentHp, maxHp);
+  const maxToughness = asFiniteNumber(raw.maxToughness);
+  const currentToughness = asFiniteNumber(raw.currentToughness, maxToughness);
+  const combatStats = raw.combatStats && typeof raw.combatStats === "object"
+    ? raw.combatStats
+    : raw.stats && typeof raw.stats === "object" ? raw.stats : {};
+  const level = asFiniteNumber(raw.level ?? combatStats.level);
   const energyCap = asFiniteNumber(raw.energyCap);
   const energy = asFiniteNumber(raw.energy, 0);
   const actions = (Array.isArray(raw.actions) ? raw.actions : [])
@@ -49,6 +77,8 @@ function normalizeActor(raw, index, warnings) {
     id,
     name: String(raw.name || id),
     kind: raw.kind === "enemy" ? "enemy" : "ally",
+    level,
+    combatStats,
     speed,
     interval,
     nextActionAt: Math.max(0, asFiniteNumber(raw.initialActionValue, interval)),
@@ -56,6 +86,33 @@ function normalizeActor(raw, index, warnings) {
     hp: maxHp !== null && maxHp > 0
       ? clamp(currentHp ?? maxHp, 0, maxHp)
       : null,
+    maxToughness: maxToughness !== null && maxToughness >= 0 ? maxToughness : null,
+    toughness: maxToughness !== null && maxToughness >= 0
+      ? clamp(currentToughness ?? maxToughness, 0, maxToughness)
+      : null,
+    isBroken: typeof raw.isBroken === "boolean"
+      ? raw.isBroken
+      : maxToughness !== null && maxToughness >= 0
+        ? (currentToughness ?? maxToughness) <= 0
+        : null,
+    weaknesses: Array.isArray(raw.weaknesses) ? raw.weaknesses : [],
+    resistancesPercent: raw.resistancesPercent && typeof raw.resistancesPercent === "object"
+      ? raw.resistancesPercent
+      : null,
+    resistancePercent: asFiniteNumber(raw.resistancePercent),
+    vulnerabilityPercent: asFiniteNumber(raw.vulnerabilityPercent, 0),
+    critVulnerabilityPercent: asFiniteNumber(raw.critVulnerabilityPercent, 0),
+    defenseReductionPercent: asFiniteNumber(raw.defenseReductionPercent, 0),
+    modifiers: Array.isArray(raw.modifiers) ? raw.modifiers
+      .filter((modifier) => modifier && TIMED_MODIFIER_FIELDS.has(modifier.field)
+        && Number.isFinite(Number(modifier.value)) && Number.isFinite(Number(modifier.expiresAt)))
+      .map((modifier) => ({
+        key: String(modifier.key || "initial:" + modifier.field),
+        field: modifier.field,
+        value: Number(modifier.value),
+        expiresAt: Number(modifier.expiresAt),
+        sourceActorId: modifier.sourceActorId || null
+      })) : [],
     shield: Math.max(0, asFiniteNumber(raw.shield, 0)),
     energy: Math.min(energyCap !== null && energyCap > 0 ? energyCap : Number.POSITIVE_INFINITY, Math.max(0, energy)),
     energyCap: energyCap !== null && energyCap > 0 ? energyCap : null,
@@ -64,6 +121,173 @@ function normalizeActor(raw, index, warnings) {
     repeatActions: raw.repeatActions !== false,
     turnCount: 0,
     insertionOrder: index
+  };
+}
+
+function readCombatStat(stats, ...keys) {
+  for (const key of keys) {
+    if (!key) continue;
+    const value = asFiniteNumber(stats?.[key]);
+    if (value !== null) return value;
+  }
+  return null;
+}
+
+function resolveTargetResistancePercent(target, element) {
+  if (element && target.resistancesPercent) {
+    const aliases = element === "Thunder" ? ["Lightning", "thunder", "lightning"]
+      : element === "Lightning" ? ["Thunder", "thunder", "lightning"] : [];
+    for (const key of [element, ...aliases]) {
+      const value = asFiniteNumber(target.resistancesPercent[key]);
+      if (value !== null) return value;
+    }
+  }
+  if (target.resistancePercent !== null) return target.resistancePercent;
+  if (element && target.weaknesses.includes(element)) return 0;
+  return null;
+}
+
+function calculateDirectDamage(actor, target, effect, warnings, now) {
+  const formula = effect.formula;
+  const fail = (reason) => {
+    warnings.push(`${effect.key || "Damage action"}: direct-damage formula omitted; ${reason}.`);
+    return null;
+  };
+  if (!formula || formula.type !== "direct") return fail("unsupported or missing formula type");
+  if (actor.kind !== "ally" || target.kind !== "enemy") {
+    return fail("direct-damage formulas currently support allied attacks against enemy targets");
+  }
+
+  const scalingStat = String(formula.scalingStat || "attack");
+  const resolveScaledStat = (field) => {
+    const base = readCombatStat(actor.combatStats, field, field === "attack" ? "atk" : null,
+      field === "defense" ? "def" : null);
+    if (base === null) return null;
+    const flat = activeModifierTotal(actor, field + "Flat", now);
+    const percent = activeModifierTotal(actor, field + "Percent", now);
+    if (percent !== 0) {
+      const baseKeys = {
+        attack: ["baseAttack", "baseAtk", "base_atk"],
+        hp: ["baseHp", "base_hp"],
+        defense: ["baseDefense", "baseDef", "base_def"]
+      }[field] || [];
+      const baseStat = readCombatStat(actor.combatStats, ...baseKeys);
+      if (baseStat === null) return null;
+      return base + flat + baseStat * percent / 100;
+    }
+    return base + flat;
+  };
+  const scalingValue = scalingStat === "attack" ? resolveScaledStat("attack")
+    : scalingStat === "hp" ? resolveScaledStat("hp")
+      : scalingStat === "defense" ? resolveScaledStat("defense") : null;
+  const percentModifierField = scalingStat + "Percent";
+  if (scalingValue === null) {
+    const baseStatKeys = {
+      attack: ["baseAttack", "baseAtk", "base_atk"],
+      hp: ["baseHp", "base_hp"],
+      defense: ["baseDefense", "baseDef", "base_def"]
+    }[scalingStat] || [];
+    if (activeModifierTotal(actor, percentModifierField, now) !== 0
+      && readCombatStat(actor.combatStats, ...baseStatKeys) === null) {
+      return fail(`attacker base ${scalingStat} is needed for the active percentage modifier`);
+    }
+    return fail(`attacker ${scalingStat} stat is missing`);
+  }
+
+  const attackerLevel = asFiniteNumber(formula.attackerLevel, actor.level);
+  const targetLevel = asFiniteNumber(formula.targetLevel, target.level);
+  if (attackerLevel === null || targetLevel === null) return fail("attacker or target level is missing");
+
+  const element = String(formula.element || "");
+  if (!element) return fail("damage element is missing");
+  const resistancePercent = resolveTargetResistancePercent(target, element);
+  if (resistancePercent === null) return fail(`target RES for ${element} is missing`);
+
+  const broken = typeof target.isBroken === "boolean"
+    ? target.isBroken
+    : typeof formula.targetBroken === "boolean" ? formula.targetBroken : null;
+  if (typeof broken !== "boolean") return fail("target Toughness state is missing");
+
+  const canCrit = formula.canCrit !== false;
+  const baseCritRate = canCrit ? readCombatStat(actor.combatStats, "critRatePercent") : 0;
+  const baseCritDamage = canCrit ? readCombatStat(actor.combatStats, "critDamagePercent") : 0;
+  if (canCrit && (baseCritRate === null || baseCritDamage === null)) {
+    return fail("attacker CRIT Rate or CRIT DMG is missing");
+  }
+  const critRate = (baseCritRate || 0) + (canCrit ? activeModifierTotal(actor, "critRatePercent", now) : 0)
+    + (canCrit ? asFiniteNumber(formula.critRatePercent, 0) || 0 : 0);
+  const critDamage = (baseCritDamage || 0) + (canCrit ? activeModifierTotal(actor, "critDamagePercent", now) : 0)
+    + (canCrit ? asFiniteNumber(formula.critDamagePercent, 0) || 0 : 0);
+
+  const motionValue = asFiniteNumber(formula.motionValue);
+  if (motionValue === null || motionValue < 0) return fail("a non-negative motion value is required");
+  const damageBonusPercent = (readCombatStat(actor.combatStats, "damageBonusPercent") || 0)
+    + activeModifierTotal(actor, "damageBonusPercent", now)
+    + (asFiniteNumber(formula.elementDamageBonusPercent,
+      asFiniteNumber(actor.combatStats.elementDamageBonuses?.[element], 0)) || 0)
+    + (asFiniteNumber(formula.damageBonusPercent, 0) || 0);
+  const defenseReductionPercent = (readCombatStat(actor.combatStats, "defenseReductionPercent") || 0)
+    + activeModifierTotal(actor, "defenseReductionPercent", now)
+    + target.defenseReductionPercent
+    + activeModifierTotal(target, "defenseReductionPercent", now)
+    + (asFiniteNumber(formula.defenseReductionPercent, 0) || 0);
+  const resistancePenetrationPercent = (readCombatStat(actor.combatStats, "resistancePenetrationPercent") || 0)
+    + activeModifierTotal(actor, "resistancePenetrationPercent", now)
+    + (asFiniteNumber(formula.resistancePenetrationPercent, 0) || 0);
+  const vulnerabilityPercent = (readCombatStat(actor.combatStats, "vulnerabilityPercent") || 0)
+    + activeModifierTotal(actor, "vulnerabilityPercent", now)
+    + (asFiniteNumber(formula.vulnerabilityPercent, 0) || 0);
+  const targetVulnerability = target.vulnerabilityPercent + activeModifierTotal(target, "vulnerabilityPercent", now);
+  const critVulnerabilityPercent = canCrit
+    ? (readCombatStat(actor.combatStats, "critVulnerabilityPercent") || 0)
+      + activeModifierTotal(actor, "critVulnerabilityPercent", now)
+      + target.critVulnerabilityPercent
+      + activeModifierTotal(target, "critVulnerabilityPercent", now)
+      + (asFiniteNumber(formula.critVulnerabilityPercent, 0) || 0)
+    : 0;
+
+  const defenseMultiplier = calculateDefenseMultiplier(attackerLevel, targetLevel, defenseReductionPercent);
+  const resistanceMultiplier = calculateResistanceMultiplier(resistancePercent / 100,
+    resistancePenetrationPercent);
+  const critMultiplier = canCrit
+    ? calculateExpectedCritMultiplier(critRate, critDamage, critVulnerabilityPercent)
+    : 1;
+  const damageMultiplier = Math.max(0, 1 + damageBonusPercent / 100);
+  const vulnerabilityMultiplier = Math.max(0, 1 + (vulnerabilityPercent + targetVulnerability) / 100);
+  const toughnessMultiplier = calculateToughnessMultiplier(broken);
+  const unroundedDamage = scalingValue * motionValue * damageMultiplier * critMultiplier
+    * defenseMultiplier * resistanceMultiplier * vulnerabilityMultiplier * toughnessMultiplier;
+
+  return {
+    amount: Math.max(0, Math.round(unroundedDamage)),
+    calculation: {
+      type: "direct",
+      element,
+      scalingStat,
+      scalingValue,
+      motionValue,
+      canCrit,
+      damageBonusPercent,
+      elementDamageBonusPercent: asFiniteNumber(formula.elementDamageBonusPercent,
+        asFiniteNumber(actor.combatStats.elementDamageBonuses?.[element], 0)) || 0,
+      critRatePercent: critRate,
+      critDamagePercent: critDamage,
+      defenseReductionPercent,
+      resistancePercent,
+      resistancePenetrationPercent,
+      vulnerabilityPercent: vulnerabilityPercent + targetVulnerability,
+      targetWasBroken: broken,
+      damageMultiplier,
+      critMultiplier,
+      defenseMultiplier,
+      resistanceMultiplier,
+      vulnerabilityMultiplier,
+      toughnessMultiplier,
+      timedModifiers: {
+        attacker: actor.modifiers.filter((modifier) => modifier.expiresAt > now).map((modifier) => ({ ...modifier })),
+        target: target.modifiers.filter((modifier) => modifier.expiresAt > now).map((modifier) => ({ ...modifier }))
+      }
+    }
   };
 }
 
@@ -122,6 +346,9 @@ function applyActionEffects(action, actor, actorsById, state) {
       ...(Array.isArray(action.speedChanges) ? action.speedChanges.map((effect) => ({ ...effect, type: "speed" })) : []),
       ...(Array.isArray(action.advances) ? action.advances.map((effect) => ({ ...effect, type: "advance" })) : []),
       ...(Array.isArray(action.delays) ? action.delays.map((effect) => ({ ...effect, type: "delay" })) : []),
+      ...(Array.isArray(action.modifiers) ? action.modifiers.map((effect) => ({ ...effect, type: "modifier" })) : []),
+      ...(Array.isArray(action.buffs) ? action.buffs.map((effect) => ({ ...effect, type: "modifier" })) : []),
+      ...(Array.isArray(action.debuffs) ? action.debuffs.map((effect) => ({ ...effect, type: "modifier" })) : []),
       ...(Array.isArray(action.damage) ? action.damage.map((effect) => ({ ...effect, type: "damage" })) : [])
     ];
 
@@ -153,20 +380,83 @@ function applyActionEffects(action, actor, actorsById, state) {
     } else if (effect.type === "delay") {
       const fraction = Math.max(0, asFiniteNumber(effect.fraction, 0));
       target.nextActionAt += target.interval * fraction;
+    } else if (effect.type === "modifier") {
+      const field = String(effect.field || "");
+      const value = asFiniteNumber(effect.value);
+      const duration = asFiniteNumber(effect.durationActionValue);
+      if (!TIMED_MODIFIER_FIELDS.has(field) || value === null || duration === null || duration <= 0) {
+        warnings.push(`${action.key}: modifier requires a supported field, finite value, and positive durationActionValue.`);
+        continue;
+      }
+      const key = String(effect.stackingKey || `${actor.id}:${action.key}:${target.id}:${field}`);
+      const stackMode = effect.stackMode === "stack" ? "stack" : "refresh";
+      const existing = target.modifiers.filter((modifier) => modifier.key === key);
+      if (stackMode === "refresh") {
+        target.modifiers = target.modifiers.filter((modifier) => modifier.key !== key);
+      } else {
+        const maxStacks = Math.max(1, Math.floor(asFiniteNumber(effect.maxStacks, Number.MAX_SAFE_INTEGER)));
+        if (existing.length >= maxStacks) {
+          const oldest = existing.sort((left, right) => left.expiresAt - right.expiresAt)[0];
+          target.modifiers = target.modifiers.filter((modifier) => modifier !== oldest);
+        }
+      }
+      target.modifiers.push({
+        key,
+        field,
+        value,
+        expiresAt: state.now + duration,
+        sourceActorId: actor.id
+      });
     } else if (effect.type === "damage") {
-      let remainingDamage = Math.max(0, amount);
+      if (target.hp === 0) {
+        warnings.push(`${action.key}: damage against defeated target '${target.id}' was skipped.`);
+        continue;
+      }
+      const formulaResult = effect.formula ? calculateDirectDamage(actor, target, effect, warnings, state.now) : null;
+      if (effect.formula && !formulaResult) continue;
+      const damageAmount = formulaResult ? formulaResult.amount : Math.max(0, amount);
+      let remainingDamage = damageAmount;
       const absorbed = Math.min(target.shield, remainingDamage);
       target.shield -= absorbed;
       remainingDamage -= absorbed;
       const hpDamage = target.hp === null ? remainingDamage : Math.min(target.hp, remainingDamage);
       if (target.hp !== null) target.hp = Math.max(0, target.hp - remainingDamage);
-      state.damageResults.push({
+      const damageResult = {
+        sourceActorId: actor.id,
+        sourceActorKind: actor.kind,
         targetId: target.id,
-        amount: Math.max(0, amount),
+        targetKind: target.kind,
+        amount: damageAmount,
         shieldAbsorbed: absorbed,
         hpDamage,
-        overkill: target.hp !== null ? Math.max(0, remainingDamage - hpDamage) : 0
-      });
+        overkill: target.hp !== null ? Math.max(0, remainingDamage - hpDamage) : 0,
+        calculation: formulaResult?.calculation || null,
+        toughnessDamage: 0,
+        targetWasBroken: target.isBroken,
+        targetIsBroken: target.isBroken
+      };
+
+      const requestedToughnessDamage = Math.max(0, asFiniteNumber(effect.toughnessDamage, 0));
+      if (requestedToughnessDamage > 0 && target.isBroken !== true) {
+        const element = String(effect.element || effect.formula?.element || "");
+        const canDamageToughness = effect.ignoreWeakness === true
+          || element && target.weaknesses.includes(element);
+        if (target.toughness === null) {
+          warnings.push(`${action.key}: Toughness damage omitted because target '${target.id}' has no Toughness value.`);
+        } else if (!canDamageToughness) {
+          warnings.push(`${action.key}: Toughness damage omitted because target '${target.id}' is not confirmed weak to '${element || "the attack element"}'.`);
+        } else {
+          const toughnessBefore = target.toughness;
+          target.toughness = Math.max(0, target.toughness - requestedToughnessDamage);
+          target.isBroken = target.toughness <= 0;
+          damageResult.toughnessDamage = Math.min(toughnessBefore, requestedToughnessDamage);
+          damageResult.toughnessBefore = toughnessBefore;
+          damageResult.toughnessAfter = target.toughness;
+          damageResult.targetIsBroken = target.isBroken;
+          damageResult.brokeTarget = damageResult.targetWasBroken !== true && target.isBroken;
+        }
+      }
+      state.damageResults.push(damageResult);
     } else {
       warnings.push(`${action.key}: unsupported effect type '${effect.type}'.`);
       continue;
@@ -183,6 +473,12 @@ function applyActionEffects(action, actor, actorsById, state) {
  * Speeds, action order, resource changes, damage, and effect durations are not
  * inferred from character names or team roles. `advance.fraction` and
  * `delay.fraction` are fractions of the target's current full action interval.
+ * Direct damage uses `effect.formula = { type: "direct", scalingStat,
+ * motionValue, element, canCrit?, critRatePercent?, critDamagePercent?, ... }`;
+ * critRate/critDamage and other percentages use percentage points (e.g. 50 = 50%).
+ * Actor combat stats and enemy resistance/break state are explicit inputs. Timed
+ * modifiers use `effect.type = "modifier"` with a supported field, value, and
+ * positive durationActionValue; percentage values are percentage points.
  */
 export function simulateCombatTimeline({
   actors: rawActors = [],
@@ -229,6 +525,7 @@ export function simulateCombatTimeline({
     if (!actor || actor.nextActionAt > horizon) break;
 
     now = Math.max(now, actor.nextActionAt);
+    actors.forEach((entry) => expireActorModifiers(entry, now));
     const plannedAction = actor.actions[actor.actionIndex];
     const selected = resolveActionForResources(actor, plannedAction, skillPoints, maxSp);
     const action = selected.action;
@@ -289,25 +586,63 @@ export function simulateCombatTimeline({
     damageTotal: events.reduce((sum, event) => event.status === "blocked"
       ? sum
       : sum + event.damage.reduce((actionSum, hit) => actionSum + Math.max(0, asFiniteNumber(hit.amount, 0)), 0), 0),
+    alliedDamageTotal: events.reduce((sum, event) => event.status === "blocked" || event.actorKind !== "ally"
+      ? sum
+      : sum + event.damage.filter((hit) => hit.targetKind === "enemy")
+        .reduce((actionSum, hit) => actionSum + Math.max(0, asFiniteNumber(hit.amount, 0)), 0), 0),
+    alliedEffectiveDamageTotal: events.reduce((sum, event) => event.status === "blocked" || event.actorKind !== "ally"
+      ? sum
+      : sum + event.damage.filter((hit) => hit.targetKind === "enemy")
+        .reduce((actionSum, hit) => actionSum
+          + Math.max(0, asFiniteNumber(hit.hpDamage, 0))
+          + Math.max(0, asFiniteNumber(hit.shieldAbsorbed, 0)), 0), 0),
+    enemyDamageTotal: events.reduce((sum, event) => event.status === "blocked" || event.actorKind !== "enemy"
+      ? sum
+      : sum + event.damage.filter((hit) => hit.targetKind === "ally")
+        .reduce((actionSum, hit) => actionSum + Math.max(0, asFiniteNumber(hit.amount, 0)), 0), 0),
+    enemyEffectiveDamageTotal: events.reduce((sum, event) => event.status === "blocked" || event.actorKind !== "enemy"
+      ? sum
+      : sum + event.damage.filter((hit) => hit.targetKind === "ally")
+        .reduce((actionSum, hit) => actionSum
+          + Math.max(0, asFiniteNumber(hit.hpDamage, 0))
+          + Math.max(0, asFiniteNumber(hit.shieldAbsorbed, 0)), 0), 0),
+    effectiveHpDamageTotal: events.reduce((sum, event) => event.status === "blocked"
+      ? sum
+      : sum + event.damage.reduce((actionSum, hit) => actionSum + Math.max(0, asFiniteNumber(hit.hpDamage, 0)), 0), 0),
     events,
     actors: actors.map((actor) => ({
       id: actor.id,
       name: actor.name,
       kind: actor.kind,
+      level: actor.level,
       speed: actor.speed,
+      resistancePercent: actor.resistancePercent,
+      resistancesPercent: actor.resistancesPercent,
+      weaknesses: [...actor.weaknesses],
+      vulnerabilityPercent: actor.vulnerabilityPercent,
+      critVulnerabilityPercent: actor.critVulnerabilityPercent,
+      defenseReductionPercent: actor.defenseReductionPercent,
       nextActionValue: Number(actor.nextActionAt.toFixed(6)),
       turns: actor.turnCount,
       hp: actor.hp,
       maxHp: actor.maxHp,
+      toughness: actor.toughness,
+      maxToughness: actor.maxToughness,
+      isBroken: actor.isBroken,
       shield: actor.shield,
       energy: actor.energy,
-      energyCap: actor.energyCap
+      energyCap: actor.energyCap,
+      modifiers: actor.modifiers.map((modifier) => ({ ...modifier }))
     })),
     assumptions: [
       "Only explicitly supplied actors and action scripts are simulated.",
       "Action Value uses 10000 divided by the supplied speed; the horizon is explicit and no game-mode cycle limit is inferred.",
-      "Damage amounts are supplied by the scenario; this module tracks HP/shield changes but does not calculate damage formulas.",
-      "Ultimate quick-casts, buff/debuff durations, DoT ticks, and trigger conditions are not inferred; encode verified actions and effects explicitly."
+      "Damage effects can use a direct-damage formula when attacker stats, target level and RES, element, CRIT stats, motion value, and break state are supplied; flat damage remains supported for externally validated values.",
+      "Raw damage is the calculated hit amount; effective damage is limited by remaining HP and shield. Hits against already-defeated targets are skipped.",
+      "Timed stat modifiers are explicit additive percentage-point effects with Action Value durations. A stackingKey refreshes one effect by default; stackMode 'stack' retains multiple stacks, optionally capped by maxStacks.",
+      "When target Max HP or Toughness is supplied and current values are omitted, the timeline initializes them at full. Weakness damage only reduces Toughness for a listed weakness unless the action explicitly ignores weakness.",
+      "Break damage itself is not calculated yet; a weakness break only changes target state for later actions.",
+      "Timed modifiers apply only when their field, value, and Action Value duration are explicit. Ultimate quick-casts, DoT ticks, and trigger conditions are not inferred."
     ],
     warnings
   };
