@@ -560,7 +560,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <span className="assumption-bullet">•</span>
               <span>{isTimelineCalculation
                 ? (isRu ? "Показаны события заданного таймлайна; поведение и действия, которых нет в сценарии, не достраиваются автоматически." : "Configured timeline events are shown; behavior and actions absent from the scenario are not inferred.")
-                : isRu ? "Показаны только вручную заданные попадания; порядок ходов, энергия и число повторных действий не моделируются." : "Only manually configured hits are included; turn order, energy, and repeated action counts are not simulated."}</span>
+                : rotationSim?.kitRotationStatus
+                  ? (isRu ? "Фазы взяты из ротации персонажа; повторность задаёт сценарий ротации, а очерёдность ходов и аптайм бафов не моделируются." : "Phases come from the character's rotation script; repeat counts follow the script, while turn order and buff uptime are not simulated.")
+                  : (isRu ? "Показаны только вручную заданные попадания; порядок ходов, энергия и число повторных действий не моделируются." : "Only manually configured hits are included; turn order, energy, and repeated action counts are not simulated.")}</span>
             </div>
             <div className="assumption-item">
               <span className="assumption-bullet">•</span>

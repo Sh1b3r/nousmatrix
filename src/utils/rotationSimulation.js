@@ -440,7 +440,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     if (energyCycle && Number(energyCycle.ultCost) > 0) {
       const fillerGain = kitRotation.instances
         .filter((inst) => !inst.isUlt)
-        .reduce((sum, inst) => sum + (Number(inst.energyGain) || 0), 0);
+        .reduce((sum, inst) => sum + (Number(inst.energyGain) || 0) * Math.max(1, Number(inst.count) || 1), 0);
       const startEnergy = Number(energyCycle.startEnergyPercent || 0) / 100 * Number(energyCycle.ultCost)
         + (Number(energyCycle.startEnergyFlat) || 0);
       if (fillerGain + startEnergy < Number(energyCycle.ultCost)) {
@@ -1025,7 +1025,9 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       : buffTimingStatus === "verified-schedule"
       ? "verified-per-hit-schedule"
       : hasAppliedTeamBuffValues ? "explicit-values-assumed-full-uptime" : "no-numeric-buffs-configured",
-    calculationStatus: usesExplicitTimeline ? "explicit-timeline-simulation" : "manual-script-estimate",
+    calculationStatus: usesExplicitTimeline ? "explicit-timeline-simulation"
+      : kitRotationSupported ? "kit-rotation-estimate" : "manual-script-estimate",
+    kitRotationStatus: kitRotationSupported ? kitRotation.status : null,
     combatStats: {
       combatAtk,
       combatHp,
