@@ -4,6 +4,21 @@ function normalizedId(value) {
   return value === null || value === undefined || value === "" ? null : String(value);
 }
 
+/**
+ * Reference-only benchmark context measured with Fribbels HSR Optimizer for the
+ * showcase build. These are NOT scoreable profiles: Fribbels generates the
+ * baseline/benchmark/perfection values with its own team and conditional buffs,
+ * while this engine computes rotation damage without ally buffs, so the setups
+ * do not match and a Fribbels-style score would be misleading. Displayed as
+ * provenance-tagged context only.
+ */
+export function getBenchmarkReference(characterId) {
+  const references = Array.isArray(benchmarkData.referenceProfiles)
+    ? benchmarkData.referenceProfiles : [];
+  return references.find((profile) => profile.status === "reference"
+    && normalizedId(profile.characterId) === normalizedId(characterId)) || null;
+}
+
 function sameSpeed(left, right) {
   return Number.isFinite(Number(left)) && Number.isFinite(Number(right)) && Math.abs(Number(left) - Number(right)) < 0.05;
 }

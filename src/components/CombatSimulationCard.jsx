@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { runCombatSimulation } from "../utils/simulation.js";
 import { CHARACTER_SQUADS, TEAM_DATA_BY_CHARACTER, TEAM_STATISTICS_SOURCES, matchSquadWithShowcase, rankSquadsByShowcase } from "../utils/teamSynergy.js";
 import { runFullTeamRotationSimulation } from "../utils/rotationSimulation.js";
-import { scoreAgainstCombatBenchmark } from "../utils/combatBenchmark.js";
+import { scoreAgainstCombatBenchmark, getBenchmarkReference } from "../utils/combatBenchmark.js";
 import { resolveCombatEquipmentEffects } from "../utils/combatEquipmentEffects.js";
 import { iconUrl, handleImageFallback } from "../utils/audit.js";
 import { SwordIcon, ShieldIcon, SparklesIcon, CheckIcon, WarnIcon } from "./Icons.jsx";
@@ -51,6 +51,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
       breakProcs
     });
   }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode, breakProcs]);
+  // Reference-еталон Fribbels: виміряний для цього білда (команда Fribbels),
+  // показується як орієнтир 0/100/200, не як оцінка нашого урону.
+  const benchmarkReference = useMemo(() => getBenchmarkReference(charId), [charId]);
   const equipmentCoverage = useMemo(() => resolveCombatEquipmentEffects(character, matchedTeammates, {
     targetCount: enemyMode === "pf" ? 5 : 3
   }), [character, matchedTeammates, enemyMode]);
@@ -535,6 +538,16 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                     : "Generic mode assumptions are used; exact enemy levels, lineup, and resistances are unavailable.")}
               </span>
             </div>
+            {benchmarkReference && (
+              <div className="assumption-item">
+                <span className="assumption-bullet">•</span>
+                <span>
+                  {(isRu
+                    ? `Еталон пробиття реліквій (Fribbels HSR Optimizer, дані ${benchmarkReference.sourceDataVersion}, виміряно ${benchmarkReference.capturedOn} для цього білда: ${benchmarkReference.eidolon}, ${benchmarkReference.lightCone}): 0% = ${(benchmarkReference.outputs.baseline / 1000).toFixed(0)}K, 100% = ${(benchmarkReference.outputs.benchmark / 1000).toFixed(0)}K, 200% = ${(benchmarkReference.outputs.perfection / 1000).toFixed(0)}K; оцінка білда у Fribbels — ${benchmarkReference.outputs.fribbelsDpsScore}% (${benchmarkReference.outputs.fribbelsGrade}). Еталони рахуються з командою та умовними баффами Fribbels, тож наш урон без баффів союзників порівнювати з ними напряму не можна — це орієнтир, а не оцінка.`
+                    : `Relic benchmark reference (Fribbels HSR Optimizer, data ${benchmarkReference.sourceDataVersion}, measured ${benchmarkReference.capturedOn} for this build: ${benchmarkReference.eidolon}, ${benchmarkReference.lightCone}): 0% = ${(benchmarkReference.outputs.baseline / 1000).toFixed(0)}K, 100% = ${(benchmarkReference.outputs.benchmark / 1000).toFixed(0)}K, 200% = ${(benchmarkReference.outputs.perfection / 1000).toFixed(0)}K; Fribbels DPS score of this build — ${benchmarkReference.outputs.fribbelsDpsScore}% (${benchmarkReference.outputs.fribbelsGrade}). The benchmarks are generated with Fribbels' team and conditional buffs, so this engine's no-buff damage cannot be compared to them directly — reference context, not a score.`)}
+                </span>
+              </div>
+            )}
             {rotationSim && (
               <div className="assumption-item">
                 <span className="assumption-bullet">•</span>
