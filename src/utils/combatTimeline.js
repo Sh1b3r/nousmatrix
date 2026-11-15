@@ -33,15 +33,25 @@ function expireActorModifiers(actor, now) {
   actor.modifiers = (actor.modifiers || []).filter((modifier) => modifier.expiresAt > now);
 }
 
-function normalizeAction(action, actorId, index) {
+function normalizeAction(action, actorId, index, warnings = []) {
   if (!action || typeof action !== "object") return null;
+  const requiresHpAbove = asFiniteNumber(action.requiresHpAbove);
+  const hasHpRequirement = action.requiresHpAbove !== null
+    && action.requiresHpAbove !== undefined && action.requiresHpAbove !== "";
+  const invalidHpRequirement = hasHpRequirement
+    && (requiresHpAbove === null || requiresHpAbove < 0);
+  if (invalidHpRequirement) {
+    warnings.push(`${action.key || actorId}: requiresHpAbove must be a non-negative finite value.`);
+  }
   return {
     ...action,
     key: String(action.key || `${actorId}:action-${index + 1}`),
     energyCost: Math.max(0, asFiniteNumber(action.energyCost, 0)),
     energyGain: Math.max(0, asFiniteNumber(action.energyGain, 0)),
     skillPointCost: Math.max(0, Math.floor(asFiniteNumber(action.skillPointCost, 0))),
-    skillPointGain: Math.max(0, Math.floor(asFiniteNumber(action.skillPointGain, 0)))
+    skillPointGain: Math.max(0, Math.floor(asFiniteNumber(action.skillPointGain, 0))),
+    requiresHpAbove,
+    invalidHpRequirement
   };
 }
 
@@ -72,7 +82,7 @@ function normalizeActor(raw, index, warnings) {
   const energyCap = asFiniteNumber(raw.energyCap);
   const energy = asFiniteNumber(raw.energy, 0);
   const actions = (Array.isArray(raw.actions) ? raw.actions : [])
-    .map((action, actionIndex) => normalizeAction(action, id, actionIndex))
+    .map((action, actionIndex) => normalizeAction(action, id, actionIndex, warnings))
     .filter(Boolean);
 
   if (actions.length > 0 && !hasUsableSpeed) {
@@ -311,25 +321,75 @@ function setActorSpeed(actor, newSpeed, now) {
   return true;
 }
 
-function resolveActionForResources(actor, action, skillPoints, maxSkillPoints) {
+function resolveActionForResources(actor, action, skillPoints, maxSkillPoints, warnings) {
   const lacksEnergy = actor.energy + Number.EPSILON < action.energyCost;
   const lacksSkillPoints = skillPoints < action.skillPointCost;
-  if (!lacksEnergy && !lacksSkillPoints) return { action, blockedBy: null };
+  const hpThreshold = asFiniteNumber(action.requiresHpAbove);
+  const lacksHp = action.invalidHpRequirement
+    || hpThreshold !== null && (actor.hp === null || actor.hp <= hpThreshold);
+  if (!lacksEnergy && !lacksSkillPoints && !lacksHp) return { action, blockedBy: null };
 
   const reason = [
     lacksEnergy ? "energy" : null,
-    lacksSkillPoints ? "skill-points" : null
+    lacksSkillPoints ? "skill-points" : null,
+    action.invalidHpRequirement ? "invalid-hp-requirement"
+      : lacksHp ? actor.hp === null ? "hp-state" : "hp" : null
   ].filter(Boolean).join("+");
   const fallback = action.fallback && typeof action.fallback === "object"
-    ? normalizeAction(action.fallback, actor.id, actor.actionIndex)
+    ? normalizeAction(action.fallback, actor.id, actor.actionIndex, warnings)
     : null;
   if (!fallback) return { action: null, blockedBy: reason };
 
   const fallbackCanPay = actor.energy + Number.EPSILON >= fallback.energyCost
-    && skillPoints >= fallback.skillPointCost;
+    && skillPoints >= fallback.skillPointCost
+    && !fallback.invalidHpRequirement
+    && (asFiniteNumber(fallback.requiresHpAbove) === null
+      || actor.hp !== null && actor.hp > asFiniteNumber(fallback.requiresHpAbove));
   return fallbackCanPay
     ? { action: fallback, blockedBy: null, fallbackFrom: action.key }
     : { action: null, blockedBy: reason };
+}
+
+function resolveEffectAmount(effect, target, action, warnings) {
+  const fixedAmount = asFiniteNumber(effect.amount);
+  const maxHpPercent = asFiniteNumber(effect.amountPercentOfMaxHp);
+  const currentHpPercent = asFiniteNumber(effect.amountPercentOfCurrentHp);
+  const hasFixedAmount = effect.amount !== null && effect.amount !== undefined && effect.amount !== "";
+  const hasMaxHpPercent = effect.amountPercentOfMaxHp !== null
+    && effect.amountPercentOfMaxHp !== undefined && effect.amountPercentOfMaxHp !== "";
+  const hasCurrentHpPercent = effect.amountPercentOfCurrentHp !== null
+    && effect.amountPercentOfCurrentHp !== undefined && effect.amountPercentOfCurrentHp !== "";
+  if ((hasFixedAmount && fixedAmount === null)
+    || (hasMaxHpPercent && maxHpPercent === null)
+    || (hasCurrentHpPercent && currentHpPercent === null)) {
+    warnings.push(`${action.key}: HP effect amount must be finite.`);
+    return null;
+  }
+  const configuredModes = [hasFixedAmount, hasMaxHpPercent, hasCurrentHpPercent].filter(Boolean).length;
+  if (configuredModes > 1) {
+    warnings.push(`${action.key}: configure only one of amount, amountPercentOfMaxHp, or amountPercentOfCurrentHp.`);
+    return null;
+  }
+  const configuredAmount = fixedAmount ?? maxHpPercent ?? currentHpPercent;
+  if (configuredAmount !== null && configuredAmount < 0) {
+    warnings.push(`${action.key}: HP effect amount cannot be negative.`);
+    return null;
+  }
+  if (maxHpPercent !== null) {
+    if (target.maxHp === null) {
+      warnings.push(`${action.key}: HP-scaled effect on '${target.id}' needs target Max HP.`);
+      return null;
+    }
+    return target.maxHp * maxHpPercent / 100;
+  }
+  if (currentHpPercent !== null) {
+    if (target.hp === null) {
+      warnings.push(`${action.key}: current-HP-scaled effect on '${target.id}' needs current HP.`);
+      return null;
+    }
+    return target.hp * currentHpPercent / 100;
+  }
+  return Math.max(0, fixedAmount ?? 0);
 }
 
 function applyActionEffects(action, actor, actorsById, state) {
@@ -365,14 +425,38 @@ function applyActionEffects(action, actor, actorsById, state) {
     const targetId = effect.targetId || (effect.type === "hp-cost" ? actor.id : null);
     const target = getTarget(targetId, effect.type || "effect");
     if (!target) continue;
-    const amount = asFiniteNumber(effect.amount, 0);
+    const scalesWithHp = asFiniteNumber(effect.amountPercentOfMaxHp) !== null
+      || asFiniteNumber(effect.amountPercentOfCurrentHp) !== null;
+    const amount = ["heal", "hp-cost", "shield"].includes(effect.type)
+      ? resolveEffectAmount(effect, target, action, warnings)
+      : asFiniteNumber(effect.amount, 0);
+    if (amount === null) continue;
 
     if (effect.type === "heal") {
-      if (target.hp === null) continue;
+      if (target.hp === null) {
+        if (!scalesWithHp) warnings.push(`${action.key}: healing '${target.id}' was omitted because current HP is unknown.`);
+        continue;
+      }
       target.hp = Math.min(target.maxHp, target.hp + Math.max(0, amount));
     } else if (effect.type === "hp-cost") {
-      if (target.hp === null) continue;
-      target.hp = Math.max(0, target.hp - Math.max(0, amount));
+      if (target.hp === null) {
+        if (!scalesWithHp) warnings.push(`${action.key}: HP cost on '${target.id}' was omitted because current HP is unknown.`);
+        continue;
+      }
+      const configuredMinimumHpAfter = asFiniteNumber(effect.minimumHpAfter, 0);
+      if (configuredMinimumHpAfter === null || configuredMinimumHpAfter < 0) {
+        warnings.push(`${action.key}: minimumHpAfter must be a non-negative finite value.`);
+        continue;
+      }
+      const minimumHpAfter = clamp(configuredMinimumHpAfter, 0, target.maxHp);
+      if (minimumHpAfter !== configuredMinimumHpAfter) {
+        warnings.push(`${action.key}: minimumHpAfter was clamped to target Max HP (${target.maxHp}).`);
+      }
+      const payableCost = Math.min(Math.max(0, amount), Math.max(0, target.hp - minimumHpAfter));
+      if (payableCost < amount) {
+        warnings.push(`${action.key}: HP cost on '${target.id}' was clamped to minimumHpAfter (${minimumHpAfter}).`);
+      }
+      target.hp = Math.max(minimumHpAfter, target.hp - payableCost);
     } else if (effect.type === "shield") {
       target.shield += Math.max(0, amount);
     } else if (effect.type === "energy") {
@@ -494,7 +578,9 @@ function applyActionEffects(action, actor, actorsById, state) {
  * critRate/critDamage and other percentages use percentage points (e.g. 50 = 50%).
  * Actor combat stats and enemy resistance/break state are explicit inputs. Timed
  * modifiers use `effect.type = "modifier"` with a supported field, value, and
- * positive durationActionValue; percentage values are percentage points.
+ * positive durationActionValue; percentage values are percentage points. HP
+ * effects can use one fixed amount or an explicit max/current HP percentage;
+ * actions can declare requiresHpAbove to model a known HP gate.
  */
 export function simulateCombatTimeline({
   actors: rawActors = [],
@@ -543,7 +629,7 @@ export function simulateCombatTimeline({
     now = Math.max(now, actor.nextActionAt);
     actors.forEach((entry) => expireActorModifiers(entry, now));
     const plannedAction = actor.actions[actor.actionIndex];
-    const selected = resolveActionForResources(actor, plannedAction, skillPoints, maxSp);
+    const selected = resolveActionForResources(actor, plannedAction, skillPoints, maxSp, warnings);
     const action = selected.action;
     actor.turnCount += 1;
     actor.nextActionAt = now + actor.interval;
@@ -656,6 +742,7 @@ export function simulateCombatTimeline({
       "Action Value uses 10000 divided by the supplied speed; the horizon is explicit and no game-mode cycle limit is inferred.",
       "Damage effects can use a direct-damage formula when attacker stats, target level and RES, element, CRIT stats, motion value, and break state are supplied; flat damage remains supported for externally validated values.",
       "Raw damage is the calculated hit amount; effective damage is limited by remaining HP and shield. Hits against already-defeated targets are skipped.",
+      "Healing, shields, and HP costs can use an explicit fixed amount, Max HP percentage, or current HP percentage. An action HP threshold only applies when requiresHpAbove is explicitly configured.",
       "Timed stat modifiers are explicit additive percentage-point effects with Action Value durations. A stackingKey refreshes one effect by default; stackMode 'stack' retains multiple stacks, optionally capped by maxStacks.",
       "When target Max HP or Toughness is supplied and current values are omitted, the timeline initializes them at full. Weakness damage only reduces Toughness for a listed weakness unless the action explicitly ignores weakness.",
       "Break damage itself is not calculated yet; a weakness break only changes target state for later actions.",

@@ -90,18 +90,36 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const displayEnemyTargets = rotationSim?.enemyTargets || (sim.enemyTarget ? [sim.enemyTarget] : []);
   const timelineActorsById = new Map((rotationSim?.combatTimeline?.actors || [])
     .map((actor) => [String(actor.id), actor.name || actor.id]));
+  const formatBlockedReason = (reason) => {
+    const labels = isRu
+      ? { energy: "не хватает энергии", "skill-points": "не хватает ОН", hp: "недостаточно HP", "hp-state": "HP не заданы", "invalid-hp-requirement": "ошибка условия HP" }
+      : { energy: "not enough Energy", "skill-points": "not enough SP", hp: "insufficient HP", "hp-state": "HP state missing", "invalid-hp-requirement": "invalid HP condition" };
+    return String(reason || (isRu ? "нет ресурса" : "resource unavailable"))
+      .split("+")
+      .map((part) => labels[part] || part)
+      .join(" + ");
+  };
   const damageBreakdown = isTimelineCalculation
-    ? (rotationSim.combatTimeline?.events || []).flatMap((event) => (event.damage || []).map((hit, index) => ({
-      key: `${event.eventIndex}:${hit.targetId}:${index}`,
-      phase: `AV ${event.actionValue} · ${event.actorName}`,
-      actionName: event.actionName,
-      targetName: timelineActorsById.get(String(hit.targetId)) || hit.targetId,
-      rawDamage: Number(hit.amount || 0),
-      effectiveDamage: Number(hit.hpDamage || 0) + Number(hit.shieldAbsorbed || 0),
-      hpDamage: Number(hit.hpDamage || 0),
-      shieldAbsorbed: Number(hit.shieldAbsorbed || 0),
-      overkill: Number(hit.overkill || 0)
-    })))
+    ? (rotationSim.combatTimeline?.events || []).flatMap((event) => {
+      if (event.status === "blocked") return [{
+        key: `${event.eventIndex}:blocked`,
+        phase: `AV ${event.actionValue} · ${event.actorName}`,
+        actionName: event.actionName,
+        status: "blocked",
+        blockedBy: event.blockedBy
+      }];
+      return (event.damage || []).map((hit, index) => ({
+        key: `${event.eventIndex}:${hit.targetId}:${index}`,
+        phase: `AV ${event.actionValue} · ${event.actorName}`,
+        actionName: event.actionName,
+        targetName: timelineActorsById.get(String(hit.targetId)) || hit.targetId,
+        rawDamage: Number(hit.amount || 0),
+        effectiveDamage: Number(hit.hpDamage || 0) + Number(hit.shieldAbsorbed || 0),
+        hpDamage: Number(hit.hpDamage || 0),
+        shieldAbsorbed: Number(hit.shieldAbsorbed || 0),
+        overkill: Number(hit.overkill || 0)
+      }));
+    })
     : (rotationSim?.steps || [])
       .filter((step) => step.isDamageAction && Number.isFinite(Number(step.damage)))
       .map((step, index) => ({
@@ -390,7 +408,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             <details className="sim-params-disclosure">
               <summary className="sim-params-summary">
                 {isTimelineCalculation
-                  ? (isRu ? `Урон по событиям (${damageBreakdown.length})` : `Damage by event (${damageBreakdown.length})`)
+                  ? (isRu ? `Урон и пропущенные действия (${damageBreakdown.length})` : `Damage and skipped actions (${damageBreakdown.length})`)
                   : (isRu ? `Разбивка расчётных попаданий (${damageBreakdown.length})` : `Estimated hit breakdown (${damageBreakdown.length})`)}
               </summary>
               <div className="sim-assumptions-list">
@@ -400,9 +418,11 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                     <span>
                       {entry.phase ? `${entry.phase}: ` : ""}
                       {entry.actionName || (isRu ? "Удар" : "Hit")}
-                      {entry.targetName ? ` → ${entry.targetName}` : ""}: {isTimelineCalculation
+                      {entry.status === "blocked"
+                        ? ` — ${isRu ? "действие пропущено" : "action skipped"}: ${formatBlockedReason(entry.blockedBy)}`
+                        : `${entry.targetName ? ` → ${entry.targetName}` : ""}: ${isTimelineCalculation
                         ? `${isRu ? "расчётный" : "calculated"} ${entry.rawDamage.toLocaleString(isRu ? "ru-RU" : "en-US")}; ${isRu ? "снято" : "applied"} ${entry.effectiveDamage.toLocaleString(isRu ? "ru-RU" : "en-US")} (${isRu ? "HP" : "HP"} ${entry.hpDamage.toLocaleString(isRu ? "ru-RU" : "en-US")} + ${isRu ? "щит" : "shield"} ${entry.shieldAbsorbed.toLocaleString(isRu ? "ru-RU" : "en-US")}${entry.overkill > 0 ? `; ${isRu ? "избыток" : "overkill"} ${entry.overkill.toLocaleString(isRu ? "ru-RU" : "en-US")}` : ""})`
-                        : `~${entry.rawDamage.toLocaleString(isRu ? "ru-RU" : "en-US")}`}
+                        : `~${entry.rawDamage.toLocaleString(isRu ? "ru-RU" : "en-US")}`}`}
                     </span>
                   </div>
                 ))}
