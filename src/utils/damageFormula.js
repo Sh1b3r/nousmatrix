@@ -4,11 +4,20 @@
  * except baseResistance, which is a fraction (e.g. 0.2 means 20%) to match
  * enemy profile data used by the combat simulator.
  */
-export function calculateDefenseMultiplier(attackerLevel, enemyLevel, defenseReductionPercent = 0) {
+export function calculateDefenseMultiplier(
+  attackerLevel,
+  enemyLevel,
+  defenseReductionPercent = 0,
+  defenseIgnorePercent = 0,
+  targetDefensePercent = 0
+) {
   const attackerLv = Math.max(1, Number(attackerLevel) || 1);
   const enemyLv = Math.max(1, Number(enemyLevel) || 1);
   const reduction = Math.min(1, Math.max(0, Number(defenseReductionPercent) / 100 || 0));
-  return (attackerLv + 20) / (attackerLv + 20 + (enemyLv + 20) * (1 - reduction));
+  const ignore = Math.min(1, Math.max(0, Number(defenseIgnorePercent) / 100 || 0));
+  const targetDefense = Math.max(0, Number(targetDefensePercent) / 100 || 0);
+  const effectiveDefense = Math.max(0, 1 + targetDefense - reduction - ignore);
+  return (attackerLv + 20) / (attackerLv + 20 + (enemyLv + 20) * effectiveDefense);
 }
 
 export function calculateResistanceMultiplier(baseResistance, resistancePenetrationPercent = 0) {

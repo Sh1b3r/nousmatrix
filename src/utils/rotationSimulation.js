@@ -141,7 +141,9 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     targets: enemyScenario.targetCount,
     targetData: enemyScenario.targets
   };
-  const totalDefShred = Math.min(1, teamDefShred / 100);
+  const defenseIgnorePercent = Math.max(0, Number(options.defenseIgnorePercent) || 0);
+  const totalDefShred = Math.min(1, Math.max(0,
+    (teamDefShred + (Number(primaryEnemy.defenseReductionPercent) || 0)) / 100));
   const appliedBuffFields = new Set([
     "atkGrant", "atkPercent", "cdGrant", "crGrant", "dmgBoost", "resPen", "defShred",
     "allVuln", "vuln", "critVuln", "breakVuln", "beBoost", "breakEff",
@@ -163,27 +165,35 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     vulnerabilityByTarget = {},
     includeToughness = true
   } = {}) => {
-    const defense = calculateDefenseMultiplier(charLv, target.level, defShredPercent);
+    // Target-scoped DEF reductions can come from the explicit encounter state
+    // (for example, a debuff applied before this packet). Previously the field
+    // was parsed but silently dropped from every manual hit calculation.
+    const effectiveDefShred = defShredPercent + (Number(target.defenseReductionPercent) || 0);
+    const defense = calculateDefenseMultiplier(
+      charLv, target.level, effectiveDefShred, defenseIgnorePercent
+    );
     const resistance = calculateResistanceMultiplier(target.resistancePercent / 100, resPenPercent);
     const toughness = includeToughness ? calculateToughnessMultiplier(target.isBroken) : 1;
     const vulnerability = 1 + (vulnerabilityPercent + target.vulnerabilityPercent
       + (Number(vulnerabilityByTarget[target.id]) || 0)) / 100;
+    const damageReduction = Math.max(0, 1 - (Number(target.damageReductionPercent) || 0) / 100)
+      * Math.max(0, 1 - (Number(target.universalDamageReductionPercent) || 0) / 100);
     return {
       defMult: defense,
       resMult: resistance,
       toughnessMultiplier: toughness,
       vulnMult: vulnerability * toughness,
-      damageFactor: defense * resistance * vulnerability * toughness
+      damageReductionMultiplier: damageReduction,
+      damageFactor: defense * resistance * vulnerability * damageReduction * toughness
     };
   };
   const primaryTargetFactors = getTargetDamageFactors(primaryEnemy);
   const defMult = primaryTargetFactors.defMult;
   const resMult = primaryTargetFactors.resMult;
-  const damageTakenMult = 1 + teamVuln / 100;
   const toughnessMultiplier = primaryTargetFactors.toughnessMultiplier;
   // Without a break-state timeline, direct hits assume an active Toughness bar.
   // Super Break instances below assume the target is already broken.
-  const vulnMult = damageTakenMult * toughnessMultiplier;
+  const vulnMult = primaryTargetFactors.vulnMult * primaryTargetFactors.damageReductionMultiplier;
   // The profile's attributes/additions already include cone base stats and
   // static property bonuses. Conditional effects are added by exact ID below.
   const characterBaseAttack = (mainChar.attributes || []).find((attribute) => attribute.field === "atk")?.value;
@@ -985,8 +995,9 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       combatCd: (combatCd * 100).toFixed(1),
       critMultiplier: critMultiplier.toFixed(2),
       totalDefShred: (totalDefShred * 100).toFixed(1),
+      defenseIgnorePercent: defenseIgnorePercent.toFixed(1),
       resMult: resMult.toFixed(2),
-      vulnMult: damageTakenMult.toFixed(2),
+      vulnMult: vulnMult.toFixed(2),
       toughnessMultiplier: toughnessMultiplier.toFixed(2)
     },
     hasUnmodeledAtkPercent: teamAtkPercent > 0 && baseAttackForPercent <= 0

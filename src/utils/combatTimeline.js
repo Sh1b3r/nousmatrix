@@ -9,9 +9,29 @@ const ACTION_GAUGE = 10000;
 const DEFAULT_MAX_EVENTS = 1000;
 const TIMED_MODIFIER_FIELDS = new Set([
   "attackFlat", "attackPercent", "hpFlat", "hpPercent", "defenseFlat", "defensePercent",
-  "critRatePercent", "critDamagePercent", "damageBonusPercent", "defenseReductionPercent",
-  "resistancePenetrationPercent", "vulnerabilityPercent", "critVulnerabilityPercent"
+  "critRatePercent", "critDamagePercent", "damageBonusPercent", "basicDamagePercent",
+  "skillDamagePercent", "ultimateDamagePercent", "followUpDamagePercent", "dotDamagePercent",
+  "breakDamagePercent", "superBreakDamagePercent", "additionalDamagePercent", "elationDamagePercent",
+  "memoDamagePercent", "assistDamagePercent", "defenseReductionPercent", "defenseIgnorePercent",
+  "resistancePenetrationPercent", "vulnerabilityPercent", "elementalDamageTakenPercent",
+  "critVulnerabilityPercent", "damageReductionPercent", "universalDamageReductionPercent", "weakenPercent"
 ]);
+const DAMAGE_TYPE_MODIFIER_FIELDS = {
+  basic: "basicDamagePercent",
+  "basic-atk": "basicDamagePercent",
+  skill: "skillDamagePercent",
+  ultimate: "ultimateDamagePercent",
+  ult: "ultimateDamagePercent",
+  "follow-up": "followUpDamagePercent",
+  fua: "followUpDamagePercent",
+  dot: "dotDamagePercent",
+  break: "breakDamagePercent",
+  "super-break": "superBreakDamagePercent",
+  additional: "additionalDamagePercent",
+  elation: "elationDamagePercent",
+  memo: "memoDamagePercent",
+  assist: "assistDamagePercent"
+};
 
 function asFiniteNumber(value, fallback = null) {
   if (value === null || value === undefined || value === "") return fallback;
@@ -117,6 +137,13 @@ function normalizeActor(raw, index, warnings) {
     vulnerabilityPercent: asFiniteNumber(raw.vulnerabilityPercent, 0),
     critVulnerabilityPercent: asFiniteNumber(raw.critVulnerabilityPercent, 0),
     defenseReductionPercent: asFiniteNumber(raw.defenseReductionPercent, 0),
+    elementalDamageTakenPercent: raw.elementalDamageTakenPercent
+      && typeof raw.elementalDamageTakenPercent === "object" ? raw.elementalDamageTakenPercent : {},
+    damageReductionPercent: asFiniteNumber(raw.damageReductionPercent,
+      asFiniteNumber(combatStats.damageReductionPercent, 0)),
+    universalDamageReductionPercent: asFiniteNumber(raw.universalDamageReductionPercent,
+      asFiniteNumber(combatStats.universalDamageReductionPercent, 0)),
+    weakenPercent: asFiniteNumber(raw.weakenPercent, asFiniteNumber(combatStats.weakenPercent, 0)),
     modifiers: Array.isArray(raw.modifiers) ? raw.modifiers
       .filter((modifier) => modifier && TIMED_MODIFIER_FIELDS.has(modifier.field)
         && Number.isFinite(Number(modifier.value)) && Number.isFinite(Number(modifier.expiresAt)))
@@ -159,6 +186,9 @@ function resolveTargetResistancePercent(target, element) {
   }
   if (element && target.resistanceDataComplete) return 0;
   if (target.resistancePercent !== null) return target.resistancePercent;
+  // Player characters have no innate elemental RES stat in HSR. A custom
+  // actor can still provide resistancePercent/resistancesPercent above.
+  if (target.kind === "ally") return 0;
   if (element && target.weaknesses.includes(element)) return 0;
   return null;
 }
@@ -170,8 +200,8 @@ function calculateDirectDamage(actor, target, effect, warnings, now) {
     return null;
   };
   if (!formula || formula.type !== "direct") return fail("unsupported or missing formula type");
-  if (actor.kind !== "ally" || target.kind !== "enemy") {
-    return fail("direct-damage formulas currently support allied attacks against enemy targets");
+  if (actor.kind === target.kind) {
+    return fail("direct-damage formulas require an allied attacker and enemy target, or vice versa");
   }
 
   const scalingStat = String(formula.scalingStat || "attack");
@@ -219,10 +249,12 @@ function calculateDirectDamage(actor, target, effect, warnings, now) {
   const resistancePercent = resolveTargetResistancePercent(target, element);
   if (resistancePercent === null) return fail(`target RES for ${element} is missing`);
 
-  const broken = typeof target.isBroken === "boolean"
-    ? target.isBroken
-    : typeof formula.targetBroken === "boolean" ? formula.targetBroken : null;
-  if (typeof broken !== "boolean") return fail("target Toughness state is missing");
+  const broken = target.kind === "enemy"
+    ? typeof target.isBroken === "boolean"
+      ? target.isBroken
+      : typeof formula.targetBroken === "boolean" ? formula.targetBroken : null
+    : true;
+  if (target.kind === "enemy" && typeof broken !== "boolean") return fail("target Toughness state is missing");
 
   const canCrit = formula.canCrit !== false;
   const baseCritRate = canCrit ? readCombatStat(actor.combatStats, "critRatePercent") : 0;
@@ -237,23 +269,64 @@ function calculateDirectDamage(actor, target, effect, warnings, now) {
 
   const motionValue = asFiniteNumber(formula.motionValue);
   if (motionValue === null || motionValue < 0) return fail("a non-negative motion value is required");
+  const extraBaseDamage = asFiniteNumber(formula.extraBaseDamage, 0);
+  if (extraBaseDamage === null || extraBaseDamage < 0) return fail("extraBaseDamage must be a non-negative finite value");
+  const damageType = String(formula.damageType || "").trim().toLowerCase().replace(/[ _]+/g, "-");
+  if (damageType === "break" || damageType === "super-break") {
+    return fail(`${damageType} needs its dedicated formula; it cannot use the direct-hit equation`);
+  }
+  const typeBonusField = damageType ? DAMAGE_TYPE_MODIFIER_FIELDS[damageType] : null;
+  if (damageType && !typeBonusField) return fail(`unsupported damage type '${formula.damageType}'`);
+  const configuredTypeBonus = typeBonusField
+    ? asFiniteNumber(actor.combatStats[typeBonusField],
+      asFiniteNumber(actor.combatStats.damageTypeBonusesPercent?.[damageType], 0)) || 0
+    : 0;
+  const timedTypeBonus = typeBonusField ? activeModifierTotal(actor, typeBonusField, now) : 0;
+  const targetElementalDamageTaken = asFiniteNumber(
+    target.elementalDamageTakenPercent?.[element]
+      ?? target.combatStats.elementalDamageTakenPercent?.[element], 0
+  ) || 0;
   const damageBonusPercent = (readCombatStat(actor.combatStats, "damageBonusPercent") || 0)
     + activeModifierTotal(actor, "damageBonusPercent", now)
     + (asFiniteNumber(formula.elementDamageBonusPercent,
       asFiniteNumber(actor.combatStats.elementDamageBonuses?.[element], 0)) || 0)
+    + configuredTypeBonus
+    + timedTypeBonus
     + (asFiniteNumber(formula.damageBonusPercent, 0) || 0);
   const defenseReductionPercent = (readCombatStat(actor.combatStats, "defenseReductionPercent") || 0)
     + activeModifierTotal(actor, "defenseReductionPercent", now)
     + target.defenseReductionPercent
     + activeModifierTotal(target, "defenseReductionPercent", now)
     + (asFiniteNumber(formula.defenseReductionPercent, 0) || 0);
+  const defenseIgnorePercent = (readCombatStat(actor.combatStats, "defenseIgnorePercent") || 0)
+    + activeModifierTotal(actor, "defenseIgnorePercent", now)
+    + (asFiniteNumber(formula.defenseIgnorePercent, 0) || 0);
+  const targetDefensePercent = (readCombatStat(target.combatStats, "defensePercent") || 0)
+    + activeModifierTotal(target, "defensePercent", now);
   const resistancePenetrationPercent = (readCombatStat(actor.combatStats, "resistancePenetrationPercent") || 0)
     + activeModifierTotal(actor, "resistancePenetrationPercent", now)
     + (asFiniteNumber(formula.resistancePenetrationPercent, 0) || 0);
   const vulnerabilityPercent = (readCombatStat(actor.combatStats, "vulnerabilityPercent") || 0)
     + activeModifierTotal(actor, "vulnerabilityPercent", now)
     + (asFiniteNumber(formula.vulnerabilityPercent, 0) || 0);
-  const targetVulnerability = target.vulnerabilityPercent + activeModifierTotal(target, "vulnerabilityPercent", now);
+  const targetVulnerability = target.vulnerabilityPercent
+    + activeModifierTotal(target, "vulnerabilityPercent", now)
+    + activeModifierTotal(target, "elementalDamageTakenPercent", now)
+    + targetElementalDamageTaken
+    + (asFiniteNumber(formula.elementalVulnerabilityPercent, 0) || 0);
+  const damageReductionPercent = Math.max(0, Math.min(100,
+    (target.damageReductionPercent || readCombatStat(target.combatStats, "damageReductionPercent") || 0)
+      + activeModifierTotal(target, "damageReductionPercent", now)
+      + (asFiniteNumber(formula.targetDamageReductionPercent, 0) || 0)));
+  const universalDamageReductionPercent = Math.max(0, Math.min(100,
+    (target.universalDamageReductionPercent
+      || readCombatStat(target.combatStats, "universalDamageReductionPercent") || 0)
+      + activeModifierTotal(target, "universalDamageReductionPercent", now)
+      + (asFiniteNumber(formula.universalDamageReductionPercent, 0) || 0)));
+  const weakenPercent = Math.max(0, Math.min(100,
+    (target.weakenPercent || readCombatStat(target.combatStats, "weakenPercent") || 0)
+      + activeModifierTotal(target, "weakenPercent", now)
+      + (asFiniteNumber(formula.weakenPercent, 0) || 0)));
   const critVulnerabilityPercent = canCrit
     ? (readCombatStat(actor.combatStats, "critVulnerabilityPercent") || 0)
       + activeModifierTotal(actor, "critVulnerabilityPercent", now)
@@ -262,7 +335,8 @@ function calculateDirectDamage(actor, target, effect, warnings, now) {
       + (asFiniteNumber(formula.critVulnerabilityPercent, 0) || 0)
     : 0;
 
-  const defenseMultiplier = calculateDefenseMultiplier(attackerLevel, targetLevel, defenseReductionPercent);
+  const defenseMultiplier = calculateDefenseMultiplier(attackerLevel, targetLevel,
+    defenseReductionPercent, defenseIgnorePercent, targetDefensePercent);
   const resistanceMultiplier = calculateResistanceMultiplier(resistancePercent / 100,
     resistancePenetrationPercent);
   const critMultiplier = canCrit
@@ -270,34 +344,50 @@ function calculateDirectDamage(actor, target, effect, warnings, now) {
     : 1;
   const damageMultiplier = Math.max(0, 1 + damageBonusPercent / 100);
   const vulnerabilityMultiplier = Math.max(0, 1 + (vulnerabilityPercent + targetVulnerability) / 100);
-  const toughnessMultiplier = calculateToughnessMultiplier(broken);
-  const unroundedDamage = scalingValue * motionValue * damageMultiplier * critMultiplier
-    * defenseMultiplier * resistanceMultiplier * vulnerabilityMultiplier * toughnessMultiplier;
+  const damageReductionMultiplier = Math.max(0, 1 - damageReductionPercent / 100)
+    * Math.max(0, 1 - universalDamageReductionPercent / 100);
+  const weakenMultiplier = Math.max(0, 1 - weakenPercent / 100);
+  const toughnessMultiplier = target.kind === "enemy" ? calculateToughnessMultiplier(broken) : 1;
+  const baseDamage = scalingValue * motionValue + extraBaseDamage;
+  const unroundedDamage = baseDamage * damageMultiplier * critMultiplier
+    * defenseMultiplier * resistanceMultiplier * vulnerabilityMultiplier
+    * damageReductionMultiplier * weakenMultiplier * toughnessMultiplier;
 
   return {
     amount: Math.max(0, Math.round(unroundedDamage)),
     calculation: {
       type: "direct",
       element,
+      damageType: damageType || "unspecified-direct",
       scalingStat,
       scalingValue,
       motionValue,
+      extraBaseDamage,
+      baseDamage,
       canCrit,
       damageBonusPercent,
+      damageTypeBonusPercent: configuredTypeBonus + timedTypeBonus,
       elementDamageBonusPercent: asFiniteNumber(formula.elementDamageBonusPercent,
         asFiniteNumber(actor.combatStats.elementDamageBonuses?.[element], 0)) || 0,
       critRatePercent: critRate,
       critDamagePercent: critDamage,
       defenseReductionPercent,
+      defenseIgnorePercent,
+      targetDefensePercent,
       resistancePercent,
       resistancePenetrationPercent,
       vulnerabilityPercent: vulnerabilityPercent + targetVulnerability,
+      damageReductionPercent,
+      universalDamageReductionPercent,
+      weakenPercent,
       targetWasBroken: broken,
       damageMultiplier,
       critMultiplier,
       defenseMultiplier,
       resistanceMultiplier,
       vulnerabilityMultiplier,
+      damageReductionMultiplier,
+      weakenMultiplier,
       toughnessMultiplier,
       timedModifiers: {
         attacker: actor.modifiers.filter((modifier) => modifier.expiresAt > now).map((modifier) => ({ ...modifier })),
@@ -521,6 +611,7 @@ function applyActionEffects(action, actor, actorsById, state) {
       remainingDamage -= absorbed;
       const hpDamage = target.hp === null ? remainingDamage : Math.min(target.hp, remainingDamage);
       if (target.hp !== null) target.hp = Math.max(0, target.hp - remainingDamage);
+      else warnings.push(`${action.key}: target '${target.id}' has no Max HP; damage cannot be capped by remaining HP or used to detect defeat.`);
       const damageResult = {
         sourceActorId: actor.id,
         sourceActorKind: actor.kind,
@@ -740,7 +831,9 @@ export function simulateCombatTimeline({
       "Only explicitly supplied actors and action scripts are simulated.",
       "Actors without action scripts remain valid as targets, but do not take turns or trigger automatic enemy behavior.",
       "Action Value uses 10000 divided by the supplied speed; the horizon is explicit and no game-mode cycle limit is inferred.",
-      "Damage effects can use a direct-damage formula when attacker stats, target level and RES, element, CRIT stats, motion value, and break state are supplied; flat damage remains supported for externally validated values.",
+      "Direct-hit formulas support explicit ally-to-enemy or enemy-to-ally attacks. They require attacker stats, levels, element, resistance, CRIT inputs when applicable, motion value, and enemy break state; player targets default to 0% elemental RES unless overridden.",
+      "Damage-type bonuses (Basic, Skill, Ultimate, Follow-up, DoT, and other supported direct-hit classes) add to general and elemental DMG bonuses. Break and Super Break are rejected by the direct-hit equation because they require dedicated formulas.",
+      "Target DEF modifiers, damage reduction, universal damage reduction, vulnerability, and Weaken are separate inputs; reduction sources use separate multiplicative factors.",
       "Raw damage is the calculated hit amount; effective damage is limited by remaining HP and shield. Hits against already-defeated targets are skipped.",
       "Healing, shields, and HP costs can use an explicit fixed amount, Max HP percentage, or current HP percentage. An action HP threshold only applies when requiresHpAbove is explicitly configured.",
       "Timed stat modifiers are explicit additive percentage-point effects with Action Value durations. A stackingKey refreshes one effect by default; stackMode 'stack' retains multiple stacks, optionally capped by maxStacks.",
@@ -748,6 +841,6 @@ export function simulateCombatTimeline({
       "Break damage itself is not calculated yet; a weakness break only changes target state for later actions.",
       "Timed modifiers apply only when their field, value, and Action Value duration are explicit. Ultimate quick-casts, DoT ticks, and trigger conditions are not inferred."
     ],
-    warnings
+    warnings: [...new Set(warnings)]
   };
 }
