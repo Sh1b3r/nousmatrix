@@ -319,5 +319,101 @@ export const ROTATIONS = {
         mv: 2.0, targets: 1, count: 1, energyGain: 144
       }
     ]
+  },
+
+  // Кастория (1407) — окно Нижнего Крыла: ульт-призыв → усиленный навык → 4 выдоха
+  // (24/28/34/34% Max HP AoE, эскалация множителя) → «Крылья сметают руины»
+  // (6×40% bounce) → обычные навыки-заполнители (50%+30% blast). Ресурс — Newbud,
+  // не энергия: энергетическая проверка цикла к ней неприменима.
+  "1407": {
+    status: "kit-verified",
+    gameVersion: "4.7",
+    buffUptimeStatus: "unverified",
+    evidence: [
+      {
+        type: "official-kit-mirror",
+        source: "prydwen.gg",
+        url: "https://www.prydwen.gg/star-rail/characters/castorice/",
+        capturedOn: "2026-11-16",
+        note: "Basic 50% MaxHP; Skill (blast) 50% + 30% adjacent; Enhanced Skill (joint AoE) 30%+50% = 80% MaxHP to all; Breath attacks 24%/28%/34% (cap), 4th breath at <=25% dragon HP triggers Wings Sweep the Ruins 6x40%; Territory -20% All-Type RES; Talent +20% DMG x3 stacks; summon +10% DMG 3 turns; Newbud charge 34000 (Prydwen Review, max Equilibrium)."
+      }
+    ],
+    noteRu: "Цикл одного призыва Нижнего Крыла (предпочтительная ротация по Review Prydwen — «сразу 4 выдоха одним действием + финальный взрыв»): 1 усиленный навык «Костяной коготь» (80% Max HP AoE, совместная атака с драконом), 4 выдоха (24% → 28% → 34% → 34% Max HP AoE; 4-й при HP дракона ≤25% переводит его в 1 HP и запускает финал), финал «Крылья сметают руины» (6 отскоков по 40%, суммарно 240% Max HP — смоделировано концентрированно на главной цели; при 3 целях распределение случайное, суммарный урон по волне тот же), плюс 2 обычных навыка-заполнителя (50% + 30% смежные) вне окна. Учетные пассивы: Territory «Потусторонние земли» −20% All-Type RES (весь цикл окна); стакы Таланта +20%×3 урона (каждое использование навыка расходует HP союзников — постоянный аптайм внутри цикла, по Review «фактически постоянные 60%»); +10% урона всем союзникам на 3 хода при призыве (тalent «Рёв, гремящий в царстве»). УЛЬТ не тратит энергию: ресурс Newbud (34000 ед. заряда при максимальном Равновесии — Review Prydwen) накапливается от потерянного HP союзников и конвертации лечения (след A2); абсолютная модель заряда не числится — доступность ульты в цикле допущение, энергетическая проверка не выполняется. Не включено (аптайм/состояние не подтверждены): E1 (×1.2/×1.4 урона AoE-ударов при HP цели ≤80%/50% от Max HP Кастории), след A6 (+30% урона дракона за каждый выдох, до 6 стаков — занижает урон выдохов/финала), след A4 (+40% SPD, на урон не влияет), E2 (Ardent Will экономит HP дракона и +30% Newbud — ресурсная сторона, множители не меняет), техника «Плачь, вестник смерти» (вне боя), пассивы поддержки (перенаправление урона, лечение, оживление). Базовая атака: уровень из кита (Lv. 6, E2 профиля не повышает).",
+    noteEn: "One-summon Netherwing window cycle (preferred rotation per the Prydwen Review — 'all 4 breath attacks in one action plus the finisher explosion'): 1 Enhanced Skill 'Boneclaw, Doomdrake's Embrace' (80% MaxHP AoE joint ATK), 4 breath attacks (24% -> 28% -> 34% -> 34% MaxHP AoE; the 4th at <=25% dragon HP drops it to 1 and triggers the finisher), the 'Wings Sweep the Ruins' finisher (6 bounces of 40%, 240% MaxHP total — modeled concentrated on the primary target; across 3 targets the distribution is random, the wave-total damage is identical), plus 2 normal-skill fillers (50% + 30% adjacent) outside the window. Counted passives: the 'Lost Netherland' Territory -20% All-Type RES (whole window); Talent stacks +20%x3 DMG (every skill use drains ally HP — sustained uptime inside the cycle, per the Review 'essentially a permanent 60%'); +10% DMG to all allies for 3 turns on summon ('Roar Rumbles the Realm'). The ult uses no Energy: the Newbud resource (34000 charge at max Equilibrium per the Prydwen Review) accumulates from ally HP lost and healing conversion (A2 trace); no absolute charge model exists — ult availability per cycle is an assumption and the energy feasibility check does not apply. Excluded (uptime/state unverified): E1 (x1.2/x1.4 multiplier on the listed AoE attacks when target HP is <=80%/50% of Castorice's MaxHP), A6 trace (+30% dragon DMG per breath, up to 6 stacks — undercounts breath/finisher damage), A4 trace (+40% SPD, damage-neutral), E2 (Ardent Will preserves dragon HP and +30% Newbud — resource-side only, multipliers unchanged), the out-of-combat Technique, support passives (damage redirection, healing, revive). Basic ATK level mirrors the displayed kit (Lv. 6; the profile's E2 does not raise it).",
+    hpScale: true,
+    passiveDmgBoost: 70,
+    passiveResPen: 20,
+    instances: [
+      {
+        key: "enhanced_skill",
+        phaseRu: "СВЕРХСПОСОБНОСТЬ → ОКНО НИЖНЕГО КРЫЛА — УСИЛЕННЫЙ НАВЫК",
+        phaseEn: "ULTIMATE → NETHERWING WINDOW — ENHANCED SKILL",
+        actionRu: "«Костяной коготь — объятие рока»: 80% Max HP AoE, совместная атака с драконом",
+        actionEn: "Boneclaw, Doomdrake's Embrace (80% MaxHP AoE joint ATK)",
+        descRu: "Кастория и Нижнее Крыло атакуют совместно: 30% + 50% Max HP по всем врагам; расходует 40% текущего HP союзников (не моделируется).",
+        descEn: "Castorice and Netherwing launch a joint ATK: 30% + 50% MaxHP to all enemies; consumes 40% of allies' current HP (not modeled).",
+        mv: 0.8, targets: 3, count: 1
+      },
+      {
+        key: "breath_1",
+        phaseRu: "ОКНО НИЖНЕГО КРЫЛА — ВЫДОХ #1",
+        phaseEn: "NETHERWING WINDOW — BREATH #1",
+        actionRu: "«Дыхание опаляет тень»: 24% Max HP AoE (−25% HP дракона)",
+        actionEn: "Breath Scorches the Shadow: 24% MaxHP AoE (−25% dragon HP)",
+        descRu: "Первый выдох, множитель начальный.",
+        descEn: "First breath, base multiplier.",
+        mv: 0.24, targets: 3, count: 1
+      },
+      {
+        key: "breath_2",
+        phaseRu: "ОКНО НИЖНЕГО КРЫЛА — ВЫДОХ #2",
+        phaseEn: "NETHERWING WINDOW — BREATH #2",
+        actionRu: "«Дыхание опаляет тень»: 28% Max HP AoE (−25% HP дракона)",
+        actionEn: "Breath Scorches the Shadow: 28% MaxHP AoE (−25% dragon HP)",
+        descRu: "Второй выдох, множитель 28%.",
+        descEn: "Second breath, 28% multiplier.",
+        mv: 0.28, targets: 3, count: 1
+      },
+      {
+        key: "breath_3",
+        phaseRu: "ОКНО НИЖНЕГО КРЫЛА — ВЫДОХ #3",
+        phaseEn: "NETHERWING WINDOW — BREATH #3",
+        actionRu: "«Дыхание опаляет тень»: 34% Max HP AoE (−25% HP дракона)",
+        actionEn: "Breath Scorches the Shadow: 34% MaxHP AoE (−25% dragon HP)",
+        descRu: "Третий выдох, множитель достигает капа 34%.",
+        descEn: "Third breath, multiplier reaches the 34% cap.",
+        mv: 0.34, targets: 3, count: 1
+      },
+      {
+        key: "breath_4",
+        phaseRu: "ОКНО НИЖНЕГО КРЫЛА — ВЫДОХ #4",
+        phaseEn: "NETHERWING WINDOW — BREATH #4",
+        actionRu: "«Дыхание опаляет тень»: 34% Max HP AoE; HP дракона ≤25% → 1 HP и запуск финала",
+        actionEn: "Breath Scorches the Shadow: 34% MaxHP AoE; dragon HP <=25% -> 1 HP and finisher trigger",
+        descRu: "Четвёртый выдох, кап 34%; при HP дракона ≤25% расход снижает его до 1 HP и вызывает финал.",
+        descEn: "Fourth breath at the 34% cap; at <=25% dragon HP the drain drops it to 1 HP and triggers the finisher.",
+        mv: 0.34, targets: 3, count: 1
+      },
+      {
+        key: "finisher",
+        phaseRu: "ФИНАЛ — КРЫЛЬЯ СМЕТАЮТ РУИНЫ",
+        phaseEn: "FINISHER — WINGS SWEEP THE RUINS",
+        actionRu: "6 отскоков по 40% Max HP (суммарно 240%; смоделировано на главной цели)",
+        actionEn: "6x 40% MaxHP bounces (240% total; modeled on the primary target)",
+        descRu: "Нижнее Крыло исчезает: 6 случайных удара по 40% Max HP каждый + восстановление 6% Max HP + 800 всем союзникам (лечение не моделируется).",
+        descEn: "Netherwing disappears: 6 random hits of 40% MaxHP each + restores 6% MaxHP + 800 to all allies (healing not modeled).",
+        mv: 0.4, targets: 1, count: 6
+      },
+      {
+        key: "filler_skills",
+        phaseRu: "ЗАПОЛНЯЮЩИЕ ХОДЫ — ЗАРЯДКА NEWBUD",
+        phaseEn: "FILLER TURNS — NEWBUD CHARGING",
+        actionRu: "2 обычных навыка: 50% Max HP по цели + 30% по смежным",
+        actionEn: "2x normal Skill: 50% MaxHP primary + 30% adjacent",
+        descRu: "Расход 30% текущего HP союзников за ход заряжает Newbud до следующего призыва (не числится).",
+        descEn: "Each use drains 30% of allies' current HP, charging Newbud toward the next summon (not numerically modeled).",
+        mv: 0.5, adjacentMv: 0.3, targets: 3, count: 2
+      }
+    ]
   }
 };
