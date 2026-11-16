@@ -1,4 +1,4 @@
-import endgameEnemyData from "../data/endgameEnemyScenarios47.json";
+import endgameEnemyData from "../data/endgameEnemyScenarios47.json" with { type: "json" };
 
 const GENERIC_SCENARIOS = {
   moc: { level: 95, resistancePercent: 20, targetCount: 3 },

@@ -1,6 +1,138 @@
-// In-memory cache для швидкої реакції на натискання кнопок у межах інстансу
+import { calculateCharacterAudit } from '../src/utils/audit.js';
+
+// In-memory cache для швидкої реакції на кнопки
 const dataCache = new Map();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 хвилин
+let coneRanksCache = null;
+
+// Словник перекладу термінів з російської на українську мову
+const UK_DICT = {
+  // Шляхи
+  'Разрушение': 'Руйнування',
+  'Охота': 'Полювання',
+  'Эрудиция': 'Ерудиція',
+  'Гармония': 'Гармонія',
+  'Небытие': 'Небуття',
+  'Сохранение': 'Збереження',
+  'Изобилие': 'Достаток',
+  'Память': 'Пам\'ять',
+
+  // Стихії
+  'Физический': 'Фізичний',
+  'Огненный': 'Вогняний',
+  'Ледяной': 'Крижаний',
+  'Электрический': 'Електричний',
+  'Ветряной': 'Вітряний',
+  'Квантовый': 'Квантовий',
+  'Мнимый': 'Уявний',
+
+  // Навички
+  'Базовая атака': 'Базова атака',
+  'Навык': 'Навичка',
+  'Сверхспособность': 'Надздібність (Ультимейт)',
+  'Талант': 'Талант',
+  'Техника': 'Техніка',
+
+  // Стати та характеристики
+  'НР': 'HP',
+  'Базовое НР': 'Базове HP',
+  'Сила атаки': 'Сила атаки',
+  'Базовая сила атаки': 'Базова сила атаки',
+  'Защита': 'Захист',
+  'Базовая защита': 'Базовий захист',
+  'Скорость': 'Швидкість',
+  'Крит. шанс': 'Крит. шанс',
+  'Крит. урон': 'Крит. шкода',
+  'Эффект пробития': 'Ефект пробиття',
+  'Скорость восстановления энергии': 'Відновлення енергії',
+  'Шанс попадания эффектов': 'Шанс влучання ефектів',
+  'Сопротивление эффектам': 'Стійкість до ефектів',
+  'Исходящее исцеление': 'Вихідне лікування',
+  'Повышение урона': 'Бонус шкоди',
+
+  // Елементальна шкода
+  'Бонус физ. урона': 'Бонус фіз. шкоди',
+  'Бонус огн. урона': 'Бонус вогняної шкоди',
+  'Бонус лед. урона': 'Бонус крижаної шкоди',
+  'Бонус электр. урона': 'Бонус електр. шкоди',
+  'Бонус ветр. урона': 'Бонус вітряної шкоди',
+  'Бонус квант. урона': 'Бонус квантової шкоди',
+  'Бонус мним. урона': 'Бонус уявної шкоди',
+  'Физический урон': 'Фізична шкода',
+  'Огненный урон': 'Вогняна шкода',
+  'Ледяной урон': 'Крижана шкода',
+  'Электрический урон': 'Електрична шкода',
+  'Ветряной урон': 'Вітряна шкода',
+  'Квантовый урон': 'Квантова шкода',
+  'Мнимый урон': 'Уявна шкода'
+};
+
+function translateUk(text) {
+  if (!text || typeof text !== 'string') return text;
+  if (UK_DICT[text]) return UK_DICT[text];
+  let res = text;
+  for (const [ru, uk] of Object.entries(UK_DICT)) {
+    if (res.includes(ru)) {
+      res = res.replaceAll(ru, uk);
+    }
+  }
+  return res;
+}
+
+// Завантаження пасивних навичок світлових конусів
+async function getConeRanks() {
+  if (coneRanksCache) return coneRanksCache;
+  try {
+    const res = await fetch('https://cdn.jsdelivr.net/gh/Mar-7th/StarRailRes@master/index_min/ru/light_cone_ranks.json');
+    if (res.ok) {
+      coneRanksCache = await res.json();
+    }
+  } catch (e) {
+    console.error('Failed to load cone ranks:', e);
+  }
+  return coneRanksCache || {};
+}
+
+function formatConeSkill(coneData, rank = 1) {
+  if (!coneData || !coneData.desc) return null;
+  const rankIdx = Math.min(Math.max((rank || 1) - 1, 0), (coneData.params?.length || 1) - 1);
+  const params = coneData.params?.[rankIdx] || [];
+
+  let desc = coneData.desc;
+  params.forEach((val, i) => {
+    const pNum = i + 1;
+    desc = desc.replace(new RegExp(`#${pNum}\\[i\\]%`, 'g'), `${Math.round(val * 100)}%`);
+    desc = desc.replace(new RegExp(`#${pNum}\\[f\\d+\\]%`, 'g'), `${(val * 100).toFixed(1).replace(/\.0$/, '')}%`);
+    desc = desc.replace(new RegExp(`#${pNum}\\[i\\]`, 'g'), `${Math.round(val)}`);
+    desc = desc.replace(new RegExp(`#${pNum}\\[f\\d+\\]`, 'g'), `${val}`);
+    desc = desc.replace(new RegExp(`#${pNum}`, 'g'), `${val}`);
+  });
+
+  return {
+    skill: translateUk(coneData.skill || 'Пасивна навичка'),
+    desc: translateUk(desc.replace(/<[^>]+>/g, ''))
+  };
+}
+
+// Розрахунок грейду для Індексу боєздатності
+function getCombatGrade(scoreNum) {
+  const s = parseFloat(scoreNum) || 0;
+  if (s >= 92) return { grade: 'SSS', label: 'Елітний білд', icon: '🔴' };
+  if (s >= 82) return { grade: 'SS', label: 'Відмінний білд', icon: '🟠' };
+  if (s >= 72) return { grade: 'S', label: 'Добрий білд', icon: '🟡' };
+  if (s >= 60) return { grade: 'A', label: 'Робочий білд', icon: '🟢' };
+  if (s >= 45) return { grade: 'B', label: 'Базовий білд', icon: '🔵' };
+  return { grade: 'C', label: 'Потребує покращення', icon: '⚪' };
+}
+
+function getSafeAudit(character) {
+  try {
+    return calculateCharacterAudit(character, 'ru');
+  } catch (err) {
+    console.error('Audit calculation error:', err);
+    return null;
+  }
+}
 
 function getCachedData(uid) {
   const entry = dataCache.get(uid);
@@ -12,7 +144,6 @@ function getCachedData(uid) {
 
 function setCachedData(uid, data) {
   dataCache.set(uid, { data, timestamp: Date.now() });
-  // Очищення старих записів, щоб пам'ять не переповнювалася
   if (dataCache.size > 200) {
     const oldestKey = dataCache.keys().next().value;
     dataCache.delete(oldestKey);
@@ -71,7 +202,6 @@ function buildProfileScreen(data, uid) {
   } else {
     text += `\n\n👥 <b>Оберіть персонажа для перегляду:</b>`;
 
-    // Кнопки персонажів (по 2 в ряд)
     let row = [];
     characters.forEach((c, idx) => {
       const eidolon = `E${c.rank ?? 0}`;
@@ -92,25 +222,44 @@ function buildProfileScreen(data, uid) {
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-// 2. Огляд персонажа (Головна картка)
-function buildCharacterOverview(character, uid, charIdx) {
+// 2. Огляд персонажа (Головна картка з індексом боєздатності)
+async function buildCharacterOverview(character, uid, charIdx) {
   const stars = '⭐'.repeat(character.rarity || 4);
   const eidolon = `E${character.rank ?? 0}`;
-  const path = character.path?.name || '-';
-  const element = character.element?.name || '-';
+  const path = translateUk(character.path?.name || '-');
+  const element = translateUk(character.element?.name || '-');
 
+  // Розрахунок індексу боєздатності
+  const audit = getSafeAudit(character);
+  const grade = audit ? getCombatGrade(audit.score) : null;
+
+  // Отримуємо конус та його пасивку
   const cone = character.light_cone;
-  const coneText = cone
-    ? `🗡 <b>Конус:</b> ${cone.name} (S${cone.rank || 1}, Ур. ${cone.level})`
-    : `🗡 <b>Конус:</b> <i>Не встановлено</i>`;
+  let coneLine = `🗡 <b>Конус:</b> <i>Не встановлено</i>`;
+  if (cone) {
+    const coneRanks = await getConeRanks();
+    const coneData = coneRanks[cone.id];
+    const skill = formatConeSkill(coneData, cone.rank);
+    const skillTitle = skill?.skill ? ` — <i>«${skill.skill}»</i>` : '';
+    coneLine = `🗡 <b>Конус:</b> ${cone.name} (S${cone.rank || 1}, Ур. ${cone.level})${skillTitle}`;
+  }
 
-  // Активні сети
+  // Бонуси сетів
   const sets = character.relic_sets || [];
   let setsText = '';
   if (sets.length > 0) {
-    setsText = sets.map(s => `• ${s.name} (${s.num} шт.)`).join('\n');
+    setsText = sets.map(s => `• <b>${s.name}</b> (${s.num} шт.)`).join('\n');
   } else {
-    setsText = '<i>Не зібрано</i>';
+    setsText = '<i>Сети не зібрано</i>';
+  }
+
+  // Блок індексу боєздатності
+  let auditBlock = '';
+  if (audit && grade) {
+    auditBlock = `
+🎯 <b>Індекс боєздатності:</b> <b>${audit.score}/100</b> [${grade.icon} <b>${grade.grade}</b> • <i>${grade.label}</i>]
+⚡ <b>Ефективність ролів:</b> <b>${audit.rollEfficiency}%</b>
+${audit.cv ? `🎯 <b>Крит-маса (CV):</b> <b>${audit.cv}</b>\n` : ''}──────────────`.trim();
   }
 
   const text = `
@@ -119,7 +268,7 @@ ${stars} <b>${character.name}</b> (${eidolon})
 📍 <b>Шлях:</b> ${path} | <b>Стихія:</b> ${element}
 📈 <b>Рівень:</b> ${character.level}/80
 
-${coneText}
+${auditBlock ? auditBlock + '\n\n' : ''}${coneLine}
 
 🛡 <b>Бонуси сетів:</b>
 ${setsText}
@@ -144,12 +293,15 @@ ${setsText}
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-// 3. Розділ «Характеристики» (Combat Stats)
+// 3. Розділ «Характеристики» (Combat Stats + Індекс боєздатності)
 function buildCharacterStats(character, uid, charIdx) {
   const baseMap = {};
   (character.attributes || []).forEach(a => { baseMap[a.field] = a; });
   const addMap = {};
   (character.additions || []).forEach(a => { addMap[a.field] = a; });
+
+  const audit = getSafeAudit(character);
+  const grade = audit ? getCombatGrade(audit.score) : null;
 
   const hpBase = Math.round(baseMap.hp?.value || 0);
   const hpAdd = Math.round(addMap.hp?.value || 0);
@@ -181,15 +333,14 @@ function buildCharacterStats(character, uid, charIdx) {
   const resTotal = addMap.effect_res ? ((addMap.effect_res.value || 0) * 100).toFixed(1) + '%' : null;
   const healTotal = addMap.heal_rate ? ((addMap.heal_rate.value || 0) * 100).toFixed(1) + '%' : null;
 
-  // Стихійний урон
   const elementFields = [
-    { field: 'physical_dmg', name: 'Фіз. урон' },
-    { field: 'fire_dmg', name: 'Вогняний урон' },
-    { field: 'ice_dmg', name: 'Крижаний урон' },
-    { field: 'thunder_dmg', name: 'Електро урон' },
-    { field: 'wind_dmg', name: 'Вітряний урон' },
-    { field: 'quantum_dmg', name: 'Квантовий урон' },
-    { field: 'imaginary_dmg', name: 'Уявний урон' }
+    { field: 'physical_dmg', name: 'Фіз. шкода' },
+    { field: 'fire_dmg', name: 'Вогняна шкода' },
+    { field: 'ice_dmg', name: 'Крижана шкода' },
+    { field: 'thunder_dmg', name: 'Електро шкода' },
+    { field: 'wind_dmg', name: 'Вітряна шкода' },
+    { field: 'quantum_dmg', name: 'Квантова шкода' },
+    { field: 'imaginary_dmg', name: 'Уявна шкода' }
   ];
   const elemDmgList = elementFields
     .filter(f => addMap[f.field] && addMap[f.field].value > 0)
@@ -198,13 +349,23 @@ function buildCharacterStats(character, uid, charIdx) {
   let text = `
 📊 <b>Характеристики: ${character.name}</b>
 ──────────────
+`.trim();
+
+  if (audit && grade) {
+    text += `\n🎯 <b>Індекс боєздатності:</b> <b>${audit.score}/100</b> [${grade.icon} <b>${grade.grade}</b> • <i>${grade.label}</i>]`;
+    text += `\n⚡ <b>Ефективність ролів:</b> <b>${audit.rollEfficiency}%</b>`;
+    if (audit.cv) text += `\n🎯 <b>Крит-маса (CV):</b> <b>${audit.cv}</b>`;
+    text += `\n──────────────`;
+  }
+
+  text += `
 ❤️ <b>HP:</b> ${hpTotal} <i>(${hpBase} +${hpAdd})</i>
 ⚔️ <b>Сила атаки:</b> ${atkTotal} <i>(${atkBase} +${atkAdd})</i>
 🛡 <b>Захист:</b> ${defTotal} <i>(${defBase} +${defAdd})</i>
 👟 <b>Швидкість:</b> <b>${spdTotal}</b> <i>(${spdBase.toFixed(1)} +${spdAdd.toFixed(1)})</i>
 
 🎯 <b>Крит. шанс:</b> <b>${crTotal}</b>
-💥 <b>Крит. урон:</b> <b>${cdTotal}</b>
+💥 <b>Крит. шкода:</b> <b>${cdTotal}</b>
 `.trim();
 
   if (beTotal) text += `\n⚡ <b>Ефект пробиття:</b> ${beTotal}`;
@@ -229,16 +390,16 @@ function buildCharacterStats(character, uid, charIdx) {
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-// 4. Розділ «Реліквії та сети»
+// 4. Розділ «Реліквії та сети» (сабстати виведені в колонку)
 function buildCharacterRelics(character, uid, charIdx) {
   const relics = character.relics || [];
   const typeNames = {
     1: '👑 Голова',
     2: '🧤 Руки',
     3: '👕 Тіло',
-    4: '👟 Ноги',
-    5: '🔮 Сфера',
-    6: '🎗 Мотузка'
+    4: '👟 Ноги (Черевики)',
+    5: '🔮 Планарна сфера',
+    6: '🎗 З\'єднувальна мотузка'
   };
 
   let text = `🛡 <b>Реліквії: ${character.name}</b>\n──────────────\n`;
@@ -246,24 +407,32 @@ function buildCharacterRelics(character, uid, charIdx) {
   if (relics.length === 0) {
     text += `<i>Реліквії відсутні або не екіпіровані.</i>\n`;
   } else {
-    // Сортуємо за типом 1..6
     const sorted = [...relics].sort((a, b) => (Number(a.type) || 0) - (Number(b.type) || 0));
 
     sorted.forEach(r => {
       const typeLabel = typeNames[r.type] || `Слот ${r.type}`;
-      const mainStat = r.main_affix ? `<b>${r.main_affix.name}: ${r.main_affix.display}</b>` : '-';
-      const subStats = (r.sub_affix || []).map(s => `${s.name} ${s.display}`).join(', ');
+      const mainStatName = translateUk(r.main_affix?.name || 'Головний');
+      const mainStatVal = r.main_affix?.display || '-';
 
-      text += `\n${typeLabel}: +${r.level || 0} (${r.name})\n`;
-      text += `  • Головний: ${mainStat}\n`;
-      if (subStats) text += `  • Сабстати: <i>${subStats}</i>\n`;
+      text += `\n<b>${typeLabel}</b> (+${r.level || 0})\n<i>${r.name}</i>\n`;
+      text += `  • Головний стат: <b>${mainStatName}: +${mainStatVal}</b>\n`;
+
+      const subAffixes = r.sub_affix || [];
+      if (subAffixes.length > 0) {
+        text += `  • Сабстати:\n`;
+        subAffixes.forEach(s => {
+          const sName = translateUk(s.name);
+          const sVal = s.display?.startsWith('+') ? s.display : `+${s.display}`;
+          text += `    ▫️ ${sName}: <b>${sVal}</b>\n`;
+        });
+      }
     });
   }
 
   // Бонуси сетів
   const sets = character.relic_sets || [];
   if (sets.length > 0) {
-    text += `\n<b>Активні сети:</b>\n`;
+    text += `\n──────────────\n<b>Активні бонуси сетів:</b>\n`;
     sets.forEach(s => {
       text += `• <b>${s.name} (${s.num} шт.)</b>\n  <i>${s.desc}</i>\n`;
     });
@@ -284,8 +453,8 @@ function buildCharacterRelics(character, uid, charIdx) {
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-// 5. Розділ «Світловий конус»
-function buildCharacterCone(character, uid, charIdx) {
+// 5. Розділ «Світловий конус» (з повною пасивною навичкою)
+async function buildCharacterCone(character, uid, charIdx) {
   const cone = character.light_cone;
 
   if (!cone) {
@@ -300,16 +469,31 @@ function buildCharacterCone(character, uid, charIdx) {
   }
 
   const star = '⭐'.repeat(cone.rarity || 4);
-  const attributes = (cone.attributes || []).map(a => `• ${a.name}: <b>${a.display}</b>`).join('\n');
+  const path = translateUk(cone.path?.name || character.path?.name || '-');
+  const attributes = (cone.attributes || []).map(a => `• ${translateUk(a.name)}: <b>${a.display}</b>`).join('\n');
+
+  // Отримуємо пасивну навичку з бази даних
+  const coneRanks = await getConeRanks();
+  const coneData = coneRanks[cone.id];
+  const passive = formatConeSkill(coneData, cone.rank);
+
+  let passiveBlock = '';
+  if (passive) {
+    passiveBlock = `
+🔮 <b>Пасивна навичка:</b> <b>«${passive.skill}»</b>
+<i>${passive.desc}</i>
+──────────────`.trim();
+  }
 
   const text = `
 🗡 <b>Світловий конус:</b> <b>${cone.name}</b>
 ──────────────
 ⭐ <b>Рідкість:</b> ${star}
+📍 <b>Шлях:</b> ${path}
 📈 <b>Рівень:</b> ${cone.level}/80
-⚔️ <b>Накладання (Superimposition):</b> S${cone.rank || 1}
+⚔️ <b>Накладання (Superimposition):</b> <b>S${cone.rank || 1}</b>
 
-<b>Базові показники конуса:</b>
+${passiveBlock ? passiveBlock + '\n\n' : ''}<b>Базові показники конуса:</b>
 ${attributes || '—'}
   `.trim();
 
@@ -338,7 +522,8 @@ function buildCharacterSkills(character, uid, charIdx) {
     text += `<i>Дані про навички недоступні.</i>`;
   } else {
     skills.forEach(s => {
-      text += `• <b>${s.name}</b> (<i>${s.type_text}</i>)\n   Рівень: <b>${s.level}</b>${s.max_level ? `/${s.max_level}` : ''}\n\n`;
+      const typeText = translateUk(s.type_text);
+      text += `• <b>${s.name}</b> (<i>${typeText}</i>)\n   Рівень: <b>${s.level}</b>${s.max_level ? `/${s.max_level}` : ''}\n\n`;
     });
   }
 
@@ -399,7 +584,6 @@ export default async function handler(req, res) {
     const messageId = cb.message?.message_id;
     const data = cb.data || '';
 
-    // Обов'язково відповідаємо на callback, щоб зняти анімацію завантаження
     await sendTg('answerCallbackQuery', { callback_query_id: cb.id });
 
     if (!chatId || !messageId) {
@@ -456,7 +640,7 @@ export default async function handler(req, res) {
           return res.status(200).json({ ok: true });
         }
 
-        const screen = buildCharacterOverview(char, uid, charIdx);
+        const screen = await buildCharacterOverview(char, uid, charIdx);
         await sendTg('editMessageText', {
           chat_id: chatId,
           message_id: messageId,
@@ -491,7 +675,7 @@ export default async function handler(req, res) {
         } else if (section === 'relics') {
           screen = buildCharacterRelics(char, uid, charIdx);
         } else if (section === 'cone') {
-          screen = buildCharacterCone(char, uid, charIdx);
+          screen = await buildCharacterCone(char, uid, charIdx);
         } else if (section === 'skills') {
           screen = buildCharacterSkills(char, uid, charIdx);
         }
@@ -529,12 +713,13 @@ export default async function handler(req, res) {
 
 Надішли мені <b>UID</b> свого акаунту (наприклад: <code>700123456</code>).
 
-Ти зможеш зручно перемикатися кнопками між:
-• 👥 <b>Персонажами з вітрини</b>
-• 📊 <b>Характеристиками (HP, ATK, Крит. шанс/урон, Швидкість тощо)</b>
-• 🛡 <b>Реліквіями та бонусами сетів</b>
-• 🗡 <b>Світловими конусами</b>
-• 🔮 <b>Рівнями слідів та навичок</b>
+Ти зможеш зручно переглядати:
+• 👥 <b>Персонажів з вітрини</b>
+• 🎯 <b>Індекс боєздатності білда (/100) та оцінку</b>
+• 📊 <b>Характеристики (HP, ATK, Крит. шанс/шкода, Швидкість)</b>
+• 🛡 <b>Реліквії (сабстати в зручну колонку) та бонуси сетів</b>
+• 🗡 <b>Світлові конуси з повною пасивною навичкою</b>
+• 🔮 <b>Рівні слідів та навичок</b>
 
 <i>Переконайся, що в налаштуваннях профілю в грі увімкнено показ персонажів!</i>
     `.trim();
