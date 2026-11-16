@@ -31,6 +31,12 @@
 //   distribution is deterministic from the kit text.
 // - resPenPercent: instance-scoped RES PEN (Seele's ult inside Amplification:
 //   A4 trace +25% Quantum RES PEN).
+// - critRatePercent: instance-scoped CRIT Rate bonus (Jingliu's Spectral
+//   Transmigration +50% CR — uptime guaranteed by the cycle structure:
+//   every ST-window instance carries it; instances outside the state do not).
+// - hpMultPercent: instance-scoped Max HP multiplier (Mydei's Vendetta
+//   +50% Max HP — uptime guaranteed by the cycle structure: every
+//   Vendetta-window instance carries it).
 // - healTallyFraction: damage per hit = options.healingTally x fraction
 //   (Hyacine's Little Ica: 20% of the accumulated healing tally).
 // - inAfterRain: instance happens while the "After Rain" state is active
@@ -43,7 +49,10 @@
 // only to the enhanced-skill BE coefficient), atkBeBonus { atkThreshold, bePer10 }
 // (Firefly A6: +0.8% BE per 10 ATK above 1800, condition checked against the
 // profile's combat ATK), spdHpBonus { spdThreshold, hpPercent } (Hyacine A6:
-// +20% Max HP while SPD >200, condition checked against the profile's SPD).
+// +20% Max HP while SPD >200, condition checked against the profile's SPD),
+// critRateFromHp { hpThreshold, crPer100, capHp } (Mydei A6: +1.2% CR per 100
+// excess HP above 4000, capped at 4000 excess — condition checked against the
+// profile's combat HP).
 
 export const ROTATIONS = {
   // Химеко: Нова (1510) — полный цикл сверхспособности «Starblazer» по реальному киту (4.7)
@@ -549,6 +558,317 @@ export const ROTATIONS = {
         descRu: "Лечение пополняет tally (учитывается через явный ввод). +30 энергии к следующей ульте.",
         descEn: "The healing feeds the tally (counted through the explicit input). +30 energy toward the next ult.",
         mv: 0, targets: 1, count: 1, energyGain: 30
+      }
+    ]
+  },
+
+  // Цзинлю (1212) — цикл: 2 навыка «Transcendent Flash» (заряд Syzygy до 2)
+  // → вход в Spectral Transmigration (+1 стак, всего 3; CR +50%) → 4 усиленных
+  // навыка «Moon On Glacial River» с ультой внутри окна (3-я атака).
+  "1212": {
+    status: "kit-verified",
+    gameVersion: "4.7",
+    buffUptimeStatus: "unverified",
+    evidence: [
+      {
+        type: "official-kit-mirror",
+        source: "prydwen.gg",
+        url: "https://www.prydwen.gg/star-rail/characters/jingliu/",
+        capturedOn: "2026-11-16",
+        note: "Basic 50% MaxHP (en 20); Skill 'Transcendent Flash' 150% MaxHP ST, +1 Syzygy (en 20, +15 from A4 trace); Enhanced 'Moon On Glacial River' 150%/75% adjacent, consumes 1 Syzygy, no SP (en 30, +8 from A4); Ult 'Florephemeral Dreamflux' 180%/90% adjacent, 140 energy cost, +1 Syzygy after attack (en 5); Talent: at 2 Syzygy enters Spectral Transmigration (+1 stack, CRIT Rate +50%, Max HP +90% while in state — the Max HP part affects the HP→ATK conversion only; here the scaling stat is Max HP itself), each attack consumes 1 Syzygy and 5% of allies' Max HP, +44% CRIT DMG per Moonlight stack up to 5; A2: ult DMG +20% against a single enemy target."
+      }
+    ],
+    noteRu: "Цикл: 2 навыка (по 150% Max HP, по 35 энергии = 20+15 след A4) → при 2 Syzygy вход в Spectral Transmigration: +1 стак (итого 3), CR +50% (учтено как critRatePercent на всех инстансах окна — аптайм гарантирован структурой цикла) → 4 усиленных навыка по 150%/75% (по 38 энергии = 30+8 A4, без SP) с ультой (180%/90%, 5 энергии) на 3-й атаке окна. КУ от стаков Moonlight: 1-я атака окна — 3 стака (+132% КУ), далее 5 стаков (+220%); ульт — 3-я атака → +220%. Средний КУ-бонус усиленного навыка 198 ((132+220×3)/4), ульт 220. Ульта также даёт +20% DMG по одиночной цели в окне (A2, учтено как extraDmgPercent). Энергия цикла: 2×35 + 4×38 = 222 ≥ 140 ✓. Каждый удар в окне съедает 5% Max HP союзников (выживаемость, не урон — не числится). Не включено: E-уровни (E0 в профиле), техника, множитель Max HP +90% в окне (в игре влияет на конверсию HP→ATK, здесь скейл уже от Max HP), тайминг стаков вне окна. SP: −2 за цикл (2 навыка, усиленные бесплатны).",
+    noteEn: "Cycle: 2 Skills (150% Max HP each, 35 energy each = 20+15 from the A4 trace) -> at 2 Syzygy she enters Spectral Transmigration: +1 stack (3 total), CRIT Rate +50% (counted as critRatePercent on every window instance — uptime guaranteed by the cycle structure) -> 4 enhanced Skills at 150%/75% (38 energy each = 30+8 A4, SP-free) with the Ultimate (180%/90%, 5 energy) as the window's 3rd attack. Moonlight CRIT DMG stacks: the window's 1st attack has 3 stacks (+132% CD), later ones 5 stacks (+220%); the ult is the 3rd attack -> +220%. Average enhanced-skill CD bonus is 198 ((132+220x3)/4), ult 220. Inside the window the ult also gains +20% DMG against a single target (A2, counted as extraDmgPercent). Cycle energy: 2x35 + 4x38 = 222 >= 140 ✓. Every window attack consumes 5% of allies' Max HP (survivability, not damage — not modeled). Excluded: eidolons (E0 profile), the Technique, the +90% Max HP state buff (in-game it feeds the HP->ATK conversion; here the scaling stat is already Max HP), out-of-window stack timing. SP: -2 per cycle (2 Skills; enhanced uses are SP-free).",
+    hpScale: true,
+    energy: { ultCost: 140 },
+    instances: [
+      {
+        key: "skill_1",
+        phaseRu: "ЗАРЯДКА SYZYGY — НАВЫК #1",
+        phaseEn: "SYZYGY CHARGING — SKILL #1",
+        actionRu: "Навык «Transcendent Flash»: 150% Max HP по цели, +1 Syzygy",
+        actionEn: "Skill 'Transcendent Flash': 150% MaxHP to one target, +1 Syzygy",
+        descRu: "35 энергии (20+15 след A4). Второй навык даёт 2-й стак и запускает вход в окно.",
+        descEn: "35 energy (20+15 from the A4 trace). The second Skill grants the 2nd stack and triggers the state entry.",
+        mv: 1.5, targets: 1, count: 2, energyGain: 35
+      },
+      {
+        key: "enhanced_1",
+        phaseRu: "ОКНО SPECTRAL TRANSMIGRATION — УСИЛЕННЫЙ НАВЫК #1",
+        phaseEn: "SPECTRAL TRANSMIGRATION WINDOW — ENHANCED SKILL #1",
+        actionRu: "«Moon On Glacial River»: 150% Max HP по цели + 75% по смежным (−1 Syzygy, −5% Max HP союзников)",
+        actionEn: "'Moon On Glacial River': 150% MaxHP primary + 75% adjacent (−1 Syzygy, −5% allies' Max HP)",
+        descRu: "3 стака Moonlight → +132% КУ. CR +50% в окне.",
+        descEn: "3 Moonlight stacks -> +132% CRIT DMG. +50% CR inside the window.",
+        mv: 1.5, adjacentMv: 0.75, targets: 3, count: 1, energyGain: 38,
+        critRatePercent: 50, extraCritDmgPercent: 132
+      },
+      {
+        key: "enhanced_2",
+        phaseRu: "ОКНО SPECTRAL TRANSMIGRATION — УСИЛЕННЫЙ НАВЫК #2",
+        phaseEn: "SPECTRAL TRANSMIGRATION WINDOW — ENHANCED SKILL #2",
+        actionRu: "«Moon On Glacial River»: 150% Max HP по цели + 75% по смежным",
+        actionEn: "'Moon On Glacial River': 150% MaxHP primary + 75% adjacent",
+        descRu: "5 стаков Moonlight → +220% КУ.",
+        descEn: "5 Moonlight stacks -> +220% CRIT DMG.",
+        mv: 1.5, adjacentMv: 0.75, targets: 3, count: 1, energyGain: 38,
+        critRatePercent: 50, extraCritDmgPercent: 220
+      },
+      {
+        key: "ult",
+        phaseRu: "ОКНО SPECTRAL TRANSMIGRATION — СВЕРХСПОСОБНОСТЬ",
+        phaseEn: "SPECTRAL TRANSMIGRATION WINDOW — ULTIMATE",
+        actionRu: "Ульт «Florephemeral Dreamflux»: 180% Max HP по цели + 90% по смежным (A2: +20% DMG в окне)",
+        actionEn: "Ult 'Florephemeral Dreamflux': 180% MaxHP primary + 90% adjacent (A2: +20% DMG inside the window)",
+        descRu: "3-я атака окна: 5 стаков Moonlight → +220% КУ. +5 энергии, +1 Syzygy после атаки.",
+        descEn: "The window's 3rd attack: 5 Moonlight stacks -> +220% CRIT DMG. +5 energy, +1 Syzygy after the attack.",
+        mv: 1.8, adjacentMv: 0.9, targets: 3, count: 1, energyGain: 5, isUlt: true,
+        critRatePercent: 50, extraCritDmgPercent: 220, extraDmgPercent: 20
+      },
+      {
+        key: "enhanced_3",
+        phaseRu: "ОКНО SPECTRAL TRANSMIGRATION — УСИЛЕННЫЙ НАВЫК #3",
+        phaseEn: "SPECTRAL TRANSMIGRATION WINDOW — ENHANCED SKILL #3",
+        actionRu: "«Moon On Glacial River»: 150% Max HP по цели + 75% по смежным",
+        actionEn: "'Moon On Glacial River': 150% MaxHP primary + 75% adjacent",
+        descRu: "5 стаков Moonlight → +220% КУ. Стак ульты финансирует 4-ю усиленную атаку.",
+        descEn: "5 Moonlight stacks -> +220% CRIT DMG. The ult's stack funds the 4th enhanced attack.",
+        mv: 1.5, adjacentMv: 0.75, targets: 3, count: 1, energyGain: 38,
+        critRatePercent: 50, extraCritDmgPercent: 220
+      },
+      {
+        key: "enhanced_4",
+        phaseRu: "ОКНО SPECTRAL TRANSMIGRATION — УСИЛЕННЫЙ НАВЫК #4",
+        phaseEn: "SPECTRAL TRANSMIGRATION WINDOW — ENHANCED SKILL #4",
+        actionRu: "«Moon On Glacial River»: 150% Max HP по цели + 75% по смежным",
+        actionEn: "'Moon On Glacial River': 150% MaxHP primary + 75% adjacent",
+        descRu: "5 стаков Moonlight → +220% КУ. Последний Syzygy; после окно закрывается.",
+        descEn: "5 Moonlight stacks -> +220% CRIT DMG. Last Syzygy; the window closes afterwards.",
+        mv: 1.5, adjacentMv: 0.75, targets: 3, count: 1, energyGain: 38,
+        critRatePercent: 50, extraCritDmgPercent: 220
+      }
+    ]
+  },
+
+  // Блейд (1205) — цикл: Hellscape (без урона) → 3 усиленных базовых
+  // «Forest of Swords» с ультой внутри окна → базовая + авто-FUA таланта.
+  "1205": {
+    status: "kit-verified",
+    gameVersion: "4.7",
+    buffUptimeStatus: "unverified",
+    evidence: [
+      {
+        type: "official-kit-mirror",
+        source: "prydwen.gg",
+        url: "https://www.prydwen.gg/star-rail/characters/blade/",
+        capturedOn: "2026-11-16",
+        note: "Basic 'Shard Sword' 50% MaxHP ST (en 20); Skill 'Hellscape': no damage, consumes 10% Max HP, enhances the Basic into 'Forest of Swords' for 3 turns (en 30); Enhanced 'Forest of Swords' 130%/52% adjacent (en 30); Ult 'Death Sentence' Blast 150% primary / 60% adjacent + up to 100% tally DMG, 130 energy cost, caps the tally at 90% of Max HP (en 5); Talent: when hit or when HP is consumed, gains a charge (5 per ult charge); at full charge uses FUA 'Death Guardian' 130% MaxHP AoE (en 10, +15 from A6, dmg x1.2 from A6); A2: ult tally starts at 50% of Max HP."
+      }
+    ],
+    noteRu: "Цикл: навык «Hellscape» (−10% Max HP, урона нет, окно 3 хода) → 3 усиленных базовых «Forest of Swords» по 130%/52% (по 30 энергии; −10% Max HP за использование) с ультой внутри окна. Ульт: 150% по цели + tally-урон; A2 ставит tally на 50% Max HP → 150+50 = 200% по цели, 60+60×50% = 90% по смежным (A2 структурно-безусловный: tally не опускается ниже 50%). Затем 1 базовая «Shard Sword» (50%, +20 энергии) и 1 авто-FUA таланта (130% AoE ×1.2 след A6 = 156%, +25 энергии = 10+15). Энергия цикла: 3×30 + 20 + 25 = 135 ≥ 130 ✓. FUA — 1 за цикл: заряды от вражеских ударов не моделируются (допущение). Урон FUA AoE — смоделирован по всем 3 целям. Не включено: E-уровни (E0), tally сверх floor A2 (зависит от потраченного/потерянного HP за бой), тайминг зарядов. SP: +1 за цикл (базовая возвращает).",
+    noteEn: "Cycle: 'Hellscape' Skill (−10% Max HP, no damage, 3-turn window) -> 3 enhanced Basics 'Forest of Swords' at 130%/52% (30 energy each; −10% Max HP per use) with the Ultimate inside the window. Ult: 150% primary + tally DMG; A2 floors the tally at 50% of Max HP -> 150+50 = 200% primary, 60+60x50% = 90% adjacent (A2 is structurally unconditional: the tally never drops below 50%). Then 1 Basic 'Shard Sword' (50%, +20 energy) and 1 auto-FUA from the Talent (130% AoE x1.2 from the A6 trace = 156%, +25 energy = 10+15). Cycle energy: 3x30 + 20 + 25 = 135 >= 130 ✓. One FUA per cycle: charges from enemy hits are not modeled (an assumption). The FUA AoE damage is modeled across all 3 targets. Excluded: eidolons (E0), tally above the A2 floor (depends on HP consumed/lost during the fight), charge timing. SP: +1 per cycle (the Basic restores it).",
+    hpScale: true,
+    energy: { ultCost: 130 },
+    instances: [
+      {
+        key: "hellscape",
+        phaseRu: "ВХОД В HELLSCAPE",
+        phaseEn: "HELLSCAPE ENTRY",
+        actionRu: "Навык «Hellscape»: без урона; −10% Max HP, окно 3 хода, базовая усиливается",
+        actionEn: "Skill 'Hellscape': no damage; −10% Max HP, 3-turn window, the Basic becomes enhanced",
+        descRu: "Окно бафает 3 следующих базовых в «Forest of Swords». 30 энергии.",
+        descEn: "The window upgrades the next 3 Basics into 'Forest of Swords'. 30 energy.",
+        mv: 0, targets: 1, count: 1, energyGain: 30
+      },
+      {
+        key: "forest_1",
+        phaseRu: "ОКНО HELLSCAPE — УСИЛЕННАЯ БАЗОВАЯ #1",
+        phaseEn: "HELLSCAPE WINDOW — ENHANCED BASIC #1",
+        actionRu: "«Forest of Swords»: 130% Max HP по цели + 52% по смежным (−10% Max HP)",
+        actionEn: "'Forest of Swords': 130% MaxHP primary + 52% adjacent (−10% Max HP)",
+        descRu: "Усиленная базовая, без SP. 30 энергии.",
+        descEn: "Enhanced Basic, SP-free. 30 energy.",
+        mv: 1.3, adjacentMv: 0.52, targets: 3, count: 1, energyGain: 30
+      },
+      {
+        key: "forest_2",
+        phaseRu: "ОКНО HELLSCAPE — УСИЛЕННАЯ БАЗОВАЯ #2",
+        phaseEn: "HELLSCAPE WINDOW — ENHANCED BASIC #2",
+        actionRu: "«Forest of Swords»: 130% Max HP по цели + 52% по смежным",
+        actionEn: "'Forest of Swords': 130% MaxHP primary + 52% adjacent",
+        descRu: "30 энергии.",
+        descEn: "30 energy.",
+        mv: 1.3, adjacentMv: 0.52, targets: 3, count: 1, energyGain: 30
+      },
+      {
+        key: "ult",
+        phaseRu: "ОКНО HELLSCAPE — СВЕРХСПОСОБНОСТЬ",
+        phaseEn: "HELLSCAPE WINDOW — ULTIMATE",
+        actionRu: "Ульт «Death Sentence»: 150%+50% (tally A2) по цели, 60%+30% по смежным",
+        actionEn: "Ult 'Death Sentence': 150%+50% (A2 tally) primary, 60%+30% adjacent",
+        descRu: "A2 ставит tally на 50% Max HP: 200% по цели, 90% по смежным. +5 энергии.",
+        descEn: "A2 floors the tally at 50% of Max HP: 200% primary, 90% adjacent. +5 energy.",
+        mv: 2.0, adjacentMv: 0.9, targets: 3, count: 1, energyGain: 5, isUlt: true
+      },
+      {
+        key: "forest_3",
+        phaseRu: "ОКНО HELLSCAPE — УСИЛЕННАЯ БАЗОВАЯ #3",
+        phaseEn: "HELLSCAPE WINDOW — ENHANCED BASIC #3",
+        actionRu: "«Forest of Swords»: 130% Max HP по цели + 52% по смежным",
+        actionEn: "'Forest of Swords': 130% MaxHP primary + 52% adjacent",
+        descRu: "Последняя атака окна. 30 энергии.",
+        descEn: "The window's final attack. 30 energy.",
+        mv: 1.3, adjacentMv: 0.52, targets: 3, count: 1, energyGain: 30
+      },
+      {
+        key: "basic",
+        phaseRu: "ВНЕ ОКНА — БАЗОВАЯ АТАКА",
+        phaseEn: "OUTSIDE WINDOW — BASIC ATK",
+        actionRu: "Базовая «Shard Sword»: 50% Max HP по цели",
+        actionEn: "Basic 'Shard Sword': 50% MaxHP to one target",
+        descRu: "После окна базовая обычная. +20 энергии, +1 SP.",
+        descEn: "After the window the Basic is plain. +20 energy, +1 SP.",
+        mv: 0.5, targets: 1, count: 1, energyGain: 20
+      },
+      {
+        key: "fua",
+        phaseRu: "АВТО-АТАКА ТАЛАНТА — FUA",
+        phaseEn: "TALENT AUTO-ATTACK — FUA",
+        actionRu: "FUA «Death Guardian»: 130% Max HP AoE ×1.2 (след A6)",
+        actionEn: "FUA 'Death Guardian': 130% MaxHP AoE x1.2 (A6 trace)",
+        descRu: "Авто-атака при полном заряде; ×1.2 от следа A6. 1 FUA за цикл — допущение. +25 энергии (10+15 A6).",
+        descEn: "Auto-attack at full charge; x1.2 from the A6 trace. 1 FUA per cycle — an assumption. +25 energy (10+15 A6).",
+        mv: 1.56, targets: 3, count: 1, energyGain: 25
+      }
+    ]
+  },
+
+  // Мидей (1404) — цикл: 4 навыка (HP-расход → заряды) → ульт (+20 зарядов,
+  // вход в Vendetta) → окно Vendetta: 2 «Kingslayer Be King» + «Godslayer Be God».
+  "1404": {
+    status: "kit-verified",
+    gameVersion: "4.7",
+    buffUptimeStatus: "unverified",
+    evidence: [
+      {
+        type: "official-kit-mirror",
+        source: "prydwen.gg",
+        url: "https://www.prydwen.gg/star-rail/characters/mydei/",
+        capturedOn: "2026-11-16",
+        note: "Basic 'Crown and Wrath' 50% MaxHP (en 20); Skill 90%/50% adjacent, consumes 50% of current HP (en 30); Enhanced 'Kingslayer Be King' 110%/66%, consumes 35% of current HP, auto-used (en 30); Enhanced 'Godslayer Be God' 280%/168%, consumes 150 Charge, auto-used, Charge cannot accumulate during it (en 10); Ult 'Throne of Bones' 160%/100% adjacent, 160 energy cost, restores 20% Max HP and +20 Talent's Charge (en 5); Talent: gains Charge from HP consumption/loss, at 100 Charge enters Vendetta (Max HP +50%), at 150 auto-uses 'Godslayer Be God'; A6: +1.2% CRIT Rate per 100 HP above 4000, capped at 4000 excess."
+      }
+    ],
+    noteRu: "Цикл: 4 навыка по 90%/50% (по 30 энергии; −50% текущего HP каждый — заряды от HP-расхода накапливаются) → ульт (160%/100%, 5 энергии, +20 зарядов) → вход в Vendetta при 100 зарядах: Max HP +50% (учтено как hpMultPercent 50 на инстансах окна — аптайм гарантирован структурой) → окно: 2× «Kingslayer Be King» (110%/66%, по 30 энергии, −35% текущего HP) + «Godslayer Be God» (280%/168%, 10 энергии, −150 зарядов). Ульт стоит ДО входа в Vendetta — множитель Max HP +50% на неё не действует. След A6: +1.2% CR за каждые 100 HP свыше 4000, кап 4000 лишнего (+48%) — условие проверяется по боевому HP профиля, учтено. Энергия цикла: 4×30 + 2×30 + 10 = 190 ≥ 160 ✓. Окно 2+1 — допущение (порядок авто-атак в окне не публикуется). Не включено: E-уровни (E0), след A2 (лечение — не урон), A4 (дефенсивный), заряды от вражеских атак и лечения (непроверяемо), тайминг выхода из Vendetta. SP: −4 за цикл (4 навыка; авто-атаки окна бесплатны).",
+    noteEn: "Cycle: 4 Skills at 90%/50% (30 energy each; −50% of current HP each — HP consumption charges the Talent) -> the Ultimate (160%/100%, 5 energy, +20 Charge) -> Vendetta entry at 100 Charge: Max HP +50% (counted as hpMultPercent 50 on the window instances — uptime guaranteed by the cycle structure) -> the window: 2x 'Kingslayer Be King' (110%/66%, 30 energy each, −35% of current HP) + 'Godslayer Be God' (280%/168%, 10 energy, −150 Charge). The Ultimate happens BEFORE Vendetta — the +50% Max HP multiplier does not apply to it. A6 trace: +1.2% CR per 100 HP above 4000, capped at 4000 excess (+48%) — the condition is checked against the profile's combat HP, counted. Cycle energy: 4x30 + 2x30 + 10 = 190 >= 160 ✓. The 2+1 window is an assumption (the auto-attack order inside the window is not published). Excluded: eidolons (E0), the A2 trace (healing, not damage), A4 (defensive), Charge from enemy hits and healing (unverifiable), Vendetta exit timing. SP: -4 per cycle (4 Skills; window auto-attacks are SP-free).",
+    hpScale: true,
+    critRateFromHp: { hpThreshold: 4000, crPer100: 1.2, capHp: 4000 },
+    energy: { ultCost: 160 },
+    instances: [
+      {
+        key: "skill_1",
+        phaseRu: "НАКОПЛЕНИЕ ЗАРЯДОВ — НАВЫК #1",
+        phaseEn: "CHARGE BUILDUP — SKILL #1",
+        actionRu: "Навык «Deaths are Legion, Regrets are None»: 90% Max HP по цели + 50% по смежным (−50% текущего HP)",
+        actionEn: "Skill 'Deaths are Legion, Regrets are None': 90% MaxHP primary + 50% adjacent (−50% of current HP)",
+        descRu: "HP-расход заряжает Talent. 30 энергии. Инстансы 2–4 идентичны.",
+        descEn: "HP consumption charges the Talent. 30 energy. Instances 2-4 are identical.",
+        mv: 0.9, adjacentMv: 0.5, targets: 3, count: 4, energyGain: 30
+      },
+      {
+        key: "ult",
+        phaseRu: "СВЕРХСПОСОБНОСТЬ — ПЕРЕД VENDETTA",
+        phaseEn: "ULTIMATE — BEFORE VENDETTA",
+        actionRu: "Ульт «Throne of Bones»: 160% Max HP по цели + 100% по смежным (+20% Max HP лечение, +20 зарядов)",
+        actionEn: "Ult 'Throne of Bones': 160% MaxHP primary + 100% adjacent (+20% Max HP heal, +20 Charge)",
+        descRu: "Стоимость 160 энергии, +5 после. +20 зарядов доводит до 100 → вход в Vendetta. Множитель Max HP +50% окна на ульту не действует (вход после ульты).",
+        descEn: "Costs 160 energy, +5 after. +20 Charge brings the total to 100 -> Vendetta entry. The window's +50% Max HP multiplier does not apply to the ult (entry happens after it).",
+        mv: 1.6, adjacentMv: 1.0, targets: 3, count: 1, energyGain: 5, isUlt: true
+      },
+      {
+        key: "kingslayer",
+        phaseRu: "ОКНО VENDETTA — АВТО-НАВЫК «KINGSLAYER BE KING»",
+        phaseEn: "VENDETTA WINDOW — AUTO-SKILL 'KINGSLAYER BE KING'",
+        actionRu: "«Kingslayer Be King»: 110% Max HP ×1.5 (Vendetta) по цели + 66% по смежным (−35% текущего HP)",
+        actionEn: "'Kingslayer Be King': 110% MaxHP x1.5 (Vendetta) primary + 66% adjacent (−35% of current HP)",
+        descRu: "Авто-использование, без SP. Множитель Vendetta +50% Max HP учтён. 2 использования. По 30 энергии.",
+        descEn: "Auto-used, SP-free. The Vendetta +50% Max HP multiplier is counted. 2 uses. 30 energy each.",
+        mv: 1.1, adjacentMv: 0.66, targets: 3, count: 2, energyGain: 30,
+        hpMultPercent: 50
+      },
+      {
+        key: "godslayer",
+        phaseRu: "ОКНО VENDETTA — АВТО-НАВЫК «GODSLAYER BE GOD»",
+        phaseEn: "VENDETTA WINDOW — AUTO-SKILL 'GODSLAYER BE GOD'",
+        actionRu: "«Godslayer Be God»: 280% Max HP ×1.5 (Vendetta) по цели + 168% по смежным (−150 зарядов)",
+        actionEn: "'Godslayer Be God': 280% MaxHP x1.5 (Vendetta) primary + 168% adjacent (−150 Charge)",
+        descRu: "Авто-использование при 150 зарядах, без SP. Завершает окно; после выход из Vendetta.",
+        descEn: "Auto-used at 150 Charge, SP-free. Closes the window; Vendetta exits afterwards.",
+        mv: 2.8, adjacentMv: 1.68, targets: 3, count: 1, energyGain: 10,
+        hpMultPercent: 50
+      }
+    ]
+  },
+
+  // Анаша (1405) — цикл: 5 навыков + 4 базовые + 5 авто-навыков таланта
+  // (Quadrivalent Ascendance, steady-state) с ультой.
+  "1405": {
+    status: "kit-verified",
+    gameVersion: "4.7",
+    buffUptimeStatus: "unverified",
+    evidence: [
+      {
+        type: "official-kit-mirror",
+        source: "prydwen.gg",
+        url: "https://www.prydwen.gg/star-rail/characters/anaxa/",
+        capturedOn: "2026-11-16",
+        note: "Basic 'Sensus' 100% ATK (en 20, +10 from A2); Skill 'Hypotos' 70% ATK x5 (primary + 4 bounces), +20% DMG per enemy hit (en 6); Ult 'Charts, Visible Souls' 160% ATK AoE, 140 energy cost (en 5); Talent: after a Basic or Skill, auto-uses an extra Skill (no SP), gains Quadrivalent Ascendance; while QA is active and 5+ weaknesses are implanted: +30% DMG; A4: 140% CD boost if solo Erudition, else +50% DMG for 2+ Erudition; A6: 20% DEF ignore per implanted weakness type."
+      }
+    ],
+    noteRu: "Цикл (steady-state Quadrivalent Ascendance — 5+ слабостей, +30% DMG учтено как passiveDmgBoost): 5 навыков (mv 116.67% = 70%×5 ударов на 3 цели, +60% DMG = +20%×3 врага, по 6 энергии), 4 базовые (100%, по 30 энергии = 20+10 след A2) и 5 авто-навыков таланта (без SP, без энергии) с ультой (160% AoE, 5 энергии). Энергия цикла: 5×6 + 4×30 = 150 ≥ 140 ✓. Не включено: E-уровни (E0), след A4 (зависит от состава: 140% КУ при одиночном Эрудиции или +50% DMG при 2+ — состав команды не фиксирован), след A6 (игнор защиты по типам слабостей врага — зависит от набора слабостей сценария), QA-старт вне steady-state. SP: −1 за цикл (5 навыков против 4 базовых).",
+    noteEn: "Cycle (steady-state Quadrivalent Ascendance — 5+ weaknesses, the +30% DMG is counted as passiveDmgBoost): 5 Skills (mv 116.67% = 70%x5 hits across 3 targets, +60% DMG = +20%x3 enemies, 6 energy each), 4 Basics (100%, 30 energy each = 20+10 from the A2 trace) and 5 Talent auto-Skills (SP-free, no energy) with the Ultimate (160% AoE, 5 energy). Cycle energy: 5x6 + 4x30 = 150 >= 140 ✓. Excluded: eidolons (E0), the A4 trace (composition-dependent: 140% CD with a solo Erudition or +50% DMG with 2+ — the team is not fixed), the A6 trace (DEF ignore per implanted weakness types — depends on the scenario's weakness set), non-steady-state QA ramp-up. SP: -1 per cycle (5 Skills vs 4 Basics).",
+    passiveDmgBoost: 30,
+    energy: { ultCost: 140 },
+    instances: [
+      {
+        key: "skill",
+        phaseRu: "ОСНОВНОЙ ЦИКЛ — НАВЫК",
+        phaseEn: "MAIN LOOP — SKILL",
+        actionRu: "Навык «Hypotos»: 70% ATK ×5 ударов (основная + 4 отскока), +20% DMG за каждого задетого врага",
+        actionEn: "Skill 'Hypotos': 70% ATK x5 hits (primary + 4 bounces), +20% DMG per enemy hit",
+        descRu: "mv 116.67% на цель (70%×5/3), +60% DMG при 3 врагах. 6 энергии. SP −1.",
+        descEn: "mv 116.67% per target (70%x5/3), +60% DMG with 3 enemies. 6 energy. SP -1.",
+        mv: 1.166667, targets: 3, count: 5, energyGain: 6, extraDmgPercent: 60
+      },
+      {
+        key: "basic",
+        phaseRu: "ОСНОВНОЙ ЦИКЛ — БАЗОВАЯ АТАКА",
+        phaseEn: "MAIN LOOP — BASIC ATK",
+        actionRu: "Базовая «Sensus»: 100% ATK по цели (A2: +10 энергии)",
+        actionEn: "Basic 'Sensus': 100% ATK to one target (A2: +10 energy)",
+        descRu: "30 энергии (20+10 след A2). +1 SP.",
+        descEn: "30 energy (20+10 from the A2 trace). +1 SP.",
+        mv: 1.0, targets: 1, count: 4, energyGain: 30
+      },
+      {
+        key: "talent_extra",
+        phaseRu: "АВТО-НАВЫК ТАЛАНТА — EXTRA SKILL",
+        phaseEn: "TALENT AUTO-SKILL — EXTRA SKILL",
+        actionRu: "5× авто-навык после базовой/навыка: тот же «Hypotos», без SP и без энергии",
+        actionEn: "5x auto-Skill after each Basic/Skill: the same 'Hypotos', SP-free and no energy",
+        descRu: "Авто-использование таланта; +30% DMG от QA уже в passiveDmgBoost.",
+        descEn: "Talent auto-use; the +30% QA DMG is already in passiveDmgBoost.",
+        mv: 1.166667, targets: 3, count: 5, energyGain: 0, extraDmgPercent: 60
+      },
+      {
+        key: "ult",
+        phaseRu: "СВЕРХСПОСОБНОСТЬ",
+        phaseEn: "ULTIMATE",
+        actionRu: "Ульт «Charts, Visible Souls»: 160% ATK AoE",
+        actionEn: "Ult 'Charts, Visible Souls': 160% ATK AoE",
+        descRu: "Стоимость 140 энергии, +5 после.",
+        descEn: "Costs 140 energy, +5 after.",
+        mv: 1.6, targets: 3, count: 1, energyGain: 5, isUlt: true
       }
     ]
   }

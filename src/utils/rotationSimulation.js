@@ -413,13 +413,26 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     const spdHpMult = kitRotation.spdHpBonus && Number(mainStats.spd || 0) > Number(kitRotation.spdHpBonus.spdThreshold || 0)
       ? 1 + (Number(kitRotation.spdHpBonus.hpPercent) || 0) / 100
       : 1;
+    // След A6 Мидея: при HP >4000 — +1.2% CRIT Rate за каждые 100 лишнего HP,
+    // максимум 4000 лишнего HP (+48%). Условие проверяется по боевому HP
+    // профиля, поэтому это не «неподтверждённый аптайм».
+    const hpCritRateBonus = kitRotation.critRateFromHp
+      ? Math.min(
+          Math.max(0, combatHp - Number(kitRotation.critRateFromHp.hpThreshold || 0)),
+          Number(kitRotation.critRateFromHp.capHp) || Number.POSITIVE_INFINITY
+        ) / 100 * (Number(kitRotation.critRateFromHp.crPer100) || 0)
+      : 0;
     kitRotation.instances.forEach((inst) => {
       const actionTeamBuffs = getTeamBuffsForAction(squad, matchedTeammates, inst.key);
       actionBuffStatuses.add(actionTeamBuffs.status);
       const b = actionTeamBuffs.buffs;
       const actionAtkPercent = baseAttackForPercent * (Number(b.atkPercent) || 0) / 100;
       const actionAtk = baseAtk + (Number(b.atkGrant) || 0) + actionAtkPercent;
-      const actionCr = Math.min(1, (baseCr + (Number(b.crGrant) || 0) + kitCritRate) / 100);
+      // inst.critRatePercent: CRIT Rate, гарантированный структурой атаки
+      // (Цзинлю: +50% CR в Spectral Transmigration — все инстансы окна).
+      // hpCritRateBonus: след A6 Мидея (+1.2% за 100 HP свыше 4000).
+      const actionCr = Math.min(1, (baseCr + (Number(b.crGrant) || 0) + kitCritRate
+        + hpCritRateBonus + (Number(inst.critRatePercent) || 0)) / 100);
       // inst.extraCritDmgPercent: усреднённый по ударам атаки КУ-бонус, который
       // гарантирован структурой самой атаки (Рёв ДХПЛ: удары 4–7 дают
       // +12/24/36/48% КУ → в среднем 120/7).
@@ -434,12 +447,15 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
         actionCd * 100,
         Number(b.critVuln) || 0
       );
+      // inst.hpMultPercent: множитель Max HP, гарантированный структурой
+      // состояния (Мидей в Vendetta: +50% Max HP — все инстансы окна).
+      const instHpMult = 1 + (Number(inst.hpMultPercent) || 0) / 100;
       const actionScalingStat = inst.healTallyFraction != null
         ? healingTally * Number(inst.healTallyFraction)
         : kitRotation.hpScale
           ? (inst.inAfterRain
-            ? combatHp * spdHpMult * (1 + kitHpPercent / 100) + kitHpFlat
-            : combatHp * spdHpMult)
+            ? combatHp * spdHpMult * instHpMult * (1 + kitHpPercent / 100) + kitHpFlat
+            : combatHp * spdHpMult * instHpMult)
           : actionAtk;
       const actionKitDmgBonus = actionDmgBonus;
       const selectedTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, Number(inst.targets) || 1)));
