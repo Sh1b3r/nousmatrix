@@ -63,10 +63,10 @@ export const BREAK_INSTANT_ELEMENT_MULTIPLIERS = {
 // Weakness-break DoT applied after the initial hit (per HoYoWiki Weakness Break
 // and community break guides): Fire Burn 1x/turn x2 turns, Lightning Shock 2x/turn
 // x2 turns, Wind Shear 1x per stack x2 turns (3 stacks vs Elite/Boss),
-// Physical Bleed 7% of Elite/Boss Max HP per turn x2 turns (capped at
-// 2 x base x maxToughness per tick), Ice Freeze 1x once. Quantum/Imaginary
-// breaks apply no DoT (Entanglement is triggered by attacks, Imprisonment only
-// delays actions).
+// Physical Bleed 7% of Elite/Boss Max HP per turn x2 turns (per-tick cap =
+// the initial break hit: 2 x base x (0.5 + maxToughness/40), x(1+BE)), Ice
+// Freeze 1x once. Quantum/Imaginary breaks apply no DoT (Entanglement is
+// triggered by attacks, Imprisonment only delays actions).
 export const BREAK_DOT_CONFIG = {
   Fire: { perTurnMultiplier: 1, turns: 2 },
   Lightning: { perTurnMultiplier: 2, turns: 2 },

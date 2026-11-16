@@ -1156,11 +1156,15 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
           let dotDescEn;
           if (dotConfig.bleedMaxHpPercent) {
             const enemyMaxHp = Number(primaryEnemy.maxHp);
-            const bleedCap = 2 * calculateBreakBaseDamage(charLv) * breakMaxToughness;
+            // Кап тика = начальный удар Physical-пробития (HoYoWiki entry/1099:
+            // «Capped at: initial damage»; wywyx/GameKee: 2 x база(level) x
+            // (0.5 + maxToughness/40)). (1+ЭП) применяется и к 7% HP, и к капу.
+            const bleedCapBase = 2 * calculateBreakBaseDamage(charLv) * (0.5 + breakMaxToughness / 40);
             if (Number.isFinite(enemyMaxHp) && enemyMaxHp > 0) {
-              dotPerTick = Math.min(enemyMaxHp * dotConfig.bleedMaxHpPercent / 100, bleedCap);
-              dotDescRu = `Кровотечение: ${(dotConfig.bleedMaxHpPercent).toFixed(0)}% макс. HP цели за тик (кап ${Math.round(bleedCap)}), ×(1+ЭП).`;
-              dotDescEn = `Bleed: ${(dotConfig.bleedMaxHpPercent).toFixed(0)}% of target Max HP per tick (cap ${Math.round(bleedCap)}), x(1+BE).`;
+              dotPerTick = Math.min(enemyMaxHp * dotConfig.bleedMaxHpPercent / 100, bleedCapBase)
+                * (1 + breakBePercent / 100);
+              dotDescRu = `Кровотечение: ${(dotConfig.bleedMaxHpPercent).toFixed(0)}% макс. HP цели за тик ×(1+ЭП); кап тика = начальный удар пробития ${Math.round(bleedCapBase)} ×(1+ЭП).`;
+              dotDescEn = `Bleed: ${(dotConfig.bleedMaxHpPercent).toFixed(0)}% of target Max HP per tick x(1+BE); per-tick cap = the initial break hit ${Math.round(bleedCapBase)} x(1+BE).`;
             }
           } else {
             const stacks = dotConfig.eliteStacks || 1;
