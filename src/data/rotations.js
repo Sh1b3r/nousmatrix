@@ -115,8 +115,8 @@ export const ROTATIONS = {
         note: "Skill 360% ATK, Basic 100%, Ult 720% (120 energy, +5), Skill energy +30, Basic energy +20."
       }
     ],
-    noteRu: "Цикл: 3 навыка (360%×3) + 2 базовые атаки (100%) + ульт (720%). Энергия: 3×30 + 2×20 = 130 ≥ 120. Не включено (аптайм не подтверждён): авто-навык таланта по цели ≤50% HP (360%, без энергии, 1 раз/ход), +80% урона в состоянии Усиления (след), +25% Quantum RES PEN (след A4). Энергия союзников и авто-процы не учитываются — оценка консервативная.",
-    noteEn: "Cycle: 3 skills (360% x3) + 2 basics (100%) + ult (720%). Energy: 3x30 + 2x20 = 130 >= 120. Excluded (uptime unverified): Talent auto-skill on <=50% HP targets (360%, no energy, once/turn), +80% DMG in Amplification (Talent), +25% Quantum RES PEN (A4 trace). Ally energy feed and auto-procs are not counted — conservative estimate.",
+    noteRu: "Цикл: 3 навыка (360%×3) + 2 базовые атаки (100%) + ульт (720%). Энергия: 3×30 + 2×20 = 130 ≥ 120. Не включено (аптайм не подтверждён): авто-навык таланта по цели ≤50% HP (360%, без энергии, 1 раз/ход), +80% урона в состоянии Усиления (Талант «Resurgence»), +25% Quantum RES PEN в Усилении (след A4), +50%×3 урона при победах (след A2). Энергия союзников и авто-процы не учитываются — оценка консервативная.",
+    noteEn: "Cycle: 3 skills (360% x3) + 2 basics (100%) + ult (720%). Energy: 3x30 + 2x20 = 130 >= 120. Excluded (uptime unverified): Talent auto-skill on <=50% HP targets (360%, no energy, once/turn), +80% DMG in Amplification (the 'Resurgence' Talent), +25% Quantum RES PEN in Amplification (A4 trace), +50%x3 DMG on defeats (A2 trace). Ally energy feed and auto-procs are not counted — conservative estimate.",
     hpScale: false,
     energy: { ultCost: 120 },
     instances: [
@@ -167,8 +167,8 @@ export const ROTATIONS = {
         note: "Fulgurant Leap 500% + 180% adjacent, energy +40; Basic 100%, energy +20; Ult 300% + 140% adjacent (140 energy, +5); A2 start +15 energy."
       }
     ],
-    noteRu: "Цикл: 3 «Стремительного прыжка» (500% + 180% по смежным) + базовая (100%) + ульт (300% + 140% по смежным). Энергия: 3×40 + 20 + 15 (след A2) = 155 ≥ 140. Не включено: стаки Праведного сердца (+10% урона за удар, до 6) и Смертельной новости (+12% КУ за стак) — средний аптайм по ударам не верифицирован; Чешуя (смещение трат ОН) — экономия ОН не моделируется.",
-    noteEn: "Cycle: 3x Fulgurant Leap (500% + 180% adjacent) + Basic (100%) + Ult (300% + 140% adjacent). Energy: 3x40 + 20 + 15 (A2 trace) = 155 >= 140. Excluded: Righteous Heart stacks (+10% DMG per hit, up to 6) and Outroar (+12% CD per stack) — per-hit average uptime unverified; Squama Sacrosancta SP offset not modeled.",
+    noteRu: "Цикл: 3 «Стремительного прыжка» (500% + 180% по смежным) + базовая (100%) + ульт (300% + 140% по смежным). Энергия: 3×40 + 20 + 15 (след A2) = 155 ≥ 140. Не включено: стаки Праведного сердца (+10% урона за удар, до 6) и Рёва (+12% КУ за стак, до 4) — средний аптайм по ударам не верифицирован; след A6 (+24% КУ по целям со слабостью к Мнимому — условие по врагу); Чешуя (смещение трат ОН) — экономия ОН не моделируется.",
+    noteEn: "Cycle: 3x Fulgurant Leap (500% + 180% adjacent) + Basic (100%) + Ult (300% + 140% adjacent). Energy: 3x40 + 20 + 15 (A2 trace) = 155 >= 140. Excluded: Righteous Heart stacks (+10% DMG per hit, up to 6) and Outroar (+12% CD per stack, up to 4) — per-hit average uptime unverified; A6 trace (+24% CD against Imaginary-weak targets — enemy-conditional); Squama Sacrosancta SP offset not modeled.",
     hpScale: false,
     energy: { ultCost: 140, startEnergyFlat: 15 },
     instances: [
@@ -292,10 +292,13 @@ export const ROTATIONS = {
         note: "Enhanced Skill (0.2xBE+200%) primary, (0.1xBE+100%) adjacent; Enhanced Basic 150%; base Skill 200%, +60% Max Energy; Ult costs 240; Talent: start with >=50% energy."
       }
     ],
-    noteRu: "Цикл: ульт (240 энергии; талант даёт старт ≥50%) → окно Complete Combustion: 2 усиленных навыка (200% + 0.2×ЭП по главной, 100% + 0.1×ЭП по смежным) + 1 усиленная базовая (150%) → 1 обычный навык (+144 энергии = 60% от макс). Энергия: 144 + 120 (старт) = 264 ≥ 240. Длина окна CC (2 навыка + 1 базовая) — допущение по таймеру SPD 70. Суперпробитие (след A4, HoYoWiki-формула): при пробитой цели и ЭП ≥150%/300% каждый удар конвертирует истощение (30 + 15×смежные) в 100%/150% Super Break урона — число срабатываний задаётся явным вводом «Суперпробития», коэффициент выбирается по учтённому ЭП (кап 360%). Формула без крита, ATK и DMG%. Не включено: A6 (+0.8% ЭП за каждые 10 ATK свыше 1800 — не входит в учтённый ЭП), траты HP.",
-    noteEn: "Cycle: ult (240 energy; Talent grants >=50% start) -> Complete Combustion window: 2 enhanced skills (200% + 0.2xBE primary, 100% + 0.1xBE adjacent) + 1 enhanced basic (150%) -> 1 base skill (+144 energy = 60% of Max). Energy: 144 + 120 (start) = 264 >= 240. The CC window length (2 skills + 1 basic) assumes the SPD 70 countdown. Super Break (A4 trace, HoYoWiki formula): against a broken target at BE >=150%/300% each hit converts its toughness reduction (30 + 15x adjacent) into 100%/150% Super Break DMG — the proc count is set by the explicit Super Break input, and the coefficient is selected from the counted BE (capped at 360%). No crit, ATK, or DMG% in the formula. Excluded: A6 (+0.8% BE per 10 ATK above 1800 — not part of the counted BE), HP costs.",
+    noteRu: "Цикл: ульт (240 энергии; талант даёт старт ≥50%) → окно Complete Combustion: 2 усиленных навыка (200% + 0.2×ЭП по главной, 100% + 0.1×ЭП по смежным) + 1 усиленная базовая (150%) → 1 обычный навык (+144 энергии = 60% от макс). Энергия: 144 + 120 (старт) = 264 ≥ 240. Длина окна CC (2 навыка + 1 базовая) — допущение по таймеру SPD 70. Суперпробитие (след A4, HoYoWiki-формула): при пробитой цели и ЭП ≥150%/300% каждый удар конвертирует истощение (30 + 15×смежные) в 100%/150% Super Break урона — число срабатываний задаётся явным вводом «Суперпробития», коэффициент выбирается по учтённому ЭП (кап 360%). Формула без крита, ATK и DMG%. Учтён след A2: +25% ЭП в состоянии CC — всё окно проходит в CC, аптайм гарантирован. Не включено: A6 (+0.8% ЭП за каждые 10 ATK свыше 1800 — не входит в учтённый ЭП), +50% эффективности пробития и +20% Break DMG ульты (действуют только на удар, наносящий пробитие; не входят в модельные удары), траты HP.",
+    noteEn: "Cycle: ult (240 energy; Talent grants >=50% start) -> Complete Combustion window: 2 enhanced skills (200% + 0.2xBE primary, 100% + 0.1xBE adjacent) + 1 enhanced basic (150%) -> 1 base skill (+144 energy = 60% of Max). Energy: 144 + 120 (start) = 264 >= 240. The CC window length (2 skills + 1 basic) assumes the SPD 70 countdown. Super Break (A4 trace, HoYoWiki formula): against a broken target at BE >=150%/300% each hit converts its toughness reduction (30 + 15x adjacent) into 100%/150% Super Break DMG — the proc count is set by the explicit Super Break input, and the coefficient is selected from the counted BE (capped at 360%). No crit, ATK, or DMG% in the formula. The A2 trace is counted: +25% BE inside the CC state — the whole window happens in CC, so uptime is guaranteed. Excluded: A6 (+0.8% BE per 10 ATK above 1800 — not part of the counted BE), the ult's +50% Break Efficiency and +20% Break DMG (apply only to the attack that inflicts the break; none of the modeled hits are that attack), HP costs.",
     hpScale: false,
     beCapPercent: 360,
+    // След A2 «Module α: Antilag Outburst»: +25% ЭП в состоянии Complete
+    // Combustion. Всё окно CC — именно в этом состоянии, аптайм гарантирован.
+    beBonusPercent: 25,
     energy: { ultCost: 240, startEnergyPercent: 50 },
     // След A4 «Module β: Autoreactive Armor» (Prydwen): в состоянии Complete
     // Combustion при ЭП >=150%/300% истощение удара конвертируется в 1 срабатывание
@@ -317,9 +320,9 @@ export const ROTATIONS = {
         phaseEn: "ENHANCED SKILL — DEATHSTAR OVERLOAD",
         actionRu: "2 усиленных навыка: (0.2×ЭП + 200%) по главной + (0.1×ЭП + 100%) по смежным",
         actionEn: "2x Enhanced Skill: (0.2xBE + 200%) primary + (0.1xBE + 100%) adjacent",
-        descRu: "Кап учтённого ЭП — 360%. Добавляет огневую слабость целям.",
-        descEn: "Counted BE capped at 360%. Adds Fire Weakness to targets.",
-        mv: 2.0, beScale: 0.2, adjacentMv: 1.0, beScaleAdjacent: 0.1, targets: 3, count: 2, energyGain: 0
+        descRu: "Кап учтённого ЭП — 360% (+25% следа A2 в окне CC). Добавляет огневую слабость целям.",
+        descEn: "Counted BE capped at 360% (+25% from the A2 trace inside the CC window). Adds Fire Weakness to targets.",
+        mv: 2.0, beScale: 0.2, adjacentMv: 1.0, beScaleAdjacent: 0.1, targets: 3, count: 2, energyGain: 0, inCompleteCombustion: true
       },
       {
         key: "e_basic",

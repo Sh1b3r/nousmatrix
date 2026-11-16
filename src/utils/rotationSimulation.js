@@ -150,6 +150,10 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   // только на инстансы, помеченные inAfterRain: true.
   const kitHpPercent = (kitRotation && kitRotation.passiveHpPercent) || 0;
   const kitHpFlat = (kitRotation && kitRotation.passiveHpFlat) || 0;
+  // Безусловный внутриоконный бонус ЭП (Светлячок A2 «Antilag Outburst»: +25% ЭП
+  // в состоянии Complete Combustion). Все инстансы окна помечены
+  // inCompleteCombustion: true, поэтому аптайм гарантирован структурой цикла.
+  const kitBeBonus = (kitRotation && kitRotation.beBonusPercent) || 0;
   // Сумма накопленного лечения — явный ввод сценария (урон Little Ica считается
   // от неё). Движок сам её не придумывает.
   const healingTally = Math.max(0, Number(options.healingTally) || 0);
@@ -424,11 +428,13 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       const selectedTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, Number(inst.targets) || 1)));
       // Множитель на цель: главный таргет — inst.mv (+ BE-часть), остальные — adjacentMv
       // (для AoE без adjacentMv значения совпадают со старым поведением).
-      const primaryMv = Number(inst.mv) + (Number(inst.beScale) || 0) * beFraction;
+      const primaryMv = Number(inst.mv) + (Number(inst.beScale) || 0)
+        * (inst.inCompleteCombustion ? Math.min((Number(mainStats.be || 0) + kitBeBonus) / 100, beCapFraction) : beFraction);
       const adjacentMvBase = inst.adjacentMv !== undefined ? Number(inst.adjacentMv) : Number(inst.mv);
       const adjacentBeScale = inst.beScaleAdjacent !== undefined ? Number(inst.beScaleAdjacent) : (Number(inst.beScale) || 0);
       const targetMotionValues = selectedTargets.map((target, index) => {
-        const mv = index === 0 ? primaryMv : adjacentMvBase + adjacentBeScale * beFraction;
+        const mv = index === 0 ? primaryMv : adjacentMvBase + adjacentBeScale
+          * (inst.inCompleteCombustion ? Math.min((Number(mainStats.be || 0) + kitBeBonus) / 100, beCapFraction) : beFraction);
         const factors = getTargetDamageFactors(target, {
           defShredPercent: Number(b.defShred) || 0,
           resPenPercent: (Number(b.resPen) || 0) + kitResPen,
@@ -495,7 +501,9 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     const sbConfig = kitRotation.superBreak;
     const sbProcs = Math.max(0, Math.floor(Number(options.superBreakProcs) || 0));
     if (sbConfig && sbProcs > 0) {
-      const bePercent = beFraction * 100;
+      // ЭП для порогов A4 учитывает A2 (+25% в окне CC) и кап кита.
+      const bePercent = Math.min(Math.max(0, Number(mainStats.be || 0)) + kitBeBonus,
+        kitRotation.beCapPercent != null ? Number(kitRotation.beCapPercent) : Number.POSITIVE_INFINITY);
       const sbTier = (sbConfig.tiers || []).slice()
         .sort((a, b) => Number(b.bePercent) - Number(a.bePercent))
         .find((tier) => bePercent >= Number(tier.bePercent));
