@@ -1,29 +1,130 @@
 import { calculateCharacterAudit } from '../src/utils/audit.js';
 
-// Кеш даних гравців та навичок конусів
+// Кеш даних гравців та пасивок світлових конусів
 const dataCache = new Map();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 хв
 const userLangPreferences = new Map(); // ручне перемикання мови користувачем
 const coneRanksCache = { ru: null, en: null };
 
 // ─────────────────────────────────────────────────────────────
-// МОВНА СИСТЕМА ТА АВТОВИЗНАЧЕННЯ
+// МОВНА СИСТЕМА (ОФІЦІЙНІ ЛОКАЛІЗАЦІЇ ІЗ ГРИ)
 // ─────────────────────────────────────────────────────────────
 
 function detectUserLang(from, chatId) {
-  // 1. Якщо користувач вручну перемикав мову в боті — пріоритет за його вибором
+  // 1. Ручний вибір користувача в чаті має найвищий пріоритет
   if (chatId && userLangPreferences.has(chatId)) {
     return userLangPreferences.get(chatId);
   }
 
-  // 2. Автоматичне визначення за регіоном / локаллю клієнта (як на сайті)
+  // 2. Автоматичне визначення за регіоном (як на сайті):
+  // Оскільки в грі немає офіційної української локалізації, для регіонів uk/ru/be
+  // використовується офіційний переклад з клієнта гри (ru), а для решти світу — (en).
   const code = (from?.language_code || '').toLowerCase();
-  if (code.startsWith('uk')) return 'uk';
-  if (code.startsWith('ru') || code.startsWith('be')) return 'ru';
+  if (code.startsWith('ru') || code.startsWith('uk') || code.startsWith('be')) {
+    return 'ru';
+  }
   return 'en';
 }
 
 const I18N = {
+  ru: {
+    welcomeTitle: 'Добро пожаловать в Honkai: Star Rail бота!',
+    welcomeDesc: 'Отправь мне <b>UID</b> своего аккаунта (например: <code>700123456</code>).\n\nТы сможешь просматривать:\n• 👥 <b>Персонажей с витрины</b>\n• 🎯 <b>Индекс боеспособности сборки (/100) и оценку</b>\n• 📊 <b>Боевые характеристики (HP, Сила атаки, Крит. шанс/урон, Скорость)</b>\n• 🛡 <b>Реликвии (сабстаты в столбик) и бонусы наборов</b>\n• 🗡 <b>Световые конусы с полным описанием пассивного навыка</b>\n• 🔮 <b>Уровни следов и навыков</b>',
+    trailblazer: 'Первопроходец',
+    level: 'Уровень',
+    equilibrium: 'Равновесие',
+    achievements: 'Достижений',
+    status: 'Статус',
+    noSignature: '(без подписи)',
+    noChars: 'На витрине нет открытых персонажей или они скрыты в настройках игры.',
+    chooseChar: 'Выберите персонажа для просмотра:',
+    refreshBtn: '🔄 Обновить данные',
+    langBtn: '🌐 Язык: 🇷🇺 (Оригинал)',
+    path: 'Путь',
+    element: 'Стихия',
+    cone: 'Световой конус',
+    notEquipped: 'Не экипирован',
+    activeSets: 'Бонусы наборов:',
+    noSets: 'Наборы не собраны',
+    chooseSection: 'Выберите раздел характеристик:',
+    combatIndex: 'Индекс боеспособности:',
+    rollEff: 'Эффективность роллов:',
+    critValue: 'Крит. масса (CV):',
+    statsBtn: '📊 Характеристики',
+    relicsBtn: '🛡 Реликвии',
+    coneBtn: '🗡 Световой конус',
+    skillsBtn: '🔮 Следы и навыки',
+    backToChars: '◀️ К списку персонажей',
+    backToChar: '◀️ К персонажу',
+    backToList: '👥 К списку',
+    statsTitle: 'Боевые характеристики:',
+    relicsTitle: 'Реликвии и наборы:',
+    noRelics: 'Реликвии отсутствуют или не экипированы.',
+    mainStat: 'Главный стат:',
+    subStats: 'Сабстаты:',
+    activeSetsBonus: 'Активные бонусы наборов:',
+    coneTitle: 'Световой конус:',
+    rarity: 'Редкость:',
+    superimposition: 'Наложение:',
+    passiveSkill: 'Пассивный навык:',
+    coneBaseStats: 'Базовые показатели конуса:',
+    skillsTitle: 'Следы и навыки:',
+    noSkills: 'Данные о навыках недоступны.',
+    lvl: 'Ур.',
+    fetching: 'Загружаю данные для UID',
+    notFound: 'Аккаунт с указанным UID не найден на серверах игры. Проверьте номер UID.',
+    serverError: 'Произошла ошибка при обращении к серверам игры. Попробуйте снова через минуту.',
+    invalidUid: 'Пожалуйста, отправьте числовой <b>UID</b> (например: <code>700123456</code>).'
+  },
+  en: {
+    welcomeTitle: 'Welcome to Honkai: Star Rail Bot!',
+    welcomeDesc: 'Send me your account <b>UID</b> (e.g. <code>700123456</code>).\n\nYou can easily inspect:\n• 👥 <b>Showcase Characters</b>\n• 🎯 <b>Combat Readiness Index (/100) & Grade</b>\n• 📊 <b>Combat Stats (HP, ATK, CRIT, Speed, etc.)</b>\n• 🛡 <b>Relics (column substats) & Set Bonuses</b>\n• 🗡 <b>Light Cones with full passive skill effect</b>\n• 🔮 <b>Trace & Skill levels</b>',
+    trailblazer: 'Trailblazer',
+    level: 'Level',
+    equilibrium: 'Equilibrium',
+    achievements: 'Achievements',
+    status: 'Status',
+    noSignature: '(no status)',
+    noChars: 'No showcase characters available or profile is hidden in game settings.',
+    chooseChar: 'Choose a character to inspect:',
+    refreshBtn: '🔄 Refresh data',
+    langBtn: '🌐 Lang: 🇬🇧 (Official)',
+    path: 'Path',
+    element: 'Combat Type',
+    cone: 'Light Cone',
+    notEquipped: 'Not equipped',
+    activeSets: 'Active Set Bonuses:',
+    noSets: 'No set bonuses active',
+    chooseSection: 'Select a section below:',
+    combatIndex: 'Combat Index:',
+    rollEff: 'Roll Efficiency:',
+    critValue: 'Crit Value (CV):',
+    statsBtn: '📊 Combat Stats',
+    relicsBtn: '🛡 Relics',
+    coneBtn: '🗡 Light Cone',
+    skillsBtn: '🔮 Traces & Skills',
+    backToChars: '◀️ Back to Roster',
+    backToChar: '◀️ Back to Character',
+    backToList: '👥 Back to Roster',
+    statsTitle: 'Combat Stats:',
+    relicsTitle: 'Relics & Sets:',
+    noRelics: 'No relics equipped.',
+    mainStat: 'Main Stat:',
+    subStats: 'Substats:',
+    activeSetsBonus: 'Active Set Bonuses:',
+    coneTitle: 'Light Cone:',
+    rarity: 'Rarity:',
+    superimposition: 'Superimposition:',
+    passiveSkill: 'Passive Skill:',
+    coneBaseStats: 'Light Cone Base Stats:',
+    skillsTitle: 'Traces & Skills:',
+    noSkills: 'Skill data is not available.',
+    lvl: 'Lv.',
+    fetching: 'Fetching data for UID',
+    notFound: 'Account with this UID was not found on game servers. Please check your UID.',
+    serverError: 'An error occurred fetching game data. Please try again shortly.',
+    invalidUid: 'Please send a valid numeric <b>UID</b> (e.g. <code>700123456</code>).'
+  },
   uk: {
     welcomeTitle: 'Вітаю у Honkai: Star Rail боті!',
     welcomeDesc: 'Надішли мені <b>UID</b> свого акаунту (наприклад: <code>700123456</code>).\n\nТи зможеш зручно переглядати:\n• 👥 <b>Персонажів з вітрини</b>\n• 🎯 <b>Індекс боєздатності білда (/100) та оцінку</b>\n• 📊 <b>Характеристики (HP, ATK, Крит. шанс/шкода, Швидкість)</b>\n• 🛡 <b>Реліквії (сабстати в стовпчик) та бонуси сетів</b>\n• 🗡 <b>Світлові конуси з повною пасивною навичкою</b>\n• 🔮 <b>Рівні слідів та навичок</b>',
@@ -55,7 +156,7 @@ const I18N = {
     backToChar: '◀️ До персонажа',
     backToList: '👥 До списку',
     statsTitle: 'Характеристики:',
-    relicsTitle: 'Реліквії:',
+    relicsTitle: 'Реліквії та сети:',
     noRelics: 'Реліквії відсутні або не екіпіровані.',
     mainStat: 'Головний стат:',
     subStats: 'Сабстати:',
@@ -67,155 +168,22 @@ const I18N = {
     coneBaseStats: 'Базові показники конуса:',
     skillsTitle: 'Сліди та навички:',
     noSkills: 'Дані про навички недоступні.',
-    lvl: 'Рівень:',
+    lvl: 'Ур.',
     fetching: 'Завантажую дані для UID',
-    notFound: 'Акаунт із вказаним UID не знайдено. Перевір правильність введених цифр.',
-    serverError: 'Сталася помилка при завантаженні даних з серверів гри. Спробуй ще раз через хвилину.',
-    invalidUid: 'Будь ласка, надішли числовий <b>UID</b> (наприклад: <code>700123456</code>).'
-  },
-  ru: {
-    welcomeTitle: 'Добро пожаловать в Honkai: Star Rail бота!',
-    welcomeDesc: 'Отправь мне <b>UID</b> своего аккаунта (например: <code>700123456</code>).\n\nТы сможешь удобно просматривать:\n• 👥 <b>Персонажей с витрины</b>\n• 🎯 <b>Индекс боеспособности сборки (/100) и оценку</b>\n• 📊 <b>Характеристики (HP, ATK, Крит. шанс/урон, Скорость)</b>\n• 🛡 <b>Реликвии (сабстаты в столбик) и бонусы сетов</b>\n• 🗡 <b>Световые конусы с полным пассивным навыком</b>\n• 🔮 <b>Уровни следов и навыков</b>',
-    trailblazer: 'Первопроходец',
-    level: 'Уровень',
-    equilibrium: 'Равновесие',
-    achievements: 'Достижений',
-    status: 'Статус',
-    noSignature: '(без подписи)',
-    noChars: 'На витрине нет открытых персонажей или они скрыты в настройках игры.',
-    chooseChar: 'Выберите персонажа для просмотра:',
-    refreshBtn: '🔄 Обновить данные',
-    langBtn: '🌐 Язык: 🇷🇺',
-    path: 'Путь',
-    element: 'Стихия',
-    cone: 'Конус',
-    notEquipped: 'Не установлен',
-    activeSets: 'Бонусы сетов:',
-    noSets: 'Сеты не собраны',
-    chooseSection: 'Выберите раздел характеристик ниже:',
-    combatIndex: 'Индекс боеспособности:',
-    rollEff: 'Эффективность роллов:',
-    critValue: 'Крит-масса (CV):',
-    statsBtn: '📊 Характеристики',
-    relicsBtn: '🛡 Реликвии',
-    coneBtn: '🗡 Световой конус',
-    skillsBtn: '🔮 Следы и навыки',
-    backToChars: '◀️ К списку персонажей',
-    backToChar: '◀️ К персонажу',
-    backToList: '👥 К списку',
-    statsTitle: 'Характеристики:',
-    relicsTitle: 'Реликвии:',
-    noRelics: 'Реликвии отсутствуют или не экипированы.',
-    mainStat: 'Главный стат:',
-    subStats: 'Сабстаты:',
-    activeSetsBonus: 'Активные бонусы сетов:',
-    coneTitle: 'Световой конус:',
-    rarity: 'Редкость:',
-    superimposition: 'Наложение:',
-    passiveSkill: 'Пассивный навык:',
-    coneBaseStats: 'Базовые показатели конуса:',
-    skillsTitle: 'Следы и навыки:',
-    noSkills: 'Данные о навыках недоступны.',
-    lvl: 'Уровень:',
-    fetching: 'Загружаю данные для UID',
-    notFound: 'Аккаунт с указанным UID не найден. Проверь правильность введенных цифр.',
-    serverError: 'Произошла ошибка при загрузке данных с серверов игры. Попробуй еще раз через минуту.',
-    invalidUid: 'Пожалуйста, отправь числовой <b>UID</b> (например: <code>700123456</code>).'
-  },
-  en: {
-    welcomeTitle: 'Welcome to Honkai: Star Rail Bot!',
-    welcomeDesc: 'Send me your account <b>UID</b> (e.g. <code>700123456</code>).\n\nYou can easily inspect:\n• 👥 <b>Showcase Characters</b>\n• 🎯 <b>Combat Readiness Index (/100) & Grade</b>\n• 📊 <b>Combat Stats (HP, ATK, CRIT, Speed, etc.)</b>\n• 🛡 <b>Relics (column substats) & Set Bonuses</b>\n• 🗡 <b>Light Cones with full passive skill effect</b>\n• 🔮 <b>Trace & Skill levels</b>',
-    trailblazer: 'Trailblazer',
-    level: 'Level',
-    equilibrium: 'Equilibrium',
-    achievements: 'Achievements',
-    status: 'Status',
-    noSignature: '(no status)',
-    noChars: 'No showcase characters available or profile is hidden in game settings.',
-    chooseChar: 'Choose a character to inspect:',
-    refreshBtn: '🔄 Refresh data',
-    langBtn: '🌐 Lang: 🇬🇧',
-    path: 'Path',
-    element: 'Element',
-    cone: 'Light Cone',
-    notEquipped: 'Not equipped',
-    activeSets: 'Active Set Bonuses:',
-    noSets: 'No set bonuses active',
-    chooseSection: 'Select a section below:',
-    combatIndex: 'Combat Index:',
-    rollEff: 'Roll Efficiency:',
-    critValue: 'Crit Value (CV):',
-    statsBtn: '📊 Combat Stats',
-    relicsBtn: '🛡 Relics',
-    coneBtn: '🗡 Light Cone',
-    skillsBtn: '🔮 Traces & Skills',
-    backToChars: '◀️ Back to Roster',
-    backToChar: '◀️ Back to Character',
-    backToList: '👥 Back to Roster',
-    statsTitle: 'Combat Stats:',
-    relicsTitle: 'Relics & Sets:',
-    noRelics: 'No relics equipped.',
-    mainStat: 'Main Stat:',
-    subStats: 'Substats:',
-    activeSetsBonus: 'Active Set Bonuses:',
-    coneTitle: 'Light Cone:',
-    rarity: 'Rarity:',
-    superimposition: 'Superimposition:',
-    passiveSkill: 'Passive Skill:',
-    coneBaseStats: 'Light Cone Base Stats:',
-    skillsTitle: 'Traces & Skills:',
-    noSkills: 'Skill data is not available.',
-    lvl: 'Level:',
-    fetching: 'Fetching data for UID',
-    notFound: 'Account with this UID was not found. Please verify the digits.',
-    serverError: 'An error occurred fetching game data. Please try again shortly.',
-    invalidUid: 'Please send a valid numeric <b>UID</b> (e.g. <code>700123456</code>).'
+    notFound: 'Акаунт із вказаним UID не знайдено на серверах гри. Перевірте номер UID.',
+    serverError: 'Сталася помилка при завантаженні даних з серверів гри. Спробуйте ще раз через хвилину.',
+    invalidUid: 'Будь ласка, надішліть числовий <b>UID</b> (наприклад: <code>700123456</code>).'
   }
 };
 
 const SLOT_NAMES = {
-  uk: { 1: '👑 Голова', 2: '🧤 Руки', 3: '👕 Тіло', 4: '👟 Ноги (Черевики)', 5: '🔮 Планарна сфера', 6: '🎗 З\'єднувальна мотузка' },
   ru: { 1: '👑 Голова', 2: '🧤 Руки', 3: '👕 Тело', 4: '👟 Ноги (Сапоги)', 5: '🔮 Планарная сфера', 6: '🎗 Соединительная вервь' },
-  en: { 1: '👑 Head', 2: '🧤 Hands', 3: '👕 Body', 4: '👟 Feet (Boots)', 5: '🔮 Planar Sphere', 6: '🎗 Link Rope' }
+  en: { 1: '👑 Head', 2: '🧤 Hands', 3: '👕 Body', 4: '👟 Feet (Boots)', 5: '🔮 Planar Sphere', 6: '🎗 Link Rope' },
+  uk: { 1: '👑 Голова', 2: '🧤 Руки', 3: '👕 Тіло', 4: '👟 Ноги (Черевики)', 5: '🔮 Планарна сфера', 6: '🎗 З\'єднувальна мотузка' }
 };
-
-// Український словник термінів
-const UK_DICT = {
-  'Разрушение': 'Руйнування', 'Охота': 'Полювання', 'Эрудиция': 'Ерудиція', 'Гармония': 'Гармонія',
-  'Небытие': 'Небуття', 'Сохранение': 'Збереження', 'Изобилие': 'Достаток', 'Память': 'Пам\'ять',
-  'Физический': 'Фізичний', 'Огненный': 'Вогняний', 'Ледяной': 'Крижаний', 'Электрический': 'Електричний',
-  'Ветряной': 'Вітряний', 'Квантовый': 'Квантовий', 'Мнимый': 'Уявний',
-  'Базовая атака': 'Базова атака', 'Навык': 'Навичка', 'Сверхспособность': 'Надздібність (Ультимейт)',
-  'Талант': 'Талант', 'Техника': 'Техніка',
-  'НР': 'HP', 'Базовое НР': 'Базове HP', 'Сила атаки': 'Сила атаки', 'Базовая сила атаки': 'Базова сила атаки',
-  'Защита': 'Захист', 'Базовая защита': 'Базовий захист', 'Скорость': 'Швидкість', 'Крит. шанс': 'Крит. шанс',
-  'Крит. урон': 'Крит. шкода', 'Эффект пробития': 'Ефект пробиття', 'Скорость восстановления энергии': 'Відновлення енергії',
-  'Шанс попадания эффектов': 'Шанс влучання ефектів', 'Сопротивление эффектам': 'Стійкість до ефектів',
-  'Исходящее исцеление': 'Вихідне лікування', 'Повышение урона': 'Бонус шкоди',
-  'Бонус физ. урона': 'Бонус фіз. шкоди', 'Бонус огн. урона': 'Бонус вогняної шкоди',
-  'Бонус лед. урона': 'Бонус крижаної шкоди', 'Бонус электр. урона': 'Бонус електр. шкоди',
-  'Бонус ветр. урона': 'Бонус вітряної шкоди', 'Бонус квант. урона': 'Бонус квантової шкоди',
-  'Бонус мним. урона': 'Бонус уявної шкоди',
-  'Физический урон': 'Фізична шкода', 'Огненный урон': 'Вогняна шкода', 'Ледяной урон': 'Крижана шкода',
-  'Электрический урон': 'Електрична шкода', 'Ветряной урон': 'Вітряна шкода', 'Квантовый урон': 'Квантова шкода',
-  'Мнимый урон': 'Уявна шкода'
-};
-
-function localize(text, lang) {
-  if (!text || typeof text !== 'string') return text;
-  if (lang === 'uk') {
-    if (UK_DICT[text]) return UK_DICT[text];
-    let res = text;
-    for (const [ru, uk] of Object.entries(UK_DICT)) {
-      if (res.includes(ru)) res = res.replaceAll(ru, uk);
-    }
-    return res;
-  }
-  return text;
-}
 
 // ─────────────────────────────────────────────────────────────
-// ЗАВАНТАЖЕННЯ ДАНИХ ТА ПАСИВОК КОНУСІВ
+// ЗАВАНТАЖЕННЯ ОФІЦІЙНИХ ДАНИХ ТА ПАСИВОК ІЗ КЛІЄНТА ГРИ
 // ─────────────────────────────────────────────────────────────
 
 async function getConeRanks(lang = 'ru') {
@@ -232,7 +200,7 @@ async function getConeRanks(lang = 'ru') {
   return coneRanksCache[target] || {};
 }
 
-function formatConeSkill(coneData, rank = 1, lang = 'uk') {
+function formatConeSkill(coneData, rank = 1) {
   if (!coneData || !coneData.desc) return null;
   const rankIdx = Math.min(Math.max((rank || 1) - 1, 0), (coneData.params?.length || 1) - 1);
   const params = coneData.params?.[rankIdx] || [];
@@ -248,19 +216,19 @@ function formatConeSkill(coneData, rank = 1, lang = 'uk') {
   });
 
   return {
-    skill: localize(coneData.skill || 'Passive Skill', lang),
-    desc: localize(desc.replace(/<[^>]+>/g, ''), lang)
+    skill: coneData.skill || '',
+    desc: desc.replace(/<[^>]+>/g, '')
   };
 }
 
-function getCombatGrade(scoreNum, lang = 'uk') {
+function getCombatGrade(scoreNum, lang = 'ru') {
   const s = parseFloat(scoreNum) || 0;
   const labels = {
-    uk: { SSS: 'Елітний білд', SS: 'Відмінний білд', S: 'Добрий білд', A: 'Робочий білд', B: 'Базовий білд', C: 'Потребує покращення' },
     ru: { SSS: 'Элитный билд', SS: 'Отличный билд', S: 'Хороший билд', A: 'Рабочий билд', B: 'Базовый билд', C: 'Требует прокачки' },
-    en: { SSS: 'Elite Build', SS: 'Great Build', S: 'Good Build', A: 'Decent Build', B: 'Basic Build', C: 'Needs Upgrade' }
+    en: { SSS: 'Elite Build', SS: 'Great Build', S: 'Good Build', A: 'Decent Build', B: 'Basic Build', C: 'Needs Upgrade' },
+    uk: { SSS: 'Елітний білд', SS: 'Відмінний білд', S: 'Добрий білд', A: 'Робочий білд', B: 'Базовий білд', C: 'Потребує покращення' }
   };
-  const l = labels[lang] || labels.en;
+  const l = labels[lang] || labels.ru;
   if (s >= 92) return { grade: 'SSS', label: l.SSS, icon: '🔴' };
   if (s >= 82) return { grade: 'SS', label: l.SS, icon: '🟠' };
   if (s >= 72) return { grade: 'S', label: l.S, icon: '🟡' };
@@ -279,7 +247,7 @@ function getSafeAudit(character, lang = 'ru') {
   }
 }
 
-async function fetchHsrData(uid, lang = 'uk', force = false) {
+async function fetchHsrData(uid, lang = 'ru', force = false) {
   const fetchLang = lang === 'en' ? 'en' : 'ru';
   const cacheKey = `${uid}_${fetchLang}`;
 
@@ -306,11 +274,11 @@ async function fetchHsrData(uid, lang = 'uk', force = false) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// ГЕНЕРАТОРИ ЕКРАНІВ
+// ГЕНЕРАТОРИ ЕКРАНІВ ТА МЕНЮ
 // ─────────────────────────────────────────────────────────────
 
-function buildProfileScreen(data, uid, lang = 'uk') {
-  const t = I18N[lang] || I18N.en;
+function buildProfileScreen(data, uid, lang = 'ru') {
+  const t = I18N[lang] || I18N.ru;
   const player = data.player || {};
   const characters = data.characters || [];
 
@@ -349,7 +317,6 @@ function buildProfileScreen(data, uid, lang = 'uk') {
     if (row.length > 0) keyboard.push(row);
   }
 
-  // Кнопки дій та швидкого перемикання мови
   keyboard.push([
     { text: t.refreshBtn, callback_data: `ref:${uid}` },
     { text: t.langBtn, callback_data: `lang:${uid}` }
@@ -358,12 +325,12 @@ function buildProfileScreen(data, uid, lang = 'uk') {
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-async function buildCharacterOverview(character, uid, charIdx, lang = 'uk') {
-  const t = I18N[lang] || I18N.en;
+async function buildCharacterOverview(character, uid, charIdx, lang = 'ru') {
+  const t = I18N[lang] || I18N.ru;
   const stars = '⭐'.repeat(character.rarity || 4);
   const eidolon = `E${character.rank ?? 0}`;
-  const path = localize(character.path?.name || '-', lang);
-  const element = localize(character.element?.name || '-', lang);
+  const path = character.path?.name || '-';
+  const element = character.element?.name || '-';
 
   const audit = getSafeAudit(character, lang);
   const grade = audit ? getCombatGrade(audit.score, lang) : null;
@@ -373,7 +340,7 @@ async function buildCharacterOverview(character, uid, charIdx, lang = 'uk') {
   if (cone) {
     const coneRanks = await getConeRanks(lang);
     const coneData = coneRanks[cone.id];
-    const skill = formatConeSkill(coneData, cone.rank, lang);
+    const skill = formatConeSkill(coneData, cone.rank);
     const skillTitle = skill?.skill ? ` — <i>«${skill.skill}»</i>` : '';
     coneLine = `🗡 <b>${t.cone}:</b> ${cone.name} (S${cone.rank || 1}, ${t.lvl} ${cone.level})${skillTitle}`;
   }
@@ -425,8 +392,8 @@ ${setsText}
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-function buildCharacterStats(character, uid, charIdx, lang = 'uk') {
-  const t = I18N[lang] || I18N.en;
+function buildCharacterStats(character, uid, charIdx, lang = 'ru') {
+  const t = I18N[lang] || I18N.ru;
   const baseMap = {};
   (character.attributes || []).forEach(a => { baseMap[a.field] = a; });
   const addMap = {};
@@ -466,22 +433,22 @@ function buildCharacterStats(character, uid, charIdx, lang = 'uk') {
   const healTotal = addMap.heal_rate ? ((addMap.heal_rate.value || 0) * 100).toFixed(1) + '%' : null;
 
   const elemNames = {
-    uk: { physical_dmg: 'Фіз. шкода', fire_dmg: 'Вогняна шкода', ice_dmg: 'Крижана шкода', thunder_dmg: 'Електро шкода', wind_dmg: 'Вітряна шкода', quantum_dmg: 'Квантова шкода', imaginary_dmg: 'Уявна шкода' },
     ru: { physical_dmg: 'Физ. урон', fire_dmg: 'Огн. урон', ice_dmg: 'Лед. урон', thunder_dmg: 'Электр. урон', wind_dmg: 'Ветр. урон', quantum_dmg: 'Квант. урон', imaginary_dmg: 'Мним. урон' },
-    en: { physical_dmg: 'Physical DMG', fire_dmg: 'Fire DMG', ice_dmg: 'Ice DMG', thunder_dmg: 'Lightning DMG', wind_dmg: 'Wind DMG', quantum_dmg: 'Quantum DMG', imaginary_dmg: 'Imaginary DMG' }
+    en: { physical_dmg: 'Physical DMG', fire_dmg: 'Fire DMG', ice_dmg: 'Ice DMG', thunder_dmg: 'Lightning DMG', wind_dmg: 'Wind DMG', quantum_dmg: 'Quantum DMG', imaginary_dmg: 'Imaginary DMG' },
+    uk: { physical_dmg: 'Фіз. шкода', fire_dmg: 'Вогняна шкода', ice_dmg: 'Крижана шкода', thunder_dmg: 'Електро шкода', wind_dmg: 'Вітряна шкода', quantum_dmg: 'Квантова шкода', imaginary_dmg: 'Уявна шкода' }
   };
-  const activeLangElem = elemNames[lang] || elemNames.en;
+  const activeLangElem = elemNames[lang] || elemNames.ru;
 
   const elemDmgList = Object.keys(activeLangElem)
     .filter(f => addMap[f] && addMap[f].value > 0)
     .map(f => `${activeLangElem[f]}: <b>${((addMap[f].value || 0) * 100).toFixed(1)}%</b>`);
 
   const statLabels = {
-    uk: { hp: 'HP', atk: 'Сила атаки', def: 'Захист', spd: 'Швидкість', cr: 'Крит. шанс', cd: 'Крит. шкода', be: 'Ефект пробиття', err: 'Відновлення енергії', ehr: 'Шанс влучання ефектів', res: 'Стійкість до ефектів', heal: 'Вихідне лікування' },
     ru: { hp: 'HP', atk: 'Сила атаки', def: 'Защита', spd: 'Скорость', cr: 'Крит. шанс', cd: 'Крит. урон', be: 'Эффект пробития', err: 'Восст. энергии', ehr: 'Шанс попад. эфф.', res: 'Сопротивл. эфф.', heal: 'Исходящее исцел.' },
-    en: { hp: 'HP', atk: 'ATK', def: 'DEF', spd: 'Speed', cr: 'CRIT Rate', cd: 'CRIT DMG', be: 'Break Effect', err: 'Energy Regen', ehr: 'Effect Hit Rate', res: 'Effect RES', heal: 'Outgoing Healing' }
+    en: { hp: 'HP', atk: 'ATK', def: 'DEF', spd: 'Speed', cr: 'CRIT Rate', cd: 'CRIT DMG', be: 'Break Effect', err: 'Energy Regen', ehr: 'Effect Hit Rate', res: 'Effect RES', heal: 'Outgoing Healing' },
+    uk: { hp: 'HP', atk: 'Сила атаки', def: 'Захист', spd: 'Швидкість', cr: 'Крит. шанс', cd: 'Крит. шкода', be: 'Ефект пробиття', err: 'Відновлення енергії', ehr: 'Шанс влучання ефектів', res: 'Стійкість до ефектів', heal: 'Вихідне лікування' }
   };
-  const lbl = statLabels[lang] || statLabels.en;
+  const lbl = statLabels[lang] || statLabels.ru;
 
   let text = `
 📊 <b>${t.statsTitle} ${character.name}</b>
@@ -527,10 +494,10 @@ function buildCharacterStats(character, uid, charIdx, lang = 'uk') {
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-function buildCharacterRelics(character, uid, charIdx, lang = 'uk') {
-  const t = I18N[lang] || I18N.en;
+function buildCharacterRelics(character, uid, charIdx, lang = 'ru') {
+  const t = I18N[lang] || I18N.ru;
   const relics = character.relics || [];
-  const typeMap = SLOT_NAMES[lang] || SLOT_NAMES.en;
+  const typeMap = SLOT_NAMES[lang] || SLOT_NAMES.ru;
 
   let text = `🛡 <b>${t.relicsTitle} ${character.name}</b>\n──────────────\n`;
 
@@ -541,7 +508,7 @@ function buildCharacterRelics(character, uid, charIdx, lang = 'uk') {
 
     sorted.forEach(r => {
       const typeLabel = typeMap[r.type] || `Slot ${r.type}`;
-      const mainStatName = localize(r.main_affix?.name || 'Main', lang);
+      const mainStatName = r.main_affix?.name || 'Main';
       const mainStatVal = r.main_affix?.display || '-';
 
       text += `\n<b>${typeLabel}</b> (+${r.level || 0})\n<i>${r.name}</i>\n`;
@@ -551,9 +518,8 @@ function buildCharacterRelics(character, uid, charIdx, lang = 'uk') {
       if (subAffixes.length > 0) {
         text += `  • ${t.subStats}\n`;
         subAffixes.forEach(s => {
-          const sName = localize(s.name, lang);
           const sVal = s.display?.startsWith('+') ? s.display : `+${s.display}`;
-          text += `    ▫️ ${sName}: <b>${sVal}</b>\n`;
+          text += `    ▫️ ${s.name}: <b>${sVal}</b>\n`;
         });
       }
     });
@@ -582,8 +548,8 @@ function buildCharacterRelics(character, uid, charIdx, lang = 'uk') {
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-async function buildCharacterCone(character, uid, charIdx, lang = 'uk') {
-  const t = I18N[lang] || I18N.en;
+async function buildCharacterCone(character, uid, charIdx, lang = 'ru') {
+  const t = I18N[lang] || I18N.ru;
   const cone = character.light_cone;
 
   if (!cone) {
@@ -598,15 +564,15 @@ async function buildCharacterCone(character, uid, charIdx, lang = 'uk') {
   }
 
   const star = '⭐'.repeat(cone.rarity || 4);
-  const path = localize(cone.path?.name || character.path?.name || '-', lang);
-  const attributes = (cone.attributes || []).map(a => `• ${localize(a.name, lang)}: <b>${a.display}</b>`).join('\n');
+  const path = cone.path?.name || character.path?.name || '-';
+  const attributes = (cone.attributes || []).map(a => `• ${a.name}: <b>${a.display}</b>`).join('\n');
 
   const coneRanks = await getConeRanks(lang);
   const coneData = coneRanks[cone.id];
-  const passive = formatConeSkill(coneData, cone.rank, lang);
+  const passive = formatConeSkill(coneData, cone.rank);
 
   let passiveBlock = '';
-  if (passive) {
+  if (passive && passive.desc) {
     passiveBlock = `
 🔮 <b>${t.passiveSkill}</b> <b>«${passive.skill}»</b>
 <i>${passive.desc}</i>
@@ -640,8 +606,8 @@ ${attributes || '—'}
   return { text, reply_markup: { inline_keyboard: keyboard } };
 }
 
-function buildCharacterSkills(character, uid, charIdx, lang = 'uk') {
-  const t = I18N[lang] || I18N.en;
+function buildCharacterSkills(character, uid, charIdx, lang = 'ru') {
+  const t = I18N[lang] || I18N.ru;
   const skills = (character.skills || []).filter(s => s.type_text && s.level > 0);
 
   let text = `🔮 <b>${t.skillsTitle} ${character.name}</b>\n──────────────\n\n`;
@@ -650,8 +616,7 @@ function buildCharacterSkills(character, uid, charIdx, lang = 'uk') {
     text += `<i>${t.noSkills}</i>`;
   } else {
     skills.forEach(s => {
-      const typeText = localize(s.type_text, lang);
-      text += `• <b>${s.name}</b> (<i>${typeText}</i>)\n   ${t.lvl} <b>${s.level}</b>${s.max_level ? `/${s.max_level}` : ''}\n\n`;
+      text += `• <b>${s.name}</b> (<i>${s.type_text}</i>)\n   ${t.lvl} <b>${s.level}</b>${s.max_level ? `/${s.max_level}` : ''}\n\n`;
     });
   }
 
@@ -712,7 +677,7 @@ export default async function handler(req, res) {
     const messageId = cb.message?.message_id;
     const data = cb.data || '';
     const userLang = detectUserLang(cb.from, chatId);
-    const t = I18N[userLang] || I18N.en;
+    const t = I18N[userLang] || I18N.ru;
 
     await sendTg('answerCallbackQuery', { callback_query_id: cb.id });
 
@@ -724,10 +689,10 @@ export default async function handler(req, res) {
       const parts = data.split(':');
       const action = parts[0];
 
-      // Перемикання мови по кнопці (uk -> en -> ru -> uk)
+      // Перемикання мови по кнопці (ru -> en -> uk -> ru)
       if (action === 'lang') {
         const uid = parts[1];
-        const nextLang = userLang === 'uk' ? 'en' : (userLang === 'en' ? 'ru' : 'uk');
+        const nextLang = userLang === 'ru' ? 'en' : (userLang === 'en' ? 'uk' : 'ru');
         userLangPreferences.set(chatId, nextLang);
 
         const hsrData = await fetchHsrData(uid, nextLang);
@@ -846,7 +811,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   }
 
-  // 2. ОБРОБКА ЗВИЧАЙНИХ ТЕКСТОВИХ ПОВІДОМЛЕНЬ
+  // 2. ОБРОБКА ТЕКСТОВИХ ПОВІДОМЛЕНЬ
   const msg = update.message || update.edited_message;
   if (!msg || !msg.chat || !msg.chat.id) {
     return res.status(200).json({ ok: true });
@@ -855,7 +820,7 @@ export default async function handler(req, res) {
   const chatId = msg.chat.id;
   const rawText = (msg.text || '').trim();
   const userLang = detectUserLang(msg.from, chatId);
-  const t = I18N[userLang] || I18N.en;
+  const t = I18N[userLang] || I18N.ru;
 
   if (rawText === '/start' || rawText === '/help') {
     const welcome = `

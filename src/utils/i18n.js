@@ -184,6 +184,7 @@ export const translations = {
     guideStep2Title: "2. Задержка обновления серверов",
     guideStep2Desc: "Сервера игры кэшируют витрину с задержкой 5–15 минут. После смены реликвий телепортируйтесь в другую локацию и перезапустите игру, прежде чем обновлять страницу.",
     rosterTitle: "Витрина аккаунта",
+    rosterHint: "Выберите персонажа • Нажмите ← или Escape для возврата к UID",
     rosterCharsSuffix: (count) => {
       const rem10 = count % 10;
       const rem100 = count % 100;
@@ -214,6 +215,7 @@ export const translations = {
     planarSetBroken: "1/2 разорванный сет",
     planarRollQuality: "Качество роллов планарок (Сфера + Вервь)",
     planarCv: "Крит. масса планарок (Planar CV)",
+    verifiedData: "Официальные данные из игры",
     weakPiece: "Худший артефакт",
     goldRelic: "5★ реликвия",
     rollTag: (upgrades) => `+${upgrades || 0}`,
