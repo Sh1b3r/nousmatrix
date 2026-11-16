@@ -142,6 +142,17 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const kitRotationSupported = kitRotation && KIT_ROTATION_STATUSES.has(kitRotation.status);
   const kitCd = (kitRotation && kitRotation.passiveCritDmg) || 0;
   const kitResPen = (kitRotation && kitRotation.passiveResPen) || 0;
+  // Безусловные следы кита: +CRIT Rate (Гиацина A2 «Gloomy Grin», +100% ей и
+  // Little Ica) — применяется ко всем инстансам ротации. Условная часть следа
+  // (+25% Outgoing Healing при лечении цели <=50% HP) не моделируется.
+  const kitCritRate = (kitRotation && kitRotation.passiveCritRate) || 0;
+  // Состояние «After Rain» (Гиацина): +30% Max HP и +600 всем союзникам — влияет
+  // только на инстансы, помеченные inAfterRain: true.
+  const kitHpPercent = (kitRotation && kitRotation.passiveHpPercent) || 0;
+  const kitHpFlat = (kitRotation && kitRotation.passiveHpFlat) || 0;
+  // Сумма накопленного лечения — явный ввод сценария (урон Little Ica считается
+  // от неё). Движок сам её не придумывает.
+  const healingTally = Math.max(0, Number(options.healingTally) || 0);
   const primaryEnemy = enemyScenario.targets[0];
   const enemy = {
     lv: primaryEnemy.level,
@@ -393,15 +404,22 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       const b = actionTeamBuffs.buffs;
       const actionAtkPercent = baseAttackForPercent * (Number(b.atkPercent) || 0) / 100;
       const actionAtk = baseAtk + (Number(b.atkGrant) || 0) + actionAtkPercent;
-      const actionCr = Math.min(1, (baseCr + (Number(b.crGrant) || 0)) / 100);
+      const actionCr = Math.min(1, (baseCr + (Number(b.crGrant) || 0) + kitCritRate) / 100);
       const actionCd = (baseCd + (Number(b.cdGrant) || 0) + kitCd) / 100;
-      const actionDmgBonus = 1 + (baseDmgBoost + (Number(b.dmgBoost) || 0) + (kitRotation.passiveDmgBoost || 0)) / 100;
+      // inst.extraDmgPercent: усилители, действующие только на конкретный
+      // инстанс (Талант Гиацины +80%x3 урона — только для Little Ica).
+      const actionDmgBonus = 1 + (baseDmgBoost + (Number(b.dmgBoost) || 0) + (kitRotation.passiveDmgBoost || 0)
+        + (Number(inst.extraDmgPercent) || 0)) / 100;
       const actionCritMultiplier = calculateExpectedCritMultiplier(
         actionCr * 100,
         actionCd * 100,
         Number(b.critVuln) || 0
       );
-      const actionScalingStat = kitRotation.hpScale ? combatHp : actionAtk;
+      const actionScalingStat = inst.healTallyFraction != null
+        ? healingTally * Number(inst.healTallyFraction)
+        : kitRotation.hpScale
+          ? (inst.inAfterRain ? combatHp * (1 + kitHpPercent / 100) + kitHpFlat : combatHp)
+          : actionAtk;
       const actionKitDmgBonus = actionDmgBonus;
       const selectedTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, Number(inst.targets) || 1)));
       // Множитель на цель: главный таргет — inst.mv (+ BE-часть), остальные — adjacentMv
@@ -440,11 +458,14 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     });
     // Проверка энергетического баланса цикла: суммарный прирост энергии заполнителей
     // должен покрывать стоимость сверхспособности (без учёта энергии союзников — намеренно).
+    // ERR профиля (sp_rate) умножает плоский прирост энергии от способностей.
     const energyCycle = kitRotation.energy;
     if (energyCycle && Number(energyCycle.ultCost) > 0) {
+      const energyRegenRate = 1 + (Number(mainStats.sp_rate) || 0) / 100;
       const fillerGain = kitRotation.instances
         .filter((inst) => !inst.isUlt)
-        .reduce((sum, inst) => sum + (Number(inst.energyGain) || 0) * Math.max(1, Number(inst.count) || 1), 0);
+        .reduce((sum, inst) => sum + (Number(inst.energyGain) || 0) * Math.max(1, Number(inst.count) || 1), 0)
+        * energyRegenRate;
       const startEnergy = Number(energyCycle.startEnergyPercent || 0) / 100 * Number(energyCycle.ultCost)
         + (Number(energyCycle.startEnergyFlat) || 0);
       if (fillerGain + startEnergy < Number(energyCycle.ultCost)) {
@@ -457,6 +478,72 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       buffTimingStatus = "verified-schedule";
     } else if (actionBuffStatuses.size === 1 && actionBuffStatuses.has("no-numeric-buffs-configured")) {
       buffTimingStatus = "no-numeric-buffs-configured";
+    }
+    // Урон мемо-спрайта от накопленного лечения (Гиацина): если tally не задан,
+    // шаг остаётся с нулевым уроном и выдаётся явное предупреждение.
+    const usesHealTally = kitRotation.instances.some((inst) => inst.healTallyFraction != null);
+    if (usesHealTally && !(healingTally > 0)) {
+      calculationWarnings.push(isRu
+        ? "Урон Little Ica считается от накопленного лечения: задайте сумму лечения в поле ввода сценария."
+        : "Little Ica damage scales with accumulated healing: set the healing tally input.");
+    }
+    // Суперпробитие кита (Светлячок, след A4 «Autoreactive Armor»): при ЭП
+    // >=150%/300% истощение удара конвертируется в 100%/150% Super Break урона.
+    // Формула (HoYoWiki): база(level) x (истощение/10) x (1+ЭП) x коэф. A4 x
+    // DEF x RES x уязвимость. Без крита, ATK и DMG%. Цель должна быть пробита.
+    // Число срабатываний — явный ввод сценария (options.superBreakProcs).
+    const sbConfig = kitRotation.superBreak;
+    const sbProcs = Math.max(0, Math.floor(Number(options.superBreakProcs) || 0));
+    if (sbConfig && sbProcs > 0) {
+      const bePercent = beFraction * 100;
+      const sbTier = (sbConfig.tiers || []).slice()
+        .sort((a, b) => Number(b.bePercent) - Number(a.bePercent))
+        .find((tier) => bePercent >= Number(tier.bePercent));
+      const minBeThreshold = Math.min(...(sbConfig.tiers || []).map((tier) => Number(tier.bePercent)));
+      if (!sbTier) {
+        calculationWarnings.push(isRu
+          ? `Суперпробитие не сработало: учтённый ЭП ${bePercent.toFixed(0)}% ниже порога ${minBeThreshold}%.`
+          : `Super Break did not trigger: counted BE ${bePercent.toFixed(0)}% is below the ${minBeThreshold}% threshold.`);
+      } else if (primaryEnemy.isBroken !== true) {
+        calculationWarnings.push(isRu
+          ? "Суперпробитие пропущено: для него нужна пробитая главная цель."
+          : "Super Break omitted: the primary target must be Weakness-Broken.");
+      } else {
+        const baseBreakDamage = calculateBreakBaseDamage(charLv);
+        const sbTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, Number(sbConfig.targets) || 3)));
+        const beMultiplier = 1 + bePercent / 100;
+        const effTPrimary = Number(sbConfig.toughnessReductionPrimary) * (1 + teamBreakEff / 100);
+        const effTAdjacent = (Number(sbConfig.toughnessReductionAdjacent) || 0) * (1 + teamBreakEff / 100);
+        let perProc = 0;
+        let sbPeak = 0;
+        sbTargets.forEach((target, index) => {
+          const toughnessReduction = index === 0 ? effTPrimary : effTAdjacent;
+          if (!(toughnessReduction > 0)) return;
+          const sbFactors = getTargetDamageFactors(target, {
+            vulnerabilityPercent: teamVuln + teamBreakVuln,
+            includeToughness: false
+          });
+          const hit = Math.round(baseBreakDamage * (toughnessReduction / 10) * beMultiplier
+            * sbTier.factor * sbFactors.damageFactor);
+          perProc += hit;
+          sbPeak = Math.max(sbPeak, hit);
+        });
+        const sbDmg = perProc * sbProcs;
+        rotationTotalDamage += sbDmg;
+        peakHitDamage = Math.max(peakHitDamage, sbPeak);
+        steps.push({
+          stepNumber: steps.length + 1,
+          charName: mainChar.name,
+          avatar: mainChar.avatar?.icon || null,
+          phase: isRu ? "СУПЕРПРОБИТИЕ (СЛЕД A4)" : "SUPER BREAK (A4 TRACE)",
+          actionNameRu: `Суперпробитие ×${sbProcs} (${(sbTier.factor * 100).toFixed(0)}% коэф. A4)`,
+          actionNameEn: `Super Break x${sbProcs} (${(sbTier.factor * 100).toFixed(0)}% A4 coefficient)`,
+          descRu: `Формула Super Break: база ур. ${charLv} × (истощение ${effTPrimary.toFixed(0)} + ${effTAdjacent.toFixed(0)}×смежные)/10 × (1+ЭП ${bePercent.toFixed(0)}%) × коэф. ${sbTier.factor} × Защита × Сопротивление × Уязвимость. Без крита, ATK и DMG%. Число срабатываний — явный ввод сценария.`,
+          descEn: `Super Break formula: Lv${charLv} base x (toughness reduction ${effTPrimary.toFixed(0)} + ${effTAdjacent.toFixed(0)}x adjacent)/10 x (1+BE ${bePercent.toFixed(0)}%) x coefficient ${sbTier.factor} x DEF x RES x vulnerability. No crit, ATK, or DMG%. Proc count is an explicit scenario input.`,
+          damage: sbDmg,
+          isDamageAction: true
+        });
+      }
     }
     // Repeated ultimates need a real action-value and energy timeline. This fixed script represents only its listed damage instances.
   } else if (isHimeko) {

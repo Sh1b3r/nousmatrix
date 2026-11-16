@@ -24,6 +24,16 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   // прогнозирует пробития сам: пользователь задаёт их как допущение сценария.
   const [breakProcsInput, setBreakProcsInput] = useState("");
   const breakProcs = Math.max(0, Math.floor(Number(breakProcsInput) || 0));
+  // Сумма накопленного лечения (Гиацина): урон мемо-спрайта Little Ica считается
+  // от неё. Значение бойовое (как Newbud у Кастории), поэтому — явный ввод.
+  const [healingTallyInput, setHealingTallyInput] = useState("");
+  const healingTally = Math.max(0, Number(healingTallyInput) || 0);
+  // Число срабатываний Суперпробития кита (Светлячок, след A4). Формула —
+  // официальная (HoYoWiki); число срабатываний — допущение пользователя.
+  const [superBreakProcsInput, setSuperBreakProcsInput] = useState("");
+  const superBreakProcs = Math.max(0, Math.floor(Number(superBreakProcsInput) || 0));
+  const usesHealingTallyInput = charId === "1409";
+  const usesSuperBreakInput = charId === "1310";
   const currentSquad = squads[selectedSquadIdx] || squads[0] || null;
   const teamData = TEAM_DATA_BY_CHARACTER[charId] || null;
   const mocDataSource = TEAM_STATISTICS_SOURCES.find((source) => source.id === "mocdata-processed")?.datasetUrl;
@@ -48,9 +58,11 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
     return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, {
       enemyMode,
       language: lang,
-      breakProcs
+      breakProcs,
+      healingTally,
+      superBreakProcs
     });
-  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode, breakProcs]);
+  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode, breakProcs, healingTally, superBreakProcs]);
   // Reference-еталон Fribbels: виміряний для цього білда (команда Fribbels),
   // показується як орієнтир 0/100/200, не як оцінка нашого урону.
   const benchmarkReference = useMemo(() => getBenchmarkReference(charId), [charId]);
@@ -207,6 +219,35 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 placeholder="0"
                 value={breakProcsInput}
                 onChange={(e) => setBreakProcsInput(e.target.value)}
+              />
+            </label>
+          )}
+          {!isTimelineCalculation && usesHealingTallyInput && (
+            <label className="sim-break-procs" title={isRu ? "Сумма накопленного лечения Гиацины и Little Ica в текущем бою; мемо-навык Ica наносит 20% от неё и снимает 50%" : "Accumulated healing tally of Hyacine and Little Ica in this battle; Ica's memosprite skill deals 20% of it and clears 50%"}>
+              <span>{isRu ? "Сумма лечения" : "Heal tally"}</span>
+              <input
+                className="sim-break-procs-input"
+                type="number"
+                min={0}
+                step={100}
+                placeholder="0"
+                value={healingTallyInput}
+                onChange={(e) => setHealingTallyInput(e.target.value)}
+              />
+            </label>
+          )}
+          {!isTimelineCalculation && usesSuperBreakInput && (
+            <label className="sim-break-procs" title={isRu ? "Число срабатываний Суперпробития (след A4): при ЭП ≥150%/300% — 100%/150% урона за срабатывание; требует пробитой цели" : "Number of Super Break procs (A4 trace): 100%/150% damage per proc at BE >=150%/300%; requires a broken target"}>
+              <span>{isRu ? "Суперпробития" : "Super Breaks"}</span>
+              <input
+                className="sim-break-procs-input"
+                type="number"
+                min={0}
+                max={20}
+                step={1}
+                placeholder="0"
+                value={superBreakProcsInput}
+                onChange={(e) => setSuperBreakProcsInput(e.target.value)}
               />
             </label>
           )}

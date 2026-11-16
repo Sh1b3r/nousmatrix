@@ -20,6 +20,16 @@
 // - adjacentMv: motion value on non-primary targets (blast). Omitted => same as mv (AoE).
 // - beScale / beScaleAdjacent: motion value added as (fraction x Break Effect),
 //   capped by kitRotation.beCapPercent (percentage points).
+// - extraDmgPercent: instance-scoped DMG bonus (Hyacine Talent +80% x3 -> only
+//   Little Ica instances; must not buff her Basic ATK).
+// - healTallyFraction: damage per hit = options.healingTally x fraction
+//   (Hyacine's Little Ica: 20% of the accumulated healing tally).
+// - inAfterRain: instance happens while the "After Rain" state is active
+//   (Hyacine Ult buff +30% Max HP +600 -> applies via passiveHpPercent/passiveHpFlat).
+// Rotation-level extras: passiveCritRate (unconditional +CRIT Rate trace),
+// passiveHpPercent / passiveHpFlat (After Rain), superBreak { toughnessReductionPrimary,
+// toughnessReductionAdjacent, tiers, targets } (Firefly A4: kit-native Super Break,
+// triggered by the explicit options.superBreakProcs input).
 
 export const ROTATIONS = {
   // Химеко: Нова (1510) — полный цикл сверхспособности «Starblazer» по реальному киту (4.7)
@@ -282,11 +292,24 @@ export const ROTATIONS = {
         note: "Enhanced Skill (0.2xBE+200%) primary, (0.1xBE+100%) adjacent; Enhanced Basic 150%; base Skill 200%, +60% Max Energy; Ult costs 240; Talent: start with >=50% energy."
       }
     ],
-    noteRu: "Цикл: ульт (240 энергии; талант даёт старт ≥50%) → окно Complete Combustion: 2 усиленных навыка (200% + 0.2×ЭП по главной, 100% + 0.1×ЭП по смежным) + 1 усиленная базовая (150%) → 1 обычный навык (+144 энергии = 60% от макс). Энергия: 144 + 120 (старт) = 264 ≥ 240. Длина окна CC (2 навыка + 1 базовая) — допущение по таймеру SPD 70. Не включено: Super Break (след A4, 100%/150% при ЭП ≥150%/300%), A6 (+0.8% ЭП за каждые 10 ATK свыше 1800), траты HP, кап ЭП 360% учитывается.",
-    noteEn: "Cycle: ult (240 energy; Talent grants >=50% start) -> Complete Combustion window: 2 enhanced skills (200% + 0.2xBE primary, 100% + 0.1xBE adjacent) + 1 enhanced basic (150%) -> 1 base skill (+144 energy = 60% of Max). Energy: 144 + 120 (start) = 264 >= 240. The CC window length (2 skills + 1 basic) assumes the SPD 70 countdown. Excluded: Super Break (A4 trace, 100%/150% at BE >=150%/300%), A6 (+0.8% BE per 10 ATK above 1800), HP costs; the 360% BE cap is applied.",
+    noteRu: "Цикл: ульт (240 энергии; талант даёт старт ≥50%) → окно Complete Combustion: 2 усиленных навыка (200% + 0.2×ЭП по главной, 100% + 0.1×ЭП по смежным) + 1 усиленная базовая (150%) → 1 обычный навык (+144 энергии = 60% от макс). Энергия: 144 + 120 (старт) = 264 ≥ 240. Длина окна CC (2 навыка + 1 базовая) — допущение по таймеру SPD 70. Суперпробитие (след A4, HoYoWiki-формула): при пробитой цели и ЭП ≥150%/300% каждый удар конвертирует истощение (30 + 15×смежные) в 100%/150% Super Break урона — число срабатываний задаётся явным вводом «Суперпробития», коэффициент выбирается по учтённому ЭП (кап 360%). Формула без крита, ATK и DMG%. Не включено: A6 (+0.8% ЭП за каждые 10 ATK свыше 1800 — не входит в учтённый ЭП), траты HP.",
+    noteEn: "Cycle: ult (240 energy; Talent grants >=50% start) -> Complete Combustion window: 2 enhanced skills (200% + 0.2xBE primary, 100% + 0.1xBE adjacent) + 1 enhanced basic (150%) -> 1 base skill (+144 energy = 60% of Max). Energy: 144 + 120 (start) = 264 >= 240. The CC window length (2 skills + 1 basic) assumes the SPD 70 countdown. Super Break (A4 trace, HoYoWiki formula): against a broken target at BE >=150%/300% each hit converts its toughness reduction (30 + 15x adjacent) into 100%/150% Super Break DMG — the proc count is set by the explicit Super Break input, and the coefficient is selected from the counted BE (capped at 360%). No crit, ATK, or DMG% in the formula. Excluded: A6 (+0.8% BE per 10 ATK above 1800 — not part of the counted BE), HP costs.",
     hpScale: false,
     beCapPercent: 360,
     energy: { ultCost: 240, startEnergyPercent: 50 },
+    // След A4 «Module β: Autoreactive Armor» (Prydwen): в состоянии Complete
+    // Combustion при ЭП >=150%/300% истощение удара конвертируется в 1 срабатывание
+    // 100%/150% Super Break урона. Усиленный навык снимает 30 стойкости (+15 по
+    // смежным) — это T eligible для формулы Super Break.
+    superBreak: {
+      toughnessReductionPrimary: 30,
+      toughnessReductionAdjacent: 15,
+      targets: 3,
+      tiers: [
+        { bePercent: 300, factor: 1.5 },
+        { bePercent: 150, factor: 1.0 }
+      ]
+    },
     instances: [
       {
         key: "e_skill",
@@ -413,6 +436,94 @@ export const ROTATIONS = {
         descRu: "Расход 30% текущего HP союзников за ход заряжает Newbud до следующего призыва (не числится).",
         descEn: "Each use drains 30% of allies' current HP, charging Newbud toward the next summon (not numerically modeled).",
         mv: 0.5, adjacentMv: 0.3, targets: 3, count: 2
+      }
+    ]
+  },
+
+  // Гиацина (1409) — цикл ульты: ульт (140 энергии, призыв Ica, After Rain 3 хода)
+  // → базовая + навык внутри окна (Ica автоматически кастует Rainclouds после
+  // каждой способности Гиацины) → базовая + навык вне окна. Урон — базовая
+  // (50% Max HP) и мемо-навык Little Ica (20% от накопленного лечения, явный ввод).
+  "1409": {
+    status: "kit-verified",
+    gameVersion: "4.7",
+    buffUptimeStatus: "unverified",
+    evidence: [
+      {
+        type: "official-kit-mirror",
+        source: "prydwen.gg",
+        url: "https://www.prydwen.gg/star-rail/characters/hyacine/",
+        capturedOn: "2026-11-16",
+        note: "Basic 50% MaxHP (energy 20); Skill heal 8%+160 / 10%+200 Ica (energy 30); Ult 140 energy (+5): heal + After Rain 3 turns (+30% Max HP +600 all); Talent: Ica MaxHP = 50% of Hyacine's, healing -> Ica DMG +80% for 2 turns, max 3 stacks; Memosprite Skill 'Rainclouds, Time to Go!': Wind AoE = 20% of healing tally, clears 50% (energy 5, break 10); Memosprite Talent: while in After Rain Ica auto-uses Rainclouds after each Hyacine ability; summon grants +15 energy; A2: Hyacine & Ica CRIT Rate +100%."
+      }
+    ],
+    noteRu: "Цикл одной ульты: ульт (140 энергии, +5 после; призыв Ica даёт +15 энергии по мемо-таланту «Soar, Unto the Sunlight») → окно After Rain (3 хода): базовая (50% Max HP ×1.3+600 от бафа +30% Max HP) + навык-лечение (энергия 30, урона нет), вне окна ещё одна базовая и один навык. После каждой способности в окне Ica автоматически кастует мемо-навык «Rainclouds, Time to Go!» — 3 касты: Wind AoE = 20% от введённой суммы накопленного лечения (каждая каста снимает 50% tally; в модели каждая каста использует один и тот же введённый tally — приближение steady-state). Талант: DMG Ica +80%×3 стака (максимум, +240%) — только для Ica, базовая не бафается. След A2 «Gloomy Grin»: +100% CRIT Rate Гиацине и Ica — безусловный, учтён. Энергия цикла: 5 + 20+30+20+30 + 3×5 = 120 + 15 (призыв) = 135 < 140 — без энергии союзников/входящих атак и ERR цикл не замыкается (выдаётся предупреждение; в бою Гиацина добирает энергию от ударов по ней и союзников). Не включено (аптайм/условия не подтверждены): A6 (при СК >200: +20% Max HP и +1% исцеления за каждые 10 лишних СК — условие по билду), условная часть A2 (+25% исцеления при HP цели ≤50% — лечение, не урон), техника (вне боя), +2% Max HP+20 всем союзникам от лечения Ica (в tally не числится), энергия союзников. Эйдолоны E1/E4/E6 не применяются: в профиле E0.",
+    noteEn: "One-ult cycle: ult (140 energy, +5 after; summoning Ica grants +15 energy via the 'Soar, Unto the Sunlight' memosprite talent) -> After Rain window (3 turns): Basic ATK (50% Max HP x1.3+600 from the +30% Max HP buff) + healing Skill (30 energy, no damage), plus one more Basic and Skill outside the window. After each ability inside the window, Ica automatically casts the 'Rainclouds, Time to Go!' memosprite skill — 3 casts: Wind AoE = 20% of the entered accumulated healing tally (each cast clears 50% of the tally; the model applies the same entered tally to every cast — a steady-state approximation). Talent: Ica DMG +80%x3 stacks (maximum, +240%) — Ica only, the Basic ATK is not buffed. A2 trace 'Gloomy Grin': +100% CRIT Rate for Hyacine and Ica — unconditional, counted. Cycle energy: 5 + 20+30+20+30 + 3x5 = 120 + 15 (summon) = 135 < 140 — without ally/incoming energy and ERR the cycle does not close (a warning is emitted; in battle Hyacine gains energy from being attacked and from allies). Excluded (uptime/conditions unverified): A6 (SPD >200: +20% Max HP and +1% outgoing healing per 10 excess SPD — build-conditional), the conditional A2 part (+25% healing on targets <=50% HP — healing, not damage), the out-of-combat Technique, the +2% Max HP +20 group heal from Ica's Talent healing (not part of the tally input), ally energy. Eidolons E1/E4/E6 do not apply: the profile is E0.",
+    hpScale: true,
+    passiveCritRate: 100,
+    passiveHpPercent: 30,
+    passiveHpFlat: 600,
+    energy: { ultCost: 140, startEnergyFlat: 15 },
+    instances: [
+      {
+        key: "ult",
+        phaseRu: "СВЕРХСПОСОБНОСТЬ — AFTER RAIN",
+        phaseEn: "ULTIMATE — AFTER RAIN",
+        actionRu: "Ульт «We Who Fly Into Twilight»: лечение + состояние After Rain (3 хода, +30% Max HP +600 всем)",
+        actionEn: "Ult 'We Who Fly Into Twilight': healing + After Rain state (3 turns, +30% Max HP +600 all)",
+        descRu: "Стоимость 140 энергии, +5 энергии после. Урона нет; баф Max HP учтён в базовой внутри окна. Призыв Ica даёт +15 энергии.",
+        descEn: "Costs 140 energy, +5 after. No damage; the Max HP buff is applied to the in-window Basic. Summoning Ica grants +15 energy.",
+        mv: 0, targets: 1, count: 1, energyGain: 5, isUlt: true
+      },
+      {
+        key: "basic_ar",
+        phaseRu: "ОКНО AFTER RAIN — БАЗОВАЯ АТАКА",
+        phaseEn: "AFTER RAIN WINDOW — BASIC ATK",
+        actionRu: "Базовая «When Breeze Kisses Cirrus»: 50% Max HP по одной цели (баф After Rain: ×1.3 +600)",
+        actionEn: "Basic 'When Breeze Kisses Cirrus': 50% MaxHP to one target (After Rain buff: x1.3 +600)",
+        descRu: "50% Max HP ×(1+30%) +600 внутри After Rain. Ica отвечает авто-кастом мемо-навыка.",
+        descEn: "50% Max HP x(1+30%) +600 inside After Rain. Ica answers with an automatic memosprite skill.",
+        mv: 0.5, targets: 1, count: 1, energyGain: 20, inAfterRain: true
+      },
+      {
+        key: "skill_ar",
+        phaseRu: "ОКНО AFTER RAIN — НАВЫК",
+        phaseEn: "AFTER RAIN WINDOW — SKILL",
+        actionRu: "Навык «Love Over the Rainbow»: лечение всем союзникам (8%+160; Ica 10%+200), урона нет",
+        actionEn: "Skill 'Love Over the Rainbow': heals all allies (8%+160; Ica 10%+200), no damage",
+        descRu: "Лечение пополняет tally (учитывается через явный ввод суммы лечения). +30 энергии. Ica отвечает авто-кастом.",
+        descEn: "The healing feeds the tally (counted through the explicit healing-tally input). +30 energy. Ica answers with an automatic cast.",
+        mv: 0, targets: 1, count: 1, energyGain: 30, inAfterRain: true
+      },
+      {
+        key: "ica_storm",
+        phaseRu: "ОКНО AFTER RAIN — АВТО-КАСТЫ LITTLE ICA",
+        phaseEn: "AFTER RAIN WINDOW — LITTLE ICA AUTO-CASTS",
+        actionRu: "3× «Rainclouds, Time to Go!»: Wind AoE = 20% от суммы накопленного лечения (каждая снимает 50% tally)",
+        actionEn: "3x 'Rainclouds, Time to Go!': Wind AoE = 20% of the accumulated healing tally (each clears 50%)",
+        descRu: "Урон = 20% × введённая сумма лечения × (1 + DMG% + 240% Таланта) × крит (A2: +100% CR). Талант в максимуме (3 стака) — допущение.",
+        descEn: "Damage = 20% x entered healing tally x (1 + DMG% + 240% Talent) x crit (A2: +100% CR). Talent at maximum (3 stacks) — an assumption.",
+        mv: 1, healTallyFraction: 0.2, extraDmgPercent: 240, targets: 3, count: 3, energyGain: 5
+      },
+      {
+        key: "basic_plain",
+        phaseRu: "ХОД ВНЕ ОКНА — БАЗОВАЯ АТАКА",
+        phaseEn: "TURN OUTSIDE WINDOW — BASIC ATK",
+        actionRu: "Базовая «When Breeze Kisses Cirrus»: 50% Max HP по одной цели",
+        actionEn: "Basic 'When Breeze Kisses Cirrus': 50% MaxHP to one target",
+        descRu: "После истечения After Rain бафа Max HP нет. Ica не действует вне окна (СК 0, вне очерёдности).",
+        descEn: "After Rain has expired, so no Max HP buff. Ica does not act outside the window (SPD 0, off the action order).",
+        mv: 0.5, targets: 1, count: 1, energyGain: 20
+      },
+      {
+        key: "skill_plain",
+        phaseRu: "ХОД ВНЕ ОКНА — НАВЫК",
+        phaseEn: "TURN OUTSIDE WINDOW — SKILL",
+        actionRu: "Навык «Love Over the Rainbow»: лечение всем союзникам, урона нет",
+        actionEn: "Skill 'Love Over the Rainbow': heals all allies, no damage",
+        descRu: "Лечение пополняет tally (учитывается через явный ввод). +30 энергии к следующей ульте.",
+        descEn: "The healing feeds the tally (counted through the explicit input). +30 energy toward the next ult.",
+        mv: 0, targets: 1, count: 1, energyGain: 30
       }
     ]
   }
