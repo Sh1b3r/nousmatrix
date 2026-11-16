@@ -402,6 +402,17 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       ? Math.max(0, Number(kitRotation.beCapPercent)) / 100
       : Number.POSITIVE_INFINITY;
     const beFraction = Math.min(Math.max(0, Number(mainStats.be || 0)) / 100, beCapFraction);
+    // След A6 Светлячка: +0.8% ЭП за каждые 10 АТК свыше 1800. Безусловный
+    // след; условие проверяется по боевой АТК профиля (вместе с конусом).
+    const a6BeBonus = kitRotation.atkBeBonus && combatAtk > Number(kitRotation.atkBeBonus.atkThreshold || 0)
+      ? (Number(kitRotation.atkBeBonus.bePer10) || 0)
+        * Math.floor((combatAtk - Number(kitRotation.atkBeBonus.atkThreshold)) / 10)
+      : 0;
+    // След A6 Гиацины: при СК >200 — +20% Max HP ей и Ica. Условие
+    // проверяется по СК профиля, поэтому это не «неподтверждённый аптайм».
+    const spdHpMult = kitRotation.spdHpBonus && Number(mainStats.spd || 0) > Number(kitRotation.spdHpBonus.spdThreshold || 0)
+      ? 1 + (Number(kitRotation.spdHpBonus.hpPercent) || 0) / 100
+      : 1;
     kitRotation.instances.forEach((inst) => {
       const actionTeamBuffs = getTeamBuffsForAction(squad, matchedTeammates, inst.key);
       actionBuffStatuses.add(actionTeamBuffs.status);
@@ -409,7 +420,11 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       const actionAtkPercent = baseAttackForPercent * (Number(b.atkPercent) || 0) / 100;
       const actionAtk = baseAtk + (Number(b.atkGrant) || 0) + actionAtkPercent;
       const actionCr = Math.min(1, (baseCr + (Number(b.crGrant) || 0) + kitCritRate) / 100);
-      const actionCd = (baseCd + (Number(b.cdGrant) || 0) + kitCd) / 100;
+      // inst.extraCritDmgPercent: усреднённый по ударам атаки КУ-бонус, который
+      // гарантирован структурой самой атаки (Рёв ДХПЛ: удары 4–7 дают
+      // +12/24/36/48% КУ → в среднем 120/7).
+      const actionCd = (baseCd + (Number(b.cdGrant) || 0) + kitCd
+        + (Number(inst.extraCritDmgPercent) || 0)) / 100;
       // inst.extraDmgPercent: усилители, действующие только на конкретный
       // инстанс (Талант Гиацины +80%x3 урона — только для Little Ica).
       const actionDmgBonus = 1 + (baseDmgBoost + (Number(b.dmgBoost) || 0) + (kitRotation.passiveDmgBoost || 0)
@@ -422,22 +437,28 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       const actionScalingStat = inst.healTallyFraction != null
         ? healingTally * Number(inst.healTallyFraction)
         : kitRotation.hpScale
-          ? (inst.inAfterRain ? combatHp * (1 + kitHpPercent / 100) + kitHpFlat : combatHp)
+          ? (inst.inAfterRain
+            ? combatHp * spdHpMult * (1 + kitHpPercent / 100) + kitHpFlat
+            : combatHp * spdHpMult)
           : actionAtk;
       const actionKitDmgBonus = actionDmgBonus;
       const selectedTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, Number(inst.targets) || 1)));
+      // Бонус ЭП кита: A2 Светлячка действует только в окне CC, A6 — всегда.
+      const instBeBonus = a6BeBonus + (inst.inCompleteCombustion ? kitBeBonus : 0);
       // Множитель на цель: главный таргет — inst.mv (+ BE-часть), остальные — adjacentMv
       // (для AoE без adjacentMv значения совпадают со старым поведением).
       const primaryMv = Number(inst.mv) + (Number(inst.beScale) || 0)
-        * (inst.inCompleteCombustion ? Math.min((Number(mainStats.be || 0) + kitBeBonus) / 100, beCapFraction) : beFraction);
+        * Math.min((Number(mainStats.be || 0) + instBeBonus) / 100, beCapFraction);
       const adjacentMvBase = inst.adjacentMv !== undefined ? Number(inst.adjacentMv) : Number(inst.mv);
       const adjacentBeScale = inst.beScaleAdjacent !== undefined ? Number(inst.beScaleAdjacent) : (Number(inst.beScale) || 0);
       const targetMotionValues = selectedTargets.map((target, index) => {
         const mv = index === 0 ? primaryMv : adjacentMvBase + adjacentBeScale
-          * (inst.inCompleteCombustion ? Math.min((Number(mainStats.be || 0) + kitBeBonus) / 100, beCapFraction) : beFraction);
+          * Math.min((Number(mainStats.be || 0) + instBeBonus) / 100, beCapFraction);
         const factors = getTargetDamageFactors(target, {
           defShredPercent: Number(b.defShred) || 0,
-          resPenPercent: (Number(b.resPen) || 0) + kitResPen,
+          // inst.resPenPercent: RES PEN, действующий только на конкретный
+          // инстанс (ульта Зеле проходит в Усилении: след A4 +25% Quantum RES PEN).
+          resPenPercent: (Number(b.resPen) || 0) + kitResPen + (Number(inst.resPenPercent) || 0),
           vulnerabilityPercent: (Number(b.allVuln) || 0) + (Number(b.vuln) || 0)
         });
         return mv * factors.damageFactor;
@@ -501,9 +522,10 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     const sbConfig = kitRotation.superBreak;
     const sbProcs = Math.max(0, Math.floor(Number(options.superBreakProcs) || 0));
     if (sbConfig && sbProcs > 0) {
-      // ЭП для порогов A4 учитывает A2 (+25% в окне CC) и кап кита.
-      const bePercent = Math.min(Math.max(0, Number(mainStats.be || 0)) + kitBeBonus,
-        kitRotation.beCapPercent != null ? Number(kitRotation.beCapPercent) : Number.POSITIVE_INFINITY);
+      // ЭП для порогов A4: полный боевой ЭП (профиль + A2 в окне CC + A6 от
+      // АТК). По hsrzone кап 360% применяется только к коэффициенту ЭП
+      // усиленного навыка; конвертация Super Break использует полный ЭП.
+      const bePercent = Math.max(0, Number(mainStats.be || 0)) + kitBeBonus + a6BeBonus;
       const sbTier = (sbConfig.tiers || []).slice()
         .sort((a, b) => Number(b.bePercent) - Number(a.bePercent))
         .find((tier) => bePercent >= Number(tier.bePercent));
