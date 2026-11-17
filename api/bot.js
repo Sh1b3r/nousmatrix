@@ -463,6 +463,7 @@ function buildCharacterStats(character, uid, charIdx, lang = 'ru') {
   }
 
   text += `
+  
 ❤️ <b>${lbl.hp}:</b> ${hpTotal} <i>(${hpBase} +${hpAdd})</i>
 ⚔️ <b>${lbl.atk}:</b> ${atkTotal} <i>(${atkBase} +${atkAdd})</i>
 🛡 <b>${lbl.def}:</b> ${defTotal} <i>(${defBase} +${defAdd})</i>
