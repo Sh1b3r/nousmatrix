@@ -6,22 +6,9 @@ const characterNamesById = {
   ...(teamStatistics.characterNamesById || {}),
   ...(approvedTeams.characterNamesById || {})
 };
-const trustedEvidenceClasses = new Set([
-  "verified-statistics",
-  "verified-guide",
-  "official-creator-guide"
-]);
-const trustedStatisticsHosts = new Set(["astravoy.net", "huggingface.co"]);
 
 function normalizeName(value) {
   return String(value || "").normalize("NFKC").toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
-}
-
-function hasValidCharacterIds(squad) {
-  return (squad.teammates || []).every((teammate) => {
-    const identity = characterNamesById[String(teammate.id || "")];
-    return Boolean(identity?.en) && normalizeName(teammate.nameEn) === normalizeName(identity.en);
-  });
 }
 
 function satisfiesTeamRequirements(squad) {
@@ -34,210 +21,166 @@ function satisfiesTeamRequirements(squad) {
   });
 }
 
-function hasTrustedEvidence(squad) {
-  return (squad.evidence || []).some((entry) =>
-    entry.source === "user-confirmed"
-    || (trustedEvidenceClasses.has(entry.trustClass)
-      && entry.sourceUrl
-      && entry.gameVersion === approvedTeams.gameVersion)
-  );
-}
-
-function hasTrustedHistoricalStatistics(squad) {
-  return (squad.evidence || []).some((entry) => {
-    if (entry.trustClass !== "verified-statistics" || !entry.sourceUrl) return false;
-
-    try {
-      const sourceUrl = new URL(entry.sourceUrl);
-      const isAstraVoy = sourceUrl.hostname === "astravoy.net"
-        && sourceUrl.pathname.startsWith("/hsr/team-comps/");
-      const isMocData = sourceUrl.hostname === "huggingface.co"
-        && sourceUrl.pathname.startsWith("/datasets/LvlUrArti/MocDataProcessed/");
-      return trustedStatisticsHosts.has(sourceUrl.hostname)
-        && (isAstraVoy || isMocData)
-        && entry.gameVersion === squad.sourceVersion;
-    } catch {
-      return false;
-    }
-  });
-}
-
-function compareVersions(left, right) {
-  const leftParts = String(left || "").split(".").map(Number);
-  const rightParts = String(right || "").split(".").map(Number);
-  const length = Math.max(leftParts.length, rightParts.length);
-
-  for (let index = 0; index < length; index += 1) {
-    const difference = (leftParts[index] || 0) - (rightParts[index] || 0);
-    if (difference) return difference;
-  }
-
-  return 0;
-}
-
-function isReviewedCurrentTeam(squad) {
-  const reviewedStatuses = new Set(["verified", "guide-supported", "user-confirmed"]);
-  const currentVersion = approvedTeams.gameVersion;
-  return reviewedStatuses.has(squad.status)
-    && squad.sourceVersion === currentVersion
-    && hasValidCharacterIds(squad)
-    && hasTrustedEvidence(squad)
-    && (squad.evidence || []).some((entry) =>
-      entry.gameVersion === currentVersion || entry.source === "user-confirmed"
-    );
-}
-
-function formatPercent(value) {
-  return Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: 2 });
-}
-
-function formatModeResult(source) {
-  if (source.averageResult === null || source.averageResult === undefined) return "";
-  if (source.mode === "pf") return `avg score ${Math.round(source.averageResult).toLocaleString("en-US")}`;
-  return `avg ${Number(source.averageResult).toFixed(2)} cycles`;
-}
-
-function buildHistoricalSquad(characterId, record, index) {
-  const teammateIds = (record.characterIds || []).filter((id) => String(id) !== String(characterId));
-  if (teammateIds.length !== 3) return null;
-
-  const teammates = teammateIds.map((id) => {
-    const identity = characterNamesById[String(id)];
-    if (!identity?.en) return null;
-    return {
-      id: String(id),
-      nameRu: identity.ru || identity.en,
-      nameEn: identity.en,
-      icon: `icon/character/${id}.png`,
-      roleRu: "Союзник в статистической четвёрке",
-      roleEn: "Observed teammate",
-      dataSourceType: "observed-team-statistics",
-      buffDescRu: "Источник подтверждает совместный состав, но баффы и их длительность не входят в расчёт.",
-      buffDescEn: "The source records this lineup; ally buffs and their uptime are not included in the calculation."
-    };
-  });
-  if (teammates.some((teammate) => !teammate)) return null;
-
-  const sources = record.sources || [];
-  const astraVoy = sources.find((source) => source.sourceId === "astravoy-team-comp-finder");
-  const modeSources = sources.filter((source) => source.sourceId === "mocdata-processed");
-  const statsVersion = modeSources.length ? "4.6.4" : (astraVoy?.gameVersion || "4.6");
-  const sourceCoverage = astraVoy
-    ? "4.6 / 4.5 / 4.4"
-    : [...new Set(modeSources.map((source) => source.gameVersion))].join(", ");
-  const nameRu = teammates.map((teammate) => teammate.nameRu).join(" + ");
-  const nameEn = teammates.map((teammate) => teammate.nameEn).join(" + ");
-  const sourceSummaryRu = [];
-  const sourceSummaryEn = [];
-
-  if (astraVoy) {
-    sourceSummaryRu.push(`AstraVoy ${sourceCoverage}: ${Number(astraVoy.observations).toLocaleString("ru-RU")} наблюдений (${formatPercent(astraVoy.usagePct)}%) из ${Number(astraVoy.characterObservationCount).toLocaleString("ru-RU")} по персонажу; ${astraVoy.contextCount} контекстов.`);
-    sourceSummaryEn.push(`AstraVoy ${sourceCoverage}: ${Number(astraVoy.observations).toLocaleString("en-US")} observations (${formatPercent(astraVoy.usagePct)}%) out of ${Number(astraVoy.characterObservationCount).toLocaleString("en-US")} for this character across ${astraVoy.contextCount} contexts.`);
-  }
-
-  for (const source of modeSources) {
-    const result = formatModeResult(source);
-    sourceSummaryRu.push(`${source.modeName} ${source.gameVersion}: использование ${formatPercent(source.usagePct)}%; место в исходной таблице ${source.rank}${result ? `, ${result}` : ", средний результат не опубликован"}.`);
-    sourceSummaryEn.push(`${source.modeName} ${source.gameVersion}: ${formatPercent(source.usagePct)}% usage; source table rank ${source.rank}${result ? `, ${result}` : ", average result not published"}.`);
-  }
-
-  const caveatRu = "Частота показывает зарегистрированное использование, а не рекомендацию или доказательство лучшей силы. Данные относятся к версиям до 4.7 и не ограничены E0; MocDataProcessed не указывает число наблюдений каждой четвёрки. Баффы этой статистической команды в симулятор не подставляются.";
-  const caveatEn = "Usage frequency records what appeared in the data; it is not a recommendation or proof of team strength. These records predate 4.7 and are not E0-filtered; MocDataProcessed does not publish a sample count for every lineup. The simulator does not apply buffs for this statistical lineup.";
-  const firstSource = sources[0];
-
-  return {
-    id: `observed_${characterId}_${index + 1}`,
-    nameRu,
-    nameEn,
-    descRu: `${sourceSummaryRu.join(" ")} ${caveatRu}`,
-    descEn: `${sourceSummaryEn.join(" ")} ${caveatEn}`,
-    sourceVersion: statsVersion,
-    sourceCoverage,
-    sourceUpdatedAt: teamStatistics.statisticsSources?.[0]?.retrievedAt || teamStatistics.statisticsSources?.[1]?.retrievedAt || null,
-    sourceUrl: firstSource?.sourceUrl || firstSource?.sourceFileUrl || null,
-    sourceUrls: sources.map((source) => source.sourceFileUrl || source.sourceUrl).filter(Boolean),
-    sourceBadgeRu: astraVoy
-      ? `статистика ${astraVoy.gameVersion} · ${Number(astraVoy.observations).toLocaleString("ru-RU")}`
-      : `статистика ${statsVersion} · ${modeSources.length} режим${modeSources.length === 1 ? "" : modeSources.length < 5 ? "а" : "ов"}`,
-    sourceBadgeEn: astraVoy
-      ? `stats ${astraVoy.gameVersion} · ${Number(astraVoy.observations).toLocaleString("en-US")}`
-      : `stats ${statsVersion} · ${modeSources.length} mode${modeSources.length === 1 ? "" : "s"}`,
-    sourceType: "observed-team-statistics",
-    status: "historical-statistics",
-    isEstimate: true,
-    assumptions: { eidolon: "unknown", mode: "historical-observations" },
-    evidence: sources.map((source) => ({
-      source: source.sourceName,
-      sourceUrl: source.sourceUrl,
-      gameVersion: source.gameVersion,
-      retrievedAt: teamStatistics.statisticsSources?.find((item) => item.id === source.sourceId)?.retrievedAt || null,
-      metric: source.metric,
-      trustClass: "verified-statistics",
-      note: source.sourceId === "astravoy-team-comp-finder"
-        ? `${source.observations} team observations; ${formatPercent(source.usagePct)}% of this character's ${source.characterObservationCount} recorded teams; version coverage ${source.coveredVersions.join(", ")}.`
-        : `${source.modeName} ${source.gameVersion}: ${formatPercent(source.usagePct)}% usage, source rank ${source.rank}, average result ${source.averageResult ?? "unavailable"}. Underlying dataset is MocData.`
-    })),
-    isUserConfirmed: false,
-    teammates
-  };
-}
-
-function isReviewedHistoricalTeam(squad) {
-  return squad.status === "historical-statistics"
-    && compareVersions(squad.sourceVersion, approvedTeams.gameVersion) < 0
-    && hasValidCharacterIds(squad)
-    && hasTrustedHistoricalStatistics(squad);
-}
-
-const characterIds = new Set([
-  ...Object.keys(approvedTeams.teamsByCharacter || {}),
-  ...Object.keys(teamStatistics.charactersById || {})
-]);
-
-function getTeamSignature(characterId, squad) {
-  return [characterId, ...(squad.teammates || []).map((teammate) => String(teammate.id || ""))]
-    .sort()
-    .join("|");
-}
-
-// Statistical records are kept separate from current or user-confirmed lineups
-// and remain visibly marked with their actual source version.
 export const CHARACTER_SQUADS = Object.fromEntries(
-  [...characterIds].map((characterId) => {
-    const currentTeams = (approvedTeams.teamsByCharacter?.[characterId] || [])
-      .filter((squad) => isReviewedCurrentTeam(squad));
-    const currentSignatures = new Set(currentTeams.map((squad) => getTeamSignature(characterId, squad)));
-    const historicalTeams = (teamStatistics.teamsByCharacter?.[characterId] || [])
-      .map((record, index) => buildHistoricalSquad(characterId, record, index))
-      .filter((squad) => squad
-        && isReviewedHistoricalTeam(squad)
-        && !currentSignatures.has(getTeamSignature(characterId, squad)));
-    const allowedTeams = [...currentTeams, ...historicalTeams].filter((squad) =>
+  Object.entries(approvedTeams.teamsByCharacter || {}).map(([characterId, squads]) => [
+    characterId,
+    (squads || []).filter((squad) =>
       satisfiesTeamRequirements(squad)
       && !(squad.teammates || []).some((teammate) =>
         (excludedTeammates[characterId] || []).includes(String(teammate.id || ""))
       )
-    );
-    return [characterId, allowedTeams];
-  })
+    )
+  ])
 );
 
-export const TEAM_DATA_BY_CHARACTER = teamStatistics.charactersById || {};
-export const TEAM_STATISTICS_SOURCES = teamStatistics.statisticsSources || [];
+export const TEAM_DATA_BY_CHARACTER = teamStatistics.teamsByCharacter || {};
+export const TEAM_STATISTICS_SOURCES = teamStatistics.sources || [];
 
 export function rankSquadsByShowcase(squads, showcaseCharacters = []) {
   const roster = Array.isArray(showcaseCharacters) ? showcaseCharacters : [];
   if (!Array.isArray(squads) || squads.length < 2 || !roster.length) return squads || [];
-  const showcasedIds = new Set(roster.map((character) => String(character.id || "")));
+
   return squads
-    .map((squad, sourceOrder) => ({
-      squad,
-      sourceOrder,
-      userConfirmed: squad.status === "user-confirmed" ? 1 : 0,
-      rosterMatches: (squad.teammates || []).filter((teammate) => showcasedIds.has(String(teammate.id || ""))).length
-    }))
-    .sort((a, b) => b.userConfirmed - a.userConfirmed || b.rosterMatches - a.rosterMatches || a.sourceOrder - b.sourceOrder)
+    .map((squad, sourceOrder) => {
+      const rosterMatches = (squad.teammates || []).reduce((count, teammate) => {
+        const hasChar = roster.some((c) => String(c.id || "") === String(teammate.id || ""));
+        return hasChar ? count + 1 : count;
+      }, 0);
+      return { squad, rosterMatches, sourceOrder };
+    })
+    .sort((a, b) => b.rosterMatches - a.rosterMatches || a.sourceOrder - b.sourceOrder)
     .map(({ squad }) => squad);
+}
+
+const SUPPORT_DEFAULT_STATS = {
+  "1313": { atk: 3100, def: 1400, hp: 12000, cr: 5, cd: 170, be: 0 },
+  "1309": { atk: 4000, def: 1600, hp: 13000, cr: 5, cd: 130, be: 0 },
+  "1512": { atk: 4000, def: 1600, hp: 13000, cr: 5, cd: 130, be: 0 },
+  "1306": { atk: 3200, def: 1400, hp: 12000, cr: 5, cd: 160, be: 0 },
+  "1501": { atk: 2600, def: 1400, hp: 12000, cr: 10, cd: 150, be: 0 },
+  "1303": { atk: 2900, def: 1600, hp: 13000, cr: 5, cd: 100, be: 180 },
+  "1304": { atk: 1500, def: 4000, hp: 14000, cr: 5, cd: 100, be: 0 },
+  "1513": { atk: 3200, def: 1400, hp: 12000, cr: 80, cd: 160, be: 0 },
+  "1208": { atk: 1000, def: 1800, hp: 16800, cr: 5, cd: 100, be: 0 },
+  "1225": { atk: 2700, def: 1200, hp: 12000, cr: 5, cd: 100, be: 280 },
+  "1403": { atk: 3000, def: 1400, hp: 14000, cr: 5, cd: 130, be: 0 },
+  "1217": { atk: 2900, def: 1400, hp: 13000, cr: 5, cd: 100, be: 0 },
+  "1101": { atk: 2400, def: 1400, hp: 12000, cr: 5, cd: 160, be: 0 },
+  "1202": { atk: 2600, def: 1200, hp: 12000, cr: 5, cd: 100, be: 0 },
+  "1110": { atk: 2000, def: 1200, hp: 12000, cr: 5, cd: 100, be: 100 },
+  "1006": { atk: 2800, def: 1200, hp: 12000, cr: 10, cd: 100, be: 100, ehr: 96 },
+  "1506": { atk: 3400, def: 1400, hp: 12000, cr: 100, cd: 180, be: 0 },
+  "1218": { atk: 2500, def: 1200, hp: 12000, cr: 5, cd: 100, be: 0, ehr: 120 },
+  "8005": { atk: 2600, def: 1200, hp: 12000, cr: 5, cd: 100, be: 220 },
+  "8007": { atk: 2800, def: 1400, hp: 12000, cr: 60, cd: 130, be: 0 },
+  "1314": { atk: 1800, def: 1200, hp: 12000, cr: 5, cd: 100, be: 150 },
+  "1222": { atk: 2600, def: 1200, hp: 12000, cr: 5, cd: 100, be: 160 }
+};
+
+export function computeSupportBuffs(rec, stats = {}) {
+  const id = String(rec.id || "");
+  const buffs = { ...(rec.buffValues || {}) };
+  const tag = `${rec.nameRu || ""} ${rec.nameEn || ""}`.toLowerCase();
+  const num = (v) => (typeof v === "number" ? v : 0);
+  let descRu = null;
+  let descEn = null;
+
+  if (id === "1313" || tag.includes("воскресенье") || tag.includes("sunday")) {
+    const cd = num(stats.cd) || 170;
+    const cdGrant = parseFloat((30 + cd * 0.20).toFixed(1));
+    buffs.cdGrant = Math.max(num(buffs.cdGrant), cdGrant);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 60);
+    buffs.crGrant = Math.max(num(buffs.crGrant), 20);
+    descRu = `100% Продвижение, +${cdGrant}% КУ (от ${cd.toFixed(0)}% КУ), +60% Урон, +20% КШ`;
+    descEn = `100% Target Advance, +${cdGrant}% Crit DMG, +60% DMG, +20% CRIT Rate`;
+  } else if (id === "1309" || id === "1512" || tag.includes("зарянка") || tag.includes("robin")) {
+    const atk = num(stats.atk) || 4000;
+    const atkGrant = Math.round(atk * 0.228 + 200);
+    buffs.atkGrant = Math.max(num(buffs.atkGrant), atkGrant);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
+    buffs.fuaCd = Math.max(num(buffs.fuaCd), 25);
+    descRu = `100% Продвижение отряда, +${atkGrant} ATK, +50% Урон, +25% КУ бонус-атак`;
+    descEn = `100% Team Advance, +${atkGrant} ATK, +50% DMG, +25% FUA Crit DMG`;
+  } else if (id === "1306" || id === "1501" || tag.includes("искорка") || tag.includes("sparkle") || tag.includes("спаркси")) {
+    const cd = num(stats.cd) || 160;
+    const cdGrant = parseFloat((45 + cd * 0.24).toFixed(1));
+    buffs.cdGrant = Math.max(num(buffs.cdGrant), cdGrant);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 48);
+    buffs.atkPercent = Math.max(num(buffs.atkPercent), 15);
+    descRu = `+50% Продвижение, +${cdGrant}% КУ, +48% Урон, +15% ATK`;
+    descEn = `+50% Advance, +${cdGrant}% Crit DMG, +48% DMG, +15% ATK`;
+  } else if (id === "1303" || tag.includes("жуань") || tag.includes("ruan")) {
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 68);
+    buffs.resPen = Math.max(num(buffs.resPen), 25);
+    buffs.breakEff = Math.max(num(buffs.breakEff), 50);
+    buffs.beBoost = Math.max(num(buffs.beBoost), 20);
+    descRu = `+68% Урон, +25% All-Type RES PEN, +10% SPD, +50% Эффективность пробития`;
+    descEn = `+68% DMG, +25% All-Type RES PEN, +10% SPD, +50% Break Efficiency`;
+  } else if (id === "1110" || tag.includes("пела") || tag.includes("pela")) {
+    buffs.defShred = Math.max(num(buffs.defShred), 56);
+    descRu = `-56% Защита врагов (сверхспособность 40% + конус «Решимость» 16%)`;
+    descEn = `-56% Enemy DEF Shred (Ultimate 40% + Resolution 16%)`;
+  } else if (id === "1006" || id === "1506" || tag.includes("волк") || tag.includes("wolf")) {
+    buffs.defShred = Math.max(num(buffs.defShred), 53);
+    buffs.resPen = Math.max(num(buffs.resPen), 13);
+    descRu = `-53% Защита (ульт 45% + дебафф 8%), +13% All-Type RES Shred`;
+    descEn = `-53% DEF Shred (Ult 45% + Bug 8%), +13% All-Type RES Shred`;
+  } else if (id === "1218" || tag.includes("цзяоцю") || tag.includes("jiaoqiu")) {
+    buffs.allVuln = Math.max(num(buffs.allVuln), 35);
+    buffs.vuln = Math.max(num(buffs.vuln), 15);
+    descRu = `+35% Общая уязвимость (Ashen Roast), +15% Уязвимость сверхспособностей`;
+    descEn = `+35% All-Type Vulnerability (Ashen Roast), +15% Ultimate Vulnerability`;
+  } else if (id === "1202" || tag.includes("тиньюнь") || tag.includes("tingyun")) {
+    buffs.atkPercent = Math.max(num(buffs.atkPercent), 50);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 50);
+    descRu = `+50% ATK (навык), +50% Урон (ульт), +50 энергии цели`;
+    descEn = `+50% ATK (Skill), +50% DMG (Ult), +50 Energy Grant`;
+  } else if (id === "1101" || tag.includes("броня") || tag.includes("bronya")) {
+    const cd = num(stats.cd) || 160;
+    const cdGrant = parseFloat((16 + cd * 0.16).toFixed(1));
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 66);
+    buffs.cdGrant = Math.max(num(buffs.cdGrant), cdGrant);
+    buffs.atkPercent = Math.max(num(buffs.atkPercent), 55);
+    descRu = `100% Продвижение, +66% Урон, +${cdGrant}% КУ, +55% ATK`;
+    descEn = `100% Advance, +66% DMG, +${cdGrant}% Crit DMG, +55% ATK`;
+  } else if (id === "1304" || tag.includes("авантюрин") || tag.includes("aventurine")) {
+    buffs.critVuln = Math.max(num(buffs.critVuln), 15);
+    descRu = `+15% Крит-уязвимость врагов (ульт), +50% Сопротивление эффектам отряда`;
+    descEn = `+15% Crit DMG Vulnerability (Ult), +50% Team Effect RES`;
+  } else if (id === "1208" || tag.includes("фу сюань") || tag.includes("fu xuan")) {
+    buffs.crGrant = Math.max(num(buffs.crGrant), 12);
+    buffs.cdGrant = Math.max(num(buffs.cdGrant), 30);
+    descRu = `+12% КШ, +30% КУ отряду, распределение урона матрицы`;
+    descEn = `+12% CRIT Rate, +30% Crit DMG, Matrix DMG Mitigation`;
+  } else if (id === "1217" || tag.includes("хохо") || tag.includes("huohuo")) {
+    buffs.atkPercent = Math.max(num(buffs.atkPercent), 40);
+    descRu = `+40% ATK, +20% энергии отряду, непрерывное рассеивание дебаффов`;
+    descEn = `+40% ATK, +20% Team Energy, Continuous Cleanse`;
+  } else if (id === "8005" || id === "8006" || tag.includes("первопроходец (гармония)") || tag.includes("trailblazer (harmony)")) {
+    buffs.breakEff = Math.max(num(buffs.breakEff), 30);
+    buffs.beBoost = Math.max(num(buffs.beBoost), 30);
+    buffs.superBreakFactor = Math.max(num(buffs.superBreakFactor), 1.6);
+    descRu = `Суперпробитие отряда (160%), +30% Эффективность пробития, передача ЭП`;
+    descEn = `Team Super Break (160%), +30% Break Efficiency, BE Share`;
+  } else if (id === "1225" || tag.includes("фуга") || tag.includes("fugue")) {
+    buffs.defShred = Math.max(num(buffs.defShred), 40);
+    buffs.breakEff = Math.max(num(buffs.breakEff), 30);
+    buffs.superBreakFactor = Math.max(num(buffs.superBreakFactor), 1.0);
+    descRu = `-40% DEF Shred, +30% Эффективность пробития, активация Суперпробития`;
+    descEn = `-40% DEF Shred, +30% Break Efficiency, Super Break Activation`;
+  } else if (id === "1403" || tag.includes("трибби") || tag.includes("tribbie")) {
+    buffs.resPen = Math.max(num(buffs.resPen), 30);
+    buffs.allVuln = Math.max(num(buffs.allVuln), 24);
+    descRu = `+30% All-Type RES PEN, +24% Общая уязвимость врагов`;
+    descEn = `+30% All-Type RES PEN, +24% All-Type Vulnerability`;
+  } else if (id === "1222" || tag.includes("линша") || tag.includes("lingsha")) {
+    buffs.breakVuln = Math.max(num(buffs.breakVuln), 25);
+    buffs.breakEff = Math.max(num(buffs.breakEff), 50);
+    descRu = `+25% Уязвимость к пробитию, +50% Эффективность пробития`;
+    descEn = `+25% Break DMG Vulnerability, +50% Break Efficiency`;
+  }
+
+  return { buffs, descRu, descEn };
 }
 
 function readProfileStats(character) {
@@ -271,19 +214,24 @@ export function matchSquadWithShowcase(squad, showcaseCharacters = [], lang = "r
     const fallbackName = isRu
       ? rec.nameRu || rec.names?.[0] || "Союзник"
       : rec.nameEn || rec.names?.[1] || rec.names?.[0] || "Teammate";
-    const dynamicBuffs = identityMismatch ? {} : { ...(rec.buffValues || {}) };
+
     const characterName = matchedChar?.name || fallbackName;
     const characterIcon = matchedChar?.avatar?.icon || matchedChar?.icon || rec.icon || (rec.id ? `icon/character/${rec.id}.png` : null);
-    const unknownBuildSuffix = rec.dataSourceType === "observed-team-statistics"
-      ? (isRu
-        ? " (в статистике зафиксирован состав, но баффы и их активность не рассчитываются)"
-        : " (the statistics record the lineup; ally buffs and their uptime are not calculated)")
-      : (isRu
-        ? " (фиксированные эффекты из этой записи; статы и длительность баффов не рассчитываются)"
-        : " (fixed effects from this team record; build stats and buff uptime are not calculated)");
-    const identityMismatchSuffix = isRu
-      ? " ID персонажа и имя из профиля не совпали; союзник исключён из расчёта."
-      : " Profile name does not match this character ID; this ally is excluded from calculations.";
+
+    const statsForBuffs = matchedChar && !identityMismatch
+      ? readProfileStats(matchedChar)
+      : (SUPPORT_DEFAULT_STATS[String(rec.id || "")] || { atk: 3000, def: 1400, hp: 12000, cr: 5, cd: 120, be: 100 });
+
+    const computed = computeSupportBuffs(rec, statsForBuffs);
+    const dynamicBuffs = identityMismatch ? {} : computed.buffs;
+    const isShowcase = Boolean(matchedChar) && !identityMismatch;
+
+    const sourceTagRu = isShowcase
+      ? " (статы из витрины)"
+      : " (эталонная синергия отряда)";
+    const sourceTagEn = isShowcase
+      ? " (stats from showcase)"
+      : " (squad baseline synergy)";
 
     return {
       ...rec,
@@ -291,11 +239,11 @@ export function matchSquadWithShowcase(squad, showcaseCharacters = [], lang = "r
       identityMismatch,
       characterName,
       characterIcon,
-      isEquippedInShowcase: Boolean(matchedChar) && !identityMismatch,
-      realStats: matchedChar && !identityMismatch ? readProfileStats(matchedChar) : null,
+      isEquippedInShowcase: isShowcase,
+      realStats: isShowcase ? statsForBuffs : null,
       dynamicBuffs,
-      dynamicBuffDescRu: `${rec.buffDescRu || ""}${identityMismatch ? identityMismatchSuffix : unknownBuildSuffix}`,
-      dynamicBuffDescEn: `${rec.buffDescEn || ""}${identityMismatch ? identityMismatchSuffix : unknownBuildSuffix}`
+      dynamicBuffDescRu: `${computed.descRu || rec.buffDescRu || ""}${sourceTagRu}`,
+      dynamicBuffDescEn: `${computed.descEn || rec.buffDescEn || ""}${sourceTagEn}`
     };
   });
 }

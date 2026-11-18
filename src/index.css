@@ -5580,6 +5580,33 @@ main {
   box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
 }
 
+.sim-buff-toggle-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.sim-buff-toggle-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.sim-buff-toggle-btn.active {
+  color: #00FF88;
+  background: rgba(0, 255, 136, 0.12);
+  border-color: #00FF88;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.25);
+}
+
 .auto-refresh-indicator {
   display: inline-flex;
   align-items: center;
@@ -5617,7 +5644,7 @@ main {
 }
 
 /* ==========================================================================
-   LEADERBOARD & UPSTASH REDIS MODAL (SEELELAND / AKASHA STYLE)
+   LEADERBOARD & UPSTASH REDIS MODAL (NOUS MATRIX LIVE BENCHMARK STYLE)
    ========================================================================== */
 
 .score-tier-badge.clickable {

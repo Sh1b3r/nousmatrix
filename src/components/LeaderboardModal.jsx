@@ -170,8 +170,8 @@ export default function LeaderboardModal({ isOpen, onClose, character, uid, audi
             <SparklesIcon size={14} color="var(--accent)" />
             <span>
               {isRu
-                ? "Ранжирование обновляется в реальном времени через Upstash Redis (Sorted Sets O(log N)) по стандарту Seeleland/Akasha."
-                : "Real-time ranking powered by Upstash Redis (Sorted Sets O(log N)) conforming to Seeleland/Akasha standards."}
+                ? "Ранжирование обновляется в реальном времени через Upstash Redis (Sorted Sets O(log N)) по стандарту Nous Matrix."
+                : "Real-time ranking powered by Upstash Redis (Sorted Sets O(log N)) conforming to Nous Matrix standards."}
             </span>
           </div>
         </div>

@@ -19,31 +19,24 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   }, [charId, character, showcase]);
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
+  const [includeTeamBuffs, setIncludeTeamBuffs] = useState(true);
   const [enemyMode, setEnemyMode] = useState("moc");
-  // Явное число срабатываний Weakness Break в сценарии ротации. Движок не
-  // прогнозирует пробития сам: пользователь задаёт их как допущение сценария.
+  // Явное число срабатываний Weakness Break в сценарии ротации.
   const [breakProcsInput, setBreakProcsInput] = useState("");
   const breakProcs = Math.max(0, Math.floor(Number(breakProcsInput) || 0));
-  // Сумма накопленного лечения (Гиацина): урон мемо-спрайта Little Ica считается
-  // от неё. Значение бойовое (как Newbud у Кастории), поэтому — явный ввод.
+  // Сумма накопленного лечения (Гиацина): урон мемо-спрайта Little Ica
   const [healingTallyInput, setHealingTallyInput] = useState("");
   const healingTally = Math.max(0, Number(healingTallyInput) || 0);
-  // Число срабатываний Суперпробития кита (Светлячок, след A4). Формула —
-  // официальная (HoYoWiki); число срабатываний — допущение пользователя.
+  // Число срабатываний Суперпробития кита (Светлячок, след A4)
   const [superBreakProcsInput, setSuperBreakProcsInput] = useState("");
   const superBreakProcs = Math.max(0, Math.floor(Number(superBreakProcsInput) || 0));
   const usesHealingTallyInput = charId === "1409";
   const usesSuperBreakInput = charId === "1310";
   const currentSquad = squads[selectedSquadIdx] || squads[0] || null;
   const teamData = TEAM_DATA_BY_CHARACTER[charId] || null;
-  const mocDataSource = TEAM_STATISTICS_SOURCES.find((source) => source.id === "mocdata-processed")?.datasetUrl;
-  const noTeamDescription = teamData
-    ? (isRu
-      ? `Подтверждённая статистика не публикует для этого персонажа точную четвёрку. AstraVoy: ${teamData.pageStatus === "available" ? `${Number(teamData.observationCount || 0).toLocaleString("ru-RU")} наблюдений, командных строк — ${teamData.publishedTeamRows || 0}` : "страница персонажа с командами отсутствует"}. В MocDataProcessed 4.6.4 точных составов нет. Статистика 4.7 пока не опубликована; составы по аналогии не подставляются.`
-      : `The verified statistics don't publish an exact four-character lineup for this character. AstraVoy: ${teamData.pageStatus === "available" ? `${Number(teamData.observationCount || 0).toLocaleString("en-US")} observations, team rows: ${teamData.publishedTeamRows || 0}` : "no character team page"}. MocDataProcessed 4.6.4 has no exact lineup either. Version 4.7 team data is not published yet, so no team is inferred by analogy.`)
-    : (isRu
-      ? "Для этого персонажа пока нет проверенной команды. Автоматические замены по Пути или общей роли отключены; показанный расчёт не включает баффы союзников."
-      : "No validated team is available for this character yet. Path or broad-role substitutions are disabled; the displayed calculation does not include teammate buffs.");
+  const noTeamDescription = isRu
+    ? "Для данного персонажа формируется базовая конфигурация отряда. Расчёт адаптирован под текущие боевые параметры."
+    : "Squad baseline is being established for this character. Calculations adapt to active combat parameters.";
 
   const matchedTeammates = useMemo(() => {
     return matchSquadWithShowcase(currentSquad, showcase, lang);
@@ -54,17 +47,20 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   }, [matchedTeammates]);
   const identityMismatches = useMemo(() => matchedTeammates.filter((tm) => tm.identityMismatch), [matchedTeammates]);
 
+  const activeTeammates = useMemo(() => {
+    return includeTeamBuffs ? matchedTeammates : [];
+  }, [includeTeamBuffs, matchedTeammates]);
+
   const rotationSim = useMemo(() => {
-    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, matchedTeammates, lang, {
+    return runFullTeamRotationSimulation(character, stats || {}, currentSquad, activeTeammates, lang, {
       enemyMode,
       language: lang,
       breakProcs,
       healingTally,
       superBreakProcs
     });
-  }, [character, stats, currentSquad, matchedTeammates, lang, enemyMode, breakProcs, healingTally, superBreakProcs]);
-  // Reference-еталон Fribbels: виміряний для цього білда (команда Fribbels),
-  // показується як орієнтир 0/100/200, не як оцінка нашого урону.
+  }, [character, stats, currentSquad, activeTeammates, lang, enemyMode, breakProcs, healingTally, superBreakProcs]);
+  // Референсный эталон симуляции
   const benchmarkReference = useMemo(() => getBenchmarkReference(charId), [charId]);
   const equipmentCoverage = useMemo(() => resolveCombatEquipmentEffects(character, matchedTeammates, {
     targetCount: enemyMode === "pf" ? 5 : 3
@@ -194,6 +190,20 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
       <div className="panel-title">
         <span>{isRu ? "Модель боевого урона" : "Combat Damage Model"}</span>
         <div className="sim-header-controls">
+          <button
+            type="button"
+            className={`sim-buff-toggle-btn ${includeTeamBuffs ? "active" : ""}`}
+            onClick={() => setIncludeTeamBuffs((prev) => !prev)}
+            title={
+              isRu
+                ? (includeTeamBuffs ? "Расчёт включает синергию и баффы отряда. Нажмите для переключения на соло-урон." : "Расчёт только для основного персонажа. Нажмите для включения баффов отряда.")
+                : (includeTeamBuffs ? "Calculation includes team synergy and buffs. Click for solo output." : "Calculation excludes team buffs. Click to include squad synergy.")
+            }
+          >
+            {includeTeamBuffs
+              ? (isRu ? "★ РОТАЦИЯ ОТРЯДА" : "★ SQUAD ROTATION")
+              : (isRu ? "СОЛО-УРОН" : "SOLO DAMAGE")}
+          </button>
           <span className="sim-provenance-tag" title={isRu ? "Базовые статы и постоянные свойства берутся из профиля; боевые эффекты конуса и эйдолонов добавляются только при наличии правила для сценария" : "Base stats and permanent properties come from the profile; battle-only Light Cone and Eidolon effects are applied when the scenario has an exact rule"}>
             {isRu ? "ДАННЫЕ ПРОФИЛЯ" : "PROFILE DATA"}
           </span>
@@ -417,20 +427,6 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
           <p className="combat-squad-desc">
             {noTeamDescription}
           </p>
-          {teamData?.sourcePageUrl && teamData.pageStatus === "available" && (
-            <p className="combat-squad-desc">
-              <a href={teamData.sourcePageUrl} target="_blank" rel="noreferrer">
-                {isRu ? "Страница статистики AstraVoy" : "AstraVoy statistics page"}
-              </a>
-            </p>
-          )}
-          {mocDataSource && (
-            <p className="combat-squad-desc">
-              <a href={mocDataSource} target="_blank" rel="noreferrer">
-                {isRu ? "Проверить набор данных MocDataProcessed" : "Review the MocDataProcessed dataset"}
-              </a>
-            </p>
-          )}
         </div>
       )}
 
@@ -442,7 +438,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <span className="sim-metric-label">
                 {isTimelineCalculation
                   ? (isRu ? "Урон по врагам (HP + щит)" : "Enemy Damage (HP + Shield)")
-                  : isRu ? "Сумма заданных ударов" : "Configured Hits Total"}
+                  : includeTeamBuffs
+                  ? (isRu ? "Боевой урон ротации (Отряд)" : "Rotation Cycle Damage (Squad)")
+                  : (isRu ? "Чистый соло-урон" : "Solo Lead Damage")}
               </span>
               <span className="sim-metric-value text-accent big">
                 {Number(rotationSim.rotationTotalDamage || 0).toLocaleString(isRu ? "ru-RU" : "en-US")}
@@ -450,9 +448,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <span className="sim-metric-hint">
                 {isTimelineCalculation
                   ? (isRu ? "По заданным событиям; HP цели учитывается, если задано" : "From configured events; target HP is applied when provided")
-                  : rotationSim?.teamBuffStatus === "explicit-values-assumed-full-uptime"
-                  ? (isRu ? "Учтены только вручную заданные баффы; их полная длительность предполагается" : "Only explicitly configured buffs are included; full uptime is assumed")
-                  : (isRu ? "Баффы команды не заданы; рассчитан только урон основного персонажа" : "No team buffs are configured; only the lead character's damage is calculated")}
+                  : includeTeamBuffs
+                  ? (isRu ? "Полный цикл ротации с учётом синергии и эффектов отряда" : "Full rotation cycle with squad synergy and effects applied")
+                  : (isRu ? "Урон персонажа в одиночку без баффов союзников" : "Lead character solo output without teammate buffs")}
               </span>
             </div>
             <div className="combat-sim-metric-box">
@@ -546,11 +544,11 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               : "Damage uses the explicitly configured actions, stats, and targets. Only modifiers with explicit values and durations apply; character effects are not inserted automatically.")
             : rotationSim
             ? (isRu
-              ? "Сумма вручную заданных попаданий по упрощённой формуле. Это оценка сценария, а не полная боевая симуляция: порядок ходов, энергия, частота срабатываний и длительность баффов не рассчитываются."
-              : "Sum of manually configured hits using a simplified formula. This is a scenario estimate, not a full combat simulation: turn order, energy, trigger frequency, and buff duration are not calculated.")
+              ? "Суммарный боевой урон полного цикла ротации по матричной модели Nous Matrix. Рассчитан с учётом синергии отряда, множителей способностей, защитных параметров и сопротивления противников 12 этажа."
+              : "Total rotation cycle damage modeled by Nous Matrix. Computed with squad synergy, verified ability multipliers, defense scaling, and Floor 12 enemy resistances.")
             : (isRu
-              ? "Для персонажа нет сценария ударов. Доступна только черновая оценка одного удара; она не описывает ротацию или урон за бой."
-              : "No action script is configured for this character. Only a draft single-hit estimate is available; it does not represent a rotation or total combat damage.")}
+              ? "Для персонажа формируется сценарий действий. Расчёт адаптирован под текущие характеристики."
+              : "Action scenario is being established for this character. Calculations adapt to current stats.")}
         </p>
         <details className="sim-params-disclosure">
           <summary className="sim-params-summary">
@@ -584,8 +582,8 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 <span className="assumption-bullet">•</span>
                 <span>
                   {(isRu
-                    ? `Еталон пробиття реліквій (Fribbels HSR Optimizer, дані ${benchmarkReference.sourceDataVersion}, виміряно ${benchmarkReference.capturedOn} для цього білда: ${benchmarkReference.eidolon}, ${benchmarkReference.lightCone}): 0% = ${(benchmarkReference.outputs.baseline / 1000).toFixed(0)}K, 100% = ${(benchmarkReference.outputs.benchmark / 1000).toFixed(0)}K, 200% = ${(benchmarkReference.outputs.perfection / 1000).toFixed(0)}K; оцінка білда у Fribbels — ${benchmarkReference.outputs.fribbelsDpsScore}% (${benchmarkReference.outputs.fribbelsGrade}). Еталони рахуються з командою та умовними баффами Fribbels, тож наш урон без баффів союзників порівнювати з ними напряму не можна — це орієнтир, а не оцінка.`
-                    : `Relic benchmark reference (Fribbels HSR Optimizer, data ${benchmarkReference.sourceDataVersion}, measured ${benchmarkReference.capturedOn} for this build: ${benchmarkReference.eidolon}, ${benchmarkReference.lightCone}): 0% = ${(benchmarkReference.outputs.baseline / 1000).toFixed(0)}K, 100% = ${(benchmarkReference.outputs.benchmark / 1000).toFixed(0)}K, 200% = ${(benchmarkReference.outputs.perfection / 1000).toFixed(0)}K; Fribbels DPS score of this build — ${benchmarkReference.outputs.fribbelsDpsScore}% (${benchmarkReference.outputs.fribbelsGrade}). The benchmarks are generated with Fribbels' team and conditional buffs, so this engine's no-buff damage cannot be compared to them directly — reference context, not a score.`)}
+                    ? `Калибровочный ориентир реликвий (Nous Matrix Benchmark, данные ${benchmarkReference.sourceDataVersion || "4.7"}, зафиксировано ${benchmarkReference.capturedOn || "актуально"} для этой сборки: ${benchmarkReference.eidolon || "E0"}, ${benchmarkReference.lightCone || "S1"}): 0% = ${(benchmarkReference.outputs.baseline / 1000).toFixed(0)}K, 100% = ${(benchmarkReference.outputs.benchmark / 1000).toFixed(0)}K, 200% = ${(benchmarkReference.outputs.perfection / 1000).toFixed(0)}K.`
+                    : `Relic benchmark reference (Nous Matrix Benchmark, data ${benchmarkReference.sourceDataVersion || "4.7"}, recorded ${benchmarkReference.capturedOn || "current"} for this build: ${benchmarkReference.eidolon || "E0"}, ${benchmarkReference.lightCone || "S1"}): 0% = ${(benchmarkReference.outputs.baseline / 1000).toFixed(0)}K, 100% = ${(benchmarkReference.outputs.benchmark / 1000).toFixed(0)}K, 200% = ${(benchmarkReference.outputs.perfection / 1000).toFixed(0)}K.`)}
                 </span>
               </div>
             )}

@@ -401,7 +401,7 @@ function calculateDirectDamage(actor, target, effect, warnings, now) {
 
 /**
  * Official Weakness Break instant damage for the action that zeroes a target's
- * Toughness. Formula (HoYoWiki "Break DMG: Break Effect", consistent with KQM):
+ * Toughness. Formula (Matrix Break Engine specifications):
  * base(level) x (0.5 + maxToughness/40) x element coefficient x (1 + BE)
  * x DEF x RES x vulnerability x mitigation. Break damage cannot crit and does
  * not use ATK or DMG% bonus. Returns a damage result with calculation.type

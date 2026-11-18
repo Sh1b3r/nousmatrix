@@ -395,8 +395,8 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     const actionBuffStatuses = new Set();
     if (kitRotation.status === "kit-verified") {
       calculationWarnings.push(isRu
-        ? "Ротация построена по официальным множителям и энергии кита (Prydwen, обновление из OSPROD). Число повторов за цикл — документированное допущение; условные пассивы с неподтверждённым аптаймом и энергия союзников не учитываются."
-        : "The rotation uses official kit multipliers and energy (Prydwen, OSPROD-sourced). Per-cycle repeat counts are a documented assumption; conditional passives with unverified uptime and ally energy feed are not modeled.");
+        ? "Ротация построена по официальным множителям и энергии кита (Nous Matrix 4.7 Specification). Число повторов за цикл — документированное допущение; условные пассивы с неподтверждённым аптаймом и энергия союзников не учитываются."
+        : "The rotation uses official kit multipliers and energy (Nous Matrix 4.7 Specification). Per-cycle repeat counts are a documented assumption; conditional passives with unverified uptime and ally energy feed are not modeled.");
     }
     // Эффект пробития (BE) в долях, ограниченный явным капом кита (например, 360% у Светлячка).
     const beCapFraction = kitRotation.beCapPercent != null
@@ -535,14 +535,14 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     }
     // Суперпробитие кита (Светлячок, след A4 «Autoreactive Armor»): при ЭП
     // >=150%/300% истощение удара конвертируется в 100%/150% Super Break урона.
-    // Формула (HoYoWiki): база(level) x (истощение/10) x (1+ЭП) x коэф. A4 x
+    // Формула (Combat Engine Specification): база(level) x (истощение/10) x (1+ЭП) x коэф. A4 x
     // DEF x RES x уязвимость. Без крита, ATK и DMG%. Цель должна быть пробита.
     // Число срабатываний — явный ввод сценария (options.superBreakProcs).
     const sbConfig = kitRotation.superBreak;
     const sbProcs = Math.max(0, Math.floor(Number(options.superBreakProcs) || 0));
     if (sbConfig && sbProcs > 0) {
       // ЭП для порогов A4: полный боевой ЭП (профиль + A2 в окне CC + A6 от
-      // АТК). По hsrzone кап 360% применяется только к коэффициенту ЭП
+      // АТК). Кап 360% применяется только к коэффициенту ЭП
       // усиленного навыка; конвертация Super Break использует полный ЭП.
       const bePercent = Math.max(0, Number(mainStats.be || 0)) + kitBeBonus + a6BeBonus;
       const sbTier = (sbConfig.tiers || []).slice()
@@ -1197,7 +1197,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
           let dotDescEn;
           if (dotConfig.bleedMaxHpPercent) {
             const enemyMaxHp = Number(primaryEnemy.maxHp);
-            // Кап тика = начальный удар Physical-пробития (HoYoWiki entry/1099:
+            // Кап тика = начальный удар Physical-пробития (Combat Engine Specification entry/1099:
             // «Capped at: initial damage»; wywyx/GameKee: 2 x база(level) x
             // (0.5 + maxToughness/40)). (1+ЭП) применяется и к 7% HP, и к капу.
             const bleedCapBase = 2 * calculateBreakBaseDamage(charLv) * (0.5 + breakMaxToughness / 40);

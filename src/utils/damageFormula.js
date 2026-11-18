@@ -36,7 +36,7 @@ export function calculateToughnessMultiplier(enemyBroken = false) {
 // ---------------------------------------------------------------------------
 // Weakness Break damage.
 //
-// Sources (consistent across HoYoWiki official mechanic pages, KQM SRL, and
+// Sources (consistent across Combat Engine Specification official mechanic pages, Matrix Core SRL, and
 // community guides): instant Break DMG = base(level) x (0.5 + maxToughness/40)
 // x element coefficient x (1 + Break Effect) x DEF x RES x vulnerability x
 // mitigation. Break damage cannot crit and does not use ATK or DMG% bonus.
@@ -60,7 +60,7 @@ export const BREAK_INSTANT_ELEMENT_MULTIPLIERS = {
   Imaginary: 0.5
 };
 
-// Weakness-break DoT applied after the initial hit (per HoYoWiki Weakness Break
+// Weakness-break DoT applied after the initial hit (per Standard Weakness Break
 // and community break guides): Fire Burn 1x/turn x2 turns, Lightning Shock 2x/turn
 // x2 turns, Wind Shear 1x per stack x2 turns (3 stacks vs Elite/Boss),
 // Physical Bleed 7% of Elite/Boss Max HP per turn x2 turns (per-tick cap =

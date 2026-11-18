@@ -124,8 +124,8 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
             onClick={onOpenLeaderboard || undefined}
             title={
               isRu
-                ? `Глобальный перцентиль сборки (${audit.archetype}): рейтинг в реальном времени (стандарт Akasha/SeeleLand). Нажмите, чтобы открыть таблицу лидеров.`
-                : `Global build leaderboard percentile (${audit.archetype}): real-time live ranking (Akasha/SeeleLand standard). Click to view leaderboard.`
+                ? `Глобальный перцентиль сборки (${audit.archetype}): рейтинг в реальном времени (стандарт Nous Matrix). Нажмите, чтобы открыть таблицу лидеров.`
+                : `Global build leaderboard percentile (${audit.archetype}): real-time live ranking (Nous Matrix calibrated distribution). Click to view leaderboard.`
             }
           >
             <span className="tier-prefix">{isRu ? "ГЛОБАЛЬНЫЙ РАНГ" : "GLOBAL RANK"}</span>

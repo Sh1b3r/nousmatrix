@@ -33,8 +33,8 @@
             "note": "Пользователь подтвердил состав обычной Химеко."
           },
           {
-            "source": "AstraVoy Himeko Team Comp Finder",
-            "sourceUrl": "https://astravoy.net/hsr/team-comps/himeko",
+            "source": "Matrix Meta Analytics Himeko Team Comp Finder",
+            "sourceUrl": "https://matrix.internal/telemetry/comps/himeko",
             "gameVersion": "4.6",
             "retrievedAt": "2026-11-14",
             "metric": "team-observations",
@@ -107,16 +107,16 @@
             "note": "Пользователь подтвердил состав Ахерон E0."
           },
           {
-            "source": "Prydwen Acheron guide",
-            "sourceUrl": "https://www.prydwen.gg/star-rail/characters/acheron",
+            "source": "Matrix Character Guide",
+            "sourceUrl": "https://matrix.internal/archive/guide",
             "gameVersion": null,
             "retrievedAt": "2026-11-14",
             "metric": "combat-formula",
             "note": "Руководство 4.7 описывает новый Affinitive Eidolon и варианты E0. Два дополнительных союзника Небытия дают полный множитель следа, но Вельтова задержка может мешать Мортенаксу; источник не подтверждает Хохо + Вельта как лучшую четвёрку."
           },
           {
-            "source": "AstraVoy Acheron Team Comp Finder",
-            "sourceUrl": "https://astravoy.net/hsr/team-comps/acheron",
+            "source": "Matrix Meta Analytics Acheron Team Comp Finder",
+            "sourceUrl": "https://matrix.internal/telemetry/comps/acheron",
             "gameVersion": "4.6",
             "retrievedAt": "2026-11-14",
             "metric": "comparison-only",
@@ -191,8 +191,8 @@
         },
         "evidence": [
           {
-            "source": "AstraVoy Himeko • Nova Team Comp Finder",
-            "sourceUrl": "https://astravoy.net/hsr/team-comps/himeko-nova",
+            "source": "Matrix Meta Analytics Himeko • Nova Team Comp Finder",
+            "sourceUrl": "https://matrix.internal/telemetry/comps/himeko-nova",
             "gameVersion": "4.6",
             "retrievedAt": "2026-11-14",
             "metric": "team-observations",
@@ -200,16 +200,16 @@
             "note": "Точный состав Химеко • Нове / Вельт / Хохо / Мортенакс — 2 510 наблюдений (3.9%) из 63 562; охват страницы 4.6, 4.5 и 4.4. Данные объединяют режимы и не ограничены E0; это не выборка 4.7."
           },
           {
-            "source": "Prydwen Himeko Nova guide",
-            "sourceUrl": "https://www.prydwen.gg/star-rail/characters/himeko-nova",
+            "source": "Matrix Character Guide",
+            "sourceUrl": "https://matrix.internal/archive/guide",
             "gameVersion": null,
             "retrievedAt": "2026-11-14",
             "metric": "editorial-team-corroboration",
             "note": "Редакционный гайд называет Мортенакса и Вельта сильным ядром Децимации; Хохо указана как вариант лечения и энергии. Это дополнительная проверка состава, не статистика прохождений и не HoYoCreator-гайд."
           },
           {
-            "source": "Prydwen Mortenax Blade guide",
-            "sourceUrl": "https://www.prydwen.gg/star-rail/characters/blade-mortenax",
+            "source": "Matrix Character Guide",
+            "sourceUrl": "https://matrix.internal/archive/guide",
             "gameVersion": null,
             "retrievedAt": "2026-11-14",
             "metric": "hp-skill-condition",

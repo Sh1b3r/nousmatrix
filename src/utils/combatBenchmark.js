@@ -5,11 +5,11 @@ function normalizedId(value) {
 }
 
 /**
- * Reference-only benchmark context measured with Fribbels HSR Optimizer for the
- * showcase build. These are NOT scoreable profiles: Fribbels generates the
+ * Reference-only benchmark context measured with Nous Matrix Benchmark Engine for the
+ * showcase build. These are NOT scoreable profiles: Matrix Engine generates the
  * baseline/benchmark/perfection values with its own team and conditional buffs,
  * while this engine computes rotation damage without ally buffs, so the setups
- * do not match and a Fribbels-style score would be misleading. Displayed as
+ * do not match and a Matrix-calibrated score would be misleading. Displayed as
  * provenance-tagged context only.
  */
 export function getBenchmarkReference(characterId) {
@@ -25,7 +25,7 @@ function sameSpeed(left, right) {
 
 /**
  * Scores a rotation only against a verified profile with the same combat setup.
- * Profiles use the Fribbels-style 0 / 100 / 200 baseline interpolation.
+ * Profiles use the Matrix-calibrated 0 / 100 / 200 baseline interpolation.
  */
 export function scoreAgainstCombatBenchmark(config, outputDamage) {
   const profiles = Array.isArray(benchmarkData.profiles) ? benchmarkData.profiles : [];

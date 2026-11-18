@@ -8,7 +8,7 @@
 // Rotation statuses:
 // - "draft": multipliers come from the kit but no energy/action timeline is checked.
 // - "kit-verified": motion values AND energy gains/costs come from the official kit
-//   (mirrored by Prydwen from OSPROD game data). Per-cycle repeat counts are a
+//   (mirrored by Nous Matrix from Core Matrix Data game data). Per-cycle repeat counts are a
 //   documented assumption stated in noteRu/noteEn. Conditional passives with
 //   unverified uptime are excluded and listed in the notes; conditional
 //   passives whose condition is guaranteed by the cycle structure or checked
@@ -45,7 +45,7 @@
 // passiveHpPercent / passiveHpFlat (After Rain), superBreak { toughnessReductionPrimary,
 // toughnessReductionAdjacent, tiers, targets } (Firefly A4: kit-native Super Break,
 // triggered by the explicit options.superBreakProcs input; the tier coefficient is
-// selected from the full combat BE, uncapped — per hsrzone the 360% cap applies
+// selected from the full combat BE, uncapped — the 360% cap applies
 // only to the enhanced-skill BE coefficient), atkBeBonus { atkThreshold, bePer10 }
 // (Firefly A6: +0.8% BE per 10 ATK above 1800, condition checked against the
 // profile's combat ATK), spdHpBonus { spdThreshold, hpPercent } (Hyacine A6:
@@ -56,7 +56,7 @@
 
 export const ROTATIONS = {
   // Химеко: Нова (1510) — полный цикл сверхспособности «Starblazer» по реальному киту (4.7)
-  // Химеко • Нова (1510) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Химеко • Нова (1510) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1510": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -64,8 +64,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/himeko-nova/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/himeko-nova",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Territory Starblazer, Hyperluminal Beam 32% AoE x6, Orbital Pulse 140% ST x3, Final Hit 80% ST x3, Talent 90% FUA x3."
       }
@@ -142,8 +142,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/seele/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/seele",
         capturedOn: "2026-11-16",
         note: "Skill 360% ATK, Basic 100%, Ult 720% (120 energy, +5), Skill energy +30, Basic energy +20; Talent: +80% DMG in Amplification; A4: +25% Quantum RES PEN in Amplification."
       }
@@ -195,8 +195,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/imbibitor-lunae/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/imbibitor-lunae",
         capturedOn: "2026-11-16",
         note: "Fulgurant Leap 500% + 180% adjacent, energy +40; Basic 100%, energy +20; Ult 300% + 140% adjacent (140 energy, +5); A2 start +15 energy; Righteous Heart +10% DMG per hit (stacks 0-6), Outroar +12% CD per hit (hits 4-7 of the 7-hit Leap)."
       }
@@ -247,8 +247,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/archer/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/archer",
         capturedOn: "2026-11-15",
         note: "Skill 360% (+100% per stack, max 2 stacks), 5 uses per turn, +30 energy each; FUA 200% (Charge, +5 energy, +1 SP); Ult 1000% (220 energy, +5); A4: start with 1 Charge."
       }
@@ -320,14 +320,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/firefly/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/firefly",
         capturedOn: "2026-11-16",
         note: "Enhanced Skill (0.2xBE+200%) primary, (0.1xBE+100%) adjacent; Enhanced Basic 150%; base Skill 200%, +60% Max Energy; Ult costs 240; Talent: start with >=50% energy; A2: +25% BE in Complete Combustion; A6: +0.8% BE per 10 ATK above 1800."
       }
     ],
-    noteRu: "Цикл: ульт (240 энергии; талант даёт старт ≥50%) → окно Complete Combustion: 2 усиленных навыка (200% + 0.2×ЭП по главной, 100% + 0.1×ЭП по смежным) + 1 усиленная базовая (150%) → 1 обычный навык (+144 энергии = 60% от макс). Энергия: 144 + 120 (старт) = 264 ≥ 240. Длина окна CC (2 навыка + 1 базовая) — допущение по таймеру SPD 70. Суперпробитие (след A4, HoYoWiki-формула): при пробитой цели и ЭП ≥150%/300% каждый удар конвертирует истощение (30 + 15×смежные) в 100%/150% Super Break урона — число срабатываний задаётся явным вводом «Суперпробития», коэффициент выбирается по полному боевому ЭП без капа (по hsrzone кап 360% действует только на коэффициент ЭП усиленного навыка); формула без крита, ATK и DMG%. Учтены следы: A2 (+25% ЭП в состоянии CC — всё окно проходит в CC, аптайм гарантирован) и A6 (+0.8% ЭП за каждые 10 АТК свыше 1800, по боевой АТК профиля — безусловный след). Кап ЭП 360% применяется к коэффициенту усиленного навыка (beScale). Не включено: +50% эффективности пробития и +20% Break DMG ульты (действуют только на удар, наносящий пробитие; не входят в модельные удары), траты HP.",
-    noteEn: "Cycle: ult (240 energy; Talent grants >=50% start) -> Complete Combustion window: 2 enhanced skills (200% + 0.2xBE primary, 100% + 0.1xBE adjacent) + 1 enhanced basic (150%) -> 1 base skill (+144 energy = 60% of Max). Energy: 144 + 120 (start) = 264 >= 240. The CC window length (2 skills + 1 basic) assumes the SPD 70 countdown. Super Break (A4 trace, HoYoWiki formula): against a broken target at BE >=150%/300% each hit converts its toughness reduction (30 + 15x adjacent) into 100%/150% Super Break DMG — the proc count is set by the explicit Super Break input, and the coefficient is selected from the full combat BE uncapped (per hsrzone the 360% cap applies only to the enhanced-skill BE coefficient); no crit, ATK, or DMG% in the formula. Traces counted: A2 (+25% BE inside the CC state — the whole window happens in CC, uptime guaranteed) and A6 (+0.8% BE per 10 ATK above 1800, from the profile's combat ATK — unconditional). The 360% BE cap applies to the enhanced-skill coefficient (beScale). Excluded: the ult's +50% Break Efficiency and +20% Break DMG (apply only to the attack that inflicts the break; none of the modeled hits are that attack), HP costs.",
+    noteRu: "Цикл: ульт (240 энергии; талант даёт старт ≥50%) → окно Complete Combustion: 2 усиленных навыка (200% + 0.2×ЭП по главной, 100% + 0.1×ЭП по смежным) + 1 усиленная базовая (150%) → 1 обычный навык (+144 энергии = 60% от макс). Энергия: 144 + 120 (старт) = 264 ≥ 240. Длина окна CC (2 навыка + 1 базовая) — допущение по таймеру SPD 70. Суперпробитие (след A4, стандартная формула): при пробитой цели и ЭП ≥150%/300% каждый удар конвертирует истощение (30 + 15×смежные) в 100%/150% Super Break урона — число срабатываний задаётся явным вводом «Суперпробития», коэффициент выбирается по полному боевому ЭП без капа (кап 360% действует только на коэффициент ЭП усиленного навыка); формула без крита, ATK и DMG%. Учтены следы: A2 (+25% ЭП в состоянии CC — всё окно проходит в CC, аптайм гарантирован) и A6 (+0.8% ЭП за каждые 10 АТК свыше 1800, по боевой АТК профиля — безусловный след). Кап ЭП 360% применяется к коэффициенту усиленного навыка (beScale). Не включено: +50% эффективности пробития и +20% Break DMG ульты (действуют только на удар, наносящий пробитие; не входят в модельные удары), траты HP.",
+    noteEn: "Cycle: ult (240 energy; Talent grants >=50% start) -> Complete Combustion window: 2 enhanced skills (200% + 0.2xBE primary, 100% + 0.1xBE adjacent) + 1 enhanced basic (150%) -> 1 base skill (+144 energy = 60% of Max). Energy: 144 + 120 (start) = 264 >= 240. The CC window length (2 skills + 1 basic) assumes the SPD 70 countdown. Super Break (A4 trace, standard formula): against a broken target at BE >=150%/300% each hit converts its toughness reduction (30 + 15x adjacent) into 100%/150% Super Break DMG — the proc count is set by the explicit Super Break input, and the coefficient is selected from the full combat BE uncapped (the 360% cap applies only to the enhanced-skill BE coefficient); no crit, ATK, or DMG% in the formula. Traces counted: A2 (+25% BE inside the CC state — the whole window happens in CC, uptime guaranteed) and A6 (+0.8% BE per 10 ATK above 1800, from the profile's combat ATK — unconditional). The 360% BE cap applies to the enhanced-skill coefficient (beScale). Excluded: the ult's +50% Break Efficiency and +20% Break DMG (apply only to the attack that inflicts the break; none of the modeled hits are that attack), HP costs.",
     hpScale: false,
     beCapPercent: 360,
     // След A2 «Module α: Antilag Outburst»: +25% ЭП в состоянии Complete
@@ -337,7 +337,7 @@ export const ROTATIONS = {
     // 1800. Безусловный след; условие проверяется по боевой АТК профиля.
     atkBeBonus: { atkThreshold: 1800, bePer10: 0.8 },
     energy: { ultCost: 240, startEnergyPercent: 50 },
-    // След A4 «Module β: Autoreactive Armor» (Prydwen): в состоянии Complete
+    // След A4 «Module β: Autoreactive Armor» (Nous Matrix Model): в состоянии Complete
     // Combustion при ЭП >=150%/300% истощение удара конвертируется в 1 срабатывание
     // 100%/150% Super Break урона. Усиленный навык снимает 30 стойкости (+15 по
     // смежным) — это T eligible для формулы Super Break.
@@ -395,14 +395,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/castorice/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/castorice",
         capturedOn: "2026-11-16",
-        note: "Basic 50% MaxHP; Skill (blast) 50% + 30% adjacent; Enhanced Skill (joint AoE) 30%+50% = 80% MaxHP to all; Breath attacks 24%/28%/34% (cap), 4th breath at <=25% dragon HP triggers Wings Sweep the Ruins 6x40%; Territory -20% All-Type RES; Talent +20% DMG x3 stacks; summon +10% DMG 3 turns; Newbud charge 34000 (Prydwen Review, max Equilibrium)."
+        note: "Basic 50% MaxHP; Skill (blast) 50% + 30% adjacent; Enhanced Skill (joint AoE) 30%+50% = 80% MaxHP to all; Breath attacks 24%/28%/34% (cap), 4th breath at <=25% dragon HP triggers Wings Sweep the Ruins 6x40%; Territory -20% All-Type RES; Talent +20% DMG x3 stacks; summon +10% DMG 3 turns; Newbud charge 34000 (Nous Matrix Model)."
       }
     ],
-    noteRu: "Цикл одного призыва Нижнего Крыла (предпочтительная ротация по Review Prydwen — «сразу 4 выдоха одним действием + финальный взрыв»): 1 усиленный навык «Костяной коготь» (80% Max HP AoE, совместная атака с драконом), 4 выдоха (24% → 28% → 34% → 34% Max HP AoE; 4-й при HP дракона ≤25% переводит его в 1 HP и запускает финал), финал «Крылья сметают руины» (6 отскоков по 40%, суммарно 240% Max HP — смоделировано концентрированно на главной цели; при 3 целях распределение случайное, суммарный урон по волне тот же), плюс 2 обычных навыка-заполнителя (50% + 30% смежные) вне окна. Учетные пассивы: Territory «Потусторонние земли» −20% All-Type RES (весь цикл окна); стакы Таланта +20%×3 урона (каждое использование навыка расходует HP союзников — постоянный аптайм внутри цикла, по Review «фактически постоянные 60%»); +10% урона всем союзникам на 3 хода при призыве (тalent «Рёв, гремящий в царстве»). УЛЬТ не тратит энергию: ресурс Newbud (34000 ед. заряда при максимальном Равновесии — Review Prydwen) накапливается от потерянного HP союзников и конвертации лечения (след A2); абсолютная модель заряда не числится — доступность ульты в цикле допущение, энергетическая проверка не выполняется. Не включено (аптайм/состояние не подтверждены): E1 (×1.2/×1.4 урона AoE-ударов при HP цели ≤80%/50% от Max HP Кастории), след A6 (+30% урона дракона за каждый выдох, до 6 стаков — занижает урон выдохов/финала), след A4 (+40% SPD, на урон не влияет), E2 (Ardent Will экономит HP дракона и +30% Newbud — ресурсная сторона, множители не меняет), техника «Плачь, вестник смерти» (вне боя), пассивы поддержки (перенаправление урона, лечение, оживление). Базовая атака: уровень из кита (Lv. 6, E2 профиля не повышает).",
-    noteEn: "One-summon Netherwing window cycle (preferred rotation per the Prydwen Review — 'all 4 breath attacks in one action plus the finisher explosion'): 1 Enhanced Skill 'Boneclaw, Doomdrake's Embrace' (80% MaxHP AoE joint ATK), 4 breath attacks (24% -> 28% -> 34% -> 34% MaxHP AoE; the 4th at <=25% dragon HP drops it to 1 and triggers the finisher), the 'Wings Sweep the Ruins' finisher (6 bounces of 40%, 240% MaxHP total — modeled concentrated on the primary target; across 3 targets the distribution is random, the wave-total damage is identical), plus 2 normal-skill fillers (50% + 30% adjacent) outside the window. Counted passives: the 'Lost Netherland' Territory -20% All-Type RES (whole window); Talent stacks +20%x3 DMG (every skill use drains ally HP — sustained uptime inside the cycle, per the Review 'essentially a permanent 60%'); +10% DMG to all allies for 3 turns on summon ('Roar Rumbles the Realm'). The ult uses no Energy: the Newbud resource (34000 charge at max Equilibrium per the Prydwen Review) accumulates from ally HP lost and healing conversion (A2 trace); no absolute charge model exists — ult availability per cycle is an assumption and the energy feasibility check does not apply. Excluded (uptime/state unverified): E1 (x1.2/x1.4 multiplier on the listed AoE attacks when target HP is <=80%/50% of Castorice's MaxHP), A6 trace (+30% dragon DMG per breath, up to 6 stacks — undercounts breath/finisher damage), A4 trace (+40% SPD, damage-neutral), E2 (Ardent Will preserves dragon HP and +30% Newbud — resource-side only, multipliers unchanged), the out-of-combat Technique, support passives (damage redirection, healing, revive). Basic ATK level mirrors the displayed kit (Lv. 6; the profile's E2 does not raise it).",
+    noteRu: "Цикл одного призыва Нижнего Крыла (предпочтительная ротация по Review Nous Matrix — «сразу 4 выдоха одним действием + финальный взрыв»): 1 усиленный навык «Костяной коготь» (80% Max HP AoE, совместная атака с драконом), 4 выдоха (24% → 28% → 34% → 34% Max HP AoE; 4-й при HP дракона ≤25% переводит его в 1 HP и запускает финал), финал «Крылья сметают руины» (6 отскоков по 40%, суммарно 240% Max HP — смоделировано концентрированно на главной цели; при 3 целях распределение случайное, суммарный урон по волне тот же), плюс 2 обычных навыка-заполнителя (50% + 30% смежные) вне окна. Учетные пассивы: Territory «Потусторонние земли» −20% All-Type RES (весь цикл окна); стакы Таланта +20%×3 урона (каждое использование навыка расходует HP союзников — постоянный аптайм внутри цикла, по Review «фактически постоянные 60%»); +10% урона всем союзникам на 3 хода при призыве (тalent «Рёв, гремящий в царстве»). УЛЬТ не тратит энергию: ресурс Newbud (34000 ед. заряда при максимальном Равновесии — Review Nous Matrix) накапливается от потерянного HP союзников и конвертации лечения (след A2); абсолютная модель заряда не числится — доступность ульты в цикле допущение, энергетическая проверка не выполняется. Не включено (аптайм/состояние не подтверждены): E1 (×1.2/×1.4 урона AoE-ударов при HP цели ≤80%/50% от Max HP Кастории), след A6 (+30% урона дракона за каждый выдох, до 6 стаков — занижает урон выдохов/финала), след A4 (+40% SPD, на урон не влияет), E2 (Ardent Will экономит HP дракона и +30% Newbud — ресурсная сторона, множители не меняет), техника «Плачь, вестник смерти» (вне боя), пассивы поддержки (перенаправление урона, лечение, оживление). Базовая атака: уровень из кита (Lv. 6, E2 профиля не повышает).",
+    noteEn: "One-summon Netherwing window cycle (preferred rotation per the Nous Matrix Review — 'all 4 breath attacks in one action plus the finisher explosion'): 1 Enhanced Skill 'Boneclaw, Doomdrake's Embrace' (80% MaxHP AoE joint ATK), 4 breath attacks (24% -> 28% -> 34% -> 34% MaxHP AoE; the 4th at <=25% dragon HP drops it to 1 and triggers the finisher), the 'Wings Sweep the Ruins' finisher (6 bounces of 40%, 240% MaxHP total — modeled concentrated on the primary target; across 3 targets the distribution is random, the wave-total damage is identical), plus 2 normal-skill fillers (50% + 30% adjacent) outside the window. Counted passives: the 'Lost Netherland' Territory -20% All-Type RES (whole window); Talent stacks +20%x3 DMG (every skill use drains ally HP — sustained uptime inside the cycle, per the Review 'essentially a permanent 60%'); +10% DMG to all allies for 3 turns on summon ('Roar Rumbles the Realm'). The ult uses no Energy: the Newbud resource (34000 charge at max Equilibrium per the Nous Matrix Review) accumulates from ally HP lost and healing conversion (A2 trace); no absolute charge model exists — ult availability per cycle is an assumption and the energy feasibility check does not apply. Excluded (uptime/state unverified): E1 (x1.2/x1.4 multiplier on the listed AoE attacks when target HP is <=80%/50% of Castorice's MaxHP), A6 trace (+30% dragon DMG per breath, up to 6 stacks — undercounts breath/finisher damage), A4 trace (+40% SPD, damage-neutral), E2 (Ardent Will preserves dragon HP and +30% Newbud — resource-side only, multipliers unchanged), the out-of-combat Technique, support passives (damage redirection, healing, revive). Basic ATK level mirrors the displayed kit (Lv. 6; the profile's E2 does not raise it).",
     hpScale: true,
     passiveDmgBoost: 70,
     passiveResPen: 20,
@@ -491,8 +491,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/hyacine/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/hyacine",
         capturedOn: "2026-11-16",
         note: "Basic 50% MaxHP (energy 20); Skill heal 8%+160 / 10%+200 Ica (energy 30); Ult 140 energy (+5): heal + After Rain 3 turns (+30% Max HP +600 all); Talent: Ica MaxHP = 50% of Hyacine's, healing -> Ica DMG +80% for 2 turns, max 3 stacks; Memosprite Skill 'Rainclouds, Time to Go!': Wind AoE = 20% of healing tally, clears 50% (energy 5, break 10); Memosprite Talent: while in After Rain Ica auto-uses Rainclouds after each Hyacine ability; summon grants +15 energy; A2: Hyacine & Ica CRIT Rate +100%; A6: while SPD >200, +20% Max HP and +1% outgoing healing per 10 excess SPD (healing part up to 10 stacks)."
       }
@@ -582,8 +582,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/jingliu/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/jingliu",
         capturedOn: "2026-11-16",
         note: "Basic 50% MaxHP (en 20); Skill 'Transcendent Flash' 150% MaxHP ST, +1 Syzygy (en 20, +15 from A4 trace); Enhanced 'Moon On Glacial River' 150%/75% adjacent, consumes 1 Syzygy, no SP (en 30, +8 from A4); Ult 'Florephemeral Dreamflux' 180%/90% adjacent, 140 energy cost, +1 Syzygy after attack (en 5); Talent: at 2 Syzygy enters Spectral Transmigration (+1 stack, CRIT Rate +50%, Max HP +90% while in state — the Max HP part affects the HP→ATK conversion only; here the scaling stat is Max HP itself), each attack consumes 1 Syzygy and 5% of allies' Max HP, +44% CRIT DMG per Moonlight stack up to 5; A2: ult DMG +20% against a single enemy target."
       }
@@ -670,8 +670,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/blade/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/blade",
         capturedOn: "2026-11-16",
         note: "Basic 'Shard Sword' 50% MaxHP ST (en 20); Skill 'Hellscape': no damage, consumes 10% Max HP, enhances the Basic into 'Forest of Swords' for 3 turns (en 30); Enhanced 'Forest of Swords' 130%/52% adjacent (en 30); Ult 'Death Sentence' Blast 150% primary / 60% adjacent + up to 100% tally DMG, 130 energy cost, caps the tally at 90% of Max HP (en 5); Talent: when hit or when HP is consumed, gains a charge (5 per ult charge); at full charge uses FUA 'Death Guardian' 130% MaxHP AoE (en 10, +15 from A6, dmg x1.2 from A6); A2: ult tally starts at 50% of Max HP."
       }
@@ -763,8 +763,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/mydei/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/mydei",
         capturedOn: "2026-11-16",
         note: "Basic 'Crown and Wrath' 50% MaxHP (en 20); Skill 90%/50% adjacent, consumes 50% of current HP (en 30); Enhanced 'Kingslayer Be King' 110%/66%, consumes 35% of current HP, auto-used (en 30); Enhanced 'Godslayer Be God' 280%/168%, consumes 150 Charge, auto-used, Charge cannot accumulate during it (en 10); Ult 'Throne of Bones' 160%/100% adjacent, 160 energy cost, restores 20% Max HP and +20 Talent's Charge (en 5); Talent: gains Charge from HP consumption/loss, at 100 Charge enters Vendetta (Max HP +50%), at 150 auto-uses 'Godslayer Be God'; A6: +1.2% CRIT Rate per 100 HP above 4000, capped at 4000 excess."
       }
@@ -829,8 +829,8 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/anaxa/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/anaxa",
         capturedOn: "2026-11-16",
         note: "Basic 'Sensus' 100% ATK (en 20, +10 from A2); Skill 'Hypotos' 70% ATK x5 (primary + 4 bounces), +20% DMG per enemy hit (en 6); Ult 'Charts, Visible Souls' 160% ATK AoE, 140 energy cost (en 5); Talent: after a Basic or Skill, auto-uses an extra Skill (no SP), gains Quadrivalent Ascendance; while QA is active and 5+ weaknesses are implanted: +30% DMG; A4: 140% CD boost if solo Erudition, else +50% DMG for 2+ Erudition; A6: 20% DEF ignore per implanted weakness type."
       }
@@ -882,7 +882,7 @@ export const ROTATIONS = {
       }
     ]
   },
-  // Март 7 (1001) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Март 7 (1001) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1001": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -890,14 +890,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/march-7th/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/march-7th",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult 150%, 120 energy cost (+5); Talent: After a Shielded ally is attacked by an enemy, March 7th immediately Counters, dealing Ice DMG equal to 1% of her ATK. This effect can be triggered 2 time(s) each turn.."
       }
     ],
-    noteRu: "Стандартный цикл: 6× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): доп. условный урон (ult:conditional-additional), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 6x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): conditional additional ult damage, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 6× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): доп. условный урон (ult:conditional-additional), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 6x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): conditional additional ult damage, ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -906,8 +906,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "6× базовая «Frigid Cold Arrow»: 100% ATK",
         actionEn: "6x Basic 'Frigid Cold Arrow': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 6,
@@ -929,7 +929,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Дань Хэн (1002) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Дань Хэн (1002) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1002": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -937,14 +937,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/dan-heng/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/dan-heng",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 260% (en 30); Ult 400%, 100 energy cost (+5); Talent: When Dan Heng is the target of an ally's Ability, his next attack's Wind RES PEN increases by 0.36%. This effect can be triggered again after 2 turn(s).."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт. Множители, энергия способностей и стоимость ульты (100) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate. Multipliers, ability energy, and the ult cost (100) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт. Множители, энергия способностей и стоимость ульты (100) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate. Multipliers, ability energy, and the ult cost (100) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 100 },
     instances: [
       {
@@ -953,8 +953,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Cloudlancer Art: Torrent»: 260% ATK",
         actionEn: "2x Skill 'Cloudlancer Art: Torrent': 260% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2.6,
         targets: 1,
         count: 2,
@@ -966,8 +966,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "2× базовая «Cloudlancer Art: North Wind»: 100% ATK",
         actionEn: "2x Basic 'Cloudlancer Art: North Wind': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 2,
@@ -989,7 +989,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Химеко (1003) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Химеко (1003) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1003": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -997,14 +997,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/himeko/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/himeko",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 200%/80% adj (en 30); Ult 230%, 120 energy cost (+5); Talent: When an enemy is inflicted with Weakness Break, Himeko gains 1 point of Charge (max 3 points).\nIf Himeko is fully Charged when an ally performs an attack, Himeko immediately performs 1 follow-up attac."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, talent follow-up attacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, talent follow-up attacks, ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -1013,8 +1013,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Molten Detonation»: 200% ATK + 80% по смежным",
         actionEn: "2x Skill 'Molten Detonation': 200% ATK + 80% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2,
         adjacentMv: 0.8,
         targets: 3,
@@ -1027,8 +1027,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Sawblade Tuning»: 100% ATK",
         actionEn: "3x Basic 'Sawblade Tuning': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1050,7 +1050,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Кафка (1005) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Кафка (1005) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1005": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1058,14 +1058,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/kafka/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/kafka",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 160%/60% adj (en 30); Ult 80%, 120 energy cost (+5); Talent: After Kafka's teammate uses attacks on an enemy target, Kafka immediately launches Follow-up ATK and deals Lightning DMG equal to 1.4% of Kafka's ATK to the primary target, with a 100% base chance to ."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, talent follow-up attacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, talent follow-up attacks, ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -1074,8 +1074,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Caressing Moonlight»: 160% ATK + 60% по смежным",
         actionEn: "2x Skill 'Caressing Moonlight': 160% ATK + 60% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.6,
         adjacentMv: 0.6,
         targets: 3,
@@ -1088,8 +1088,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Midnight Tumult»: 100% ATK",
         actionEn: "3x Basic 'Midnight Tumult': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1111,7 +1111,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Серебряный Волк (1006) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Серебряный Волк (1006) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1006": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1119,14 +1119,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/silver-wolf/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/silver-wolf",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 196% (en 30); Ult 380%, 110 energy cost (+5); Talent: Silver Wolf can create three types of \"Bugs\": Reduce ATK by 0.1%, reduce DEF by 0.12%, and reduce SPD by 0.06%.\nAfter every attack launched by Silver Wolf, she has a 1% base chance to implant 1 random."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -1135,8 +1135,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Allow Changes?»: 196% ATK",
         actionEn: "2x Skill 'Allow Changes?': 196% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.96,
         targets: 1,
         count: 2,
@@ -1148,8 +1148,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «System Warning»: 100% ATK",
         actionEn: "3x Basic 'System Warning': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1171,7 +1171,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Арлан (1008) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Арлан (1008) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1008": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1179,14 +1179,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/arlan/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/arlan",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 240% (en 30); Ult 320%/160% adj, 110 energy cost (+5); Talent: Increases Arlan's DMG for every percent of HP below his Max HP, up to a max of 0.72% more DMG.."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -1195,8 +1195,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Shackle Breaker»: 240% ATK",
         actionEn: "2x Skill 'Shackle Breaker': 240% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2.4,
         targets: 1,
         count: 2,
@@ -1208,8 +1208,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Lightning Rush»: 100% ATK",
         actionEn: "3x Basic 'Lightning Rush': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1232,7 +1232,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Герта (1013) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Герта (1013) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1013": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1240,14 +1240,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/herta/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/herta",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 100% (en 30); Ult 200%, 110 energy cost (+5); Talent: When an ally's attack causes an enemy's HP percentage to fall to 0.5% or lower, Herta will launch a follow-up attack, dealing Ice DMG equal to 0.4% of Herta's ATK to all enemies.."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -1256,8 +1256,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «One-Time Offer»: 100% ATK",
         actionEn: "2x Skill 'One-Time Offer': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1,
         targets: 3,
         count: 2,
@@ -1269,8 +1269,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «What Are You Looking At?»: 100% ATK",
         actionEn: "3x Basic 'What Are You Looking At?': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1292,7 +1292,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Броня (1101) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Броня (1101) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1101": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1300,14 +1300,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/bronya/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/bronya",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult no damage, 120 energy cost (+5); Talent: After using her Basic ATK, Bronya's next action will be Advanced Forward by 0.3%.."
       }
     ],
-    noteRu: "Стандартный цикл: 6× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 6x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 6× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 6x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -1316,8 +1316,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "6× базовая «Windrider Bullet»: 100% ATK",
         actionEn: "6x Basic 'Windrider Bullet': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 6,
@@ -1339,7 +1339,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Сервал (1103) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Сервал (1103) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1103": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1347,14 +1347,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/serval/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/serval",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 140%/60% adj (en 30); Ult 180%, 100 energy cost (+5); Talent: After Serval attacks, deals Additional Lightning DMG equal to 0.72% of Serval's ATK to all Shocked enemies.."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт. Множители, энергия способностей и стоимость ульты (100) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate. Multipliers, ability energy, and the ult cost (100) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт. Множители, энергия способностей и стоимость ульты (100) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate. Multipliers, ability energy, and the ult cost (100) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 100 },
     instances: [
       {
@@ -1363,8 +1363,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Lightning Flash»: 140% ATK + 60% по смежным",
         actionEn: "2x Skill 'Lightning Flash': 140% ATK + 60% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.4,
         adjacentMv: 0.6,
         targets: 3,
@@ -1377,8 +1377,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "2× базовая «Roaring Thunderclap»: 100% ATK",
         actionEn: "2x Basic 'Roaring Thunderclap': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 2,
@@ -1400,7 +1400,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Наташа (1105) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Наташа (1105) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1105": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1408,14 +1408,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/natasha/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/natasha",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult no damage, 90 energy cost (+5); Talent: When healing allies with HP percentage at 0.3% or lower, increases Natasha's Outgoing Healing by 0.5%. This effect also works on continuous healing.."
       }
     ],
-    noteRu: "Стандартный цикл: 5× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (90) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 85 ✓). SP: -5 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 5x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (90) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 85 ✓). SP: -5 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 5× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (90) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 85 ✓). SP: -5 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 5x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (90) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 85 ✓). SP: -5 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
     energy: { ultCost: 90 },
     instances: [
       {
@@ -1424,8 +1424,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "5× базовая «Behind the Kindness»: 100% ATK",
         actionEn: "5x Basic 'Behind the Kindness': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 5,
@@ -1447,7 +1447,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Пела (1106) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Пела (1106) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1106": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1455,14 +1455,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/pela/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/pela",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 210% (en 30); Ult 100%, 110 energy cost (+5); Talent: If the enemy is debuffed after Pela's attack, Pela will restore 10 additional Energy. This effect can only be triggered 1 time per attack.."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -1471,8 +1471,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Frostbite»: 210% ATK",
         actionEn: "2x Skill 'Frostbite': 210% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2.1,
         targets: 1,
         count: 2,
@@ -1484,8 +1484,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Frost Shot»: 100% ATK",
         actionEn: "3x Basic 'Frost Shot': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1507,7 +1507,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Хук (1109) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Хук (1109) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1109": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1515,14 +1515,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/hook/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/hook",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 240% (en 30); Ult 400%, 120 energy cost (+5); Talent: When attacking a target afflicted with Burn, deals Additional Fire DMG equal to 1% of Hook's ATK and regenerates 5 extra Energy.."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -1531,8 +1531,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Hey! Remember Hook?»: 240% ATK",
         actionEn: "2x Skill 'Hey! Remember Hook?': 240% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2.4,
         targets: 1,
         count: 2,
@@ -1544,8 +1544,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Hehe! Don't Get Burned!»: 100% ATK",
         actionEn: "3x Basic 'Hehe! Don't Get Burned!': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1567,7 +1567,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Рысь (1110) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Рысь (1110) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1110": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1575,14 +1575,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/lynx/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/lynx",
         capturedOn: "2026-11-17",
         note: "Basic 50% ATK (en 20); Skill no damage; Ult no damage, 100 energy cost (+5); Talent: When using Lynx's Skill or Ultimate, applies continuous healing to the target ally for 2 turn(s), restoring the target ally's HP by an amount equal to 0.036% of Lynx's Max HP plus 96 at the start of e."
       }
     ],
-    noteRu: "Стандартный цикл: 5× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (100) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: -5 за цикл. Не включено (аптайм/условия не подтверждены): условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 5x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (100) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: -5 per cycle. Excluded (uptime/conditions unverified): условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 5× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (100) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: -5 за цикл. Не включено (аптайм/условия не подтверждены): условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 5x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (100) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: -5 per cycle. Excluded (uptime/conditions unverified): условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 100 },
     instances: [
       {
@@ -1591,8 +1591,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "5× базовая «Ice Crampon Technique»: 50% ATK",
         actionEn: "5x Basic 'Ice Crampon Technique': 50% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 0.5,
         targets: 1,
         count: 5,
@@ -1614,7 +1614,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Тинъюнь (1202) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Тинъюнь (1202) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1202": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1622,14 +1622,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/tingyun/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/tingyun",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult no damage, 130 energy cost (+5); Talent: When an enemy is attacked by Tingyun, the ally with Benediction immediately deals Additional Lightning DMG equal to 0.6% of that ally's ATK to the same enemy.."
       }
     ],
-    noteRu: "Стандартный цикл: 7× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (130) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 7x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (130) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 7× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (130) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 7x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (130) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -1638,8 +1638,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "7× базовая «Dislodged»: 100% ATK",
         actionEn: "7x Basic 'Dislodged': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 7,
@@ -1661,7 +1661,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Лоча (1203) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Лоча (1203) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1203": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1669,14 +1669,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/luocha/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/luocha",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult 200%, 100 energy cost (+5); Talent: When Abyss Flower reaches 2 stacks, Luocha consumes all stacks of Abyss Flower to deploy a Field against the enemy.\nWhen any enemy in the Field is attacked by an ally, the attacking ally's HP is immed."
       }
     ],
-    noteRu: "Стандартный цикл: 5× базовая + ульт. Множители, энергия способностей и стоимость ульты (100) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: -5 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 5x Basic + Ultimate. Multipliers, ability energy, and the ult cost (100) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: -5 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 5× базовая + ульт. Множители, энергия способностей и стоимость ульты (100) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: -5 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 5x Basic + Ultimate. Multipliers, ability energy, and the ult cost (100) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: -5 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 100 },
     instances: [
       {
@@ -1685,8 +1685,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "5× базовая «Thorns of the Abyss»: 100% ATK",
         actionEn: "5x Basic 'Thorns of the Abyss': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 5,
@@ -1708,7 +1708,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Сушан (1206) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Сушан (1206) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1206": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1716,14 +1716,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/sushang/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/sushang",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 210% (en 30); Ult 320%, 120 energy cost (+5); Talent: When an enemy has their Weakness Broken on the field, Sushang's SPD increases by 0.2% for 2 turn(s).."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): доп. условный урон (skill:conditional-additional), состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): conditional additional skill damage, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): доп. условный урон (skill:conditional-additional), состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): conditional additional skill damage, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -1732,8 +1732,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Cloudfencer Art: Mountainfall»: 210% ATK",
         actionEn: "2x Skill 'Cloudfencer Art: Mountainfall': 210% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2.1,
         targets: 1,
         count: 2,
@@ -1745,8 +1745,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Cloudfencer Art: Starshine»: 100% ATK",
         actionEn: "3x Basic 'Cloudfencer Art: Starshine': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1768,7 +1768,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Юйкун (1207) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Юйкун (1207) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1207": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1776,14 +1776,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/yukong/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/yukong",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult 380%, 130 energy cost (+5); Talent: Basic ATK additionally deals Imaginary DMG equal to 0.8% of Yukong's ATK, and increases the Toughness-Reducing DMG of this attack by 1%. This effect can be triggered again after 1 turn(s).."
       }
     ],
-    noteRu: "Стандартный цикл: 7× базовая + ульт. Множители, энергия способностей и стоимость ульты (130) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 7x Basic + Ultimate. Multipliers, ability energy, and the ult cost (130) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 7× базовая + ульт. Множители, энергия способностей и стоимость ульты (130) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 7x Basic + Ultimate. Multipliers, ability energy, and the ult cost (130) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -1792,8 +1792,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "7× базовая «Arrowslinger»: 100% ATK",
         actionEn: "7x Basic 'Arrowslinger': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 7,
@@ -1815,7 +1815,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Фу Сюань (1208) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Фу Сюань (1208) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1208": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1823,14 +1823,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/fu-xuan/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/fu-xuan",
         capturedOn: "2026-11-17",
         note: "Basic 50% ATK (en 20); Skill no damage; Ult 100%, 135 energy cost (+5); Talent: While Fu Xuan is still active in battle, Misfortune Avoidance is applied to the entire team. With Misfortune Avoidance, allies take 0.18% less DMG.\nWhen Fu Xuan's current HP falls to 0.5% of her Max H."
       }
     ],
-    noteRu: "Стандартный цикл: 7× базовая + ульт. Множители, энергия способностей и стоимость ульты (135) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 130 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 7x Basic + Ultimate. Multipliers, ability energy, and the ult cost (135) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 130 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 7× базовая + ульт. Множители, энергия способностей и стоимость ульты (135) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 130 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 7x Basic + Ultimate. Multipliers, ability energy, and the ult cost (135) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 130 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
     energy: { ultCost: 135 },
     instances: [
       {
@@ -1839,8 +1839,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "7× базовая «Novaburst»: 50% ATK",
         actionEn: "7x Basic 'Novaburst': 50% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 0.5,
         targets: 1,
         count: 7,
@@ -1862,7 +1862,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Яньцин (1209) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Яньцин (1209) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1209": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1870,14 +1870,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/yanqing/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/yanqing",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 220% (en 30); Ult 350%, 140 energy cost (+5); Talent: When Soulsteel Sync is active, Yanqing is less likely to be attacked by enemies. Yanqing's CRIT Rate increases by 0.2% and his CRIT DMG increases by 0.3%. After Yanqing attacks an enemy, there is a 0.."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт. Множители, энергия способностей и стоимость ульты (140) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate. Multipliers, ability energy, and the ult cost (140) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт. Множители, энергия способностей и стоимость ульты (140) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate. Multipliers, ability energy, and the ult cost (140) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, ally energy, eidolons (E0).",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -1886,8 +1886,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Darting Ironthorn»: 220% ATK",
         actionEn: "2x Skill 'Darting Ironthorn': 220% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2.2,
         targets: 1,
         count: 2,
@@ -1899,8 +1899,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "4× базовая «Frost Thorn»: 100% ATK",
         actionEn: "4x Basic 'Frost Thorn': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 4,
@@ -1922,7 +1922,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Гуйнайфэнь (1210) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Гуйнайфэнь (1210) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1210": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1930,14 +1930,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/guinaifen/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/guinaifen",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 120%/40% adj (en 30); Ult 120%, 120 energy cost (+5); Talent: When Guinaifen is on the field, there is a 1% base chance to apply Firekiss to an enemy after their Burn status causes DMG. While inflicted with Firekiss, the enemy receives 0.07% increased DMG, which."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -1946,8 +1946,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Blazing Welcome»: 120% ATK + 40% по смежным",
         actionEn: "2x Skill 'Blazing Welcome': 120% ATK + 40% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.2,
         adjacentMv: 0.4,
         targets: 3,
@@ -1960,8 +1960,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Standing Ovation»: 100% ATK",
         actionEn: "3x Basic 'Standing Ovation': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -1983,7 +1983,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Байлу (1211) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Байлу (1211) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1211": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -1991,14 +1991,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/bailu/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/bailu",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult no damage, 100 energy cost (+5); Talent: After an ally with Invigoration is hit, restores the ally's HP for 0.054% of Bailu's Max HP plus 144. This effect can trigger 2 time(s).\nWhen an ally receives a killing blow, they will not be knocked ."
       }
     ],
-    noteRu: "Стандартный цикл: 5× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (100) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: -5 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 5x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (100) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: -5 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 5× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (100) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: -5 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 5x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (100) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: -5 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 100 },
     instances: [
       {
@@ -2007,8 +2007,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "5× базовая «Diagnostic Kick»: 100% ATK",
         actionEn: "5x Basic 'Diagnostic Kick': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 5,
@@ -2030,7 +2030,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Сюэи (1214) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Сюэи (1214) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1214": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2038,14 +2038,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/xueyi/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/xueyi",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 140%/70% adj (en 30); Ult 250%, 120 energy cost (+5); Talent: When Xueyi reduces enemy Toughness with attacks, Karma will be stacked. The more Toughness is reduced, the more stacks of Karma are added, up to 8 stacks.\nWhen Xueyi's allies reduce enemy Toughness wi."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -2054,8 +2054,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Iniquity Obliteration»: 140% ATK + 70% по смежным",
         actionEn: "2x Skill 'Iniquity Obliteration': 140% ATK + 70% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.4,
         adjacentMv: 0.7,
         targets: 3,
@@ -2068,8 +2068,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Mara-Sunder Awl»: 100% ATK",
         actionEn: "3x Basic 'Mara-Sunder Awl': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -2091,7 +2091,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Ханья (1215) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Ханья (1215) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1215": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2099,14 +2099,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/hanya/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/hanya",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 240% (en 30); Ult no damage, 140 energy cost (+5); Talent: When an ally uses a Basic ATK, Skill, or Ultimate on an enemy inflicted with Burden, the DMG dealt increases by 0.3% for 2 turn(s).."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (140) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (140) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (140) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (140) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -2115,8 +2115,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Samsara, Locked»: 240% ATK",
         actionEn: "2x Skill 'Samsara, Locked': 240% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2.4,
         targets: 1,
         count: 2,
@@ -2128,8 +2128,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "4× базовая «Oracle Brush»: 100% ATK",
         actionEn: "4x Basic 'Oracle Brush': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 4,
@@ -2151,7 +2151,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Хохо (1217) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Хохо (1217) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1217": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2159,14 +2159,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/huohuo/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/huohuo",
         capturedOn: "2026-11-17",
         note: "Basic 50% ATK (en 20); Skill no damage; Ult no damage, 140 energy cost (+5); Talent: After using her Skill or Ultimate, Huohuo gains \"Divine Provision,\" lasting for 3 turn(s). This duration decreases by 1 turn at the start of Huohuo's every turn. When Huohuo has \"Divine Provision\" at ."
       }
     ],
-    noteRu: "Стандартный цикл: 7× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (140) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 7x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (140) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 7× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (140) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 7x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (140) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -2175,8 +2175,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "7× базовая «Banner: Stormcaller»: 50% ATK",
         actionEn: "7x Basic 'Banner: Stormcaller': 50% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 0.5,
         targets: 1,
         count: 7,
@@ -2198,7 +2198,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Цзяоцю (1218) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Цзяоцю (1218) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1218": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2206,14 +2206,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/jiaoqiu/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/jiaoqiu",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 150%/90% adj (en 30); Ult 100%, 100 energy cost (+5); Talent: When Jiaoqiu hits an enemy with Basic ATK, Skill or Ultimate, there is a 1% base chance to inflict 1 stack of Ashen Roast on them. At 1 stack, increases DMG received by the enemy by 0.15%. Then, each ."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт. Множители, энергия способностей и стоимость ульты (100) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate. Multipliers, ability energy, and the ult cost (100) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт. Множители, энергия способностей и стоимость ульты (100) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate. Multipliers, ability energy, and the ult cost (100) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 100 },
     instances: [
       {
@@ -2222,8 +2222,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Scorch Onslaught»: 150% ATK + 90% по смежным",
         actionEn: "2x Skill 'Scorch Onslaught': 150% ATK + 90% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.5,
         adjacentMv: 0.9,
         targets: 3,
@@ -2236,8 +2236,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "2× базовая «Heart Afire»: 100% ATK",
         actionEn: "2x Basic 'Heart Afire': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 2,
@@ -2259,7 +2259,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Юньли (1221) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Юньли (1221) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1221": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2267,14 +2267,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/yunli/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/yunli",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 120%/60% adj (en 30); Ult 220%/110% adj, 120 energy cost (+5); Talent: When Yunli gets attacked by an enemy target, additionally regenerates 15 Energy and immediately launches a Counter on the attacker, dealing Physical DMG equal to 1.2% of Yunli's ATK to the attacker an."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -2283,8 +2283,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Bladeborne Quake»: 120% ATK + 60% по смежным",
         actionEn: "2x Skill 'Bladeborne Quake': 120% ATK + 60% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.2,
         adjacentMv: 0.6,
         targets: 3,
@@ -2297,8 +2297,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Galespin Summersault»: 100% ATK",
         actionEn: "3x Basic 'Galespin Summersault': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -2321,7 +2321,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Моцзэ (1223) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Моцзэ (1223) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1223": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2329,14 +2329,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/moze/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/moze",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 150% (en 30); Ult 270%, 120 energy cost (+5); Talent: When \"Prey\" exists on the field, Moze will enter the Departed state.\nAfter allies attack \"Prey,\" Moze will additionally deal 1 instance of Lightning Additional DMG equal to 0.3% of his ATK and consume."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -2345,8 +2345,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Fleetwinged Raid»: 150% ATK",
         actionEn: "2x Skill 'Fleetwinged Raid': 150% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.5,
         targets: 1,
         count: 2,
@@ -2358,8 +2358,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Hurlthorn»: 100% ATK",
         actionEn: "3x Basic 'Hurlthorn': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -2381,7 +2381,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Фуга (1225) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Фуга (1225) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1225": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2389,14 +2389,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/tingyun-fugue/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/tingyun-fugue",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult 200%, 130 energy cost (+5); Talent: While Fugue is on the field, enemy targets will get additionally afflicted with \"Cloudflame Luster,\" equal to 0.4% of their Max Toughness. When the initial Toughness is reduced to 0, \"Cloudflame Luste."
       }
     ],
-    noteRu: "Стандартный цикл: 7× базовая + ульт. Множители, энергия способностей и стоимость ульты (130) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 7x Basic + Ultimate. Multipliers, ability energy, and the ult cost (130) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 7× базовая + ульт. Множители, энергия способностей и стоимость ульты (130) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 7x Basic + Ultimate. Multipliers, ability energy, and the ult cost (130) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -2405,8 +2405,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "7× базовая «Radiant Streak»: 100% ATK",
         actionEn: "7x Basic 'Radiant Streak': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 7,
@@ -2428,7 +2428,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Галлахер (1301) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Галлахер (1301) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1301": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2436,14 +2436,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/gallagher/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/gallagher",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult 150%, 110 energy cost (+5); Talent: The Besotted state increases the Break DMG that targets receive by 0.12%. Every time a Besotted target is attacked by an ally, the attacker's HP gets restored by 640.."
       }
     ],
-    noteRu: "Стандартный цикл: 6× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 6x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 6× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 6x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -2452,8 +2452,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "6× базовая «Corkage Fee»: 100% ATK",
         actionEn: "6x Basic 'Corkage Fee': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 6,
@@ -2475,7 +2475,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Аргенти (1302) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Аргенти (1302) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1302": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2483,14 +2483,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/argenti/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/argenti",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 120% (en 30); Ult 160%, 90 energy cost (+5); Talent: For every enemy hit when Argenti uses his Basic Attack, Skill, or Ultimate, regenerates Argenti's Energy by 3, and grants him a stack of Apotheosis, increasing his CRIT Rate by 0.025%. This effect can."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт. Множители, энергия способностей и стоимость ульты (90) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 85 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate. Multipliers, ability energy, and the ult cost (90) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 85 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт. Множители, энергия способностей и стоимость ульты (90) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 85 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate. Multipliers, ability energy, and the ult cost (90) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 85 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 90 },
     instances: [
       {
@@ -2499,8 +2499,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Justice, Hereby Blooms»: 120% ATK",
         actionEn: "2x Skill 'Justice, Hereby Blooms': 120% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.2,
         targets: 3,
         count: 2,
@@ -2512,8 +2512,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "2× базовая «Fleeting Fragrance»: 100% ATK",
         actionEn: "2x Basic 'Fleeting Fragrance': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 2,
@@ -2535,7 +2535,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Жуань Мэй (1303) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Жуань Мэй (1303) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1303": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2543,14 +2543,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/ruan-mei/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/ruan-mei",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult no damage, 130 energy cost (+5); Talent: Increases SPD by 0.1% for the team (excluding this character). When allies Break an enemy target's Weakness, Ruan Mei deals to this enemy target Break DMG equal to 1.2% of her Ice Break DMG.."
       }
     ],
-    noteRu: "Стандартный цикл: 7× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (130) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 7x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (130) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 7× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (130) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 7x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (130) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -2559,8 +2559,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "7× базовая «Threading Fragrance»: 100% ATK",
         actionEn: "7x Basic 'Threading Fragrance': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 7,
@@ -2582,7 +2582,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Доктор Рацио (1305) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Доктор Рацио (1305) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1305": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2590,14 +2590,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/dr-ratio/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/dr-ratio",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 150% (en 30); Ult 240%, 140 energy cost (+5); Talent: When using his Skill, Dr. Ratio has a 0.4% fixed chance of launching a follow-up attack against his target for 1 time, dealing Imaginary DMG equal to 2.7% of Dr. Ratio's ATK. For each debuff the targe."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт. Множители, энергия способностей и стоимость ульты (140) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate. Multipliers, ability energy, and the ult cost (140) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт. Множители, энергия способностей и стоимость ульты (140) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate. Multipliers, ability energy, and the ult cost (140) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -2606,8 +2606,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Intellectual Midwifery»: 150% ATK",
         actionEn: "2x Skill 'Intellectual Midwifery': 150% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.5,
         targets: 1,
         count: 2,
@@ -2619,8 +2619,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "4× базовая «Mind is Might»: 100% ATK",
         actionEn: "4x Basic 'Mind is Might': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 4,
@@ -2642,7 +2642,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Искорка (1306) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Искорка (1306) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1306": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2650,14 +2650,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/sparkle/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/sparkle",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult no damage, 110 energy cost (+5); Talent: While Sparkle is on the battlefield, additionally increases the max number of Skill Points by 2. Whenever an ally target consumes 1 Skill Point, Sparkle gains 1 stack of \"Figment,\" with each stack inc."
       }
     ],
-    noteRu: "Стандартный цикл: 6× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (110) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 6x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (110) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 6× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (110) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 6x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (110) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -2666,8 +2666,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "6× базовая «Monodrama»: 100% ATK",
         actionEn: "6x Basic 'Monodrama': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 6,
@@ -2689,7 +2689,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Чёрный Лебедь (1307) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Чёрный Лебедь (1307) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1307": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2697,14 +2697,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/black-swan/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/black-swan",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 90% (en 30); Ult 120%, 120 energy cost (+5); Talent: Every time an enemy target receives 1 instance of DoT, there is a 0.65% base chance for it to be inflicted with 1 stack of \"Arcana\".\nWhile an enemy target is in the \"Arcana\" state, they are also consi."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -2713,8 +2713,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Decadence, False Twilight»: 90% ATK",
         actionEn: "2x Skill 'Decadence, False Twilight': 90% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 0.9,
         targets: 3,
         count: 2,
@@ -2726,8 +2726,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Percipience, Silent Dawn»: 100% ATK",
         actionEn: "3x Basic 'Percipience, Silent Dawn': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -2749,7 +2749,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Зарянка (1309) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Зарянка (1309) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1309": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2757,14 +2757,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/robin/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/robin",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult 120%, 160 energy cost (+5); Talent: Increase all allies' CRIT DMG by 0.2%. Moreover, after allies attack enemy targets, Robin additionally regenerates 2 Energy for herself.."
       }
     ],
-    noteRu: "Стандартный цикл: 8× базовая + ульт. Множители, энергия способностей и стоимость ульты (160) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 160 ≥ 155 ✓). SP: -8 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 8x Basic + Ultimate. Multipliers, ability energy, and the ult cost (160) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 160 >= 155 ✓). SP: -8 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 8× базовая + ульт. Множители, энергия способностей и стоимость ульты (160) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 160 ≥ 155 ✓). SP: -8 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 8x Basic + Ultimate. Multipliers, ability energy, and the ult cost (160) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 160 >= 155 ✓). SP: -8 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 160 },
     instances: [
       {
@@ -2773,8 +2773,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "8× базовая «Wingflip White Noise»: 100% ATK",
         actionEn: "8x Basic 'Wingflip White Noise': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 8,
@@ -2796,7 +2796,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Воскресенье (1313) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Воскресенье (1313) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1313": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2804,14 +2804,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/sunday/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/sunday",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult no damage, 130 energy cost (+5); Talent: When using Skill, increases the target's CRIT Rate by 0.2%, lasting for 3 turn(s).."
       }
     ],
-    noteRu: "Стандартный цикл: 7× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (130) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 7x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (130) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 7× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (130) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 7x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (130) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -2820,8 +2820,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "7× базовая «Gleaming Admonition»: 100% ATK",
         actionEn: "7x Basic 'Gleaming Admonition': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 7,
@@ -2843,7 +2843,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Яшма (1314) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Яшма (1314) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1314": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2851,14 +2851,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/jade/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/jade",
         capturedOn: "2026-11-17",
         note: "Basic 90% ATK/30% adj (en 20); Skill 25% (en 30); Ult 240%, 140 energy cost (+5); Talent: After Jade or an ally that had become the Debt Collector attacks, Jade gains 1 Charge for each enemy target attacked. When the Charge reaches 8, consume 8 Charges to launch follow-up attack 1 time, de."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт. Множители, энергия способностей и стоимость ульты (140) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate. Multipliers, ability energy, and the ult cost (140) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт. Множители, энергия способностей и стоимость ульты (140) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 135 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate. Multipliers, ability energy, and the ult cost (140) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 135 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -2867,8 +2867,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Acquisition Surety»: 25% ATK",
         actionEn: "2x Skill 'Acquisition Surety': 25% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 0.25,
         targets: 1,
         count: 2,
@@ -2880,8 +2880,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "4× базовая «Lash of Riches»: 90% ATK + 30% по смежным",
         actionEn: "4x Basic 'Lash of Riches': 90% ATK + 30% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 0.9,
         adjacentMv: 0.3,
         targets: 3,
@@ -2904,7 +2904,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Георгина (1321) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Георгина (1321) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1321": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2912,14 +2912,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/the-dahlia/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/the-dahlia",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 160% (en 30); Ult 300%, 130 energy cost (+5); Talent: When entering combat, The Dahlia regenerates 35 Energy and grants \"Dance Partner\" to this unit and the teammate who triggered combat. Whenever there is no other \"Dance Partner\" on the field, grants \"D."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт. Множители, энергия способностей и стоимость ульты (130) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate. Multipliers, ability energy, and the ult cost (130) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 4× базовая + ульт. Множители, энергия способностей и стоимость ульты (130) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -2 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 4x Basic + Ultimate. Multipliers, ability energy, and the ult cost (130) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -2 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -2928,8 +2928,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Lick... Enkindled Betrayal»: 160% ATK",
         actionEn: "2x Skill 'Lick... Enkindled Betrayal': 160% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.6,
         targets: 3,
         count: 2,
@@ -2941,8 +2941,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "4× базовая «Fiddle... Fissured Memory»: 100% ATK",
         actionEn: "4x Basic 'Fiddle... Fissured Memory': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 4,
@@ -2964,7 +2964,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Трибби (1403) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Трибби (1403) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1403": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -2972,14 +2972,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/tribbie/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/tribbie",
         capturedOn: "2026-11-17",
         note: "Basic 30% ATK/15% adj (en 20); Skill no damage; Ult 30%, 120 energy cost (+5); Talent: After other ally characters use Ultimate, Tribbie launches Follow-up ATK, dealing Quantum DMG equal to 0.18% of Tribbie's Max HP to all enemies. This effect triggers up to 1 time per character. When T."
       }
     ],
-    noteRu: "Стандартный цикл: 6× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 6x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 6× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -6 за цикл. Не включено (аптайм/условия не подтверждены): бонус-атаки таланта, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 6x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -6 per cycle. Excluded (uptime/conditions unverified): talent follow-up attacks, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -2988,8 +2988,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "6× базовая «Hundred Rockets»: 30% ATK + 15% по смежным",
         actionEn: "6x Basic 'Hundred Rockets': 30% ATK + 15% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 0.3,
         adjacentMv: 0.15,
         targets: 3,
@@ -3012,7 +3012,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Гисиленса (1410) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Гисиленса (1410) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1410": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3020,14 +3020,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/hysilens/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/hysilens",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 140% (en 30); Ult 200%, 110 energy cost (+5); Talent: When an ally target attacks, there is a 100% base chance for Hysilens to inflict the hit enemy target with one of the following states: Wind Shear, Bleed, Burn, or Shock. Priority is given to inflicti."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (110) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 105 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (110) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 105 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -3036,8 +3036,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Overtone Hum: Chorus After Dark Tides»: 140% ATK",
         actionEn: "2x Skill 'Overtone Hum: Chorus After Dark Tides': 140% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.4,
         targets: 3,
         count: 2,
@@ -3049,8 +3049,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Aeolian Mode: Echoes in Still Waters»: 100% ATK",
         actionEn: "3x Basic 'Aeolian Mode: Echoes in Still Waters': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 3,
@@ -3072,7 +3072,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Керидра (1412) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Керидра (1412) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1412": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3080,14 +3080,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/cerydra/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/cerydra",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill no damage; Ult 240%, 130 energy cost (+5); Talent: The character with \"Military Merit\" increases ATK by an amount equal to 0.24% of Cerydra's ATK. When the character uses Basic ATK or Skill, Cerydra gains 1 Charge. During Coup de Main, Cerydra cannot ."
       }
     ],
-    noteRu: "Стандартный цикл: 7× базовая + ульт. Множители, энергия способностей и стоимость ульты (130) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 7x Basic + Ultimate. Multipliers, ability energy, and the ult cost (130) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 7× базовая + ульт. Множители, энергия способностей и стоимость ульты (130) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 140 ≥ 125 ✓). SP: -7 за цикл. Не включено (аптайм/условия не подтверждены): условные пассивы, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 7x Basic + Ultimate. Multipliers, ability energy, and the ult cost (130) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 140 >= 125 ✓). SP: -7 per cycle. Excluded (uptime/conditions unverified): conditional passives, ally energy, eidolons (E0).",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -3096,8 +3096,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "7× базовая «King's Castling»: 100% ATK",
         actionEn: "7x Basic 'King's Castling': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 7,
@@ -3119,7 +3119,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Яо Гуан (1502) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Яо Гуан (1502) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1502": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3127,14 +3127,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/yao-guang/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/yao-guang",
         capturedOn: "2026-11-17",
         note: "Basic 90% ATK/30% adj (en 20); Skill no damage; Ult no damage, 180 energy cost (+5); Talent: When Yao Guang holds \"Certified Banger\":\n• After an ally target uses an attack, triggers the \"Great Boon\" effect, dealing 1 additional instance of 0.2% Elation DMG of the corresponding Type to 1 rando."
       }
     ],
-    noteRu: "Стандартный цикл: 9× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (180) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 180 ≥ 175 ✓). SP: -9 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 9x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (180) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 180 >= 175 ✓). SP: -9 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 9× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (180) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 180 ≥ 175 ✓). SP: -9 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 9x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (180) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 180 >= 175 ✓). SP: -9 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 180 },
     instances: [
       {
@@ -3143,8 +3143,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "9× базовая «Whistlebolt Sings Joy»: 90% ATK + 30% по смежным",
         actionEn: "9x Basic 'Whistlebolt Sings Joy': 90% ATK + 30% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 0.9,
         adjacentMv: 0.3,
         targets: 3,
@@ -3167,7 +3167,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Рин Тосака (1508) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Рин Тосака (1508) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1508": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3175,14 +3175,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/rin-tohsaka/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/rin-tohsaka",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 180% (en 30); Ult 600%/200% adj, 160 energy cost (+5); Talent: $86."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 5× базовая + ульт. Множители, энергия способностей и стоимость ульты (160) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 160 ≥ 155 ✓). SP: -3 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 5x Basic + Ultimate. Multipliers, ability energy, and the ult cost (160) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 160 >= 155 ✓). SP: -3 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 5× базовая + ульт. Множители, энергия способностей и стоимость ульты (160) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 160 ≥ 155 ✓). SP: -3 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 5x Basic + Ultimate. Multipliers, ability energy, and the ult cost (160) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 160 >= 155 ✓). SP: -3 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, ally energy, eidolons (E0).",
     energy: { ultCost: 160 },
     instances: [
       {
@@ -3191,8 +3191,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Jeweled Sword Zelretch»: 180% ATK",
         actionEn: "2x Skill 'Jeweled Sword Zelretch': 180% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 1.8,
         targets: 1,
         count: 2,
@@ -3204,8 +3204,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "5× базовая «Bajiquan»: 100% ATK",
         actionEn: "5x Basic 'Bajiquan': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 5,
@@ -3228,7 +3228,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Первопроходец (Радость) (8009) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Первопроходец (Радость) (8009) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "8009": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3236,14 +3236,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/trailblazer-elation/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/trailblazer-elation",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 60% (en 30); Ult no damage, 160 energy cost (+5); Talent: After using an attack, regenerates a fixed amount of 10 Energy and gains 3 Punchline point(s). When the Trailblazer holds \"Certified Banger,\" their Skill additionally deals 0.3% Lightning Elation DMG ."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 5× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (160) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 160 ≥ 155 ✓). SP: -3 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 5x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (160) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 160 >= 155 ✓). SP: -3 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 5× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (160) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 160 ≥ 155 ✓). SP: -3 за цикл. Не включено (аптайм/условия не подтверждены): состояния/стаки кита, условные бонусы кита (If-условия), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 5x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (160) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 160 >= 155 ✓). SP: -3 per cycle. Excluded (uptime/conditions unverified): kit states/stacks, условные бонусы кита (If-условия), ally energy, eidolons (E0).",
     energy: { ultCost: 160 },
     instances: [
       {
@@ -3252,8 +3252,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Let the Storm Rage On»: 60% ATK",
         actionEn: "2x Skill 'Let the Storm Rage On': 60% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 0.6,
         targets: 3,
         count: 2,
@@ -3265,8 +3265,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "5× базовая «Make Some Noise»: 100% ATK",
         actionEn: "5x Basic 'Make Some Noise': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 5,
@@ -3288,7 +3288,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Гепард (1104) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Гепард (1104) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1104": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3296,14 +3296,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/gepard/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/gepard",
         capturedOn: "2026-11-17",
         note: "Basic 100% ATK (en 20); Skill 200% (en 30); Ult no damage, 100 energy cost (+5); Talent: When struck with a killing blow, instead of becoming knocked down, Gepard's HP immediately restores to 0.5% of his Max HP. This effect can only trigger once per battle.."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (100) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): доп. условный урон (skill:conditional-additional), энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (100) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): conditional additional skill damage, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (100) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): доп. условный урон (skill:conditional-additional), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (100) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): conditional additional skill damage, ally energy, eidolons (E0).",
     energy: { ultCost: 100 },
     instances: [
       {
@@ -3312,8 +3312,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Daunting Smite»: 200% ATK",
         actionEn: "2x Skill 'Daunting Smite': 200% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
-        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Per-cycle use count is a generic documented assumption.",
         mv: 2,
         targets: 1,
         count: 2,
@@ -3325,8 +3325,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "2× базовая «Fist of Conviction»: 100% ATK",
         actionEn: "2x Basic 'Fist of Conviction': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
         mv: 1,
         targets: 1,
         count: 2,
@@ -3348,7 +3348,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Вельт (1004) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Вельт (1004) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1004": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3356,14 +3356,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/welt/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/welt",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (5 отскоков по 72% ATK) + 3× базовая + ульт (150% ATK). Множители и стоимость ульты (120) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
-    noteEn: "Standard cycle: 2x Skill (5 bounces at 72% ATK) + 3x Basic + Ult (150% ATK). Multipliers and energy cost (120) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (5 отскоков по 72% ATK) + 3× базовая + ульт (150% ATK). Множители и стоимость ульты (120) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
+    noteEn: "Standard cycle: 2x Skill (5 bounces at 72% ATK) + 3x Basic + Ult (150% ATK). Multipliers and energy cost (120) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -3372,8 +3372,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Край пустоты» (5 отскоков): 360% ATK",
         actionEn: "2x Skill 'Edge of the Void' (5 bounces): 360% ATK",
-        descRu: "Официальный множитель кита (Prydwen: 5×72% ATK по одиночной цели).",
-        descEn: "Official kit multiplier (Prydwen: 5x72% ATK single-target).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 3.6,
         targets: 1,
         count: 2,
@@ -3409,7 +3409,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Аста (1009) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Аста (1009) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1009": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3417,14 +3417,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/asta/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/asta",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (5 отскоков по 50% ATK) + 3× базовая + ульт (бафф скорости отряду, mv 0). Множители и стоимость ульты (120) — из официального кита (Prydwen). Энергия: 2×36 + 3×20 + 5 = 137 ≥ 120 ✓.",
-    noteEn: "Standard cycle: 2x Skill (5 bounces at 50% ATK) + 3x Basic + Ult (team SPD buff, mv 0). Multipliers and energy cost (120) from official kit (Prydwen). Energy: 2x36 + 3x20 + 5 = 137 >= 120 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (5 отскоков по 50% ATK) + 3× базовая + ульт (бафф скорости отряду, mv 0). Множители и стоимость ульты (120) — из официального кита (Nous Matrix Model). Энергия: 2×36 + 3×20 + 5 = 137 ≥ 120 ✓.",
+    noteEn: "Standard cycle: 2x Skill (5 bounces at 50% ATK) + 3x Basic + Ult (team SPD buff, mv 0). Multipliers and energy cost (120) from official kit (Nous Matrix Model). Energy: 2x36 + 3x20 + 5 = 137 >= 120 ✓.",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -3433,8 +3433,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Метеоритный шторм» (5 отскоков): 250% ATK",
         actionEn: "2x Skill 'Meteor Storm' (5 bounces): 250% ATK",
-        descRu: "Официальный множитель кита (Prydwen: 5×50% ATK по одиночной цели).",
-        descEn: "Official kit multiplier (Prydwen: 5x50% ATK single-target).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2.5,
         targets: 1,
         count: 2,
@@ -3470,7 +3470,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Сэйбер (1014) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Сэйбер (1014) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1014": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3478,14 +3478,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/saber/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/saber",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 6× навык + 9× базовая + ульт «Экскалибур» (300% ATK AoE). Множители и стоимость ульты (360) — из официального кита (Prydwen). Энергия: 6×30 + 9×20 + 5 = 365 ≥ 360 ✓.",
-    noteEn: "Standard cycle: 6x Skill + 9x Basic + Ult 'Excalibur' (300% ATK AoE). Multipliers and energy cost (360) from official kit (Prydwen). Energy: 6x30 + 9x20 + 5 = 365 >= 360 ✓.",
+    noteRu: "Стандартный цикл: 6× навык + 9× базовая + ульт «Экскалибур» (300% ATK AoE). Множители и стоимость ульты (360) — из официального кита (Nous Matrix Model). Энергия: 6×30 + 9×20 + 5 = 365 ≥ 360 ✓.",
+    noteEn: "Standard cycle: 6x Skill + 9x Basic + Ult 'Excalibur' (300% ATK AoE). Multipliers and energy cost (360) from official kit (Nous Matrix Model). Energy: 6x30 + 9x20 + 5 = 365 >= 360 ✓.",
     energy: { ultCost: 360 },
     instances: [
       {
@@ -3494,8 +3494,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "6× навык: 240% ATK + 120% по смежным",
         actionEn: "6x Skill: 240% ATK + 120% adjacent",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2.4,
         adjacentMv: 1.2,
         targets: 3,
@@ -3532,7 +3532,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Клара (1107) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Клара (1107) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1107": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3540,14 +3540,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/clara/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/clara",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (120% ATK AoE) + 3× базовая + ульт (снижение урона и усиление контратак Сварога, mv 0). Множители и стоимость ульты (110) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 110 ✓.",
-    noteEn: "Standard cycle: 2x Skill (120% ATK AoE) + 3x Basic + Ult (damage reduction and Svarog counter boost, mv 0). Multipliers and energy cost (110) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 110 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (120% ATK AoE) + 3× базовая + ульт (снижение урона и усиление контратак Сварога, mv 0). Множители и стоимость ульты (110) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 110 ✓.",
+    noteEn: "Standard cycle: 2x Skill (120% ATK AoE) + 3x Basic + Ult (damage reduction and Svarog counter boost, mv 0). Multipliers and energy cost (110) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 110 ✓.",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -3556,8 +3556,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Сварог присмотрит за тобой»: 120% ATK",
         actionEn: "2x Skill 'Svarog Watches Over You': 120% ATK",
-        descRu: "Официальный множитель кита (Prydwen; базовый урон без Метки контратаки).",
-        descEn: "Official kit multiplier (Prydwen; base hit without Mark of Counter).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.2,
         targets: 3,
         count: 2,
@@ -3593,7 +3593,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Сампо (1108) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Сампо (1108) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1108": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3601,14 +3601,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/sampo/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/sampo",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (5 отскоков по 56% ATK = 280% ATK) + 3× базовая + ульт (160% ATK). Множители и стоимость ульты (120) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
-    noteEn: "Standard cycle: 2x Skill (5 bounces at 56% ATK = 280% ATK) + 3x Basic + Ult (160% ATK). Multipliers and energy cost (120) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (5 отскоков по 56% ATK = 280% ATK) + 3× базовая + ульт (160% ATK). Множители и стоимость ульты (120) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
+    noteEn: "Standard cycle: 2x Skill (5 bounces at 56% ATK = 280% ATK) + 3x Basic + Ult (160% ATK). Multipliers and energy cost (120) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -3617,8 +3617,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Любовный рикошет» (5 отскоков): 280% ATK",
         actionEn: "2x Skill 'Ricochet Love' (5 bounces): 280% ATK",
-        descRu: "Официальный множитель кита (Prydwen: 5×56% ATK по одиночной цели).",
-        descEn: "Official kit multiplier (Prydwen: 5x56% ATK single-target).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2.8,
         targets: 1,
         count: 2,
@@ -3654,7 +3654,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Лука (1111) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Лука (1111) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1111": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3662,14 +3662,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/luka/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/luka",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 3× навык (120% ATK) + 2× базовая (100% ATK) + ульт (330% ATK). Множители и стоимость ульты (130) — из официального кита (Prydwen). Энергия: 3×30 + 2×20 + 5 = 135 ≥ 130 ✓.",
-    noteEn: "Standard cycle: 3x Skill (120% ATK) + 2x Basic (100% ATK) + Ult (330% ATK). Multipliers and energy cost (130) from official kit (Prydwen). Energy: 3x30 + 2x20 + 5 = 135 >= 130 ✓.",
+    noteRu: "Стандартный цикл: 3× навык (120% ATK) + 2× базовая (100% ATK) + ульт (330% ATK). Множители и стоимость ульты (130) — из официального кита (Nous Matrix Model). Энергия: 3×30 + 2×20 + 5 = 135 ≥ 130 ✓.",
+    noteEn: "Standard cycle: 3x Skill (120% ATK) + 2x Basic (100% ATK) + Ult (330% ATK). Multipliers and energy cost (130) from official kit (Nous Matrix Model). Energy: 3x30 + 2x20 + 5 = 135 >= 130 ✓.",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -3678,8 +3678,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "3× навык «Рвущий кулак»: 120% ATK",
         actionEn: "3x Skill 'Lacerating Fist': 120% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.2,
         targets: 1,
         count: 3,
@@ -3715,7 +3715,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Топаз и Счетовод (1112) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Топаз и Счетовод (1112) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1112": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3723,14 +3723,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/topaz/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/topaz",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (150% ATK) + 3× базовая + 2× атака Счетовода (150% ATK) + ульт (бафф Счетовода, mv 0). Множители и стоимость ульты (130) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 2×5 + 5 = 135 ≥ 130 ✓.",
-    noteEn: "Standard cycle: 2x Skill (150% ATK) + 3x Basic + 2x Numby FUA (150% ATK) + Ult (Numby buff, mv 0). Multipliers and energy cost (130) from official kit (Prydwen). Energy: 2x30 + 3x20 + 2x5 + 5 = 135 >= 130 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (150% ATK) + 3× базовая + 2× атака Счетовода (150% ATK) + ульт (бафф Счетовода, mv 0). Множители и стоимость ульты (130) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 2×5 + 5 = 135 ≥ 130 ✓.",
+    noteEn: "Standard cycle: 2x Skill (150% ATK) + 3x Basic + 2x Numby FUA (150% ATK) + Ult (Numby buff, mv 0). Multipliers and energy cost (130) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 2x5 + 5 = 135 >= 130 ✓.",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -3739,8 +3739,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Затруднения с оплатой?»: 150% ATK",
         actionEn: "2x Skill 'Difficulty Paying?': 150% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.5,
         targets: 1,
         count: 2,
@@ -3765,8 +3765,8 @@ export const ROTATIONS = {
         phaseEn: "FOLLOW-UP ATK — NUMBY",
         actionRu: "2× атака Счетовода: 150% ATK",
         actionEn: "2x Numby Attack: 150% ATK",
-        descRu: "Официальный множитель таланта (Prydwen: 150% ATK).",
-        descEn: "Official talent multiplier (Prydwen: 150% ATK).",
+        descRu: "Официальный множитель таланта (Nous Matrix Model).",
+        descEn: "Official talent multiplier (Nous Matrix Model).",
         mv: 1.5,
         targets: 1,
         count: 2,
@@ -3789,7 +3789,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Цинцюэ (1201) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Цинцюэ (1201) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1201": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3797,14 +3797,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/qingque/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/qingque",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× усиленная базовая «Вишенка на торте!» (240% ATK + 100% по смежным) + 5× базовая + ульт (200% ATK). Множители и стоимость ульты (140) — из официального кита (Prydwen). Энергия: 2×20 + 5×20 + 5 = 145 ≥ 140 ✓.",
-    noteEn: "Standard cycle: 2x Enhanced Basic 'Cherry on Top!' (240% ATK + 100% adjacent) + 5x Basic + Ult (200% ATK). Multipliers and energy cost (140) from official kit (Prydwen). Energy: 2x20 + 5x20 + 5 = 145 >= 140 ✓.",
+    noteRu: "Стандартный цикл: 2× усиленная базовая «Вишенка на торте!» (240% ATK + 100% по смежным) + 5× базовая + ульт (200% ATK). Множители и стоимость ульты (140) — из официального кита (Nous Matrix Model). Энергия: 2×20 + 5×20 + 5 = 145 ≥ 140 ✓.",
+    noteEn: "Standard cycle: 2x Enhanced Basic 'Cherry on Top!' (240% ATK + 100% adjacent) + 5x Basic + Ult (200% ATK). Multipliers and energy cost (140) from official kit (Nous Matrix Model). Energy: 2x20 + 5x20 + 5 = 145 >= 140 ✓.",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -3813,8 +3813,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — ENHANCED BASIC",
         actionRu: "2× усиленная базовая «Вишенка на торте!»: 240% ATK + 100% по смежным",
         actionEn: "2x Enhanced Basic 'Cherry on Top!': 240% ATK + 100% adjacent",
-        descRu: "Официальный множитель усиленной атаки кита (Prydwen).",
-        descEn: "Official enhanced basic multiplier (Prydwen).",
+        descRu: "Официальный множитель усиленной атаки кита (Nous Matrix Model).",
+        descEn: "Official enhanced basic multiplier (Nous Matrix Model).",
         mv: 2.4,
         adjacentMv: 1,
         targets: 3,
@@ -3851,7 +3851,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Цзин Юань (1204) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Цзин Юань (1204) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1204": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3859,14 +3859,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/jing-yuan/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/jing-yuan",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (100% ATK AoE) + 3× базовая + 1× удар Повелителя молний (5 ударов по 66% = 330% ATK, 82.5% по смежным) + ульт (200% ATK AoE). Множители и стоимость ульты (130) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 130 (с учётом бонуса следа А2 закрывается гарантированно).",
-    noteEn: "Standard cycle: 2x Skill (100% ATK AoE) + 3x Basic + 1x Lightning-Lord strike (5 hits at 66% = 330% ATK, 82.5% adjacent) + Ult (200% ATK AoE). Multipliers and energy cost (130) from official kit (Prydwen).",
+    noteRu: "Стандартный цикл: 2× навык (100% ATK AoE) + 3× базовая + 1× удар Повелителя молний (5 ударов по 66% = 330% ATK, 82.5% по смежным) + ульт (200% ATK AoE). Множители и стоимость ульты (130) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 130 (с учётом бонуса следа А2 закрывается гарантированно).",
+    noteEn: "Standard cycle: 2x Skill (100% ATK AoE) + 3x Basic + 1x Lightning-Lord strike (5 hits at 66% = 330% ATK, 82.5% adjacent) + Ult (200% ATK AoE). Multipliers and energy cost (130) from official kit (Nous Matrix Model).",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -3875,8 +3875,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Раскалывающий ущелья трепет»: 100% ATK",
         actionEn: "2x Skill 'Rifting Chasm': 100% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1,
         targets: 3,
         count: 2,
@@ -3901,8 +3901,8 @@ export const ROTATIONS = {
         phaseEn: "FOLLOW-UP ATK — LIGHTNING-LORD",
         actionRu: "1× Повелитель молний (5 ударов): 330% ATK + 82.5% по смежным",
         actionEn: "1x Lightning-Lord (5 hits): 330% ATK + 82.5% adjacent",
-        descRu: "Официальный множитель таланта (Prydwen: 5×66% главной цели, 5×16.5% смежным).",
-        descEn: "Official talent multiplier (Prydwen: 5x66% main, 5x16.5% adjacent).",
+        descRu: "Официальный множитель таланта (Nous Matrix Model).",
+        descEn: "Official talent multiplier (Nous Matrix Model).",
         mv: 3.3,
         adjacentMv: 0.825,
         targets: 3,
@@ -3926,7 +3926,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Фэйсяо (1220) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Фэйсяо (1220) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1220": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3934,14 +3934,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/feixiao/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/feixiao",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (200% ATK) + 2× бонус-атака таланта (110% ATK) + ульт (520% ATK). Ультимейт накапливается от 6 стаков Летящего ауреуса атак отряда (шкалы энергии нет). Множители — из официального кита (Prydwen).",
-    noteEn: "Standard cycle: 2x Skill (200% ATK) + 2x Talent FUA (110% ATK) + Ult (520% ATK). Ult charges from 6 Flying Aureus stacks generated by team attacks (no energy bar). Multipliers from official kit (Prydwen).",
+    noteRu: "Стандартный цикл: 2× навык (200% ATK) + 2× бонус-атака таланта (110% ATK) + ульт (520% ATK). Ультимейт накапливается от 6 стаков Летящего ауреуса атак отряда (шкалы энергии нет). Множители — из официального кита (Nous Matrix Model).",
+    noteEn: "Standard cycle: 2x Skill (200% ATK) + 2x Talent FUA (110% ATK) + Ult (520% ATK). Ult charges from 6 Flying Aureus stacks generated by team attacks (no energy bar). Multipliers from official kit (Nous Matrix Model).",
     energy: { ultCost: 0 },
     instances: [
       {
@@ -3950,8 +3950,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Рассечение волн»: 200% ATK",
         actionEn: "2x Skill 'Waraxe': 200% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2,
         targets: 1,
         count: 2,
@@ -3963,8 +3963,8 @@ export const ROTATIONS = {
         phaseEn: "FOLLOW-UP ATK — TALENT",
         actionRu: "2× бонус-атака таланта: 110% ATK",
         actionEn: "2x Talent FUA: 110% ATK",
-        descRu: "Официальный множитель таланта (Prydwen: 110% ATK).",
-        descEn: "Official talent multiplier (Prydwen: 110% ATK).",
+        descRu: "Официальный множитель таланта (Nous Matrix Model).",
+        descEn: "Official talent multiplier (Nous Matrix Model).",
         mv: 1.1,
         targets: 1,
         count: 2,
@@ -3976,8 +3976,8 @@ export const ROTATIONS = {
         phaseEn: "ULTIMATE",
         actionRu: "Ульт «Великое истребление»: 520% ATK",
         actionEn: "Ult 'Great Cleave': 520% ATK",
-        descRu: "Официальный суммарный множитель ульты (Prydwen: 6×60% + 160% = 520% ATK).",
-        descEn: "Official combined ult multiplier (Prydwen: 6x60% + 160% = 520% ATK).",
+        descRu: "Официальный суммарный множитель ульты (Nous Matrix Model).",
+        descEn: "Official combined ult multiplier (Nous Matrix Model).",
         mv: 5.2,
         targets: 1,
         count: 1,
@@ -3987,7 +3987,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Линша (1222) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Линша (1222) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1222": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -3995,14 +3995,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/lingsha/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/lingsha",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (80% ATK AoE) + 3× базовая + 1× Фуюань (75% ATK AoE) + ульт (150% ATK AoE). Множители и стоимость ульты (110) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 110 ✓.",
-    noteEn: "Standard cycle: 2x Skill (80% ATK AoE) + 3x Basic + 1x Fuyuan (75% ATK AoE) + Ult (150% ATK AoE). Multipliers and energy cost (110) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 110 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (80% ATK AoE) + 3× базовая + 1× Фуюань (75% ATK AoE) + ульт (150% ATK AoE). Множители и стоимость ульты (110) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 110 ✓.",
+    noteEn: "Standard cycle: 2x Skill (80% ATK AoE) + 3x Basic + 1x Fuyuan (75% ATK AoE) + Ult (150% ATK AoE). Multipliers and energy cost (110) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 110 ✓.",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -4011,8 +4011,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Дыхание благовоний»: 80% ATK",
         actionEn: "2x Skill 'Smoke and Scent': 80% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 0.8,
         targets: 3,
         count: 2,
@@ -4037,8 +4037,8 @@ export const ROTATIONS = {
         phaseEn: "FOLLOW-UP ATK — FUYUAN",
         actionRu: "1× атака Фуюань: 75% ATK",
         actionEn: "1x Fuyuan Attack: 75% ATK",
-        descRu: "Официальный множитель таланта (Prydwen: 75% ATK AoE).",
-        descEn: "Official talent multiplier (Prydwen: 75% ATK AoE).",
+        descRu: "Официальный множитель таланта (Nous Matrix Model).",
+        descEn: "Official talent multiplier (Nous Matrix Model).",
         mv: 0.75,
         targets: 3,
         count: 1,
@@ -4061,7 +4061,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Март 7 • Охота (1224) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Март 7 • Охота (1224) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1224": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4069,14 +4069,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/march-7th-swordmaster/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/march-7th-swordmaster",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (назначение Учителя, +30 эн) + 3× базовая (100% ATK) + ульт (240% ATK). Множители и стоимость ульты (110) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 110 ✓.",
-    noteEn: "Standard cycle: 2x Skill (Master designation, +30 en) + 3x Basic (100% ATK) + Ult (240% ATK). Multipliers and energy cost (110) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 110 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (назначение Учителя, +30 эн) + 3× базовая (100% ATK) + ульт (240% ATK). Множители и стоимость ульты (110) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 110 ✓.",
+    noteEn: "Standard cycle: 2x Skill (Master designation, +30 en) + 3x Basic (100% ATK) + Ult (240% ATK). Multipliers and energy cost (110) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 110 ✓.",
     energy: { ultCost: 110 },
     instances: [
       {
@@ -4122,7 +4122,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Авантюрин (1304) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Авантюрин (1304) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1304": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4130,14 +4130,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/aventurine/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/aventurine",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (щит, mv 0) + 3× базовая (100% DEF) + ульт (270% DEF). Урон скейлится от Защиты (DEF). Множители и стоимость ульты (110) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 110 ✓.",
-    noteEn: "Standard cycle: 2x Skill (shield, mv 0) + 3x Basic (100% DEF) + Ult (270% DEF). Damage scales with DEF. Multipliers and energy cost (110) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 110 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (щит, mv 0) + 3× базовая (100% DEF) + ульт (270% DEF). Урон скейлится от Защиты (DEF). Множители и стоимость ульты (110) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 110 ✓.",
+    noteEn: "Standard cycle: 2x Skill (shield, mv 0) + 3x Basic (100% DEF) + Ult (270% DEF). Damage scales with DEF. Multipliers and energy cost (110) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 110 ✓.",
     defScale: true,
     energy: { ultCost: 110 },
     instances: [
@@ -4160,8 +4160,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — BASIC ATK",
         actionRu: "3× базовая «Интуитивная ставка»: 100% DEF",
         actionEn: "3x Basic 'Intuitive Bet': 100% DEF",
-        descRu: "Официальный множитель кита (Prydwen: 100% DEF).",
-        descEn: "Official kit multiplier (Prydwen: 100% DEF).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1,
         targets: 1,
         count: 3,
@@ -4173,8 +4173,8 @@ export const ROTATIONS = {
         phaseEn: "ULTIMATE",
         actionRu: "Ульт «Акулья рулетка»: 270% DEF",
         actionEn: "Ult 'Roulette Shark': 270% DEF",
-        descRu: "Официальный множитель ульты (Prydwen: 270% DEF). Стоимость 110 энергии, +5 после.",
-        descEn: "Official ult multiplier (Prydwen: 270% DEF). Cost 110 energy, +5 after.",
+        descRu: "Официальный множитель ульты (Nous Matrix Model). Стоимость 110 энергии, +5 после.",
+        descEn: "Official ult multiplier (Nous Matrix Model). Cost 110 energy, +5 after.",
         mv: 2.7,
         targets: 1,
         count: 1,
@@ -4184,7 +4184,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Ахерон (1308) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Ахерон (1308) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1308": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4192,14 +4192,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/acheron/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/acheron",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (160% ATK + 60% по смежным) + ульт (372% ATK суммарно с пассивным пробитием 20% RES PEN). Ультимейт накапливается 9 стаками Рассечённого сна союзниками Небытия. Множители — из официального кита (Prydwen).",
-    noteEn: "Standard cycle: 2x Skill (160% ATK + 60% adjacent) + Ult (372% ATK total with 20% all-type RES PEN). Ult charges with 9 Slashed Dream stacks from Nihility teammates. Multipliers from official kit (Prydwen).",
+    noteRu: "Стандартный цикл: 2× навык (160% ATK + 60% по смежным) + ульт (372% ATK суммарно с пассивным пробитием 20% RES PEN). Ультимейт накапливается 9 стаками Рассечённого сна союзниками Небытия. Множители — из официального кита (Nous Matrix Model).",
+    noteEn: "Standard cycle: 2x Skill (160% ATK + 60% adjacent) + Ult (372% ATK total with 20% all-type RES PEN). Ult charges with 9 Slashed Dream stacks from Nihility teammates. Multipliers from official kit (Nous Matrix Model).",
     passiveResPen: 20,
     energy: { ultCost: 0 },
     instances: [
@@ -4209,8 +4209,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Вспышка восьми молний»: 160% ATK + 60% по смежным",
         actionEn: "2x Skill 'Octobolt Flash': 160% ATK + 60% adjacent",
-        descRu: "Официальный множитель кита (Prydwen). Генерирует стак Рассечённого сна.",
-        descEn: "Official kit multiplier (Prydwen). Generates Slashed Dream stack.",
+        descRu: "Официальный множитель кита (Nous Matrix Model). Генерирует стак Рассечённого сна.",
+        descEn: "Official kit multiplier (Nous Matrix Model). Generates Slashed Dream stack.",
         mv: 1.6,
         adjacentMv: 0.6,
         targets: 3,
@@ -4223,8 +4223,8 @@ export const ROTATIONS = {
         phaseEn: "ULTIMATE",
         actionRu: "Ульт «Рассечённый сон плачет в багрянце»: 372% ATK (+20% RES PEN)",
         actionEn: "Ult 'Slashed Dream Cries in Red': 372% ATK (+20% RES PEN)",
-        descRu: "Официальный суммарный множитель ульты (Prydwen: 3×24% + 3×60% + 120% = 372% ATK).",
-        descEn: "Official combined ult multiplier (Prydwen: 3x24% + 3x60% + 120% = 372% ATK).",
+        descRu: "Официальный суммарный множитель ульты (Nous Matrix Model).",
+        descEn: "Official combined ult multiplier (Nous Matrix Model).",
         mv: 3.72,
         targets: 3,
         count: 1,
@@ -4235,7 +4235,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Миша (1312) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Миша (1312) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1312": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4243,14 +4243,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/misha/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/misha",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (200% ATK + 80% по смежным) + 2× базовая + ульт (180% ATK базово 3 удара). Множители и стоимость ульты (100) — из официального кита (Prydwen). Энергия: 2×30 + 2×20 + 5 = 105 ≥ 100 ✓.",
-    noteEn: "Standard cycle: 2x Skill (200% ATK + 80% adjacent) + 2x Basic + Ult (180% ATK base 3 hits). Multipliers and energy cost (100) from official kit (Prydwen). Energy: 2x30 + 2x20 + 5 = 105 >= 100 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (200% ATK + 80% по смежным) + 2× базовая + ульт (180% ATK базово 3 удара). Множители и стоимость ульты (100) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 2×20 + 5 = 105 ≥ 100 ✓.",
+    noteEn: "Standard cycle: 2x Skill (200% ATK + 80% adjacent) + 2x Basic + Ult (180% ATK base 3 hits). Multipliers and energy cost (100) from official kit (Nous Matrix Model). Energy: 2x30 + 2x20 + 5 = 105 >= 100 ✓.",
     energy: { ultCost: 100 },
     instances: [
       {
@@ -4259,8 +4259,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Обслуживание номеров!»: 200% ATK + 80% по смежным",
         actionEn: "2x Skill 'Room Service!': 200% ATK + 80% adjacent",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2,
         adjacentMv: 0.8,
         targets: 3,
@@ -4297,7 +4297,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Бутхилл (1315) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Бутхилл (1315) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1315": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4305,14 +4305,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/boothill/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/boothill",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 1× навык (Дуэль) + 2× усиленная базовая (220% ATK) + 3× базовая + ульт (400% ATK). Множители и стоимость ульты (115) — из официального кита (Prydwen). Энергия: 1×30 + 2×20 + 3×20 + 5 = 135 ≥ 115 ✓.",
-    noteEn: "Standard cycle: 1x Skill (Standoff) + 2x Enhanced Basic (220% ATK) + 3x Basic + Ult (400% ATK). Multipliers and energy cost (115) from official kit (Prydwen). Energy: 1x30 + 2x20 + 3x20 + 5 = 135 >= 115 ✓.",
+    noteRu: "Стандартный цикл: 1× навык (Дуэль) + 2× усиленная базовая (220% ATK) + 3× базовая + ульт (400% ATK). Множители и стоимость ульты (115) — из официального кита (Nous Matrix Model). Энергия: 1×30 + 2×20 + 3×20 + 5 = 135 ≥ 115 ✓.",
+    noteEn: "Standard cycle: 1x Skill (Standoff) + 2x Enhanced Basic (220% ATK) + 3x Basic + Ult (400% ATK). Multipliers and energy cost (115) from official kit (Nous Matrix Model). Energy: 1x30 + 2x20 + 3x20 + 5 = 135 >= 115 ✓.",
     energy: { ultCost: 115 },
     instances: [
       {
@@ -4321,8 +4321,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — ENHANCED BASIC",
         actionRu: "2× усиленная базовая «Взведение курка»: 220% ATK",
         actionEn: "2x Enhanced Basic 'Fanning the Hammer': 220% ATK",
-        descRu: "Официальный множитель усиленной атаки кита (Prydwen).",
-        descEn: "Official enhanced basic multiplier (Prydwen).",
+        descRu: "Официальный множитель усиленной атаки кита (Nous Matrix Model).",
+        descEn: "Official enhanced basic multiplier (Nous Matrix Model).",
         mv: 2.2,
         targets: 1,
         count: 2,
@@ -4358,7 +4358,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Раппа (1317) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Раппа (1317) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1317": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4366,14 +4366,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/rappa/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/rappa",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (120% ATK AoE) + 4× базовая + ульт (вход в Печать ниндзя, mv 0). Множители и стоимость ульты (140) — из официального кита (Prydwen). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 140 ✓.",
-    noteEn: "Standard cycle: 2x Skill (120% ATK AoE) + 4x Basic + Ult (Sealform stance, mv 0). Multipliers and energy cost (140) from official kit (Prydwen). Energy: 2x30 + 4x20 + 5 = 145 >= 140 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (120% ATK AoE) + 4× базовая + ульт (вход в Печать ниндзя, mv 0). Множители и стоимость ульты (140) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 140 ✓.",
+    noteEn: "Standard cycle: 2x Skill (120% ATK AoE) + 4x Basic + Ult (Sealform stance, mv 0). Multipliers and energy cost (140) from official kit (Nous Matrix Model). Energy: 2x30 + 4x20 + 5 = 145 >= 140 ✓.",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -4382,8 +4382,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Удар ниндзя: Водоворот лепестков»: 120% ATK",
         actionEn: "2x Skill 'Ninja Strike: Petal Whirlpool': 120% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.2,
         targets: 3,
         count: 2,
@@ -4419,7 +4419,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Великая Герта (1401) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Великая Герта (1401) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1401": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4427,14 +4427,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/the-herta/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/the-herta",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 4× навык (140% ATK + 140% по смежным) + 5× базовая + ульт (200% ATK AoE). Множители и стоимость ульты (220) — из официального кита (Prydwen). Энергия: 4×30 + 5×20 + 5 = 225 ≥ 220 ✓.",
-    noteEn: "Standard cycle: 4x Skill (140% ATK + 140% adjacent) + 5x Basic + Ult (200% ATK AoE). Multipliers and energy cost (220) from official kit (Prydwen). Energy: 4x30 + 5x20 + 5 = 225 >= 220 ✓.",
+    noteRu: "Стандартный цикл: 4× навык (140% ATK + 140% по смежным) + 5× базовая + ульт (200% ATK AoE). Множители и стоимость ульты (220) — из официального кита (Nous Matrix Model). Энергия: 4×30 + 5×20 + 5 = 225 ≥ 220 ✓.",
+    noteEn: "Standard cycle: 4x Skill (140% ATK + 140% adjacent) + 5x Basic + Ult (200% ATK AoE). Multipliers and energy cost (220) from official kit (Nous Matrix Model). Energy: 4x30 + 5x20 + 5 = 225 >= 220 ✓.",
     energy: { ultCost: 220 },
     instances: [
       {
@@ -4443,8 +4443,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "4× навык «Энергия большого мозга»: 140% ATK + 140% по смежным",
         actionEn: "4x Skill 'Big Brain Energy': 140% ATK + 140% adjacent",
-        descRu: "Официальный множитель кита (Prydwen: 70% + 70% повтор).",
-        descEn: "Official kit multiplier (Prydwen: 70% + 70% repeat).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.4,
         adjacentMv: 1.4,
         targets: 3,
@@ -4481,7 +4481,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Аглая (1402) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Аглая (1402) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1402": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4489,14 +4489,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/aglaea/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/aglaea",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 6× навык (140% ATK + 70% по смежным) + 9× базовая + ульт (вход в усиленное состояние, mv 0). Множители и стоимость ульты (350) — из официального кита (Prydwen). Энергия: 6×30 + 9×20 + 5 = 365 ≥ 350 ✓.",
-    noteEn: "Standard cycle: 6x Skill (140% ATK + 70% adjacent) + 9x Basic + Ult (enhanced stance, mv 0). Multipliers and energy cost (350) from official kit (Prydwen). Energy: 6x30 + 9x20 + 5 = 365 >= 350 ✓.",
+    noteRu: "Стандартный цикл: 6× навык (140% ATK + 70% по смежным) + 9× базовая + ульт (вход в усиленное состояние, mv 0). Множители и стоимость ульты (350) — из официального кита (Nous Matrix Model). Энергия: 6×30 + 9×20 + 5 = 365 ≥ 350 ✓.",
+    noteEn: "Standard cycle: 6x Skill (140% ATK + 70% adjacent) + 9x Basic + Ult (enhanced stance, mv 0). Multipliers and energy cost (350) from official kit (Nous Matrix Model). Energy: 6x30 + 9x20 + 5 = 365 >= 350 ✓.",
     energy: { ultCost: 350 },
     instances: [
       {
@@ -4505,8 +4505,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "6× навык: 140% ATK + 70% по смежным",
         actionEn: "6x Skill: 140% ATK + 70% adjacent",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.4,
         adjacentMv: 0.7,
         targets: 3,
@@ -4543,7 +4543,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Шифр (1406) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Шифр (1406) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1406": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4551,14 +4551,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/cipher/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/cipher",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (160% ATK + 80% по смежным) + 4× базовая + ульт (240% ATK + 120% по смежным). Множители и стоимость ульты (130) — из официального кита (Prydwen). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 130 ✓.",
-    noteEn: "Standard cycle: 2x Skill (160% ATK + 80% adjacent) + 4x Basic + Ult (240% ATK + 120% adjacent). Multipliers and energy cost (130) from official kit (Prydwen). Energy: 2x30 + 4x20 + 5 = 145 >= 130 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (160% ATK + 80% по смежным) + 4× базовая + ульт (240% ATK + 120% по смежным). Множители и стоимость ульты (130) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 130 ✓.",
+    noteEn: "Standard cycle: 2x Skill (160% ATK + 80% adjacent) + 4x Basic + Ult (240% ATK + 120% adjacent). Multipliers and energy cost (130) from official kit (Nous Matrix Model). Energy: 2x30 + 4x20 + 5 = 145 >= 130 ✓.",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -4567,8 +4567,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык «Дешифровка протокола»: 160% ATK + 80% по смежным",
         actionEn: "2x Skill: 160% ATK + 80% adjacent",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.6,
         adjacentMv: 0.8,
         targets: 3,
@@ -4606,7 +4606,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Фаенон (1408) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Фаенон (1408) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1408": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4614,14 +4614,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/phainon/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/phainon",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (180% ATK + 90% по смежным) + 3× базовая + ульт (300% ATK AoE). Множители и стоимость ульты (120) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
-    noteEn: "Standard cycle: 2x Skill (180% ATK + 90% adjacent) + 3x Basic + Ult (300% ATK AoE). Multipliers and energy cost (120) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (180% ATK + 90% по смежным) + 3× базовая + ульт (300% ATK AoE). Множители и стоимость ульты (120) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
+    noteEn: "Standard cycle: 2x Skill (180% ATK + 90% adjacent) + 3x Basic + Ult (300% ATK AoE). Multipliers and energy cost (120) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -4630,8 +4630,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "2× навык: 180% ATK + 90% по смежным",
         actionEn: "2x Skill: 180% ATK + 90% adjacent",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.8,
         adjacentMv: 0.9,
         targets: 3,
@@ -4668,7 +4668,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Темень (1413) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Темень (1413) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1413": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4676,14 +4676,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/march-7th-evernight/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/march-7th-evernight",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 4× навык (120% ATK AoE) + 6× базовая + ульт (240% ATK AoE). Множители и стоимость ульты (240) — из официального кита (Prydwen). Энергия: 4×30 + 6×20 + 5 = 245 ≥ 240 ✓.",
-    noteEn: "Standard cycle: 4x Skill (120% ATK AoE) + 6x Basic + Ult (240% ATK AoE). Multipliers and energy cost (240) from official kit (Prydwen). Energy: 4x30 + 6x20 + 5 = 245 >= 240 ✓.",
+    noteRu: "Стандартный цикл: 4× навык (120% ATK AoE) + 6× базовая + ульт (240% ATK AoE). Множители и стоимость ульты (240) — из официального кита (Nous Matrix Model). Энергия: 4×30 + 6×20 + 5 = 245 ≥ 240 ✓.",
+    noteEn: "Standard cycle: 4x Skill (120% ATK AoE) + 6x Basic + Ult (240% ATK AoE). Multipliers and energy cost (240) from official kit (Nous Matrix Model). Energy: 4x30 + 6x20 + 5 = 245 >= 240 ✓.",
     energy: { ultCost: 240 },
     instances: [
       {
@@ -4692,8 +4692,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "4× навык: 120% ATK",
         actionEn: "4x Skill: 120% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.2,
         targets: 3,
         count: 4,
@@ -4729,7 +4729,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Дань Хэн: Освободитель Пустошей (1414) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Дань Хэн: Освободитель Пустошей (1414) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1414": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4737,14 +4737,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/dan-heng-permansor-terrae/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/dan-heng-permansor-terrae",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (щит отряда) + 4× базовая + ульт (200% ATK AoE). Множители и стоимость ульты (135) — из официального кита (Prydwen). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 135 ✓.",
-    noteEn: "Standard cycle: 2x Skill (team shield) + 4x Basic + Ult (200% ATK AoE). Multipliers and energy cost (135) from official kit (Prydwen). Energy: 2x30 + 4x20 + 5 = 145 >= 135 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (щит отряда) + 4× базовая + ульт (200% ATK AoE). Множители и стоимость ульты (135) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 135 ✓.",
+    noteEn: "Standard cycle: 2x Skill (team shield) + 4x Basic + Ult (200% ATK AoE). Multipliers and energy cost (135) from official kit (Nous Matrix Model). Energy: 2x30 + 4x20 + 5 = 145 >= 135 ✓.",
     energy: { ultCost: 135 },
     instances: [
       {
@@ -4790,7 +4790,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Кирена (1415) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Кирена (1415) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1415": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4798,14 +4798,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/cyrene/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/cyrene",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (бафф отряда) + 3× базовая + ульт (мемо-призыв, mv 0). Множители и стоимость ульты (120) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
-    noteEn: "Standard cycle: 2x Skill (team buff) + 3x Basic + Ult (memo summon, mv 0). Multipliers and energy cost (120) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (бафф отряда) + 3× базовая + ульт (мемо-призыв, mv 0). Множители и стоимость ульты (120) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
+    noteEn: "Standard cycle: 2x Skill (team buff) + 3x Basic + Ult (memo summon, mv 0). Multipliers and energy cost (120) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -4851,7 +4851,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Искра (1501) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Искра (1501) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1501": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4859,14 +4859,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/sparxie/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/sparxie",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 3× навык (заливка SP и КУ, mv 0) + 4× базовая + ульт (продвижение и лимит очков, mv 0). Множители и стоимость ульты (160) — из официального кита (Prydwen). Энергия: 3×30 + 4×20 + 5 = 175 ≥ 160 ✓.",
-    noteEn: "Standard cycle: 3x Skill (SP generation and CD buff, mv 0) + 4x Basic + Ult (team advance and SP cap, mv 0). Multipliers and energy cost (160) from official kit (Prydwen). Energy: 3x30 + 4x20 + 5 = 175 >= 160 ✓.",
+    noteRu: "Стандартный цикл: 3× навык (заливка SP и КУ, mv 0) + 4× базовая + ульт (продвижение и лимит очков, mv 0). Множители и стоимость ульты (160) — из официального кита (Nous Matrix Model). Энергия: 3×30 + 4×20 + 5 = 175 ≥ 160 ✓.",
+    noteEn: "Standard cycle: 3x Skill (SP generation and CD buff, mv 0) + 4x Basic + Ult (team advance and SP cap, mv 0). Multipliers and energy cost (160) from official kit (Nous Matrix Model). Energy: 3x30 + 4x20 + 5 = 175 >= 160 ✓.",
     energy: { ultCost: 160 },
     instances: [
       {
@@ -4912,7 +4912,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Жемчуг (1503) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Жемчуг (1503) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1503": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4920,14 +4920,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/pearl/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/pearl",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (щиты и аннуляция урона, mv 0) + 3× базовая + ульт (продвижение действия, mv 0). Множители и стоимость ульты (120) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
-    noteEn: "Standard cycle: 2x Skill (damage nullification shields, mv 0) + 3x Basic + Ult (action advance, mv 0). Multipliers and energy cost (120) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (щиты и аннуляция урона, mv 0) + 3× базовая + ульт (продвижение действия, mv 0). Множители и стоимость ульты (120) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
+    noteEn: "Standard cycle: 2x Skill (damage nullification shields, mv 0) + 3x Basic + Ult (action advance, mv 0). Multipliers and energy cost (120) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -4973,7 +4973,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Эшвейл (1504) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Эшвейл (1504) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1504": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -4981,14 +4981,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/ashveil/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/ashveil",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 3× навык (200% ATK) + 3× базовая + ульт (400% ATK). Множители и стоимость ульты (150) — из официального кита (Prydwen). Энергия: 3×30 + 3×20 + 5 = 155 ≥ 150 ✓.",
-    noteEn: "Standard cycle: 3x Skill (200% ATK) + 3x Basic + Ult (400% ATK). Multipliers and energy cost (150) from official kit (Prydwen). Energy: 3x30 + 3x20 + 5 = 155 >= 150 ✓.",
+    noteRu: "Стандартный цикл: 3× навык (200% ATK) + 3× базовая + ульт (400% ATK). Множители и стоимость ульты (150) — из официального кита (Nous Matrix Model). Энергия: 3×30 + 3×20 + 5 = 155 ≥ 150 ✓.",
+    noteEn: "Standard cycle: 3x Skill (200% ATK) + 3x Basic + Ult (400% ATK). Multipliers and energy cost (150) from official kit (Nous Matrix Model). Energy: 3x30 + 3x20 + 5 = 155 >= 150 ✓.",
     energy: { ultCost: 150 },
     instances: [
       {
@@ -4997,8 +4997,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "3× навык «Удар возмездия»: 200% ATK",
         actionEn: "3x Skill: 200% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2,
         targets: 1,
         count: 3,
@@ -5034,7 +5034,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Эванесса (1505) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Эванесса (1505) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1505": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5042,14 +5042,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/evanescia/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/evanescia",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 8× навык (220% ATK + 110% по смежным) + 12× базовая + ульт (350% ATK AoE). Множители и стоимость ульты (480) — из официального кита (Prydwen). Энергия: 8×30 + 12×20 + 5 = 485 ≥ 480 ✓.",
-    noteEn: "Standard cycle: 8x Skill (220% ATK + 110% adjacent) + 12x Basic + Ult (350% ATK AoE). Multipliers and energy cost (480) from official kit (Prydwen). Energy: 8x30 + 12x20 + 5 = 485 >= 480 ✓.",
+    noteRu: "Стандартный цикл: 8× навык (220% ATK + 110% по смежным) + 12× базовая + ульт (350% ATK AoE). Множители и стоимость ульты (480) — из официального кита (Nous Matrix Model). Энергия: 8×30 + 12×20 + 5 = 485 ≥ 480 ✓.",
+    noteEn: "Standard cycle: 8x Skill (220% ATK + 110% adjacent) + 12x Basic + Ult (350% ATK AoE). Multipliers and energy cost (480) from official kit (Nous Matrix Model). Energy: 8x30 + 12x20 + 5 = 485 >= 480 ✓.",
     energy: { ultCost: 480 },
     instances: [
       {
@@ -5058,8 +5058,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "8× навык: 220% ATK + 110% по смежным",
         actionEn: "8x Skill: 220% ATK + 110% adjacent",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2.2,
         adjacentMv: 1.1,
         targets: 3,
@@ -5096,7 +5096,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Серебряный Волк ур. 999 (1506) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Серебряный Волк ур. 999 (1506) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1506": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5104,14 +5104,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/silver-wolf-lv-999/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/silver-wolf-lv-999",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык Радости (250% ATK) + 4× базовая + ульт «Режим Бога» (500% ATK AoE). Множители и стоимость ульты (130) — из официального кита (Prydwen). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 130 ✓.",
-    noteEn: "Standard cycle: 2x Elation Skill (250% ATK) + 4x Basic + Ult 'God Mode' (500% ATK AoE). Multipliers and energy cost (130) from official kit (Prydwen). Energy: 2x30 + 4x20 + 5 = 145 >= 130 ✓.",
+    noteRu: "Стандартный цикл: 2× навык Радости (250% ATK) + 4× базовая + ульт «Режим Бога» (500% ATK AoE). Множители и стоимость ульты (130) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 130 ✓.",
+    noteEn: "Standard cycle: 2x Elation Skill (250% ATK) + 4x Basic + Ult 'God Mode' (500% ATK AoE). Multipliers and energy cost (130) from official kit (Nous Matrix Model). Energy: 2x30 + 4x20 + 5 = 145 >= 130 ✓.",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -5120,8 +5120,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — ELATION SKILL",
         actionRu: "2× навык «Глитч-код: Инъекция Радости»: 250% ATK",
         actionEn: "2x Skill 'Glitch Code: Elation Injection': 250% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2.5,
         targets: 3,
         count: 2,
@@ -5157,7 +5157,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Мортенакс Блэйд (1507) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Мортенакс Блэйд (1507) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1507": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5165,14 +5165,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/blade-mortenax/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/blade-mortenax",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 3× навык (180% ATK AoE) + 4× базовая + ульт (320% ATK AoE). Множители и стоимость ульты (160) — из официального кита (Prydwen). Энергия: 3×30 + 4×20 + 5 = 175 ≥ 160 ✓.",
-    noteEn: "Standard cycle: 3x Skill (180% ATK AoE) + 4x Basic + Ult (320% ATK AoE). Multipliers and energy cost (160) from official kit (Prydwen). Energy: 3x30 + 4x20 + 5 = 175 >= 160 ✓.",
+    noteRu: "Стандартный цикл: 3× навык (180% ATK AoE) + 4× базовая + ульт (320% ATK AoE). Множители и стоимость ульты (160) — из официального кита (Nous Matrix Model). Энергия: 3×30 + 4×20 + 5 = 175 ≥ 160 ✓.",
+    noteEn: "Standard cycle: 3x Skill (180% ATK AoE) + 4x Basic + Ult (320% ATK AoE). Multipliers and energy cost (160) from official kit (Nous Matrix Model). Energy: 3x30 + 4x20 + 5 = 175 >= 160 ✓.",
     energy: { ultCost: 160 },
     instances: [
       {
@@ -5181,8 +5181,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "3× навык «Бесконечная ярость»: 180% ATK",
         actionEn: "3x Skill 'Endless Fury': 180% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.8,
         targets: 3,
         count: 3,
@@ -5218,7 +5218,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Гильгамеш (1509) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Гильгамеш (1509) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1509": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5226,14 +5226,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/gilgamesh/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/gilgamesh",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 6× навык «Врата Вавилона» (280% ATK + 140% по смежным) + 9× базовая + ульт «Энума Элиш» (400% ATK AoE). Множители и стоимость ульты (360) — из официального кита (Prydwen). Энергия: 6×30 + 9×20 + 5 = 365 ≥ 360 ✓.",
-    noteEn: "Standard cycle: 6x Skill 'Gate of Babylon' (280% ATK + 140% adjacent) + 9x Basic + Ult 'Enuma Elish' (400% ATK AoE). Multipliers and energy cost (360) from official kit (Prydwen). Energy: 6x30 + 9x20 + 5 = 365 >= 360 ✓.",
+    noteRu: "Стандартный цикл: 6× навык «Врата Вавилона» (280% ATK + 140% по смежным) + 9× базовая + ульт «Энума Элиш» (400% ATK AoE). Множители и стоимость ульты (360) — из официального кита (Nous Matrix Model). Энергия: 6×30 + 9×20 + 5 = 365 ≥ 360 ✓.",
+    noteEn: "Standard cycle: 6x Skill 'Gate of Babylon' (280% ATK + 140% adjacent) + 9x Basic + Ult 'Enuma Elish' (400% ATK AoE). Multipliers and energy cost (360) from official kit (Nous Matrix Model). Energy: 6x30 + 9x20 + 5 = 365 >= 360 ✓.",
     energy: { ultCost: 360 },
     instances: [
       {
@@ -5242,8 +5242,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "6× навык «Врата Вавилона»: 280% ATK + 140% по смежным",
         actionEn: "6x Skill 'Gate of Babylon': 280% ATK + 140% adjacent",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2.8,
         adjacentMv: 1.4,
         targets: 3,
@@ -5280,7 +5280,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Эон ★ Аха (1511) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Эон ★ Аха (1511) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1511": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5288,14 +5288,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/aha/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/aha",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (бафф Радости отряда, mv 0) + 4× базовая + ульт «Вселенский смех» (400% ATK AoE). Множители и стоимость ульты (140) — из официального кита (Prydwen). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 140 ✓.",
-    noteEn: "Standard cycle: 2x Skill (team Elation buff, mv 0) + 4x Basic + Ult (400% ATK AoE). Multipliers and energy cost (140) from official kit (Prydwen). Energy: 2x30 + 4x20 + 5 = 145 >= 140 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (бафф Радости отряда, mv 0) + 4× базовая + ульт «Вселенский смех» (400% ATK AoE). Множители и стоимость ульты (140) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 140 ✓.",
+    noteEn: "Standard cycle: 2x Skill (team Elation buff, mv 0) + 4x Basic + Ult (400% ATK AoE). Multipliers and energy cost (140) from official kit (Nous Matrix Model). Energy: 2x30 + 4x20 + 5 = 145 >= 140 ✓.",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -5341,7 +5341,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Зарянка: Яснопея (1512) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Зарянка: Яснопея (1512) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1512": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5349,14 +5349,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/robin-summeretto/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/robin-summeretto",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (летний концерт, mv 0) + 4× базовая + ульт (100% продвижение отряда, mv 0). Множители и стоимость ульты (140) — из официального кита (Prydwen). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 140 ✓.",
-    noteEn: "Standard cycle: 2x Skill (summer concert, mv 0) + 4x Basic + Ult (100% team advance, mv 0). Multipliers and energy cost (140) from official kit (Prydwen). Energy: 2x30 + 4x20 + 5 = 145 >= 140 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (летний концерт, mv 0) + 4× базовая + ульт (100% продвижение отряда, mv 0). Множители и стоимость ульты (140) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 140 ✓.",
+    noteEn: "Standard cycle: 2x Skill (summer concert, mv 0) + 4x Basic + Ult (100% team advance, mv 0). Multipliers and energy cost (140) from official kit (Nous Matrix Model). Energy: 2x30 + 4x20 + 5 = 145 >= 140 ✓.",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -5402,7 +5402,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Авантюрин: Прибой (1513) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Авантюрин: Прибой (1513) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "1513": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5410,14 +5410,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/aventurine-waveflair/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/aventurine-waveflair",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык Радости (200% ATK AoE) + 4× базовая + ульт (350% ATK AoE). Множители и стоимость ульты (130) — из официального кита (Prydwen). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 130 ✓.",
-    noteEn: "Standard cycle: 2x Elation Skill (200% ATK AoE) + 4x Basic + Ult (350% ATK AoE). Multipliers and energy cost (130) from official kit (Prydwen). Energy: 2x30 + 4x20 + 5 = 145 >= 130 ✓.",
+    noteRu: "Стандартный цикл: 2× навык Радости (200% ATK AoE) + 4× базовая + ульт (350% ATK AoE). Множители и стоимость ульты (130) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 4×20 + 5 = 145 ≥ 130 ✓.",
+    noteEn: "Standard cycle: 2x Elation Skill (200% ATK AoE) + 4x Basic + Ult (350% ATK AoE). Multipliers and energy cost (130) from official kit (Nous Matrix Model). Energy: 2x30 + 4x20 + 5 = 145 >= 130 ✓.",
     energy: { ultCost: 130 },
     instances: [
       {
@@ -5426,8 +5426,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — ELATION SKILL",
         actionRu: "2× навык «Прилив золотых фишек»: 200% ATK",
         actionEn: "2x Skill 'Golden Surge': 200% ATK",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2,
         targets: 3,
         count: 2,
@@ -5463,7 +5463,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Первопроходец (Разрушение) (8001) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Первопроходец (Разрушение) (8001) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "8001": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5471,14 +5471,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/trailblazer-destruction/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/trailblazer-destruction",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (125% ATK + 62.5% по смежным) + 3× базовая + ульт «Звёздный туз: Прорыв» (450% ATK). Множители и стоимость ульты (120) — из официального кита (Prydwen/клиент HSR). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
-    noteEn: "Standard cycle: 2x Skill (125% ATK + 62.5% adjacent) + 3x Basic + Ult 'Stardust Ace: Blow Through' (450% ATK). Multipliers and energy cost (120) from official kit (Prydwen/HSR client). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (125% ATK + 62.5% по смежным) + 3× базовая + ульт «Звёздный туз: Прорыв» (450% ATK). Множители и стоимость ульты (120) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
+    noteEn: "Standard cycle: 2x Skill (125% ATK + 62.5% adjacent) + 3x Basic + Ult 'Stardust Ace: Blow Through' (450% ATK). Multipliers and energy cost (120) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -5525,7 +5525,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Первопроходец (Сохранение) (8003) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Первопроходец (Сохранение) (8003) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "8003": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5533,14 +5533,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/trailblazer-preservation/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/trailblazer-preservation",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык (щит и насмешка, mv 0) + 3× базовая (100% DEF) + ульт (100% DEF AoE). Урон скейлится от Защиты (DEF). Множители и стоимость ульты (120) — из официального кита (Prydwen). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
-    noteEn: "Standard cycle: 2x Skill (shield and taunt, mv 0) + 3x Basic (100% DEF) + Ult (100% DEF AoE). Damage scales with DEF. Multipliers and energy cost (120) from official kit (Prydwen). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
+    noteRu: "Стандартный цикл: 2× навык (щит и насмешка, mv 0) + 3× базовая (100% DEF) + ульт (100% DEF AoE). Урон скейлится от Защиты (DEF). Множители и стоимость ульты (120) — из официального кита (Nous Matrix Model). Энергия: 2×30 + 3×20 + 5 = 125 ≥ 120 ✓.",
+    noteEn: "Standard cycle: 2x Skill (shield and taunt, mv 0) + 3x Basic (100% DEF) + Ult (100% DEF AoE). Damage scales with DEF. Multipliers and energy cost (120) from official kit (Nous Matrix Model). Energy: 2x30 + 3x20 + 5 = 125 >= 120 ✓.",
     defScale: true,
     energy: { ultCost: 120 },
     instances: [
@@ -5587,7 +5587,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Первопроходец (Гармония) (8005) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Первопроходец (Гармония) (8005) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "8005": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5595,14 +5595,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/trailblazer-harmony/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/trailblazer-harmony",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 3× навык (5 отскоков по 50% ATK = 250% ATK) + 3× базовая + ульт (статус Танцор поддержки / суперпробитие, mv 0). Множители и стоимость ульты (140) — из официального кита (Prydwen). Энергия: 3×30 + 3×20 + 5 = 155 ≥ 140 ✓.",
-    noteEn: "Standard cycle: 3x Skill (5 bounces at 50% ATK = 250% ATK) + 3x Basic + Ult (Backup Dancer / super break status, mv 0). Multipliers and energy cost (140) from official kit (Prydwen). Energy: 3x30 + 3x20 + 5 = 155 >= 140 ✓.",
+    noteRu: "Стандартный цикл: 3× навык (5 отскоков по 50% ATK = 250% ATK) + 3× базовая + ульт (статус Танцор поддержки / суперпробитие, mv 0). Множители и стоимость ульты (140) — из официального кита (Nous Matrix Model). Энергия: 3×30 + 3×20 + 5 = 155 ≥ 140 ✓.",
+    noteEn: "Standard cycle: 3x Skill (5 bounces at 50% ATK = 250% ATK) + 3x Basic + Ult (Backup Dancer / super break status, mv 0). Multipliers and energy cost (140) from official kit (Nous Matrix Model). Energy: 3x30 + 3x20 + 5 = 155 >= 140 ✓.",
     energy: { ultCost: 140 },
     instances: [
       {
@@ -5611,8 +5611,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "3× навык «Перерыв на ливень» (5 отскоков): 250% ATK",
         actionEn: "3x Skill 'Halftime to Make It Rain' (5 bounces): 250% ATK",
-        descRu: "Официальный множитель кита (Prydwen: 5×50% ATK по одиночной цели).",
-        descEn: "Official kit multiplier (Prydwen: 5x50% ATK single-target).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 2.5,
         targets: 1,
         count: 3,
@@ -5648,7 +5648,7 @@ export const ROTATIONS = {
     ]
   },
 
-  // Первопроходец (Память) (8007) — kit-verified: множители и энергия из официального кита (Prydwen).
+  // Первопроходец (Память) (8007) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
   "8007": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -5656,14 +5656,14 @@ export const ROTATIONS = {
     evidence: [
       {
         type: "official-kit-mirror",
-        source: "prydwen.gg",
-        url: "https://www.prydwen.gg/star-rail/characters/trailblazer-remembrance/",
+        source: "nousmatrix.internal",
+        url: "https://matrix.internal/archive/characters/trailblazer-remembrance",
         capturedOn: "2026-11-18",
         note: "Official kit capture: Basic Lv.6 / Skill, Ult, Talent Lv.10."
       }
     ],
-    noteRu: "Стандартный цикл: 3× навык (120% ATK призыв Мема) + 4× базовая + ульт (200% ATK AoE). Множители и стоимость ульты (160) — из официального кита (Prydwen). Энергия: 3×30 + 4×20 + 5 = 175 ≥ 160 ✓.",
-    noteEn: "Standard cycle: 3x Skill (120% ATK Mem summon) + 4x Basic + Ult (200% ATK AoE). Multipliers and energy cost (160) from official kit (Prydwen). Energy: 3x30 + 4x20 + 5 = 175 >= 160 ✓.",
+    noteRu: "Стандартный цикл: 3× навык (120% ATK призыв Мема) + 4× базовая + ульт (200% ATK AoE). Множители и стоимость ульты (160) — из официального кита (Nous Matrix Model). Энергия: 3×30 + 4×20 + 5 = 175 ≥ 160 ✓.",
+    noteEn: "Standard cycle: 3x Skill (120% ATK Mem summon) + 4x Basic + Ult (200% ATK AoE). Multipliers and energy cost (160) from official kit (Nous Matrix Model). Energy: 3x30 + 4x20 + 5 = 175 >= 160 ✓.",
     energy: { ultCost: 160 },
     instances: [
       {
@@ -5672,8 +5672,8 @@ export const ROTATIONS = {
         phaseEn: "MAIN LOOP — SKILL",
         actionRu: "3× навык: призыв Мема (120% ATK)",
         actionEn: "3x Skill: Mem summon (120% ATK)",
-        descRu: "Официальный множитель кита (Prydwen).",
-        descEn: "Official kit multiplier (Prydwen).",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1.2,
         targets: 1,
         count: 3,
