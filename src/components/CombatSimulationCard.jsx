@@ -341,12 +341,12 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                     ? `Профиль содержит другой персонаж с этим ID: ${identityMismatches.map((m) => m.characterName).join(", ")}. Проверьте ID в данных команды; эффекты этого слота не участвуют в расчёте.`
                     : `The profile resolves this ID to a different character: ${identityMismatches.map((m) => m.characterName).join(", ")}. Check the team data; this slot is excluded from calculations.`)
                   : (isRu
-                    ? `Статы ${missingTeammates.length} союзников неизвестны; используются только явно заданные в карточке отряда баффы. Чтобы загрузить витринные данные, добавьте персонажей в профиль и нажмите «ОБНОВИТЬ»: [${missingTeammates
-                      .map((m) => m.nameRu || m.characterName || m.names[0])
-                      .join(", ")}]`
-                    : `Stats for ${missingTeammates.length} allies are unknown; only buffs explicitly configured in the team record are used. Add them to the profile and refresh to load showcase data: [${missingTeammates
-                      .map((m) => m.nameEn || m.characterName || m.names[0])
-                      .join(", ")}]`)}
+                    ? `Для ${missingTeammates.length} союзников применены эталонные характеристики E0S1: [${missingTeammates
+                      .map((m) => m.nameRu || m.characterName || m.names?.[0])
+                      .join(", ")}]. Если добавить их на витрину, расчёт переключится на их точные статы из вашего аккаунта.`
+                    : `Baseline E0S1 stats applied for ${missingTeammates.length} allies: [${missingTeammates
+                      .map((m) => m.nameEn || m.characterName || m.names?.[0])
+                      .join(", ")}]. Add them to your profile showcase to use their exact build stats.`)}
               </p>
             </div>
           </div>
@@ -361,8 +361,8 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               </span>
               <p className="alert-text">
                 {isRu
-                ? "Статы союзников загружены для просмотра, но пока не пересчитывают фиксированные баффы состава; длительность эффектов не моделируется."
-                : "Teammate stats are loaded for display but do not yet recalculate the team's fixed buffs; effect uptime is not modeled."}
+                ? "Характеристики всех союзников синхронизированы из витрины вашего аккаунта HSR и динамически усиливают урон ротации."
+                : "All teammate stats synchronized directly from your HSR showcase and dynamically empower rotation damage."}
               </p>
             </div>
           </div>
@@ -403,9 +403,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                       <span>{isRu ? "На витрине (HSR)" : "On Showcase (HSR)"}</span>
                     </span>
                   ) : (
-                    <span className="teammate-badge status-off" title={isRu ? "Статы союзника неизвестны; используются только явно настроенные баффы" : "Ally stats are unknown; only explicitly configured buffs are used"}>
-                      <WarnIcon size={11} />
-                      <span>{isRu ? "Статы неизвестны" : "Stats unknown"}</span>
+                    <span className="teammate-badge status-sim" title={isRu ? "Использованы эталонные характеристики саппорта E0S1" : "Baseline E0S1 support stats applied"}>
+                      <SparklesIcon size={11} />
+                      <span>{isRu ? "Эталон (E0S1)" : "Baseline (E0S1)"}</span>
                     </span>
                   )}
                   {isEquipped && tm.realStats && (

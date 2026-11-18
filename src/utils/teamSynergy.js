@@ -21,38 +21,7 @@ function satisfiesTeamRequirements(squad) {
   });
 }
 
-export const CHARACTER_SQUADS = Object.fromEntries(
-  Object.entries(approvedTeams.teamsByCharacter || {}).map(([characterId, squads]) => [
-    characterId,
-    (squads || []).filter((squad) =>
-      satisfiesTeamRequirements(squad)
-      && !(squad.teammates || []).some((teammate) =>
-        (excludedTeammates[characterId] || []).includes(String(teammate.id || ""))
-      )
-    )
-  ])
-);
-
-export const TEAM_DATA_BY_CHARACTER = teamStatistics.teamsByCharacter || {};
-export const TEAM_STATISTICS_SOURCES = teamStatistics.sources || [];
-
-export function rankSquadsByShowcase(squads, showcaseCharacters = []) {
-  const roster = Array.isArray(showcaseCharacters) ? showcaseCharacters : [];
-  if (!Array.isArray(squads) || squads.length < 2 || !roster.length) return squads || [];
-
-  return squads
-    .map((squad, sourceOrder) => {
-      const rosterMatches = (squad.teammates || []).reduce((count, teammate) => {
-        const hasChar = roster.some((c) => String(c.id || "") === String(teammate.id || ""));
-        return hasChar ? count + 1 : count;
-      }, 0);
-      return { squad, rosterMatches, sourceOrder };
-    })
-    .sort((a, b) => b.rosterMatches - a.rosterMatches || a.sourceOrder - b.sourceOrder)
-    .map(({ squad }) => squad);
-}
-
-const SUPPORT_DEFAULT_STATS = {
+export const SUPPORT_DEFAULT_STATS = {
   "1313": { atk: 3100, def: 1400, hp: 12000, cr: 5, cd: 170, be: 0 },
   "1309": { atk: 4000, def: 1600, hp: 13000, cr: 5, cd: 130, be: 0 },
   "1512": { atk: 4000, def: 1600, hp: 13000, cr: 5, cd: 130, be: 0 },
@@ -72,10 +41,119 @@ const SUPPORT_DEFAULT_STATS = {
   "1506": { atk: 3400, def: 1400, hp: 12000, cr: 100, cd: 180, be: 0 },
   "1218": { atk: 2500, def: 1200, hp: 12000, cr: 5, cd: 100, be: 0, ehr: 120 },
   "8005": { atk: 2600, def: 1200, hp: 12000, cr: 5, cd: 100, be: 220 },
+  "8006": { atk: 2600, def: 1200, hp: 12000, cr: 5, cd: 100, be: 220 },
   "8007": { atk: 2800, def: 1400, hp: 12000, cr: 60, cd: 130, be: 0 },
   "1314": { atk: 1800, def: 1200, hp: 12000, cr: 5, cd: 100, be: 150 },
-  "1222": { atk: 2600, def: 1200, hp: 12000, cr: 5, cd: 100, be: 160 }
+  "1222": { atk: 2600, def: 1200, hp: 12000, cr: 5, cd: 100, be: 160 },
+  "1508": { atk: 2800, def: 1200, hp: 12000, cr: 60, cd: 140, be: 0 },
+  "1414": { atk: 3000, def: 1200, hp: 12000, cr: 50, cd: 120, be: 0 },
+  "1301": { atk: 2200, def: 1200, hp: 12000, cr: 5, cd: 100, be: 150 },
+  "1312": { atk: 2800, def: 1100, hp: 11000, cr: 70, cd: 140, be: 0 },
+  "1004": { atk: 2600, def: 1200, hp: 12000, cr: 60, cd: 120, be: 0 },
+  "1307": { atk: 3000, def: 1200, hp: 12000, cr: 10, cd: 100, be: 0, ehr: 120 },
+  "1409": { atk: 2000, def: 1400, hp: 16000, cr: 5, cd: 100, be: 0 }
 };
+
+const DEFAULT_CRIT_SQUAD = [
+  { id: "1306", nameRu: "Искорка", nameEn: "Sparkle", roleRu: "Поддержка", roleEn: "Support" },
+  { id: "1309", nameRu: "Зарянка", nameEn: "Robin", roleRu: "Поддержка", roleEn: "Support" },
+  { id: "1304", nameRu: "Авантюрин", nameEn: "Aventurine", roleRu: "Выживание", roleEn: "Sustain" }
+];
+
+function buildCharacterSquadsCatalog() {
+  const allCharIds = new Set([
+    ...Object.keys(approvedTeams.teamsByCharacter || {}),
+    ...Object.keys(teamStatistics.teamsByCharacter || {})
+  ]);
+
+  const result = {};
+
+  for (const charId of allCharIds) {
+    const list = [];
+    const charExcluded = excludedTeammates[charId] || [];
+
+    // 1. Approved teams (if explicitly defined)
+    const appSquads = (approvedTeams.teamsByCharacter?.[charId] || []).filter((squad) =>
+      satisfiesTeamRequirements(squad)
+      && !(squad.teammates || []).some((teammate) => charExcluded.includes(String(teammate.id || "")))
+    );
+    list.push(...appSquads);
+
+    // 2. Converted teams from team telemetry statistics
+    const statSquads = teamStatistics.teamsByCharacter?.[charId] || [];
+    for (let idx = 0; idx < statSquads.length; idx++) {
+      const sq = statSquads[idx];
+      const teammateIds = (sq.characterIds || []).filter((id) => String(id) !== String(charId));
+      if (teammateIds.length === 0) continue;
+      if (teammateIds.some((id) => charExcluded.includes(String(id)))) continue;
+
+      const teammates = teammateIds.map((tmId) => {
+        const meta = characterNamesById[String(tmId)] || {};
+        return {
+          id: String(tmId),
+          nameRu: meta.ru || `Персонаж ${tmId}`,
+          nameEn: meta.en || `Character ${tmId}`,
+          roleRu: "Поддержка",
+          roleEn: "Support"
+        };
+      });
+
+      list.push({
+        id: sq.id || `squad_${charId}_${idx + 1}`,
+        nameRu: sq.nameRu || `Состав отряда #${idx + 1}`,
+        nameEn: sq.nameEn || `Squad #${idx + 1}`,
+        teammates,
+        sourceType: sq.sourceType || "matrix-telemetry"
+      });
+    }
+
+    // 3. Fallback baseline if no squads found
+    if (list.length === 0) {
+      list.push({
+        id: `squad_${charId}_default`,
+        nameRu: "Рекомендуемый состав отряда",
+        nameEn: "Recommended Baseline Squad",
+        teammates: DEFAULT_CRIT_SQUAD,
+        sourceType: "matrix-telemetry"
+      });
+    }
+
+    // Prioritize squads with highest synergy buffers
+    list.sort((a, b) => {
+      const buffScoreA = (a.teammates || []).reduce((c, tm) => c + (SUPPORT_DEFAULT_STATS[String(tm.id || "")] ? 1 : 0), 0);
+      const buffScoreB = (b.teammates || []).reduce((c, tm) => c + (SUPPORT_DEFAULT_STATS[String(tm.id || "")] ? 1 : 0), 0);
+      return buffScoreB - buffScoreA;
+    });
+
+    result[charId] = list;
+  }
+
+  return result;
+}
+
+export const CHARACTER_SQUADS = buildCharacterSquadsCatalog();
+export const TEAM_DATA_BY_CHARACTER = teamStatistics.teamsByCharacter || {};
+export const TEAM_STATISTICS_SOURCES = teamStatistics.sources || [];
+
+export function rankSquadsByShowcase(squads, showcaseCharacters = []) {
+  const roster = Array.isArray(showcaseCharacters) ? showcaseCharacters : [];
+  if (!Array.isArray(squads) || squads.length < 2) return squads || [];
+
+  return squads
+    .slice()
+    .map((squad, sourceOrder) => {
+      const rosterMatches = (squad.teammates || []).reduce((count, teammate) => {
+        const hasChar = roster.some((c) => String(c.id || "") === String(teammate.id || ""));
+        return hasChar ? count + 1 : count;
+      }, 0);
+      const buffMatches = (squad.teammates || []).reduce((count, teammate) => {
+        return count + (SUPPORT_DEFAULT_STATS[String(teammate.id || "")] ? 1 : 0);
+      }, 0);
+      return { squad, rosterMatches, buffMatches, sourceOrder };
+    })
+    .sort((a, b) => b.rosterMatches - a.rosterMatches || b.buffMatches - a.buffMatches || a.sourceOrder - b.sourceOrder)
+    .map(({ squad }) => squad);
+}
 
 export function computeSupportBuffs(rec, stats = {}) {
   const id = String(rec.id || "");
@@ -178,6 +256,37 @@ export function computeSupportBuffs(rec, stats = {}) {
     buffs.breakEff = Math.max(num(buffs.breakEff), 50);
     descRu = `+25% Уязвимость к пробитию, +50% Эффективность пробития`;
     descEn = `+25% Break DMG Vulnerability, +50% Break Efficiency`;
+  } else if (id === "1508" || tag.includes("рин") || tag.includes("rin")) {
+    buffs.crGrant = Math.max(num(buffs.crGrant), 24);
+    buffs.cdGrant = Math.max(num(buffs.cdGrant), 45);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 30);
+    buffs.atkPercent = Math.max(num(buffs.atkPercent), 30);
+    descRu = `+24% КШ, +45% КУ, +30% Урон, +30% ATK (Гармония)`;
+    descEn = `+24% CRIT Rate, +45% Crit DMG, +30% DMG, +30% ATK`;
+  } else if (id === "1414") {
+    buffs.atkPercent = Math.max(num(buffs.atkPercent), 30);
+    buffs.dmgBoost = Math.max(num(buffs.dmgBoost), 35);
+    buffs.resPen = Math.max(num(buffs.resPen), 15);
+    descRu = `+30% ATK, +35% Урон, +15% RES PEN`;
+    descEn = `+30% ATK, +35% DMG, +15% RES PEN`;
+  } else if (id === "1301" || tag.includes("галлахер") || tag.includes("gallagher")) {
+    buffs.breakVuln = Math.max(num(buffs.breakVuln), 13.2);
+    descRu = `+13.2% Уязвимость к пробитию (дебафф Бессилие)`;
+    descEn = `+13.2% Break DMG Vulnerability (Besotted)`;
+  } else if (id === "1312" || tag.includes("модзи") || tag.includes("moze")) {
+    buffs.critVuln = Math.max(num(buffs.critVuln), 25);
+    buffs.vuln = Math.max(num(buffs.vuln), 15);
+    descRu = `+25% Крит-уязвимость FUA, +15% Дополнительный урон союзников`;
+    descEn = `+25% FUA Crit Vuln, +15% Additional DMG`;
+  } else if (id === "1004" || tag.includes("вельт") || tag.includes("welt")) {
+    buffs.vuln = Math.max(num(buffs.vuln), 12);
+    descRu = `+12% Уязвимость врагов (заключение и дебаффы)`;
+    descEn = `+12% Vulnerability (Imprisonment & Slow)`;
+  } else if (id === "1307" || tag.includes("лебедь") || tag.includes("swan")) {
+    buffs.defShred = Math.max(num(buffs.defShred), 20.8);
+    buffs.vuln = Math.max(num(buffs.vuln), 25);
+    descRu = `-20.8% DEF Shred, +25% Уязвимость в ход противника`;
+    descEn = `-20.8% DEF Shred, +25% Vulnerability on Enemy Turn`;
   }
 
   return { buffs, descRu, descEn };

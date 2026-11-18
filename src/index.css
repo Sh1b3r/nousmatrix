@@ -3909,6 +3909,12 @@ main {
   border: 1px solid rgba(255, 183, 77, 0.25);
 }
 
+.teammate-badge.status-sim {
+  background: rgba(0, 229, 255, 0.12);
+  color: #00E5FF;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+}
+
 .teammate-stat-pill {
   font-family: var(--font-mono);
   font-size: 10px;
