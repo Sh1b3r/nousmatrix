@@ -193,25 +193,6 @@ export default function CharacterOverview({ character, audit, t, lang = "ru" }) 
 
       {audit && (
         <div className="char-hero-verdict-bar">
-          <div className="verdict-score-block">
-            <span
-              className="verdict-score-pill"
-              title={
-                isRu
-                  ? "Расчётный индекс готовности билда (от 0 до 100): 70% статы роли, 30% роллы реликвий"
-                  : "Readiness index (0-100): 70% archetype stats, 30% relic rolls"
-              }
-            >
-              GRADE {audit.grade || "S"} • {audit.score}/100
-            </span>
-            <span
-              className="verdict-rank-pill"
-              title={isRu ? "Модельный индекс, не перцентиль игроков" : "Model index, not a player percentile"}
-            >
-              {isRu ? "Индекс" : "Index"} {audit.score}/100
-            </span>
-          </div>
-
           <div className="verdict-takeaways-group">
             {topStrength && (
               <div className="verdict-takeaway-item strength">

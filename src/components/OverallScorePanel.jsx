@@ -38,16 +38,47 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
             {isRu ? "Индекс боевой готовности билда" : "Combat Readiness Index"}
           </span>
         </div>
-        <span
-          className="overall-matrix-badge"
-          title={
-            isRu
-              ? "Модель NousMatrix: 70% оценки зависит от достижения целевых порогов характеристик, 30% — от полезных роллов реликвий"
-              : "NousMatrix composite score: 70% archetype stat thresholds, 30% relic roll efficiency"
-          }
-        >
-          {t.matrix100 || "Matrix 100"}
-        </span>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+          <div
+            className="score-verified-stamp"
+            style={{
+              padding: "4px 8px",
+              lineHeight: 1,
+              display: "inline-flex",
+              alignItems: "center",
+              boxSizing: "border-box"
+            }}
+            title={
+              isRu
+                ? "Фактические характеристики и экипировка получены напрямую из профиля игрока через Hoyoverse API"
+                : "Live attributes and equipment synced directly from player showcase via Hoyoverse API"
+            }
+          >
+            <CheckIcon size={12} />
+            <span
+              style={{
+                fontFamily: "var(--font-grotesk), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                fontWeight: 700,
+                lineHeight: 1,
+                display: "inline-block",
+                transform: "translateY(-1px)",
+                whiteSpace: "nowrap"
+              }}
+            >
+              {isRu ? "Синхронизировано из HSR" : "Synchronized with HSR"}
+            </span>
+          </div>
+          <span
+            className="overall-matrix-badge"
+            title={
+              isRu
+                ? "Модель NousMatrix: 70% оценки зависит от достижения целевых порогов характеристик, 30% — от полезных роллов реликвий"
+                : "NousMatrix composite score: 70% archetype stat thresholds, 30% relic roll efficiency"
+            }
+          >
+            {t.matrix100 || "Matrix 100"}
+          </span>
+        </div>
       </div>
 
       <div className="score-hero-container" style={{ minHeight: "auto", padding: "16px 20px 18px 20px", boxSizing: "border-box" }}>
@@ -110,35 +141,6 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
                   : `#${leaderboardData.rank.toLocaleString()} of ${leaderboardData.total.toLocaleString()}`}
               </span>
             )}
-          </div>
-          <div
-            className="score-verified-stamp"
-            style={{
-              padding: "5px 9px 6px 9px",
-              lineHeight: 1,
-              display: "inline-flex",
-              alignItems: "center",
-              boxSizing: "border-box"
-            }}
-            title={
-              isRu
-                ? "Фактические характеристики и экипировка получены напрямую из профиля игрока через Hoyoverse API"
-                : "Live attributes and equipment synced directly from player showcase via Hoyoverse API"
-            }
-          >
-            <CheckIcon size={12} />
-            <span
-              style={{
-                fontFamily: "var(--font-grotesk), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-                fontWeight: 700,
-                lineHeight: 1,
-                display: "inline-block",
-                transform: "translateY(-1px)",
-                whiteSpace: "nowrap"
-              }}
-            >
-              {isRu ? "Синхронизировано из HSR" : "Synchronized with HSR"}
-            </span>
           </div>
         </div>
       </div>
