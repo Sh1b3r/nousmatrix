@@ -10,7 +10,7 @@ function formatActionsCount(n, isRu) {
   return `${n} рекомендаций`;
 }
 
-export default function OverallScorePanel({ audit, t, lang = "ru" }) {
+export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardData = null, onOpenLeaderboard = null }) {
   if (!audit) return null;
   const isRu = (lang || (t?.lvl === "Ур." ? "ru" : "en")) === "ru";
   const cvBarWidth = Math.min(100, Math.max(10, (parseFloat(audit.cv) / 320) * 100));
@@ -89,15 +89,27 @@ export default function OverallScorePanel({ audit, t, lang = "ru" }) {
         </div>
         <div className="score-hero-right">
           <div
-            className="score-tier-badge"
+            className={`score-tier-badge ${onOpenLeaderboard ? "clickable" : ""}`}
+            onClick={onOpenLeaderboard || undefined}
             title={
               isRu
-                ? `Глобальный перцентиль сборки (${audit.archetype}): калиброванная модель распределения (Akasha/SeeleLand стандарт). Отражает позицию среди оптимизированных билдов роли.`
-                : `Global build leaderboard percentile (${audit.archetype}): calibrated distribution benchmark (Akasha/SeeleLand standard).`
+                ? `Глобальный перцентиль сборки (${audit.archetype}): рейтинг в реальном времени (стандарт Akasha/SeeleLand). Нажмите, чтобы открыть таблицу лидеров.`
+                : `Global build leaderboard percentile (${audit.archetype}): real-time live ranking (Akasha/SeeleLand standard). Click to view leaderboard.`
             }
           >
             <span className="tier-prefix">{isRu ? "ГЛОБАЛЬНЫЙ РАНГ" : "GLOBAL RANK"}</span>
-            <span className="tier-percent">{safeTopPercent ? `TOP ${safeTopPercent}%` : "TOP —%"}</span>
+            <span className="tier-percent">
+              {leaderboardData?.topPercent
+                ? `TOP ${leaderboardData.topPercent}%`
+                : (safeTopPercent ? `TOP ${safeTopPercent}%` : "TOP —%")}
+            </span>
+            {leaderboardData?.rank && (
+              <span className="tier-rank-sub">
+                {isRu
+                  ? `#${leaderboardData.rank.toLocaleString()} из ${leaderboardData.total.toLocaleString()}`
+                  : `#${leaderboardData.rank.toLocaleString()} of ${leaderboardData.total.toLocaleString()}`}
+              </span>
+            )}
           </div>
           <div
             className="score-verified-stamp"

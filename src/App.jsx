@@ -12,6 +12,7 @@ import RelicsAuditPanel from "./components/RelicsAuditPanel.jsx";
 import CombatSimulationCard from "./components/CombatSimulationCard";
 import DashboardNav from "./components/DashboardNav.jsx";
 import TrophyModal from "./components/TrophyModal";
+import LeaderboardModal from "./components/LeaderboardModal";
 import { RefreshIcon } from "./components/Icons.jsx";
 import { iconUrl, calculateCharacterAudit } from "./utils/audit";
 import { getDetectedLanguage, translations } from "./utils/i18n";
@@ -130,6 +131,8 @@ export default function App() {
   const lastSelectedCharRef = useRef(null);
   const [isTrophyOpen, setIsTrophyOpen] = useState(false);
   const isTrophyOpenRef = useRef(false);
+  const [leaderboardData, setLeaderboardData] = useState(null);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [relicsLayoutMode, setRelicsLayoutMode] = useState(() => {
     try {
       return localStorage.getItem("nousmatrix_relics_layout_mode") || "grouped";
@@ -589,6 +592,47 @@ export default function App() {
       saveCharacterPreference(uid, activeChar);
     }
   }, [activeChar, currentProfile?.player?.uid]);
+
+  useEffect(() => {
+    if (!activeChar || !audit || !currentProfile?.player?.uid) return;
+    const uid = String(currentProfile.player.uid);
+    const charId = String(activeChar.id);
+    let isCancelled = false;
+
+    fetch("/api/leaderboard", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        uid,
+        nickname: currentProfile.player.nickname || null,
+        characterId: charId,
+        characterName: activeChar.name,
+        score: audit.score,
+        archetype: audit.archetype,
+        cv: audit.cv,
+        spd: audit.spd,
+        stats: audit.stats,
+        lightCone: activeChar.light_cone ? {
+          name: activeChar.light_cone.name,
+          rank: activeChar.light_cone.rank,
+          level: activeChar.light_cone.level,
+          icon: activeChar.light_cone.icon
+        } : null,
+        relicSets: (activeChar.relic_sets || []).map(rs => rs.name)
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!isCancelled && data.success) {
+          setLeaderboardData(data);
+        }
+      })
+      .catch(err => console.warn("Leaderboard sync warning:", err));
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeChar?.id, currentProfile?.player?.uid, audit?.score]);
   return (
     <div className="app-container">
       <Header onBackToHome={handleBackToHome} />
@@ -701,7 +745,13 @@ export default function App() {
             <div className="dashboard-grid">
               <div className="dashboard-col-left">
                 <div id="section-score" className="panel panel-overall-score" style={{ marginBottom: "24px" }}>
-                  <OverallScorePanel audit={audit} t={t} lang={lang} />
+                  <OverallScorePanel
+                    audit={audit}
+                    t={t}
+                    lang={lang}
+                    leaderboardData={leaderboardData}
+                    onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
+                  />
                 </div>
                 <div id="section-stats" className="panel panel-combat-stats" style={{ marginBottom: "24px" }}>
                   <div className="panel-title combat-stats-title">
@@ -761,6 +811,16 @@ export default function App() {
               lang={lang}
               layoutMode={relicsLayoutMode}
               onLayoutModeChange={handleRelicsLayoutModeChange}
+            />
+
+            <LeaderboardModal
+              isOpen={isLeaderboardOpen}
+              onClose={() => setIsLeaderboardOpen(false)}
+              character={activeChar}
+              uid={player?.uid}
+              audit={audit}
+              leaderboardData={leaderboardData}
+              lang={lang}
             />
           </section>
         )}
