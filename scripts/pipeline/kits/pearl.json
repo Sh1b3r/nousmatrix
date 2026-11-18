@@ -1,0 +1,168 @@
+{
+ "slug": "pearl",
+ "url": "https://www.prydwen.gg/star-rail/characters/pearl/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Brushstroke: Trace the Severed Stream",
+   "level": 1,
+   "energies": [
+    20,
+    30,
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Ice DMG equal to 0.9% of Pearl's DEF to one designated enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Relume Life's Light",
+   "level": 1,
+   "energies": [
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Defense",
+   "maxLevel": 15,
+   "text": "Gains 15 point(s) of Certified Banger, restores HP for all ally targets equal to 0.12% of Pearl's DEF plus 240, and additionally restores HP for the ally target with the lowest current HP percentage equal to 0.12% of Pearl's DEF plus 240."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Appraise Soul's Ground",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Support",
+   "maxLevel": 15,
+   "text": "$86"
+  },
+  {
+   "kind": "Talent",
+   "name": "Grow Grace from Grit",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Defense",
+   "maxLevel": 15,
+   "text": "Pearl can use Certified Banger as Repellency. Each point of Certified Banger is equal to 200 point(s) of Repellency. When an ally target takes DMG, Pearl can consume Repellency to block 60% of the DMG for the ally target. Pearl's Certified Banger lasts indefinitely and has a max limit of 50. When an ally target's current HP percentage is 50% or lower, DMG taken is reduced by 0.3%."
+  },
+  {
+   "kind": "Technique",
+   "name": "Recast Masterwork in Nacre",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "",
+   "maxLevel": 1,
+   "text": "After using Technique, gains Aesthetic Archetype. When switching active characters, Aesthetic Archetype transfers to the active character. At the start of the next battle, Pearl gains 20 Certified Banger and applies Deep Learning to the character with Aesthetic Archetype. This Deep Learning has 2 Charge. Pearl can only apply Deep Learning to characters other than herself."
+  },
+  {
+   "kind": "Elation Skill",
+   "name": "Dissolve Reason into Elation",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Elation Skill",
+   "effectText": "Support",
+   "maxLevel": 15,
+   "text": "When there are 1/2/3/4 or more Elation characters in the team, this causes all ally targets to additionally deal Elation DMG of their corresponding Type equal to 0.1%/0.15%/0.2%/0.4% to the attack target after their next attack."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Panoptic Vision",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Pearl's DEF is 2400 or higher, increases this unit's Elation by 32%. For every 100 DEF exceeded, increases this unit's Elation by 3%. Up to a max of 3600 excess DEF can be taken into account for this effect. Pearl gains a bonus to Outgoing Healing equal to 20% of this unit's Elation.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Sensory Latitude",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "While possessing \"Certified Banger,\" all ally targets' Effect RES increases by 50%. When an ally target's turn begins, Pearl gains 5 point(s) of \"Certified Banger,\" up to a max of 50 point(s) of \"Certified Banger.\" The obtainable amount of \"Certified Banger\" resets at the start of Pearl's turn. When using Enhanced Basic ATK or Skill, dispels 1 debuff(s) from all ally targets.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Aesthetic Firewall",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After entering combat and using Ultimate, if the \"Aesthetic Archetype\" is an Elation character, their next Ultimate use regenerates a fixed 90 Energy for Pearl. This effect cannot stack.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Nestle That Pearl in Uninked Tides",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When the number of Elation Path characters on the team equals 2/3/4 or more, increases Elation for all allies by 10%/20%/60%. When an ally target is struck with fatal damage, instead of becoming knocked down, immediately restores HP equal to 50% of their Max HP. This effect can trigger 2 time(s) per battle.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Crop That Dappled Dawn",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Merrymakes all ally targets' Elation DMG by 15%. When using Ultimate, causes other ally Elation characters (excluding Pearl and \"Aesthetic Archetype\") to also trigger the action advance effect, and increases the \"Certified Banger\" and Punchline gained at the start of the extra turn provided by the Ultimate by 100%.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Sketch That Suspended Wave",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15.Basic ATK Lv. +1, up to a maximum of Lv. 10.Elation Skill Lv. +1, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Study That Veiled Smile",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases the Elation DMG multiplier provided by the Elation Skill for all allies by 100%.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Render Those Starlit Swirls",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15.Talent Lv. +2, up to a maximum of Lv. 15.Elation Skill Lv. +1, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Compute Life From One Shell",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "While in \"Deep Learning,\" all allies' All-Type RES PEN increases by 20%. Pearl's Enhanced Basic ATK additionally deals Ice Elation DMG equal to 240% of the stats of \"Aesthetic Archetype.\"",
+   "resolved": false
+  }
+ ]
+}

@@ -1,0 +1,153 @@
+{
+ "slug": "cipher",
+ "url": "https://www.prydwen.gg/star-rail/characters/cipher/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Oops, a Missed Catch",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 10,
+   "text": "Deals Quantum DMG equal to 1% of Cipher's ATK to one designated enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Hey, Jackpot for the Taking",
+   "level": 1,
+   "energies": [
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Blast",
+   "maxLevel": 15,
+   "text": "Has a 1.2% base chance to Weaken one designated enemy and adjacent targets (decreasing their DMG dealt by 0.1%) and increasing Cipher's ATK by 0.3%, lasting for 2 turn(s). Moreover, deals Quantum DMG equal to 2% of Cipher's ATK to one designated enemy, and Quantum DMG equal to 1% of Cipher's ATK to its adjacent targets."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Yours Truly, Kitty Phantom Thief!",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Blast",
+   "maxLevel": 15,
+   "text": "Deals Quantum DMG equal to 1.2% of Cipher's ATK to one designated enemy. Then, deals True DMG equal to 0.25% of the current tally kept by Talent to the one designated enemy. Moreover, deals Quantum DMG equal to 0.4% of Cipher's ATK alongside True DMG equal to 0.75% of the current tally kept by Talent to the one designated enemy and its adjacent targets. And this True DMG is distrubuted enenly among all targets of this ability."
+  },
+  {
+   "kind": "Talent",
+   "name": "The Hospitable Dolosian",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "When there are no enemy targets in \"Patron\" state on the battlefield, Cipher immediately causes one enemy target with the highest Max HP on the battlefield to become the \"Patron.\" When using Skill and Ultimate, the primary target becomes the \"Patron.\" The \"Patron\" state only takes effect on the latest target.\nAfter the \"Patron\" is attacked by other ally targets, Cipher immediately launches a Follow-up ATK against the \"Patron,\" dealing Quantum DMG equal to 1.5% of Cipher's ATK. This effect can be triggered up to 1 time(s) each turn, and it resets at the start of Cipher's turn.\nCipher will tally 0.12% of the non-True DMG ally targets dealt to \"Patron\". Overflow DMG will not be tallied. After using Ultimate, clears this tally."
+  },
+  {
+   "kind": "Technique",
+   "name": "Puss in Boots",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Enhance",
+   "maxLevel": 1,
+   "text": "Obtains \"Zagreus's Blessing\" for 15 second(s). During this time, Cipher will be undetectable by enemies and her movement speed increases by 50%. When approaching an enemy in the overworld/Simulated Universe/Divergent Universe, there is a chance of immediately obtaining a random Consumable. You can obtain Consumables up to 50 time(s) in each Earth day.\nWhen entering battle with \"Zagreus's Blessing\" active, deals Quantum DMG equal to 1% of Cipher's ATK to all enemies. Increases the recorded DMG Cipher obtains from this instance of DMG by 2%."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Empyrean Strides",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Cipher's SPD is higher than or equal to 140/170, CRIT Rate increases by 25%/50%, and the gained tally increases by 50%/100%.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "300 Rogues",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Cipher can tally 8% of the non-True DMG ally targets dealt to the enemy targets other than the \"Patron.\" Overflow DMG is not tallied.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Sleight of Sky",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases the CRIT DMG dealt by the Talent's Follow-up ATK by 100%. When Cipher is on the battlefield, DMG received by all enemy targets increases by 40%.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Read the Room, Seek the Glee",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Cipher's recorded DMG is 150% of the original recorded DMG value. When using a Follow-up ATK caused by her Talent, increases Cipher's ATK by 80% for 2 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "In the Fray, Nab On a Spree",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Cipher hits an enemy target, there is a 120% base chance of causing them to receive 30% more DMG, lasting 2 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "From Thin Air, Hard to Foresee",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "The Jig Is Up, Quick to Flee",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After \"Patron\" is attacked by an ally target, Cipher deals Quantum Additional DMG equal to 50% of Cipher's ATK to it.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Safe in Numbers, Light as a Bee",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "The Thief's Game, Unsung and Free",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases DMG dealt by Follow-up ATKs caused by Cipher's Talent by 350%. Records an additional 16% of non-Overflow DMG dealt by this ATK. After resetting the record upon using her Ultimate, returns 20% of the reset record",
+   "resolved": false
+  }
+ ]
+}

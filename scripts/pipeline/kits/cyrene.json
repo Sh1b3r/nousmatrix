@@ -1,0 +1,486 @@
+{
+ "slug": "cyrene",
+ "url": "https://www.prydwen.gg/star-rail/characters/cyrene/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Lo, Hope Takes Flight!",
+   "level": 1,
+   "energies": [
+    0,
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Gains 1 \"Recollection\" point(s) and deals Ice DMG equal to 0.5% of Cyrene's Max HP to one designated enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Bloom, Elysium of Beyond",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Support",
+   "maxLevel": 15,
+   "text": "Gains 3 \"Recollection\" point(s) and deploys a Zone that lasts 2 turns, with the Zone's duration decreasing by 1 at the start of Cyrene's turn. While the Zone is active, for each instance of DMG dealt by all ally targets, deals 1 additional instance of True DMG equal to 0.24% of the original DMG. When Cyrene is downed, the Zone will also be dispelled."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Verse ◦ Vow ∞",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Summon",
+   "maxLevel": 15,
+   "text": "Summons memosprite ███, causes it to immediately gain 1 extra turn, and activates all teammates' Ultimate. Then, enters the \"Ripples of Past Reverie\" state, with Basic ATK enhanced to \"To Love and Tomorrow ♪\" and can only use this Basic ATK. Increases Cyrene's and ███'s CRIT Rate by 0.5%, and deploys the Zone effect from the Skill with no active duration.\nCan only be used once per combat. ███'s initial Max HP equals to 100% of Cyrene's Max HP."
+  },
+  {
+   "kind": "Talent",
+   "name": "Hearts Gather as One",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "When combat begins or after Cyrene takes action, other ally characters under any state and their memosprites gain \"Future.\" When ally targets with \"Future\" take action, they consume \"Future\" to grant Cyrene 1 \"Recollection\" point(s). When Cyrene has 24 \"Recollection\" points, her Ultimate can be activated, and all debuffs on her are dispelled. When she has 12 \"Recollection\" points while in the \"Ripples of Past Reverie\" state, her Ultimate can be activated.\nAfter reaching the maximum, \"Recollection\" points can overflow to a maximum of 27 points. While Cyrene is on the field, increases DMG dealt by all ally targets by 0.2%."
+  },
+  {
+   "kind": "Technique",
+   "name": "Peace at West Wind's End",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Support",
+   "maxLevel": 1,
+   "text": "After the Technique is used, creates a Special Dimension that lasts for 30 second(s) around the character. Enemies within this dimension enters the \"This Moment, Forever\" state. Increases movement speed for the ally characters within this Special Dimension by 50%. After entering combat within the duration, deploys the Skill's Zone. Only 1 Dimension Effect created by allies can exist at the same time."
+  },
+  {
+   "kind": "Memosprite Skill",
+   "name": "Minuet of Blooms and Plumes",
+   "level": 1,
+   "energies": [
+    0,
+    0
+   ],
+   "ultCost": null,
+   "desc": "Deals Ice DMG to all enemies equal to #1[i]% of ███'s Max HP.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Waiting, In Every Past",
+   "level": 1,
+   "energies": [
+    0,
+    0
+   ],
+   "ultCost": null,
+   "desc": "███'s SPD remains at 0, and ███ will not appear on the Action Order. While on the field, it is considered as Out-of-Bounds When changes occur on Cyrene's HP percentage, ███'s HP percentage will also change accordingly. When ███ is on the field, Cyrene's and ███'s Max HP increases by #1[i]%. After using abilities, all Continuous Effects' duration on this unit decreases by 1.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Romance",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "One-time effect. When used on Aglaea, causes Aglaea to gain \"Romantic\" and immediately stacks Garmentmaker's Memosprite Talent's SPD Boost effect to its max. After Aglaea or Garmentmaker uses an attack, consumes \"Romantic\" and regenerates 70 Energy. Increases DMG dealt by Aglaea and Garmentmaker by #2[i]%, and ignores #1[i]% of the target's DEF, lasting until Aglaea exits the \"Supreme Stance\" state.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Reason",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "One-time effect. When used on Anaxa, recovers 1 Skill Point(s) for allies and allows Anaxa to take action immediately. Increases the number of Skill DMG instances by 3 for 1 turn. The next time Anaxa uses his Basic ATK or Skill, he gains \"True Knowledge\": Increases the ATK of all Erudition Path characters by #1[i]% and Skill DMG dealt by #2[i]% until the start of Anaxa's next turn.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Life and Death",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. When used on Castorice, \"Newbud\" can overflow up to 200%. When summoning Netherwing, consumes all overflowed \"Newbud,\" increases the DMG multiplier of the DMG dealt by #1[i]% for every 1% of overflow value consumed when the summoned Netherwing triggers the ability effect of its Talent, \"Wings Sweep the Ruins.\" If there are 2 enemy target(s) on the field or fewer when summoned, the DMG multiplier additionally increases by #2[i]% when summoning.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Law",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. After using on Cerydra, increases the CRIT DMG of the character with \"Military Merit\" by #1[i]%. After Coup de Main ends, Cerydra immediately gains 1 point(s) of Charge.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Trickery",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. When used on Cipher, increases the DMG dealt by Cipher by #1[i]%, and decreases the DEF of the \"Patron\" by #2[i]% and the DEF of enemy targets other than \"Patron\" by #3[i]%.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to ██",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "After Cyrene has gained \"Recollection\" from each different teammate (other than ███), when ███ uses \"Minuet of Blooms and Plumes,\" it additionally deals 1 instance of Ice DMG equal to #1[i]% of ███'s Max HP to one random enemy. After Cyrene uses her Ultimate or when ███ is summoned, ███ immediately gains 1 \"Story.\" When \"Story\" reaches 3 points, ███ consumes all \"Story\" points to immediately gain 1 extra turn and automatically use \"Minuet of Blooms and Plumes.\"",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Earth",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "When ███ uses Memosprite Skill, grants \"Ode to Earth\" to Dan Heng • Permansor Terrae, and the next 3 attack(s) of \"Souldragon\" deals Additional DMG of the \"Bondmates\" Type, equal to #1[i]% of the \"Bondmates\" Shield Effect. When Dan Heng • Permansor Terrae holds \"Ode to Earth,\" the \"Bondmate\" deals #2[i]% more DMG. When used on Dan Heng • Permansor Terrae, additionally advances Souldragon's action by 100%. The Souldragon's next action gains the enhance effects of Dan Heng • Permansor Terrae's Ultimate and the Shield Effect provided by Souldragon is 150% of its original Shield value. Does not consume the enhancement Charge of Dan Heng • Permansor Terrae's Ultimate.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Sky",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "When ███ uses Memosprite Skill, causes Hyacine to gain 2 stacks of \"Ode to Sky.\" When used on Hyacine, regenerates #2[i] Energy for Hyacine. When Hyacine has \"Ode to Sky\" and is providing healing, additionally increases the healing value for Little Ica's Memosprite Skill by an amount equal to #1[i]% of the healing value this time. After Hyacine uses Skill/Ultimate, consumes 1 stack of \"Ode to Sky.\"",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Ocean",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "One-time effect. When used on Hysilens, Hysilens gains \"Flowing Warmth.\" After Hysilens uses an attack, consumes \"Flowing Warmth\" and regenerates 60 Energy for this unit. In this battle, increases DMG dealt by Hysilens by #2[i]%. After Hysilens uses Basic ATK/Skill to attack enemies, causes the DoT currently applied on the attacked enemy targets to immediately produce DMG equal to #2[i]%/#1[i]% of the original DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Time",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. After it is used on Evernight, increases DMG dealt when Evey uses the Memosprite Skill \"Dream, Dissolving, as Dew\" by #1[i]%. After Evernight uses a Skill/Ultimate, additionally gains 1 \"Memoria\" point(s). The CRIT DMG boost effect provided by the Skill is further increased by an amount equal to #2[i]% of Evernight's CRIT DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Strife",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "One-time effect. When used on Mydei, removes all Crowd Control debuffs inflicted on him. And if Mydei is in the \"Vendetta\" state, he automatically uses 1 instance of \"Godslayer Be God\" without consuming Charge. Mydei's CRIT DMG increases by #1[i]% during this attack. If the target gets defeated before the use, then it will target the newly arriving enemy targets instead. If Mydei is not in the \"Vendetta\" state, then advances Mydei's action by 100%.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Worldbearing",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. After it is used on Phainon, Phainon gains 6 \"Coreflames\" as well as \"Eternal Ignition\" when Transforming. When Transforming, if \"Coreflame\" exceeds 12, for each point in excess, Khaslana's CRIT DMG increases by #1[i]%, up to #2[i]%. While \"Eternal Ignition\" persists, increases Khaslana's CRIT Rate by #3[i]%. After the extra turns are depleted, the Transformation does not end, but refreshes all of Khaslana's extra turns and gains 4 point(s) of \"Scourge.\" At the start of Khaslana's extra turns, Khaslana consumes an amount of HP equal to 15% of his current HP. After using an attack, deals 5 instances of Additional DMG, with each instance dealing Fire Additional DMG equal to #4[i]% of Khaslana's ATK to one random enemy.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Genesis",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. When used on Trailblazer (Remembrance), increases Trailblazer (Remembrance)'s ATK by a value equal to #1[i]% of ███'s Max HP, and increases Trailblazer (Remembrance)'s CRIT Rate by a value equal to #2[i]% of ███'s CRIT Rate. This effect also applies to Mem. After Trailblazer (Remembrance) uses Enhanced Basic ATK in this battle, ███ immediately gains 1 extra turn and automatically uses \"Minuet of Blooms and Plumes.\" If the target was defeated before this ability is used, it will be used on newly appeared enemy targets instead.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Passage",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. When used on Tribbie, causes DMG dealt by Tribbie to ignore #1[i]% of the enemy's DEF. When Tribbie launches Follow-up ATK and triggers the Additional DMG from Tribbie's Zone, it further deals 1 instance(s) of Additional DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Child of Remembrance",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When a teammate's memosprite is summoned, it gains ‘Future.’ ‘Future’ held by memosprites cannot be consumed.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Ripples Across Time",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When there are 1/2/3 Chrysos Heir(s) or Remembrance Path character(s) aside from Cyrene in the team, Cyrene gains 2/3/6 ‘Recollection’ point(s) at the start of combat.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Causality in Trichotomy",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Cyrene's SPD is at 180 or higher, increases all allies' DMG dealt by 20%. Then, for each point of SPD exceeded, increases Cyrene and ███'s Ice RES PEN by 2%, counting up to a maximum of 60 exceeded SPD points.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Epics, Born on a Blank Slate",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When ███ triggers the Memosprite Skill \"Ode to ██\" while using \"Minuet of Blooms and Plumes,\" gains 6 \"Recollection\" point(s) and increases the number of bounces for this attack by 12.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "A Tomorrow in Thirteen Shades",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When entering combat, additionally gains 12 \"Recollection\" point(s). For each different ally character that gains the Memosprite Skill buff from ███, the DMG multiplier of the True DMG dealt by ally targets via the Skill's Zone increases by 6%, up to a max increase of 24%.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "By Thy Being, As I've Written",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15. Memosprite Skill Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Please Write On, With a Smile",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Each time after ███ uses \"Minuet of Blooms and Plumes,\" the Bounce DMG multiplier of the triggered Memosprite Skill \"Ode to ██\" increases by 6% in the current battle and can be stacked up to 24 times.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Gaze, Steeped in Yesterbloom",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10. Memosprite Talent Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Remembrance, Sung in Ripples ♪",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Cyrene uses her Ultimate for the first time, all allies' actions advance by 100%. Each time when ███ triggers the Memosprite Skill \"Ode to ██\" and uses \"Minuet of Blooms and Plumes,\" based on the number of times it has been triggered, gains the following effects:1 time: When ███ is on the field, reduces all enemy targets' DEF by 20%.2 times and more: Advances all allies' actions by 24%.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Romance",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "One-time effect. When used on Aglaea, causes Aglaea to gain \"Romantic\" and immediately stacks Garmentmaker's Memosprite Talent's SPD Boost effect to its max. After Aglaea or Garmentmaker uses an attack, consumes \"Romantic\" and regenerates 70 Energy. Increases DMG dealt by Aglaea and Garmentmaker by #2[i]%, and ignores #1[i]% of the target's DEF, lasting until Aglaea exits the \"Supreme Stance\" state.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Reason",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "One-time effect. When used on Anaxa, recovers 1 Skill Point(s) for allies and allows Anaxa to take action immediately. Increases the number of Skill DMG instances by 3 for 1 turn. The next time Anaxa uses his Basic ATK or Skill, he gains \"True Knowledge\": Increases the ATK of all Erudition Path characters by #1[i]% and Skill DMG dealt by #2[i]% until the start of Anaxa's next turn.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Life and Death",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. When used on Castorice, \"Newbud\" can overflow up to 200%. When summoning Netherwing, consumes all overflowed \"Newbud,\" increases the DMG multiplier of the DMG dealt by #1[i]% for every 1% of overflow value consumed when the summoned Netherwing triggers the ability effect of its Talent, \"Wings Sweep the Ruins.\" If there are 2 enemy target(s) on the field or fewer when summoned, the DMG multiplier additionally increases by #2[i]% when summoning.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Law",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. After using on Cerydra, increases the CRIT DMG of the character with \"Military Merit\" by #1[i]%. After Coup de Main ends, Cerydra immediately gains 1 point(s) of Charge.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Trickery",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. When used on Cipher, increases the DMG dealt by Cipher by #1[i]%, and decreases the DEF of the \"Patron\" by #2[i]% and the DEF of enemy targets other than \"Patron\" by #3[i]%.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to ██",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "After Cyrene has gained \"Recollection\" from each different teammate (other than ███), when ███ uses \"Minuet of Blooms and Plumes,\" it additionally deals 1 instance of Ice DMG equal to #1[i]% of ███'s Max HP to one random enemy. After Cyrene uses her Ultimate or when ███ is summoned, ███ immediately gains 1 \"Story.\" When \"Story\" reaches 3 points, ███ consumes all \"Story\" points to immediately gain 1 extra turn and automatically use \"Minuet of Blooms and Plumes.\"",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Earth",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "When ███ uses Memosprite Skill, grants \"Ode to Earth\" to Dan Heng • Permansor Terrae, and the next 3 attack(s) of \"Souldragon\" deals Additional DMG of the \"Bondmates\" Type, equal to #1[i]% of the \"Bondmates\" Shield Effect. When Dan Heng • Permansor Terrae holds \"Ode to Earth,\" the \"Bondmate\" deals #2[i]% more DMG. When used on Dan Heng • Permansor Terrae, additionally advances Souldragon's action by 100%. The Souldragon's next action gains the enhance effects of Dan Heng • Permansor Terrae's Ultimate and the Shield Effect provided by Souldragon is 150% of its original Shield value. Does not consume the enhancement Charge of Dan Heng • Permansor Terrae's Ultimate.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Sky",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "When ███ uses Memosprite Skill, causes Hyacine to gain 2 stacks of \"Ode to Sky.\" When used on Hyacine, regenerates #2[i] Energy for Hyacine. When Hyacine has \"Ode to Sky\" and is providing healing, additionally increases the healing value for Little Ica's Memosprite Skill by an amount equal to #1[i]% of the healing value this time. After Hyacine uses Skill/Ultimate, consumes 1 stack of \"Ode to Sky.\"",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Ocean",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "One-time effect. When used on Hysilens, Hysilens gains \"Flowing Warmth.\" After Hysilens uses an attack, consumes \"Flowing Warmth\" and regenerates 60 Energy for this unit. In this battle, increases DMG dealt by Hysilens by #2[i]%. After Hysilens uses Basic ATK/Skill to attack enemies, causes the DoT currently applied on the attacked enemy targets to immediately produce DMG equal to #2[i]%/#1[i]% of the original DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Time",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. After it is used on Evernight, increases DMG dealt when Evey uses the Memosprite Skill \"Dream, Dissolving, as Dew\" by #1[i]%. After Evernight uses a Skill/Ultimate, additionally gains 1 \"Memoria\" point(s). The CRIT DMG boost effect provided by the Skill is further increased by an amount equal to #2[i]% of Evernight's CRIT DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Strife",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "One-time effect. When used on Mydei, removes all Crowd Control debuffs inflicted on him. And if Mydei is in the \"Vendetta\" state, he automatically uses 1 instance of \"Godslayer Be God\" without consuming Charge. Mydei's CRIT DMG increases by #1[i]% during this attack. If the target gets defeated before the use, then it will target the newly arriving enemy targets instead. If Mydei is not in the \"Vendetta\" state, then advances Mydei's action by 100%.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Worldbearing",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. After it is used on Phainon, Phainon gains 6 \"Coreflames\" as well as \"Eternal Ignition\" when Transforming. When Transforming, if \"Coreflame\" exceeds 12, for each point in excess, Khaslana's CRIT DMG increases by #1[i]%, up to #2[i]%. While \"Eternal Ignition\" persists, increases Khaslana's CRIT Rate by #3[i]%. After the extra turns are depleted, the Transformation does not end, but refreshes all of Khaslana's extra turns and gains 4 point(s) of \"Scourge.\" At the start of Khaslana's extra turns, Khaslana consumes an amount of HP equal to 15% of his current HP. After using an attack, deals 5 instances of Additional DMG, with each instance dealing Fire Additional DMG equal to #4[i]% of Khaslana's ATK to one random enemy.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Genesis",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. When used on Trailblazer (Remembrance), increases Trailblazer (Remembrance)'s ATK by a value equal to #1[i]% of ███'s Max HP, and increases Trailblazer (Remembrance)'s CRIT Rate by a value equal to #2[i]% of ███'s CRIT Rate. This effect also applies to Mem. After Trailblazer (Remembrance) uses Enhanced Basic ATK in this battle, ███ immediately gains 1 extra turn and automatically uses \"Minuet of Blooms and Plumes.\" If the target was defeated before this ability is used, it will be used on newly appeared enemy targets instead.",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Ode to Passage",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "desc": "Effective for the entire battle. When used on Tribbie, causes DMG dealt by Tribbie to ignore #1[i]% of the enemy's DEF. When Tribbie launches Follow-up ATK and triggers the Additional DMG from Tribbie's Zone, it further deals 1 instance(s) of Additional DMG.",
+   "resolved": false
+  }
+ ]
+}

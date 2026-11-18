@@ -1,0 +1,153 @@
+{
+ "slug": "asta",
+ "url": "https://www.prydwen.gg/star-rail/characters/asta/",
+ "capturedOn": "2026-11-17",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Spectrum Beam",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Fire DMG equal to 1% of Asta's ATK to a single enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Meteor Storm",
+   "level": 1,
+   "energies": [
+    6
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Bounce",
+   "maxLevel": 15,
+   "text": "Deals Fire DMG equal to 0.5% of Asta's ATK to a single enemy and further deals DMG for 4 extra times, with each time dealing Fire DMG equal to 0.5% of Asta's ATK to a random enemy."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Astral Blessing",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Support",
+   "maxLevel": 15,
+   "text": "Increases SPD of all allies by 50 for 2 turn(s)."
+  },
+  {
+   "kind": "Talent",
+   "name": "Astrometry",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Support",
+   "maxLevel": 15,
+   "text": "Gains 1 stack of Charging for every different enemy hit by Asta plus an extra stack if the enemy hit has Fire Weakness.\nFor every stack of Charging Asta has, all allies' ATK increases by 0.14%, up to 5 time(s).\nStarting from her second turn, Asta's Charging stack count is reduced by 3 at the beginning of every turn."
+  },
+  {
+   "kind": "Technique",
+   "name": "Miracle Flash",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "",
+   "maxLevel": 1,
+   "text": "Immediately attacks the enemy. After entering battle, deals Fire DMG equal to 0.5% of Asta's ATK to all enemies."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Sparks",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Asta's Basic ATK has a 80% base chance to Burn enemies for 3 turn(s), making the enemy take Fire DoT equal to 50% of Asta's Basic ATK DMG at the start of each turn.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Ignite",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Asta is on the field, all allies' Fire DMG increases by 18%.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Constellation",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Asta's DEF increases by 6% for every current Charging stack she possesses.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Star Sings Sans Verses or Vocals",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When using Skill, deals DMG for 1 extra time to a random enemy.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Moon Speaks in Wax and Wane",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After using her Ultimate, Asta's Charging stacks will not be reduced in the next turn.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Meteor Showers for Wish and Want",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Aurora Basks in Beauty and Bliss",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Asta's Energy Regeneration Rate increases by 15% when she has 2 or more Charging stacks.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Nebula Secludes in Cold Cosmos",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Galaxy Dreams in Calm and Comfort",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Charging stack(s) lost in each turn is reduced by 1.",
+   "resolved": false
+  }
+ ]
+}

@@ -1,0 +1,178 @@
+{
+ "slug": "march-7th-evernight",
+ "url": "https://www.prydwen.gg/star-rail/characters/march-7th-evernight/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Time Thence Blurs",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Ice DMG equal to 0.5% of Evernight's Max HP to one designated enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Day Gently Slips",
+   "level": 1,
+   "energies": [
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Summon",
+   "maxLevel": 15,
+   "text": "Consumes 10% of Evernight's current HP to summon memosprite Evey and increases CRIT DMG of all ally memosprites by an amount equal to 0.24% of Evernight's CRIT DMG for 2 turn(s). Duration decreases by 1 at the start of each of Evernight's turns. If Evey is already on the field, restores 50% of its Max HP. When used, gains 2 \"Memoria.\" If in the \"Darkest Riddle\" state, gains 12 additional \"Memoria.\""
+  },
+  {
+   "kind": "Ultimate",
+   "name": "O Wakeful World, Goodnight",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "AoE",
+   "maxLevel": 15,
+   "text": "Summons memosprite Evey, then memosprite Evey deals Ice DMG equal to 2% of Evey's Max HP to all enemies, and causes Evernight to enter the \"Darkest Riddle\" state. During this state, the DMG received by all enemies increases by 0.3%, the DMG dealt by Evernight and memosprite Evey increases by 0.6%, and both Evernight and memosprite Evey are immune to Crowd Control debuffs. Gains 2 \"Darkest Riddle\" Charge(s). Memosprite Evey consumes 1 Charge after using \"Dream, Dissolving, as Dew.\" At the start of Evernight's turn, if no Charges remain, exits the \"Darkest Riddle\" state."
+  },
+  {
+   "kind": "Talent",
+   "name": "With Me, This Night",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "When entering combat, summons memosprite Evey. Memosprite Evey has 160 SPD by default, and its Max HP is 50% of Evernight's Max HP. Each time Evernight or memosprite Evey loses HP, increases CRIT DMG for both this unit and memosprite Evey by 0.6% for 2 turn(s), and gains 2 \"Memoria.\" This effect can trigger only once per target per attack. When Evernight has 16 or more \"Memoria,\" dispels and becomes immune to Crowd Control debuffs. If memosprite Evey is on the field, it immediately takes action. The immediate action effect can only trigger again after memosprite Evey uses \"Dream, Dissolving, as Dew.\""
+  },
+  {
+   "kind": "Technique",
+   "name": "Let it Rain Cold On Thee",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "",
+   "maxLevel": 1,
+   "text": "After using Technique, at the start of the next battle, gains an effect identical to the Skill which increases all allies' memosprite CRIT DMG, and gains 1 point(s) of \"Memoria.\""
+  },
+  {
+   "kind": "Memosprite Skill",
+   "name": "Remembrance, Whirling, Like Rain",
+   "level": 1,
+   "energies": [
+    20,
+    10
+   ],
+   "ultCost": null,
+   "desc": "This ability automatically selects a target, prioritizing the enemy target that Evernight last attacked. Deals Ice DMG equal to #1[i]% of Evey's Max HP to one enemy. For every 4 point(s) of \"Memoria\" Evernight currently has, further deals Ice DMG equal to #2[i]% of Evey's Max HP. After use, Evernight gains 1 point(s) of \"Memoria.\"",
+   "resolved": false
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "Solitude, Drifting, In Murk",
+   "level": 1,
+   "energies": [
+    0,
+    0,
+    0
+   ],
+   "ultCost": null,
+   "desc": "Evey is immune to Crowd Control debuffs but has increased chance of being targeted. While Evernight is on the field, increases DMG dealt by Evernight and Evey by #1[i]%.",
+   "resolved": false
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Dark the Night, Still the Moon",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases Evernight and the memosprite Evey's CRIT Rate by 35%. When using abilities, consumes 5% of this unit's current HP to increase both their CRIT DMG by 15% for 2 turn(s). After memosprite Evey uses \"Dream, Dissolving, as Dew,\" recovers 1 Skill Point for allies.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Rouse the Flame, Lull the Light",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "At the start of combat, Evernight regenerates 70 Energy and gains 1 \"Memoria.\" When Evernight or an ally memosprite uses an ability, Evernight regenerates 5 Energy and gains 1 \"Memoria.\"",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Kindle the Morn, Drop the Rain",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When there are 1/2/3/4 or more Remembrance characters in the team, while Evernight's Skill persists, additionally increases all memosprites' CRIT DMG by 5%/15%/50%/65%.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Sleep Tight, the Night Dreams Long",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Evernight is on the field and when there are 4 or more/3/2/1 enemy targets on the field, ally memosprites deal 120%/125%/130%/150% of their original DMG respectively.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Listen Up, the Slumber Speaks Soft",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases Evernight's and memosprite Evey's CRIT DMG by 40%. Each time Evernight gains \"Memoria,\" increases the gained \"Memoria\" by 2 point(s). When using Ultimate, additionally gains 2 \"Darkest Riddle\" state Charge(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Fear Not, the Nightmare Lies Past",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10. Memosprite Talent Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Wake Up, the Tomorrow is Yours",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "While Evernight is on the field, ally memosprites' Weakness Break Efficiency increases by 25%, and memosprite Evey gains an additional 25% Weakness Break Efficiency.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Let Go, the \"Me\" in Memories",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15. Memosprite Skill Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Like This, Always",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "While Evernight is on the field, all allies' All-Type RES PEN increases by 20%. After memosprite Evey uses \"Dream, Dissolving, as Dew,\" Evernight gains 30% of the consumed \"Memoria\" in this attack.",
+   "resolved": false
+  }
+ ]
+}

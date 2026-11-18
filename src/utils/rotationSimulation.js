@@ -232,6 +232,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const coneAttackGrant = baseAttackForPercent * equipmentEffects.lightConeDamage.attackPercent / 100;
   const combatAtk = baseAtk + teamAtkGrant + percentAttackGrant + coneAttackGrant;
   const combatHp = baseHp;
+  const combatDef = Number(mainStats.def || 0);
   const rawTotalCr = (baseCr + teamCrGrant);
 
   // Специфика таланта СВ ур. 999 («I Carry, We Win»):
@@ -452,11 +453,13 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       const instHpMult = 1 + (Number(inst.hpMultPercent) || 0) / 100;
       const actionScalingStat = inst.healTallyFraction != null
         ? healingTally * Number(inst.healTallyFraction)
-        : kitRotation.hpScale
-          ? (inst.inAfterRain
-            ? combatHp * spdHpMult * instHpMult * (1 + kitHpPercent / 100) + kitHpFlat
-            : combatHp * spdHpMult * instHpMult)
-          : actionAtk;
+        : kitRotation.defScale
+          ? combatDef
+          : kitRotation.hpScale
+            ? (inst.inAfterRain
+              ? combatHp * spdHpMult * instHpMult * (1 + kitHpPercent / 100) + kitHpFlat
+              : combatHp * spdHpMult * instHpMult)
+            : actionAtk;
       const actionKitDmgBonus = actionDmgBonus;
       const selectedTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, Number(inst.targets) || 1)));
       // Бонус ЭП кита: A2 Светлячка действует только в окне CC, A6 — всегда.

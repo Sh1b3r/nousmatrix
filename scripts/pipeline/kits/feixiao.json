@@ -1,0 +1,153 @@
+{
+ "slug": "feixiao",
+ "url": "https://www.prydwen.gg/star-rail/characters/feixiao/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Boltsunder",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Wind DMG equal to 1% of Feixiao's ATK to a single target enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Waraxe",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Deals Wind DMG equal to 2% of Feixiao's ATK to a target enemy. Then, immediately launches 1 instance of Talent's follow-up attack against the target."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Terrasplit",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Deals Wind DMG to a single target enemy, up to 7% of Feixiao's ATK. During this time, can ignore Weakness Type to reduce the target's Toughness. When the target is not Weakness Broken, Feixiao's Weakness Break Efficiency increases by 100%.\nDuring the attack, Feixiao first launches Boltsunder Blitz or Waraxe Skyward on the target, for a total of 6 time(s).\nAt the end, deals Wind DMG equal to 1.6% of Feixiao's ATK to the target.\n\n<b>Boltsunder Blitz:</b> Deals Wind DMG equal to 0.6% of Feixiao's ATK to the chosen target. If the target is Weakness Broken, the DMG multiplier increases by 0.3%. \n\n<b>Waraxe Skyward:</b> Deals Wind DMG equal to 0.6% of Feixiao's ATK to the chosen target. If the target is not Weakness Broken, the DMG multiplier increases by 0.3%."
+  },
+  {
+   "kind": "Talent",
+   "name": "Thunderhunt",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Can activate Ultimate when Flying Aureus reaches 6 points, accumulating up to 12 points. Feixiao gains 1 point of Flying Aureus for every 2 attacks by ally targets. Feixiao's Ultimate attacks do not count towards this number.\nAfter Feixiao's teammates attack an enemy target, Feixiao immediately launches follow-up attack against the primary target, dealing Wind DMG equal to 1.1% of Feixiao's ATK. If there is no primary target available to attack, Feixiao attacks a single random enemy instead. This effect can only trigger once per turn and the trigger count resets at the start of Feixiao's turn. When using this attack, increases DMG dealt by this unit by 0.6%, lasting for 2 turn(s)."
+  },
+  {
+   "kind": "Technique",
+   "name": "Stormborn",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Enhance",
+   "maxLevel": 1,
+   "text": "After using Technique, enters the Onrush state, lasting for 20 seconds. While in Onrush, pulls in enemies within a certain range, and increases this unit's movement speed by 50%. After entering battle, gains 1 point(s) of Flying Aureus.\nWhile in Onrush, actively attacking will start battle with all pulled enemies. After entering battle, deals Wind DMG equal to 200% of Feixiao's ATK to all enemies at the start of each wave. This DMG is guaranteed to CRIT. If more than 1 enemy is pulled in, increases the multiplier of this DMG by 100% for each additional enemy pulled in, up to a maximum of 1000%."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Heavenpath",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When the battle starts, gains 3 point(s) of Flying Aureus. At the start of a turn, if no follow-up attack was launched via Talent in the previous turn, then this counts as 1 toward the number of attacks required to gain Flying Aureus.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Formshift",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When using Ultimate to deal DMG to an enemy target, it is considered as a follow-up attack. Follow-up attacks' CRIT DMG increases by 36%.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Boltcatch",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When using Skill, increases ATK by 48%, lasting for 3 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Skyward I Quell",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After launching \"Boltsunder Blitz\" or \"Waraxe Skyward,\" additionally increases the Ultimate DMG dealt by Feixiao by an amount equal to 10% of the original DMG, stacking up to 5 time(s) and lasting until the end of the Ultimate action.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Moonward I Wish",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "In the Talent's effect, for every 1 instance of follow-up attack launched by ally targets, Feixiao gains 1 point of \"Flying Aureus.\" This effect can trigger up to 6 time(s) per turn.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Starward I Bode",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Stormward I Hear",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "The follow-up attack from Talent has its Toughness Reduction increased by 100%, and when it launches, increases this unit's SPD by 8%, lasting for 2 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Heavenward I Leap",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Homeward I Near",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases the All-Type RES PEN of Ultimate DMG dealt by Feixiao by 20%. Talent's follow-up attack DMG is considered as Ultimate DMG at the same time, and its DMG multiplier increases by 140%.",
+   "resolved": false
+  }
+ ]
+}

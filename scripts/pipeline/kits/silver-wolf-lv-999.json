@@ -1,0 +1,180 @@
+{
+ "slug": "silver-wolf-lv-999",
+ "url": "https://www.prydwen.gg/star-rail/characters/silver-wolf-lv-999/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "One Punch!",
+   "level": 1,
+   "energies": [
+    0,
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 10,
+   "text": "Deals Imaginary DMG equal to 1% of Silver Wolf LV.999's ATK to one designated enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Trigger Happy",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "AoE",
+   "maxLevel": 15,
+   "text": "Gains 5 Punchline point(s) and deals Imaginary DMG equal to 1.6% of Silver Wolf LV.999's ATK to all enemies."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "God Mode: ON!",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "Enters the \"Godmode Player\" state, and advances action by 100%.\nDeploys a Zone while in the \"Godmode Player\" state. While Silver Wolf LV.999 possesses \"Certified Banger,\" each time an ally target within the Zone consumes 1 Skill Point, there is a chance to trigger 1 time Silver Wolf LV.999's \"Top Loot Box\": Deal Imaginary Elation DMG equal to 0.9% split evenly among all enemies, and randomly trigger 1 of the following effects:\n\"Big Flipping Sword\": Additionally deals True DMG to the enemy target with the highest HP equal to 20% of the total DMG dealt this time.\n\"Kaboom Eggsplosion\": Recovers 2 Skill Point(s).\n\"Funky Munch Bean\": Gains 3 Punchline(s).\nThe initial fixed chance to trigger this effect is 100%. After successfully triggering, the fixed chance for the subsequent trigger is reduced to 20% of the current chance. If the target is defeated before triggering, this effect triggers on the enemy target that just entered instead."
+  },
+  {
+   "kind": "Talent",
+   "name": "I Carry, We Win",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "After reaching 60 \"Hidden MMR\" points, the Ultimate can be activated. After reaching the maximum limit, it can overflow by an additional 240 point(s).\nWhen gaining Punchline, Silver Wolf LV.999 gains an equal amount of \"Hidden MMR.\" Each point of \"Hidden MMR\" increases CRIT Rate by 0.004%. After CRIT Rate increases to 100%, each remaining point of \"Hidden MMR\" switches to increasing CRIT DMG by 0.008%.\nWhile in the \"Godmode Player\" state, Silver Wolf LV.999 is immune to Crowd Control debuffs, cannot use her Ultimate, and gains Enhanced Basic ATK and Enhanced Elation Skill. After completely using Enhanced Basic ATK 3 time(s), she exits the \"Godmode Player\" state. After exiting the \"Godmode Player\" state, \"Hidden MMR\" is cleared.\nWhile in possession of \"Certified Banger,\" using Basic ATK or Skill against attacked enemy targets deals 0.4% Imaginary Elation DMG. Enhanced Basic ATK's ability DMG is converted to Elation DMG at the same multiplier."
+  },
+  {
+   "kind": "Technique",
+   "name": "This? Absolute Meta!",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Impair",
+   "maxLevel": 1,
+   "text": "Summons \"Funky Munch Bean.\" Use again to dismiss. Using Technique does not consume Technique Points. When Technique Points reach 0, the summon is dismissed and Technique cannot be used.\n\"Funky Munch Bean\" causes Normal Enemies within a certain range to enter a Terrified state. It will also automatically search for and attack Normal Enemies, consuming 1 Technique Point to instantly defeat them without entering combat.\nWhile \"Funky Munch Bean\" is present, after entering combat, 1 instance of \"Top Loot Box\" from \"Funky Munch Bean\" is triggered at the start of each wave. The Elation DMG dealt in this instance takes into account a fixed amount of 99 \"Certified Banger\" points."
+  },
+  {
+   "kind": "Elation Skill",
+   "name": "Honkai-DMG Demo",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Elation Skill",
+   "effectText": "AoE",
+   "maxLevel": 15,
+   "text": "Deals 6 instances of DMG, with each instance dealing 0.9% Imaginary Elation DMG to one random enemy. Then, resets the fixed chance to trigger \"Top Loot Box\" to its initial value."
+  },
+  {
+   "kind": "Unique",
+   "name": "McAwolfee 999",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Unique",
+   "effectText": "Unique",
+   "maxLevel": 1,
+   "text": "Gain this effect after obtaining \"Silver Wolf LV.999\" or when \"Silver Wolf LV.999\" is present in the current team: In battle, if an enemy target inflicts a Crowd Control debuff on an ally, all allies gain \"Firewall\" for 1 turn. While in the \"Firewall\" state, ally targets are immune to Crowd Control debuffs inflicted by enemy targets. This effect can trigger at most 1 time per wave."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "False Ending Speedrun",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When SPD is 160 or higher, increases this unit's Elation by 50%. For every 1 SPD exceeded, increases this unit's Elation by 2%. Up to a max of 100 excess SPD can be taken into account for this effect.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "True Ending Unlocked",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "If the number of Punchlines taken into account when using an Elation Skill is 20 or more, gain an additional 20 Hidden MMR points (if 40 or more, gain 20 points on top of that).",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Secret Level Maxed",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After entering the Godmode Player state, gains 20 point(s) of Hidden MMR.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Aether Editing: Eidolon +1",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases the DMG taken by enemy targets in the Zone by 20%. When leaving the \"Godmode Player\" state, \"Hidden MMR\" will not be cleared, 20% of \"Hidden MMR\" will be retained instead.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "It's a Feature, Not a Bug",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After entering the \"Godmode Player\" state, all buffs on this unit are extended by 1 turn. In the current \"Godmode Player\" state, for every 120 point(s) of \"Hidden MMR\" (including the initial \"Hidden MMR\") increased, Silver Wolf LV.999 gains 1 extra turn and regains 1 use of Enhanced Basic ATK.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Max Lv. 15? Says who?",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10. Elation Skill Lv. +1, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "I Came. I Saw. I One‑Shot.",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Elation DMG dealt by \"Honkai-DMG Demo\" additionally takes into account Punchline points times 5.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Basic ATK Is the New Ultimate",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15. Elation Skill Lv. +1, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Solo Maxxing!",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Elation DMG dealt during Enhanced Basic ATK merrymakes by 50%.When enemy targets enter combat, they are inflicted with \"Absolute Weakness\": Has All-Type Weakness, and All-Type Base RES is reduced to 0 (If Base RES is already at 0, then the corresponding Type RES decreases by 20%).",
+   "resolved": false
+  }
+ ]
+}

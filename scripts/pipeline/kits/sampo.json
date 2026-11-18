@@ -1,0 +1,153 @@
+{
+ "slug": "sampo",
+ "url": "https://www.prydwen.gg/star-rail/characters/sampo/",
+ "capturedOn": "2026-11-17",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Dazzling Blades",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Wind DMG equal to 1% of Sampo's ATK to a single enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Ricochet Love",
+   "level": 1,
+   "energies": [
+    6
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Bounce",
+   "maxLevel": 15,
+   "text": "Deals Wind DMG equal to 0.56% of Sampo's ATK to a single enemy, and further deals DMG for 4 extra time(s), with each time dealing Wind DMG equal to 0.56% of Sampo's ATK to a random enemy."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Surprise Present",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Impair",
+   "maxLevel": 15,
+   "text": "Deals Wind DMG equal to 1.6% of Sampo's ATK to all enemies, with a 1% base chance to increase the targets' DoT taken by 0.3% for 2 turn(s)."
+  },
+  {
+   "kind": "Talent",
+   "name": "Windtorn Dagger",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "Sampo's attacks have a 0.65% base chance to inflict Wind Shear for 3 turn(s).\nEnemies inflicted with Wind Shear will take Wind DoT equal to 0.52% of Sampo's ATK at the beginning of each turn. Wind Shear can stack up to 5 time(s)."
+  },
+  {
+   "kind": "Technique",
+   "name": "Shining Bright",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Impair",
+   "maxLevel": 1,
+   "text": "After Sampo uses his Technique, enemies in a set area are inflicted with Blind for 10 second(s). Blinded enemies cannot detect your team.\nWhen initiating combat against a Blinded enemy, there is a 1% fixed chance to delay all enemies' action by 0.25%."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Trap",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Extends the duration of Wind Shear caused by Talent by 1 turn.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Defensive Position",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Using Ultimate additionally regenerates 10 Energy.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Spice Up",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Enemies with Wind Shear effect deal 15% less damage to Sampo.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Rising Love",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When using Skill, deals DMG for 1 extra time(s) to a random enemy.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Infectious Enthusiasm",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When an enemy with Wind Shear is defeated, there is a 100% base chance to inflict 1 stack(s) of Wind Shear, equivalent to the Talent's Wind Shear.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Big Money!",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1. up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "The Deeper the Love, the Stronger the Hate",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Skill hits an enemy with 5 or more stack(s) of Wind Shear, the enemy immediately takes 8% of current Wind Shear DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Huuuuge Money!",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Increased Spending",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Talent's Wind Shear DMG multiplier increases by 15%.",
+   "resolved": false
+  }
+ ]
+}

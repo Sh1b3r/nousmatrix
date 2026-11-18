@@ -1,0 +1,154 @@
+{
+ "slug": "rappa",
+ "url": "https://www.prydwen.gg/star-rail/characters/rappa/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Ninjutsu: Rise Above Tumbles",
+   "level": 1,
+   "energies": [
+    20,
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Imaginary DMG equal to 1% of Rappa's ATK to a single target enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Ninja Strike: Rooted Resolute",
+   "level": 1,
+   "energies": [
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "AoE",
+   "maxLevel": 15,
+   "text": "Deals Imaginary DMG equal to 1.2% of Rappa's ATK to all enemies."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Nindō Supreme: Aishiteru",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "Enters the \"Sealform\" state, immediately gains 1 extra turn, obtains 3 points of \"Chroma Ink,\" and increases Weakness Break Efficiency by 50% and Break Effect by 0.3%.\nWhile in the \"Sealform\" state, Basic ATK is enhanced, and Skill and Ultimate cannot be used. After using Enhanced Basic ATK, consumes 1 point of \"Chroma Ink.\" When \"Chroma Ink\" is depleted, exits the \"Sealform\" state."
+  },
+  {
+   "kind": "Talent",
+   "name": "Ninja Tech: Endurance Gauge",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "Each time the enemy target is Weakness Broken, Rappa gains 1 point of Charge, up to a max of 10 points of Charge. When Rappa next launches the third hit of Ningu: Demonbane Petalblade, additionally deals Break DMG equal to 0.6% of Rappa's Imaginary Break DMG to all enemies. This DMG can ignore Weakness Type to reduce 2 Toughness, consuming all Charge. Each point of Charge increases the Break DMG multiplier by 0.5% and increases the Toughness Reduction that can ignore Weakness Type by 1.\nWhen Breaking Weakness, triggers the Imaginary Weakness Break effect."
+  },
+  {
+   "kind": "Technique",
+   "name": "Wisps of Aurora",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Support",
+   "maxLevel": 1,
+   "text": "After using Technique, enters the Graffiti state for 20 seconds. While in the Graffiti state, moves forward rapidly for a set distance and attacks any enemies touched. During the rapid movement, can block all enemies' attacks. Using an attack in the Graffiti state can end the state's duration early. After entering combat via attacking enemies, deals 30 Toughness Reduction regardless of Weakness Type and Break DMG equal to 200% of Rappa's Imaginary Break DMG to each enemy target, and deals Break DMG equal to 180% of Rappa's Imaginary Break DMG to adjacent targets. At the same time, this unit regenerates 10 Energy."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Ninjutsu Inscription: Sky High",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When the Weakness of an elite-level or higher enemy is broken, Rappa additionally gains 1 point(s) of Charge and regenerates 10 Energy.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Ninjutsu Inscription: Sea Echo",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "While in the Sealform state, after Rappa uses Enhanced Basic ATK to deal DMG to a Weakness Broken enemy target, converts the Toughness Reduction from this instance of DMG to 1 instance of 60% Super Break DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Ninjutsu Inscription: Withered Leaf",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When an enemy target becomes Weakness Broken, increases the Break DMG taken by 2%. If Rappa's current ATK is higher than 2400, for every 100 excess ATK, additionally increases this value by 1%, up to a max additional increase of 8%. This effect lasts for 2 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Returned Is the Revenant With No Ferry Toll",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "During the \"Sealform\" state entered by using Ultimate, DMG dealt by Rappa ignores 15% of the targets' DEF. After exiting the \"Sealform\" state, regenerates 20 Energy.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Free Is the Mind Enlightened by Haikus",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "The Enhanced Basic ATK's first 2 hits have their Toughness Reduction against the one designated enemy increased by 50%.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Many Are the Shrines That Repel No Hell",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Lost Is the Nindō Devoured by Time",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "While in the \"Sealform\" state, increases all allies' SPD by 12%.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Steady Is The Ranger With Unerring Arrows",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Righteous Is the Wrath That Spares No Evil",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When battle starts, Rappa gains 5 point(s) of her Talent's Charge, and its upper limit increases by 5 point(s). After launching the third hit of \"Ningu: Demonbane Petalblade,\" gains 5 point(s) of Charge.",
+   "resolved": false
+  }
+ ]
+}

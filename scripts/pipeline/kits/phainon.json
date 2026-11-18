@@ -1,0 +1,156 @@
+{
+ "slug": "phainon",
+ "url": "https://www.prydwen.gg/star-rail/characters/phainon/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Stride to Deliverance",
+   "level": 1,
+   "energies": [
+    0,
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 10,
+   "text": "Deals Physical DMG equal to 1% of Phainon's ATK to one designated enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Let There Be Light",
+   "level": 1,
+   "energies": [
+    0,
+    0,
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Blast",
+   "maxLevel": 15,
+   "text": "Gains 2 point(s) of \"Coreflame,\" dealing Physical DMG equal to 3% of Phainon's ATK to one designated enemy and Physical DMG equal to 1.2% of Phainon's ATK to adjacent targets."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "He Who Bears the World Must Burn",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "AoE",
+   "maxLevel": 15,
+   "text": "Transforms into Khaslana and deploys Territory during transformation. Other teammates in the Territory becomes Departed and cannot take action, and all enemies gain Physical Weakness.\nKhaslana does not have his own turn, but has 8 Khaslana's extra turn(s) with a fixed SPD equal to 60% of Khaslana's base SPD. At the start of the final Khaslana's extra turn, immediately launches Final Hit and deals Physical Ultimate DMG equal to 9.6% of Khaslana's ATK that is distributed evenly across all enemies."
+  },
+  {
+   "kind": "Talent",
+   "name": "Pyric Corpus",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "$86"
+  },
+  {
+   "kind": "Technique",
+   "name": "Beginning of the End",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Enhance",
+   "maxLevel": 1,
+   "text": "While Phainon is in the team, increases Max Technique Points by 3.\nWhen actively using this Technique, consumes 2 Technique Points and immediately attacks all enemies within a certain range. After entering battle, regenerates 25 Energy for allies and gains 2 \"Scourge\" and 1 Skill Point(s). Deals Physical DMG equal to 200% of Phainon's ATK to all enemies at the start of each wave.\nIf attacking a normal enemy, immediately defeats them without entering combat. No Technique Points are consumed if no enemies are hit."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "March to Oblivion",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "At the start of the battle, gains 1 point(s) of Coreflame. When the transformation ends, gains 3 point(s) of Coreflame.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Bide in Flames",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When receiving healing effects or Shields from a teammate, increases DMG dealt by 45% for 4 turn(s). This effect cannot be triggered repeatedly within one turn. When receiving Energy regeneration ability effects provided by teammates, gains 1 point(s) of Coreflame.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Shine with Valor",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When entering battle or when transformation ends, increases ATK by 50%. This effect can stack up to 2 time(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Flame and Light Bind Virtue and Vice",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "The base SPD inheritance ratio of █████'s extra turn increases to 66%. For every enemy target defeated in one battle, further increases it by 1.5%, up to 84%.When using Ultimate, CRIT DMG increases by 50%, lasting for 3 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Eidolon 2",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "█████'s Physical RES PEN increases by 20%. When consuming 4 \"Scourge\" to use \"Foundation: Stardeath Verdict,\" gains 1 extra turn.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Eidolon 3",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Eidolon 4",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When using \"Calamity: Soulscorch Edict,\" additionally gains 4 stack(s) of \"Soulscorch.\"",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Eidolon 5",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Eidolon 6",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "The number of Overflow point for \"Coreflame\" no longer has an upper limit. When battle starts, gains 6 \"Coreflame(s).\" After using \"Foundation: Stardeath Verdict's\" attack, additionally deals True DMG equal to 36% of the total DMG dealt in this attack to the enemy with the highest HP.",
+   "resolved": false
+  }
+ ]
+}

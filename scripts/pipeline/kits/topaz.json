@@ -1,0 +1,153 @@
+{
+ "slug": "topaz",
+ "url": "https://www.prydwen.gg/star-rail/characters/topaz/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Deficit...",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Fire DMG equal to 1% of Topaz's ATK to a single enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Difficulty Paying?",
+   "level": 1,
+   "energies": [
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Inflicts a single target enemy with a Proof of Debt status, increasing the DMG it takes from follow-up attacks by 0.5%. Proof of Debt only takes effect on the most recent target it is applied to. If there are no enemies inflicted with Proof of Debt on the field when an ally's turn starts or when an ally takes action, Topaz will inflict a random enemy with Proof of Debt.\nNumby deals Fire DMG equal to 1.5% of Topaz's ATK to this target. Using this Skill to deal DMG is considered as launching a follow-up attack."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Turn a Profit!",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "Numby enters the Windfall Bonanza! state and its DMG multiplier increases by 1.5% and CRIT DMG increases by 0.25%. Also, when enemies with Proof of Debt are hit by an ally's Basic ATK, Skill, or Ultimate, Numby's action is Advanced Forward by 0.5%. Numby exits the Windfall Bonanza! state after using 2 attacks."
+  },
+  {
+   "kind": "Talent",
+   "name": "Trotter Market!?",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Summons Numby at the start of battle. Numby has 80 SPD by default. When taking action, Numby launches follow-up attacks on a single enemy target afflicted with Proof of Debt, dealing Fire DMG equal to 1.5% of Topaz's ATK.\nWhen enemies afflicted with Proof of Debt receive an ally's follow-up attacks, Numby's action is Advanced Forward by 0.5%. The action Advance Forward effect cannot be triggered during Numby's own turn.\nWhen Topaz is downed, Numby disappears."
+  },
+  {
+   "kind": "Technique",
+   "name": "Explicit Subsidy",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Enhance",
+   "maxLevel": 1,
+   "text": "Summons Numby when Topaz enters the overworld. Numby will automatically search for Basic Treasures and Trotters within a set radius.\nUsing her Technique will regenerate 60 Energy for Topaz after Numby's first attack in the next battle.\nIf Topaz is still in the team after using her Technique and defeating overworld enemies, a small bonus amount of credits will be added to the earned credits. A maximum of 10000 bonus credits can be received per calendar day.\nAfter using her Technique and defeating enemies in Simulated Universe, additionally receive a small amount of Cosmic Fragments with a small chance to obtain 1 random Curio."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Overdraft",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Topaz uses Basic ATK to deal DMG, it will be considered as a follow-up attack.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Financial Turmoil",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases Topaz and Numby's DMG dealt to enemy targets with Fire Weakness by 15%.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Stonks Market",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After Numby uses an attack while in the Windfall Bonanza! state, Topaz additionally regenerates 10 Energy.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Future Market",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When enemies afflicted with Proof of Debt receive follow-up attacks, they will enter the Debtor state. This can take effect only once within a single action. The Debtor state increases the CRIT DMG of follow-up attacks inflicted on the target enemies by 25%, stacking up to 2 time(s). When Proof of Debt is removed, the Debtor state is also removed.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Bona Fide Acquisition",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After Numby takes action and launches an attack, Topaz regenerates 5 Energy.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Seize the Big and Free the Small",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Agile Operation",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After Numby's turn begins, Topaz's action is Advanced Forward by 20%.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Inflationary Demand",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Incentive Mechanism",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Numby's attack count during the Windfall Bonanza! state increases by 1, and its Fire RES PEN increases by 10% when it attacks.",
+   "resolved": false
+  }
+ ]
+}

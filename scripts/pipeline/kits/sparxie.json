@@ -1,0 +1,168 @@
+{
+ "slug": "sparxie",
+ "url": "https://www.prydwen.gg/star-rail/characters/sparxie/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Cat Got Your Flametongue?",
+   "level": 1,
+   "energies": [
+    20,
+    40
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 10,
+   "text": "Deals Fire DMG equal to 1% of Sparxie's ATK to one designated enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Boom! Sparxicle's Poppin",
+   "level": 1,
+   "energies": [
+    0,
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "Start a livestream to turn Basic ATK into \"Bloom! Winner Takes All\" and trigger \"Engagement Farming\" 1 time. During this ability, \"Engagement Farming\" can be triggered repeatedly, up to 20 time(s). Using this ability is not considered as using a Skill."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Party's Wildin' and Camera's Rollin'",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "AoE",
+   "maxLevel": 15,
+   "text": "Gains 2 Punchline point(s). Deals Fire DMG equal to (0.6 × Elation + 0.5%) of Sparxie's ATK to all enemies."
+  },
+  {
+   "kind": "Talent",
+   "name": "Sleight of Sparx Hand",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "When Sparxie holds \"Certified Banger\":\n• Using Enhanced Basic ATK deals 0.4% Fire Elation DMG to one designated enemy, and 0.2% Fire Elation DMG to their adjacent targets. Additionally, for every 1 instance of \"Engagement Farming\" triggered, the Enhanced Basic ATK deals 1 extra instance of 0.2% Fire Elation DMG to 1 random attacked enemy target.\n• Using Ultimate deals 0.48% Fire Elation DMG to all enemies."
+  },
+  {
+   "kind": "Technique",
+   "name": "The Heart Makes the Finest Tomb",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Impair",
+   "maxLevel": 1,
+   "text": "After using the Technique, inflicts enemies within a set area with \"Block\" for 10 second(s). \"Blocked\" enemies cannot detect ally targets. After entering combat via actively attacking a \"Blocked\" enemy, deals Fire DMG to all enemies equal to 50% of Sparxie's ATK and recovers 2 Skill Point(s) for allies."
+  },
+  {
+   "kind": "Elation Skill",
+   "name": "Signal Overflow: The Great Encore!",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Elation Skill",
+   "effectText": "AoE",
+   "maxLevel": 15,
+   "text": "Deals 0.5% Fire Elation DMG to all enemies and deals 20 additional instance(s) of DMG. Each instance deals 0.25% Fire Elation DMG to one random enemy. Grants 2 \"Thrill\" point(s) to Sparxie, which can be used to offset Sparxie's Skill Point consumption. Consuming \"Thrill\" is considered as consuming Skill Points."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Sweet! Punchline Signing",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "For every 100 of Sparxie's ATK that exceeds 2000, increases this unit's Elation by 5%, up to a maximum increase of 80%.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Dazzling! Persona Kaleidoscope",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When there are 1/2/(3 or more) Elation characters in the team, using Sparxie's Ultimate will additionally gain 2/4/8 Punchline and 1/1/4 Thrill.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Frenzy! Palette of Truth and Lies",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "For every 1 Punchline currently owned, increases all allies' CRIT DMG by 8%, up to a max increase of 80%.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "#GoingViral #WhoIsShe",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Aha Instant ends, gains 5 Punchline. For every 1 Punchline owned, increases All-Type RES PEN for all allies by 1.5%, up to a max increase of 15%.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "#AudienceKnows",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Aha Instant ends, Sparxie gains 1 extra turn and 2 \"Thrill.\" For every 1 \"Thrill\" consumed, increases this unit's CRIT DMG by 10%, lasting for 2 turn(s) and stacking up to 4 time(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "#LinkUp #HeartSkip",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10. Elation Skill Lv. +1, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "#LockedIn #FaceCard",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When using Ultimate, additionally gains 5 Punchline and increases this unit's Elation by 36% for 3 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "#HealingTheWorld #GoodVibesOnly",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15. Elation Skill Lv. +1, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "#BuiltDifferent #GoingExtinct",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases All-Type RES PEN by 20%. For every 1 Punchline taken into account by the Elation Skill, the number of its additional DMG instances increases by 1, up to a max of 40.",
+   "resolved": false
+  }
+ ]
+}

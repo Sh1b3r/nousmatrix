@@ -1,0 +1,181 @@
+{
+ "slug": "robin-summeretto",
+ "url": "https://www.prydwen.gg/star-rail/characters/robin-summeretto/",
+ "capturedOn": "2026-11-18",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "The Sea Sings in My Key",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Wind DMG equal to 0.5% of Robin • Summeretto's Max HP to one enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Summer Strums the Soul",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Summon",
+   "maxLevel": 15,
+   "text": "Summons the memosprite Summer Songbirds Bessie. If any among the Summer Songbirds is already on the field, restores its HP by an amount equal to 1% of Summer Songbirds's Max HP, and gains 6 Vibes."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Ascend That Rhapsody in Blue",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "Advances the action of one designated ally unit (excluding Robin • Summeretto) by 100% and regenerates a fixed amount of Energy equal to 0.2% of their Max Energy, and then, grants them the Special Guest effect. When the character with Special Guest and their summon attacks, they additionally grant Robin 2 point(s) of Vibes and cannot advance the actions of other friendly targets. This effect lasts for 2 turn(s), and its duration decreases by 1 at the start of this character's turn."
+  },
+  {
+   "kind": "Talent",
+   "name": "Wings Heed No Borders",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "The memosprite Summer Songbirds has an initial Max HP equal to 70% of Robin • Summeretto's Max HP and an initial SPD equal to 180% of Robin • Summeretto's SPD. When an ally target uses an attack, or when providing healing effect or Shield for the first time in any target's turn, Robin • Summeretto gains 1 Vibes, up to a max of 50. While Summer Songbirds Bessie is on the field, if Robin's Vibes is 6 or more, immediately summons the Summer Songbird Drummie, and if Vibes is 12 or more, immediately summons the Summer Songbird Paddie. When all Summer Songbirds take the stage, dispels all Crowd Control debuffs that Robin • Summeretto and the Summer Songbirds are under, enter the Fever state and deploy a Zone. When ally targets deal DMG inside the Zone, they ignore 0.15% plus Vibes × 0.5% of enemy targets' DEF.\nWhile in the Fever state, Robin • Summeretto and the Summer Songbirds are immune to Crowd Control debuffs, and Robin • Summeretto will not enter her turns until the Fever state ends."
+  },
+  {
+   "kind": "Technique",
+   "name": "We Are the Melody",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Enhance",
+   "maxLevel": 1,
+   "text": "After using Technique, at the start of the next combat, action advances by 20%, immediately gains 6 Vibes, and grants all allies a 30% DMG Boost for 2 turn(s)."
+  },
+  {
+   "kind": "Memosprite Skill",
+   "name": "Chirrup Quartet",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Memosprite Skill",
+   "effectText": "AoE",
+   "maxLevel": 7,
+   "text": "Deals Wind DMG equal to 2.1% of Summer Songbirds's Max HP to all enemies."
+  },
+  {
+   "kind": "Memosprite Talent",
+   "name": "A Warble of Wings",
+   "level": 1,
+   "energies": [
+    0,
+    0,
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Memosprite Talent",
+   "effectText": "Support",
+   "maxLevel": 7,
+   "text": "While in the Fever state, the Summer Songbirds and a countdown will appear on the action bar, increasing the DMG dealt by Robin • Summeretto and themselves by 0.84% + Vibes × 0.028%. When Summer Songbirds's turn starts, they use the Memosprite Skill. The countdown has an initial SPD of 140. When their turn starts, 50% of current Vibes (a minimum of 12 points) gets deducted. When Vibes reach 0, the Summer Songbirds disappear and Robin • Summeretto exits the Fever state. While Summer Songbirds are on the field, increases the DMG taken by all enemies by 0.112%/0.168%/0.224% respectively based on the number of members present."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Deviated Chords",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When an ally target causes Robin • Summeretto to gain Vibes, if their ATK is higher than Robin • Summeretto's, increases that target's ATK by an amount equal to (16% + Vibes × 0.4%) of Robin • Summeretto's Max HP. Otherwise, increases that target's CRIT DMG by 40% + Vibes × 1.5%. Lasts for 2 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Improvised Blues",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Robin • Summeretto or \"Summer Songbirds\" receive healing or a Shield provided by teammates, they gain 12 stack(s) of \"Groove,\" up to a max of 12 stack(s). The first time Robin • Summeretto gains Vibes on any unit's turn, if she has \"Groove,\" she consumes 1 stack of \"Groove\" and regenerates 3 Energy.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Rebuilt Harmony",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases the CRIT Rate of Robin • Summeretto and \"Summer Songbirds\" by 50%.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Stray Bird of Summer",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "\"Summer Songbirds\" records 100% of the non-True DMG dealt by ally targets. When using the Memosprite Skill, it additionally deals True DMG equal to 11% of the total recorded DMG plus current Vibes points × 0.1% to the enemy target with the highest HP, then clears 50% of the recorded value.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "A Heart of Still Water",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases All-Type RES PEN of ally targets by 18%. Robin • Summeretto's Max Vibes increases by 20. The first time an ally target uses an ability that causes Robin • Summeretto to gain Vibes within any target's turn, she gains an additional 2 points.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Echoes Left Along the Way",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15. Memosprite Talent Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Her Variation on the Theme",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Upon entering the \"Fever\" state, immediately gains 12 point(s) of Vibes, and the SPD of \"Summer Songbirds\" increases by 20% plus current Vibes × 0.5%.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "To Chase the Dawn Anew",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10. Memosprite Skill Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "A Song Yet Unnamed",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Increases the Memosprite Skill's DMG multiplier by 100% of the original multiplier. While in the \"Fever\" state, Robin • Summeretto's Ultimate can be stored up to 2 times. After entering the \"Fever\" state for the first time or at the start of a \"Fever\" countdown turn in this battle, regenerates a fixed amount of 140 Energy.",
+   "resolved": false
+  }
+ ]
+}

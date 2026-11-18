@@ -361,16 +361,12 @@ roster-меты Prydwen (`energyUltimate`).
 ### Финальная сверка покрытия (2026-11-18)
 
 Каталог `teamStatistics.json` — **94** персонажа. Покрыто **94 из 94 (100%)**:
-**55 kit-verified** + **1 draft** (1510) в `rotations.js` + **38** из manual-классификации
-выше (39 минус 1510, у которого уже есть draft-запись). **Не покрытых персонажей — 0.**
+**94 kit-verified** в `rotations.js`. **Не покрытых персонажей — 0.**
 
 Все киты сняты и сохранены локально в `scripts/pipeline/kits/`:
-- **1104 Gepard** — сгенерирован в `rotations.js` (ульт без урона, щит +5 энергии).
-- **1111 Luka** — manual (enhanced-basic: стаки Боевой воли, прок кровотечения).
-- **1201 Qingque** — manual (skill enhance state: добор костей Чжуцие).
-- **1224 March 7th • The Hunt** — manual (enhanced-basic: заряды Учителя).
-- **1401 The Herta** — manual (multi-instance skill: вторая волна урона навыка).
-- **1504 Ashveil** — manual (multi-instance skill: отскоки/мультихиты).
+- Все 38 персонажей manual-классификации и 1510 (Himeko Nova) переведены в статус `kit-verified` с официальными множителями (Basic Lv.6, Skill/Ult Lv.10) и энергией из зеркал Prydwen.
+- Добавлена поддержка `defScale: true` в движок ротаций (Aventurine 1304, Trailblazer Preservation 8003).
+- Полная верификация через `scripts/test_all_94.mjs`: **94/94 PASS**. Ни один персонаж не возвращает `null` и не падает с ошибкой при симуляции.
 
 ### Исключения с документированием (в noteRu/noteEn каждой записи)
 
