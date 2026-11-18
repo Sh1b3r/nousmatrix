@@ -3277,4 +3277,64 @@ export const ROTATIONS = {
       }
     ]
   },
+
+  // Гепард (1104) — kit-verified: множители и энергия из официального кита (Prydwen).
+  "1104": {
+    status: "kit-verified",
+    gameVersion: "4.7",
+    buffUptimeStatus: "unverified",
+    evidence: [
+      {
+        type: "official-kit-mirror",
+        source: "prydwen.gg",
+        url: "https://www.prydwen.gg/star-rail/characters/gepard/",
+        capturedOn: "2026-11-17",
+        note: "Basic 100% ATK (en 20); Skill 200% (en 30); Ult no damage, 100 energy cost (+5); Talent: When struck with a killing blow, instead of becoming knocked down, Gepard's HP immediately restores to 0.5% of his Max HP. This effect can only trigger once per battle.."
+      }
+    ],
+    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт (ульт без урона — только энергетика). Множители, энергия способностей и стоимость ульты (100) — из официального кита (Prydwen, зеркало OSPROD, снимок 2026-11-17, Basic Lv.6 / остальные Lv.10). Число повторов за цикл — общее документированное допущение (энергия: 100 ≥ 95 ✓). SP: +0 за цикл. Не включено (аптайм/условия не подтверждены): доп. условный урон (skill:conditional-additional), энергия союзников, эйдолоны (E0).",
+    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate (the ult deals no damage — energy budget only). Multipliers, ability energy, and the ult cost (100) come from the official kit (Prydwen, OSPROD mirror, captured 2026-11-17, Basic Lv.6 / others Lv.10). Per-cycle repeat counts are a generic documented assumption (energy: 100 >= 95 ✓). SP: +0 per cycle. Excluded (uptime/conditions unverified): conditional additional skill damage, ally energy, eidolons (E0).",
+    energy: { ultCost: 100 },
+    instances: [
+      {
+        key: "skill",
+        phaseRu: "ОСНОВНОЙ ЦИКЛ — НАВЫК",
+        phaseEn: "MAIN LOOP — SKILL",
+        actionRu: "2× навык «Daunting Smite»: 200% ATK",
+        actionEn: "2x Skill 'Daunting Smite': 200% ATK",
+        descRu: "Официальный множитель кита (Prydwen). Число применений за цикл — общее документированное допущение.",
+        descEn: "Official kit multiplier (Prydwen). Per-cycle use count is a generic documented assumption.",
+        mv: 2,
+        targets: 1,
+        count: 2,
+        energyGain: 30
+      },
+      {
+        key: "basic",
+        phaseRu: "ОСНОВНОЙ ЦИКЛ — БАЗОВАЯ АТАКА",
+        phaseEn: "MAIN LOOP — BASIC ATK",
+        actionRu: "2× базовая «Fist of Conviction»: 100% ATK",
+        actionEn: "2x Basic 'Fist of Conviction': 100% ATK",
+        descRu: "Официальный множитель кита (Prydwen). Число применений добирает энергию ульты — допущение.",
+        descEn: "Official kit multiplier (Prydwen). Basic count tops up the ult energy — an assumption.",
+        mv: 1,
+        targets: 1,
+        count: 2,
+        energyGain: 20
+      },
+      {
+        key: "ult",
+        phaseRu: "СВЕРХСПОСОБНОСТЬ",
+        phaseEn: "ULTIMATE",
+        actionRu: "Ульт «Enduring Bulwark»: не наносит урона (лечение/бафф)",
+        actionEn: "Ult 'Enduring Bulwark': deals no damage (heal/buff)",
+        descRu: "В цикле учтена только энергетика ульты: стоимость 100, +5 после.",
+        descEn: "Only the ult's energy budget is counted: cost 100, +5 after.",
+        mv: 0,
+        targets: 1,
+        count: 1,
+        energyGain: 5, isUlt: true
+      }
+    ]
+  },
 };

@@ -83,7 +83,8 @@ function hasDamage(d) { return d && d.primary && d.primary.pct > 0; }
 
 const out = [];
 const manual = [];
-const ids = Object.keys(catalog.charactersById).filter((k) => /^\d+$/.test(k));
+const argIds = process.argv.slice(2);
+const ids = argIds.length ? argIds : Object.keys(catalog.charactersById).filter((k) => /^\d+$/.test(k));
 
 for (const id of ids) {
   if (DONE.has(id)) continue;
@@ -129,7 +130,8 @@ for (const id of ids) {
   // DEF-based scaling anywhere in the core damage text (skip shield absorption)
   const rawCore = [basic, skill, ult].filter(Boolean).map((a) => ((a.text || a.desc) + "").replace(/\s+/g, " ")).join(" ");
   const defM = rawCore.match(/(DMG[^.;\n]{0,90}?(?:equal to|plus) [\d.]+% of (?:the )?[A-Za-z .•]{0,30}'s DEF)/);
-  if (defM && !/absorb/i.test(defM[1])) { manual.push([id, meta.nameEn, "DEF-based scaling"]); continue; }
+  const defWin = defM ? rawCore.slice(Math.max(0, defM.index - 25), defM.index + defM[0].length) : "";
+  if (defM && !/absorb/i.test(defWin)) { manual.push([id, meta.nameEn, "DEF-based scaling"]); continue; }
 
   const basicEn = basic.energies[0] != null ? basic.energies[0] : 20;
   const skillEn = s && skill.energies[0] != null ? skill.energies[0] : null;

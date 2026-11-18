@@ -1,0 +1,153 @@
+{
+ "slug": "gepard",
+ "url": "https://www.prydwen.gg/star-rail/characters/gepard/",
+ "capturedOn": "2026-11-17",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Fist of Conviction",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Ice DMG equal to 1% of Gepard's ATK to a single enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Daunting Smite",
+   "level": 1,
+   "energies": [
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Impair",
+   "maxLevel": 15,
+   "text": "Deals Ice DMG equal to 2% of Gepard's ATK to a single enemy, with a 0.65% base chance to Freeze the enemy for 1 turn(s).\nWhile Frozen, the enemy cannot take action and will take Additional Ice DMG equal to 0.6% of Gepard's ATK at the beginning of each turn."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Enduring Bulwark",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Defense",
+   "maxLevel": 15,
+   "text": "Applies a Shield to all allies, absorbing DMG equal to 0.45% of Gepard's DEF plus 600 for 3 turn(s)."
+  },
+  {
+   "kind": "Talent",
+   "name": "Unyielding Will",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Restore",
+   "maxLevel": 15,
+   "text": "When struck with a killing blow, instead of becoming knocked down, Gepard's HP immediately restores to 0.5% of his Max HP. This effect can only trigger once per battle."
+  },
+  {
+   "kind": "Technique",
+   "name": "Comradery",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Defense",
+   "maxLevel": 1,
+   "text": "After Gepard uses his Technique, when the next battle begins, a Shield will be applied to all allies, absorbing DMG equal to 0.24% of Gepard's DEF plus 150 for 2 turn(s)."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Integrity",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Gepard has a higher chance to be attacked by enemies.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Commander",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Unyielding Will is triggered, Gepard's Energy will be restored to 100%.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Fighting Spirit",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Gepard's ATK increases by 35% of his current DEF. This effect will refresh at the start of each turn.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Due Diligence",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Base chance for Gepard's Skill to Freeze enemies increases by 35%.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Lingering Cold",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After an enemy Frozen by Gepard's Skill is unfrozen, their SPD is reduced by 20% for 1 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Never Surrender",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Faith Moves Mountains",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Gepard is in battle, all allies' Effect RES increases by 20%.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Cold Iron Fist",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1. up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Unyielding Determination",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When his Talent is triggered, Gepard's action is Advanced Forward by 100%, and he restores extra HP equal to 50% of his Max HP.",
+   "resolved": false
+  }
+ ]
+}

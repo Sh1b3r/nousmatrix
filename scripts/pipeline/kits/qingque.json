@@ -1,0 +1,154 @@
+{
+ "slug": "qingque",
+ "url": "https://www.prydwen.gg/star-rail/characters/qingque/",
+ "capturedOn": "2026-11-17",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Flower Pick",
+   "level": 1,
+   "energies": [
+    20,
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Tosses 1 jade tile from the suit with the fewest tiles in hand to deal Quantum DMG equal to 1% of Qingque's ATK to a single enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "A Scoop of Moon",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "Immediately draws 2 jade tile(s) and increases DMG by 0.28% until the end of the current turn. This effect can stack up to 4 time(s). The turn will not end after this Skill is used."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "A Quartet? Woo-hoo!",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "AoE",
+   "maxLevel": 15,
+   "text": "Deals Quantum DMG equal to 2% of Qingque's ATK to all enemies, and obtains 4 jade tiles of the same suit."
+  },
+  {
+   "kind": "Talent",
+   "name": "Celestial Jade",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "When an ally's turn starts, Qingque randomly draws 1 tile from 3 different suits and can hold up to 4 tiles at one time.\nIf Qingque starts her turn with 4 tiles of the same suit, she consumes all tiles to enter the \"Hidden Hand\" state.\nWhile in this state, Qingque cannot use her Skill again. At the same time, Qingque's ATK increases by 0.72%, and her Basic ATK \"Flower Pick\" is enhanced, becoming \"Cherry on Top!\" The \"Hidden Hand\" state ends after using \"Cherry on Top!\"."
+  },
+  {
+   "kind": "Technique",
+   "name": "Game Solitaire",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Enhance",
+   "maxLevel": 1,
+   "text": "After using Technique, Qingque draws 2 jade tile(s) when the battle starts."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Tile Battle",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Restores 1 Skill Point when using the Skill. This effect can only be triggered 1 time per battle.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Bide Time",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Using the Skill increases DMG Boost effect of attacks by an extra 10%.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Winning Hand",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Qingque's SPD increases by 10% for 1 turn after using the Enhanced Basic ATK.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Rise Through the Tiles",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate deals 10% more DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Sleep on the Tiles",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Every time Draw Tile is triggered, Qingque immediately regenerates 1 Energy.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Read Between the Tiles",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Right on the Tiles",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After this character's Skill is used, there is a 24% fixed chance to gain Autarky, which lasts until the end of the current turn. With Autarky, using Basic ATK or Enhanced Basic ATK immediately launches 1 follow-up attack on the same target, dealing Quantum DMG equal to 100% of the previous Basic ATK (or Enhanced Basic ATK)'s DMG.",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Gambit for the Tiles",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Prevail Beyond the Tiles",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Recovers 1 Skill Point after using Enhanced Basic ATK.",
+   "resolved": false
+  }
+ ]
+}

@@ -1,0 +1,572 @@
+{
+ "ashveil": {
+  "unitId": "87",
+  "nameEn": "Ashveil",
+  "role": "Main DPS",
+  "energyUltimate": 150
+ },
+ "black-swan": {
+  "unitId": "46",
+  "nameEn": "Black Swan",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ },
+ "bronya": {
+  "unitId": "12",
+  "nameEn": "Bronya",
+  "role": "Support",
+  "energyUltimate": 120
+ },
+ "castorice": {
+  "unitId": "72",
+  "nameEn": "Castorice",
+  "role": "Main DPS",
+  "energyUltimate": 0
+ },
+ "cerydra": {
+  "unitId": "79",
+  "nameEn": "Cerydra",
+  "role": "Support",
+  "energyUltimate": 130
+ },
+ "cipher": {
+  "unitId": "74",
+  "nameEn": "Cipher",
+  "role": "Sub DPS",
+  "energyUltimate": 130
+ },
+ "cyrene": {
+  "unitId": "83",
+  "nameEn": "Cyrene",
+  "role": "Support",
+  "energyUltimate": 24
+ },
+ "dan-heng-permansor-terrae": {
+  "unitId": "82",
+  "nameEn": "Dan Heng • Permansor Terrae",
+  "role": "Shielder",
+  "energyUltimate": 135
+ },
+ "fu-xuan": {
+  "unitId": "29",
+  "nameEn": "Fu Xuan",
+  "role": "Support",
+  "energyUltimate": 135
+ },
+ "gallagher": {
+  "unitId": "51",
+  "nameEn": "Gallagher",
+  "role": "Healer",
+  "energyUltimate": 110
+ },
+ "huohuo": {
+  "unitId": "40",
+  "nameEn": "Huohuo",
+  "role": "Healer",
+  "energyUltimate": 140
+ },
+ "hyacine": {
+  "unitId": "75",
+  "nameEn": "Hyacine",
+  "role": "Healer",
+  "energyUltimate": 140
+ },
+ "lingsha": {
+  "unitId": "61",
+  "nameEn": "Lingsha",
+  "role": "Healer",
+  "energyUltimate": 110
+ },
+ "blade-mortenax": {
+  "unitId": "91",
+  "nameEn": "Mortenax Blade",
+  "role": "Amplifier",
+  "energyUltimate": 160
+ },
+ "natasha": {
+  "unitId": "16",
+  "nameEn": "Natasha",
+  "role": "Healer",
+  "energyUltimate": 90
+ },
+ "pearl": {
+  "unitId": "95",
+  "nameEn": "Pearl",
+  "role": "Support",
+  "energyUltimate": 0
+ },
+ "rin-tohsaka": {
+  "unitId": "94",
+  "nameEn": "Rin Tohsaka",
+  "role": "Support",
+  "energyUltimate": 160
+ },
+ "robin": {
+  "unitId": "52",
+  "nameEn": "Robin",
+  "role": "Support",
+  "energyUltimate": 160
+ },
+ "robin-summeretto": {
+  "unitId": "97",
+  "nameEn": "Robin Summeretto",
+  "role": "Support",
+  "energyUltimate": 140
+ },
+ "ruan-mei": {
+  "unitId": "43",
+  "nameEn": "Ruan Mei",
+  "role": "Support",
+  "energyUltimate": 130
+ },
+ "seele": {
+  "unitId": "13",
+  "nameEn": "Seele",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ },
+ "silver-wolf": {
+  "unitId": "8",
+  "nameEn": "Silver Wolf",
+  "role": "Sub DPS",
+  "energyUltimate": 110
+ },
+ "sparkle": {
+  "unitId": "47",
+  "nameEn": "Sparkle",
+  "role": "Support",
+  "energyUltimate": 110
+ },
+ "sunday": {
+  "unitId": "64",
+  "nameEn": "Sunday",
+  "role": "Support",
+  "energyUltimate": 130
+ },
+ "the-dahlia": {
+  "unitId": "84",
+  "nameEn": "The Dahlia",
+  "role": "Sub DPS",
+  "energyUltimate": 130
+ },
+ "tingyun": {
+  "unitId": "25",
+  "nameEn": "Tingyun",
+  "role": "Support",
+  "energyUltimate": 130
+ },
+ "trailblazer-remembrance": {
+  "unitId": "69",
+  "nameEn": "Trailblazer • Remembrance",
+  "role": "Support",
+  "energyUltimate": 160
+ },
+ "tribbie": {
+  "unitId": "70",
+  "nameEn": "Tribbie",
+  "role": "Sub DPS",
+  "energyUltimate": 120
+ },
+ "welt": {
+  "unitId": "6",
+  "nameEn": "Welt",
+  "role": "Sub DPS",
+  "energyUltimate": 120
+ },
+ "yao-guang": {
+  "unitId": "85",
+  "nameEn": "Yao Guang",
+  "role": "Support",
+  "energyUltimate": 180
+ },
+ "acheron": {
+  "unitId": "49",
+  "nameEn": "Acheron",
+  "role": "Main DPS",
+  "energyUltimate": 0
+ },
+ "aglaea": {
+  "unitId": "68",
+  "nameEn": "Aglaea",
+  "role": "Main DPS",
+  "energyUltimate": 350
+ },
+ "aha": {
+  "unitId": "98",
+  "nameEn": "Aha",
+  "role": "Support",
+  "energyUltimate": 0
+ },
+ "anaxa": {
+  "unitId": "73",
+  "nameEn": "Anaxa",
+  "role": "Sub DPS",
+  "energyUltimate": 140
+ },
+ "archer": {
+  "unitId": "77",
+  "nameEn": "Archer",
+  "role": "Main DPS",
+  "energyUltimate": 220
+ },
+ "argenti": {
+  "unitId": "41",
+  "nameEn": "Argenti",
+  "role": "Main DPS",
+  "energyUltimate": 90
+ },
+ "arlan": {
+  "unitId": "9",
+  "nameEn": "Arlan",
+  "role": "Main DPS",
+  "energyUltimate": 110
+ },
+ "asta": {
+  "unitId": "10",
+  "nameEn": "Asta",
+  "role": "Support",
+  "energyUltimate": 120
+ },
+ "astra-yao": {
+  "unitId": "99",
+  "nameEn": "Astra Yao",
+  "role": "Support",
+  "energyUltimate": 0
+ },
+ "aventurine": {
+  "unitId": "50",
+  "nameEn": "Aventurine",
+  "role": "Shielder",
+  "energyUltimate": 110
+ },
+ "aventurine-waveflair": {
+  "unitId": "96",
+  "nameEn": "Aventurine Waveflair",
+  "role": "Support",
+  "energyUltimate": 0
+ },
+ "bailu": {
+  "unitId": "24",
+  "nameEn": "Bailu",
+  "role": "Healer",
+  "energyUltimate": 100
+ },
+ "blade": {
+  "unitId": "28",
+  "nameEn": "Blade",
+  "role": "Main DPS",
+  "energyUltimate": 130
+ },
+ "boothill": {
+  "unitId": "53",
+  "nameEn": "Boothill",
+  "role": "Main DPS",
+  "energyUltimate": 115
+ },
+ "clara": {
+  "unitId": "18",
+  "nameEn": "Clara",
+  "role": "Main DPS",
+  "energyUltimate": 110
+ },
+ "dan-heng": {
+  "unitId": "4",
+  "nameEn": "Dan Heng",
+  "role": "Main DPS",
+  "energyUltimate": 100
+ },
+ "imbibitor-lunae": {
+  "unitId": "34",
+  "nameEn": "Dan Heng • Imbibitor Lunae",
+  "role": "Main DPS",
+  "energyUltimate": 140
+ },
+ "dr-ratio": {
+  "unitId": "44",
+  "nameEn": "Dr. Ratio",
+  "role": "Main DPS",
+  "energyUltimate": 140
+ },
+ "ellen": {
+  "unitId": "100",
+  "nameEn": "Ellen",
+  "role": "Support",
+  "energyUltimate": 0
+ },
+ "evanescia": {
+  "unitId": "89",
+  "nameEn": "Evanescia",
+  "role": "Main DPS",
+  "energyUltimate": 480
+ },
+ "feixiao": {
+  "unitId": "59",
+  "nameEn": "Feixiao",
+  "role": "Main DPS",
+  "energyUltimate": 0
+ },
+ "firefly": {
+  "unitId": "54",
+  "nameEn": "Firefly",
+  "role": "Main DPS",
+  "energyUltimate": 240
+ },
+ "gepard": {
+  "unitId": "15",
+  "nameEn": "Gepard",
+  "role": "Shielder",
+  "energyUltimate": 100
+ },
+ "gilgamesh": {
+  "unitId": "93",
+  "nameEn": "Gilgamesh",
+  "role": "Support",
+  "energyUltimate": 360
+ },
+ "guinaifen": {
+  "unitId": "39",
+  "nameEn": "Guinaifen",
+  "role": "Sub DPS",
+  "energyUltimate": 120
+ },
+ "hanya": {
+  "unitId": "42",
+  "nameEn": "Hanya",
+  "role": "Support",
+  "energyUltimate": 140
+ },
+ "herta": {
+  "unitId": "11",
+  "nameEn": "Herta",
+  "role": "Sub DPS",
+  "energyUltimate": 110
+ },
+ "himeko": {
+  "unitId": "5",
+  "nameEn": "Himeko",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ },
+ "himeko-nova": {
+  "unitId": "92",
+  "nameEn": "Himeko Nova",
+  "role": "Support",
+  "energyUltimate": 150
+ },
+ "hook": {
+  "unitId": "20",
+  "nameEn": "Hook",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ },
+ "hysilens": {
+  "unitId": "80",
+  "nameEn": "Hysilens",
+  "role": "Main DPS",
+  "energyUltimate": 110
+ },
+ "jade": {
+  "unitId": "55",
+  "nameEn": "Jade",
+  "role": "Sub DPS",
+  "energyUltimate": 140
+ },
+ "jiaoqiu": {
+  "unitId": "57",
+  "nameEn": "Jiaoqiu",
+  "role": "Support",
+  "energyUltimate": 100
+ },
+ "jing-yuan": {
+  "unitId": "22",
+  "nameEn": "Jing Yuan",
+  "role": "Main DPS",
+  "energyUltimate": 130
+ },
+ "jingliu": {
+  "unitId": "36",
+  "nameEn": "Jingliu",
+  "role": "Main DPS",
+  "energyUltimate": 140
+ },
+ "kafka": {
+  "unitId": "7",
+  "nameEn": "Kafka",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ },
+ "luka": {
+  "unitId": "33",
+  "nameEn": "Luka",
+  "role": "Sub DPS",
+  "energyUltimate": 130
+ },
+ "luocha": {
+  "unitId": "21",
+  "nameEn": "Luocha",
+  "role": "Healer",
+  "energyUltimate": 100
+ },
+ "lynx": {
+  "unitId": "35",
+  "nameEn": "Lynx",
+  "role": "Healer",
+  "energyUltimate": 100
+ },
+ "march-7th": {
+  "unitId": "3",
+  "nameEn": "March 7th",
+  "role": "Shielder",
+  "energyUltimate": 120
+ },
+ "march-7th-evernight": {
+  "unitId": "81",
+  "nameEn": "March 7th • Evernight",
+  "role": "Sub DPS",
+  "energyUltimate": 240
+ },
+ "march-7th-swordmaster": {
+  "unitId": "58",
+  "nameEn": "March 7th • The Hunt",
+  "role": "Sub DPS",
+  "energyUltimate": 110
+ },
+ "misha": {
+  "unitId": "48",
+  "nameEn": "Misha",
+  "role": "Sub DPS",
+  "energyUltimate": 100
+ },
+ "moze": {
+  "unitId": "62",
+  "nameEn": "Moze",
+  "role": "Sub DPS",
+  "energyUltimate": 120
+ },
+ "mydei": {
+  "unitId": "71",
+  "nameEn": "Mydei",
+  "role": "Main DPS",
+  "energyUltimate": 160
+ },
+ "pela": {
+  "unitId": "17",
+  "nameEn": "Pela",
+  "role": "Sub DPS",
+  "energyUltimate": 110
+ },
+ "phainon": {
+  "unitId": "78",
+  "nameEn": "Phainon",
+  "role": "Main DPS",
+  "energyUltimate": 12
+ },
+ "qingque": {
+  "unitId": "26",
+  "nameEn": "Qingque",
+  "role": "Sub DPS",
+  "energyUltimate": 140
+ },
+ "rappa": {
+  "unitId": "63",
+  "nameEn": "Rappa",
+  "role": "Main DPS",
+  "energyUltimate": 140
+ },
+ "saber": {
+  "unitId": "76",
+  "nameEn": "Saber",
+  "role": "Main DPS",
+  "energyUltimate": 360
+ },
+ "sampo": {
+  "unitId": "19",
+  "nameEn": "Sampo",
+  "role": "Sub DPS",
+  "energyUltimate": 120
+ },
+ "serval": {
+  "unitId": "14",
+  "nameEn": "Serval",
+  "role": "Sub DPS",
+  "energyUltimate": 100
+ },
+ "silver-wolf-lv-999": {
+  "unitId": "88",
+  "nameEn": "Silver Wolf • Lv. 999",
+  "role": "Main DPS",
+  "energyUltimate": 0
+ },
+ "sparxie": {
+  "unitId": "86",
+  "nameEn": "Sparxie",
+  "role": "Main DPS",
+  "energyUltimate": 160
+ },
+ "sushang": {
+  "unitId": "27",
+  "nameEn": "Sushang",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ },
+ "the-herta": {
+  "unitId": "67",
+  "nameEn": "The Herta",
+  "role": "Main DPS",
+  "energyUltimate": 220
+ },
+ "tingyun-fugue": {
+  "unitId": "65",
+  "nameEn": "Tingyun • Fugue",
+  "role": "Support",
+  "energyUltimate": 130
+ },
+ "topaz": {
+  "unitId": "38",
+  "nameEn": "Trailblazer • Destruction",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ },
+ "trailblazer-elation": {
+  "unitId": "90",
+  "nameEn": "Trailblazer • Elation",
+  "role": "Support",
+  "energyUltimate": 160
+ },
+ "trailblazer-harmony": {
+  "unitId": "60",
+  "nameEn": "Trailblazer • Harmony",
+  "role": "Support",
+  "energyUltimate": 140
+ },
+ "trailblazer-preservation": {
+  "unitId": "2",
+  "nameEn": "Trailblazer • Preservation",
+  "role": "Shielder",
+  "energyUltimate": 120
+ },
+ "xueyi": {
+  "unitId": "45",
+  "nameEn": "Xueyi",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ },
+ "yanqing": {
+  "unitId": "23",
+  "nameEn": "Yanqing",
+  "role": "Main DPS",
+  "energyUltimate": 140
+ },
+ "yukong": {
+  "unitId": "32",
+  "nameEn": "Yukong",
+  "role": "Support",
+  "energyUltimate": 130
+ },
+ "yunli": {
+  "unitId": "56",
+  "nameEn": "Yunli",
+  "role": "Main DPS",
+  "energyUltimate": 120
+ }
+}

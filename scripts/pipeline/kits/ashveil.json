@@ -1,0 +1,153 @@
+{
+ "slug": "ashveil",
+ "url": "https://www.prydwen.gg/star-rail/characters/ashveil/",
+ "capturedOn": "2026-11-17",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Talons: Inculcate Decorum",
+   "level": 1,
+   "energies": [
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 10,
+   "text": "Deals Lightning DMG equal to 1% of Ashveil's ATK to one designated enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Flog: Smite Evil",
+   "level": 1,
+   "energies": [
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Makes one designated enemy become the \"Bait,\" dealing it Lightning DMG equal to 2% of Ashveil's ATK. If the target is already the \"Bait,\" additionally deals it Lightning DMG equal to 1% of Ashveil's ATK, and recovers 1 Skill Point(s). When the \"Bait\" exists on the field, all enemies' DEF gets reduced by 0.4%.\nWhen there is no \"Bait\" on the field, Ashveil immediately makes the enemy target with the lowest HP on the field become the \"Bait.\" The \"Bait\" state only takes effect on the most recently applied target."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Banquet: Insatiable Appetite",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Makes one designated enemy become the \"Bait,\" dealing it Lightning DMG equal to 4% of Ashveil's ATK. Then, immediately launches 1 instance of enhanced Talent's Follow-Up ATK against the \"Bait.\" And Ashveil gains 3 Charge.\nThis enhanced Talent's Follow-Up ATK does not consume Charge. Whenever \"Gluttony\" reaches 4 stack(s) or more, consumes 4 stack(s) of \"Gluttony\" to additionally deal 1 instance of Lightning DMG equal to 2% of Ashveil's ATK. And when this instance of Follow-Up ATK deals a killing blow to the target, it will continue to deal DMG to a new \"Bait.\" This triggers until \"Gluttony\" becomes lower than 4 stack(s). If all enemy targets currently on the field have been dealt killing blows, the enhanced Talent's Follow-Up ATK will immediately end."
+  },
+  {
+   "kind": "Talent",
+   "name": "Rancor: Enmity Reprisal",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Ashveil has an initial Charge of 2 and can hold up to a max of 3. After the \"Bait\" gets attacked by other ally targets, Ashveil regenerates a fixed amount of 8 Energy, then consumes 1 Charge to launch Follow-Up ATK against the \"Bait,\" dealing Lightning DMG equal to 2% of Ashveil's ATK. Afterwards, gains 2 stack(s) of \"Gluttony,\" stacking up to 12 time(s)."
+  },
+  {
+   "kind": "Technique",
+   "name": "Devour: O Loathsome Hand",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "Impair",
+   "maxLevel": 1,
+   "text": "After using Technique, inflicts Daze on enemies within a set area for 10 second(s). Dazed enemies will not actively attack ally targets.\nWhen entering combat via actively attacking a Dazed enemy, deals Lightning DMG to all enemies equal to 100% of Ashveil's ATK, and grants Ashveil 1 Charge."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Damnation Trail",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Ashveil uses Skill/Ultimate, gains 1/2 stacks of Gluttony. During Ashveil's Follow-Up ATK, for every 1 enemy(ies) suffer a killing blow, Ashveil gains 1 stack(s) of Gluttony.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Phantom Limb",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "DMG dealt by Ashveil's Follow-Up ATK increases by 80%. And for every 1 stack(s) of Gluttony in possession, DMG dealt by Follow-Up ATK additionally increases by 10%.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "First Fang",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "While Ashveil is on the field, CRIT DMG dealt by ally targets increases by 40%, and CRIT DMG dealt by ally target's Follow-Up ATK additionally increases by 80%.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Beware: Venture Not at Full Moon",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "While Ashveil is on the field, increases DMG taken by all enemies by 24%. When an enemy target's current HP percentage is 50% or lower, the DMG they take increases to 36%.",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "Knock: Where Snickers Echo",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "The max stack limit of \"Gluttony\" increases to 18. After each time Ashveil launches the enhanced Talent's Follow-Up ATK, refunds 35% of the removed \"Gluttony\" stacks.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Hush: Unsaid Between Friends",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Heed: Swallow Truth Whole",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Ashveil uses Ultimate, increases ATK by 40% for 3 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "Caution: Sleuth Turns Slayer",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "Finale: And Then There Were None",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When the \"Bait\" exists on the field, reduces all enemies' All-Type RES by 20%. For every 1 stack of \"Gluttony\" Ashveil has gained, the DMG dealt increases by 4%. This effect can stack up to 30 time(s).",
+   "resolved": false
+  }
+ ]
+}

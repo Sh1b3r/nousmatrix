@@ -324,53 +324,53 @@ roster-меты Prydwen (`energyUltimate`).
 
 ### Что сделано
 
-- **44 новых kit-verified записи** в `src/data/rotations.js` (всего
-  54 kit-verified + 1 draft). Цикл-шаблон: 2× навык (если наносит урон)
+- **45 новых kit-verified записей** в `src/data/rotations.js` (всего
+  55 kit-verified + 1 draft = 56). Цикл-шаблон: 2× навык (если наносит урон)
   + N× базовая (N добирает энергию ульты) + ульт. Число повторов — общее
   документированное допущение; множители/энергия — кит.
 - Для саппортов/хилеров без урона в ульте (Bronya, Natasha, Lynx,
   Tingyun, Bailu, Huohuo, Hanya, Ruan Mei, Sparkle, Sunday, Yao Guang,
-  Trailblazer Elation) — цикл «только базовые + ульт», ульт —
-  энергетическое событие (mv 0).
+  Trailblazer Elation, Gepard) — цикл «только базовые + ульт» (или 2× навык
+  + 2× базовая у Гепарда), ульт — энергетическое событие (mv 0).
+- Для Гепарда (1104) исправлен фильтр скейлинга от DEF в пайплайне
+  (поглощение урона щитом не путается с нанесением урона от защиты).
 - Смежный урон (Blast) смоделирован `adjacentMv`; мультитай-атаки —
   предупреждение в noteRu/noteEn (множитель за один удар).
 - Движок не менялся.
 
-### Классификация manual-списка (34 персонажа, без записей)
+### Классификация manual-списка (38 персонажей, без записей)
 
 - **summon/memosprite талант** (9): Topaz & Numby, Jing Yuan, Lingsha,
   Aglaea, Cyrene, Dan Heng • Permansor Terrae, Robin • Summeretto,
   Trailblazer (Remembrance), March 7th • Evernight.
-- **multi-instance skill/ult** (11): Welt, Asta, Saber, Clara, Sampo,
+- **multi-instance skill/ult** (13): Welt, Asta, Saber, Clara, Sampo,
   Misha, Cipher, Evanescia, Gilgamesh, Trailblazer (Destruction — 2 режима
-  ульты), Trailblazer (Harmony).
+  ульты), Trailblazer (Harmony), The Herta (1401 — вторая волна скилла),
+  Ashveil (1504 — мульти-инстанс скилла).
 - **transform/summon ульта** (4): Rappa, Phainon, Himeko • Nova,
   Mortenax Blade.
 - **ульт 0 энергии / спецмодель** (6): Feixiao, Acheron, Pearl,
   Silver Wolf LV.999, Aventurine • Waveflair, Aeon ★ Aha.
 - **DEF-скейлинг** (2): Aventurine, Trailblazer (Preservation).
-- **enhanced-basic state** (2): Boothill, Sparxie.
+- **enhanced-basic / skill-enhance state** (5): Boothill, Sparxie,
+  Luka (1111 — стаки Боевой воли), March 7th • The Hunt (1224 — заряды
+  Учителя), Qingque (1201 — стойка навыка/кости).
 - Март 7 (1001) — сгенерирован (кит снят после снятия рати-лимита
-  Cloudflare). Март 7 • Охотница (1224) — **не** сгенерирована: записи
-  в `rotations.js` нет; прежняя строка отчёта была ошибочной
-  (исправлено при финальной сверке покрытия 2026-11-17).
+  Cloudflare). Март 7 • Охотница (1224) — отнесена к manual (enhanced-basic).
 
-### Финальная сверка покрытия (2026-11-17)
+### Финальная сверка покрытия (2026-11-18)
 
-Каталог `teamStatistics.json` — **94** персонажа. Покрыто **88**:
-54 kit-verified + 1 draft (1510) в `rotations.js` + 33 из manual-классификации
-выше (34 минус 1510, у которого уже есть draft-запись). **Не покрыты — 6:**
+Каталог `teamStatistics.json` — **94** персонажа. Покрыто **94 из 94 (100%)**:
+**55 kit-verified** + **1 draft** (1510) в `rotations.js` + **38** из manual-классификации
+выше (39 минус 1510, у которого уже есть draft-запись). **Не покрытых персонажей — 0.**
 
-- **1104 Gepard** — не вошёл в прогон раунда 4; технических блокеров нет,
-  кандидат на kit-verified в следующем прогоне.
-- **1111 Luka** — аналогично; DoT таланта (кровотечение) — стандартное
-  исключение с документированием, как у Kafka-класса.
-- **1201 Qingque** — enhanced-basic state (стак Чжуцие) — класс manual,
-  как Boothill/Sparxie выше.
-- **1224 March 7th • The Hunt** — ошибочно числилась сгенерированной
-  (см. правку выше); записи нет.
-- **1401 The Herta** — не вошёл в прогон раунда 4.
-- **1504 Ashveil** — не вошёл в прогон раунда 4.
+Все киты сняты и сохранены локально в `scripts/pipeline/kits/`:
+- **1104 Gepard** — сгенерирован в `rotations.js` (ульт без урона, щит +5 энергии).
+- **1111 Luka** — manual (enhanced-basic: стаки Боевой воли, прок кровотечения).
+- **1201 Qingque** — manual (skill enhance state: добор костей Чжуцие).
+- **1224 March 7th • The Hunt** — manual (enhanced-basic: заряды Учителя).
+- **1401 The Herta** — manual (multi-instance skill: вторая волна урона навыка).
+- **1504 Ashveil** — manual (multi-instance skill: отскоки/мультихиты).
 
 ### Исключения с документированием (в noteRu/noteEn каждой записи)
 
@@ -381,7 +381,7 @@ Dr. Ratio, Boothill-класс), состояния/стаки кита, If-ус
 
 ### Тесты
 
-`scripts/test-round4.mjs` — **44/44 PASS**: kit-пайплайн задействован
+`scripts/test-round4.mjs` — **45/45 PASS**: kit-пайплайн задействован
 (официальные множители кита), урон конечен и > 0, энергетический цикл
 замыкается без энергии союзников. Регрессия 10 прежних kit-verified
 проходит; известное задокументированное поведение: у Гиацины (1409)

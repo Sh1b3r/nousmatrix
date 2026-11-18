@@ -1,0 +1,154 @@
+{
+ "slug": "luka",
+ "url": "https://www.prydwen.gg/star-rail/characters/luka/",
+ "capturedOn": "2026-11-17",
+ "abilities": [
+  {
+   "kind": "Basic ATK",
+   "name": "Direct Punch",
+   "level": 1,
+   "energies": [
+    20,
+    20
+   ],
+   "ultCost": null,
+   "typeText": "Basic ATK",
+   "effectText": "Single Target",
+   "maxLevel": 9,
+   "text": "Deals Physical DMG equal to 1% of Luka's ATK to a single enemy."
+  },
+  {
+   "kind": "Skill",
+   "name": "Lacerating Fist",
+   "level": 1,
+   "energies": [
+    30
+   ],
+   "ultCost": null,
+   "typeText": "Skill",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Deals Physical DMG equal to 1.2% of Luka's ATK to a single enemy target. In addition, there is a 1% base chance to inflict Bleed on them, lasting for 3 turn(s).\nWhile Bleeding, the enemy will take 0.24% of their Max HP as Physical DoT at the start of each turn. This DMG will not exceed more than 3.38% of Luka's ATK."
+  },
+  {
+   "kind": "Ultimate",
+   "name": "Coup de Grâce",
+   "level": 1,
+   "energies": [
+    5
+   ],
+   "ultCost": null,
+   "typeText": "Ultimate",
+   "effectText": "Single Target",
+   "maxLevel": 15,
+   "text": "Receives 2 stack(s) of Fighting Will, with a 1% base chance to increase a single enemy target's DMG received by 0.2% for 3 turn(s). Then, deals Physical DMG equal to 3.3% of Luka's ATK to the target."
+  },
+  {
+   "kind": "Talent",
+   "name": "Flying Sparks",
+   "level": 1,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Talent",
+   "effectText": "Enhance",
+   "maxLevel": 15,
+   "text": "After Luka uses his Basic ATK \"Direct Punch\" or Skill \"Lacerating Fist,\" he receives 1 stack of Fighting Will, up to 4 stacks. When he has 2 or more stacks of Fighting Will, his Basic ATK \"Direct Punch\" is enhanced to \"Sky-Shatter Fist.\" After his Enhanced Basic ATK's \"Rising Uppercut\" hits a Bleeding enemy target, the Bleed status will immediately deal DMG for 1 time equal to 0.85% of the original DMG to the target. At the start of battle, Luka will possess 1 stack of Fighting Will."
+  },
+  {
+   "kind": "Technique",
+   "name": "Anticipator",
+   "level": null,
+   "energies": [
+    0
+   ],
+   "ultCost": null,
+   "typeText": "Technique",
+   "effectText": "",
+   "maxLevel": 1,
+   "text": "Immediately attacks the enemy. Upon entering battle, Luka deals Physical DMG equal to 0.5% of his ATK to a random single enemy with a 1% base chance to inflict his Skill's Bleed effect on the target. Then, Luka gains 1 additional stack of Fighting Will."
+  },
+  {
+   "kind": "A2Major trace",
+   "name": "Kinetic Overload",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When the Skill is used, immediately dispels 1 buff from the enemy target.",
+   "resolved": false
+  },
+  {
+   "kind": "A4Major trace",
+   "name": "Cycle Braking",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "For every stack of Fighting Will obtained, additionally regenerates 3 Energy.",
+   "resolved": false
+  },
+  {
+   "kind": "A6Major trace",
+   "name": "Crush Fighting Will",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When using Enhanced Basic ATK, every hit Direct Punch deals has a 50% fixed chance for Luka to use 1 additional hit. This effect does not apply to additional hits generated in this way.",
+   "resolved": false
+  },
+  {
+   "kind": "E1",
+   "name": "Fighting Endlessly",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "When Luka takes action, if the target enemy is Bleeding, increases DMG dealt by Luka by 15% for 2 turn(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E2",
+   "name": "The Enemy is Weak, I am Strong",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "If the Skill hits an enemy target with Physical Weakness, gain 1 stack(s) of Fighting Will.",
+   "resolved": false
+  },
+  {
+   "kind": "E3",
+   "name": "Born for the Ring",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Skill Lv. +2, up to a maximum of Lv. 15. Talent Lv. +2, up to a maximum of Lv. 15.",
+   "resolved": false
+  },
+  {
+   "kind": "E4",
+   "name": "Never Turning Back",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "For every stack of Fighting Will obtained, increases ATK by 5%, stacking up to 4 time(s).",
+   "resolved": false
+  },
+  {
+   "kind": "E5",
+   "name": "The Spirit of Wildfire",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "Ultimate Lv. +2, up to a maximum of Lv. 15. Basic ATK Lv. +1, up to a maximum of Lv. 10.",
+   "resolved": false
+  },
+  {
+   "kind": "E6",
+   "name": "A Champion's Applause",
+   "level": null,
+   "energies": [],
+   "ultCost": null,
+   "desc": "After the Enhanced Basic ATK's \"Rising Uppercut\" hits a Bleeding enemy target, the Bleed status will immediately deal DMG 1 time equal to 8% of the original DMG for every hit of Direct Punch already unleashed during the current Enhanced Basic ATK.",
+   "resolved": false
+  }
+ ]
+}
