@@ -5073,9 +5073,9 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: #22C55E;
-  color: #02200D;
-  border: 1px solid #4ADE80;
+  background: #00FF88;
+  color: #041B10;
+  border: 1px solid #00FF88;
   border-radius: 4px;
   padding: 6px 14px;
   font-size: 12px;
@@ -5091,15 +5091,15 @@ main {
 }
 
 .nav-donate-btn:hover {
-  background: #4ADE80;
-  border-color: #86EFAC;
-  color: #011408;
+  background: #33FFA3;
+  border-color: #66FFBD;
+  color: #02120A;
   transform: translateY(-1px);
 }
 
 .nav-donate-btn:active {
-  background: #16A34A;
-  border-color: #15803D;
+  background: #00CC6D;
+  border-color: #00AA5A;
   transform: translateY(0);
 }
 
