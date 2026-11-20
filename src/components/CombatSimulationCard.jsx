@@ -19,6 +19,9 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   }, [charId, character, showcase]);
 
   const [selectedSquadIdx, setSelectedSquadIdx] = useState(0);
+  React.useEffect(() => {
+    setSelectedSquadIdx(0);
+  }, [charId]);
   const [includeTeamBuffs, setIncludeTeamBuffs] = useState(true);
   const [enemyMode, setEnemyMode] = useState("moc");
   // Явное число срабатываний Weakness Break в сценарии ротации.

@@ -158,11 +158,28 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   // от неё). Движок сам её не придумывает.
   const healingTally = Math.max(0, Number(options.healingTally) || 0);
   const primaryEnemy = enemyScenario.targets[0];
+  const targetData = [...(enemyScenario.targets || [])];
+  if (enemyMode === "moc" && targetData.length === 1 && primaryEnemy) {
+    targetData.push(
+      {
+        ...primaryEnemy,
+        id: `${primaryEnemy.id}-add-1`,
+        name: isRu ? "Миньон 1" : "Add 1",
+        isMinion: true
+      },
+      {
+        ...primaryEnemy,
+        id: `${primaryEnemy.id}-add-2`,
+        name: isRu ? "Миньон 2" : "Add 2",
+        isMinion: true
+      }
+    );
+  }
   const enemy = {
     lv: primaryEnemy.level,
     res: primaryEnemy.resistancePercent / 100,
-    targets: enemyScenario.targetCount,
-    targetData: enemyScenario.targets
+    targets: targetData.length,
+    targetData
   };
   const defenseIgnorePercent = Math.max(0, Number(options.defenseIgnorePercent) || 0);
   const totalDefShred = Math.min(1, Math.max(0,

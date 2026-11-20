@@ -55,8 +55,8 @@
 // profile's combat HP).
 
 export const ROTATIONS = {
-  // Химеко: Нова (1510) — полный цикл сверхспособности «Starblazer» по реальному киту (4.7)
-  // Химеко • Нова (1510) — kit-verified: множители и энергия из официального кита (Nous Matrix Model).
+  // Химеко • Нова (1510) — калиброванный полный цикл 4.7 по реальному киту:
+  // 2 Навыка (220%+110% blast) + Сверхспособность (6 лучей 32% AoE + 3 импульса 140%+70% blast + финал 240%+120% blast) + Талант FUA (140% AoE).
   "1510": {
     status: "kit-verified",
     gameVersion: "4.7",
@@ -67,69 +67,83 @@ export const ROTATIONS = {
         source: "nousmatrix.internal",
         url: "https://matrix.internal/archive/characters/himeko-nova",
         capturedOn: "2026-11-18",
-        note: "Official kit capture: Territory Starblazer, Hyperluminal Beam 32% AoE x6, Orbital Pulse 140% ST x3, Final Hit 80% ST x3, Talent 90% FUA x3."
+        note: "Official kit capture: Territory Starblazer, Skill 220%+110% blast, Hyperluminal Beam 32% AoE x6, Orbital Pulse 140%+70% blast x3, Final Hit 240%+120% blast, Talent 140% AoE x2."
       }
     ],
-    noteRu: "Цикл Starblazer: Сверхспособность (6 лучей по 32% AoE + 3 залпа по 140% + финал 3×80%) + 2 базовые (100%) + 3 FUA таланта (90%). RES PEN +20%, КУ +80%, урон +20%.",
-    noteEn: "Starblazer cycle: Ultimate (6 beams 32% AoE + 3 volleys 140% + finale 3x80%) + 2 Basics (100%) + 3 Talent FUAs (90%). RES PEN +20%, CD +80%, DMG +20%.",
+    noteRu: "Полный цикл Starblazer (4.7): 2 Навыка (220%+110% blast) + Сверхспособность (6 лучей 32% AoE + 3 импульса 140%+70% blast + финал 240%+120% blast) + 2 бонус-атаки Таланта (140% AoE). В Starblazer: +20% RES PEN, +80% КУ, +20% Урон.",
+    noteEn: "Full Starblazer cycle (4.7): 2 Skills (220%+110% blast) + Ultimate (6 beams 32% AoE + 3 pulses 140%+70% blast + finale 240%+120% blast) + 2 Talent FUAs (140% AoE). In Starblazer: +20% RES PEN, +80% CD, +20% DMG.",
     energy: { ultCost: 150 },
     hpScale: false,
-    passiveDmgBoost: 20, // Navigator's Semaphore: +20% урона всем союзникам — учитывается как собственный аурный баф
-    // Талант «Of Fire and Far Faring» (Territory Starblazer): пока Химеко Нова на поле,
-    // её All-Type RES PEN +20% и CRIT DMG +80% — учитываются в личных множителях.
-    passiveCritDmg: 80,
-    passiveResPen: 20,
+    passiveDmgBoost: 20, // Navigator's Semaphore: +20% урона
+    passiveCritDmg: 80,  // Territory Starblazer: +80% КУ
+    passiveResPen: 20,   // Territory Starblazer: +20% RES PEN
     ultLoop: true,
     instances: [
+      {
+        key: "skill",
+        phaseRu: "НАВЫК — СОЛНЕЧНЫЙ ПРОТУБЕРАНЕЦ",
+        phaseEn: "SKILL — SOLAR PROMINENCE",
+        actionRu: "2 применения навыка (220% ATK по цели + 110% по смежным)",
+        actionEn: "2x Skill (220% ATK primary + 110% adjacent)",
+        descRu: "Взрывной огненный урон навыка между ультами под продвижением Искорки/Воскресенья.",
+        descEn: "Blast Fire skill damage between ultimates advanced by supports.",
+        mv: 2.2,
+        adjacentMv: 1.1,
+        targets: 3,
+        count: 2,
+        energyGain: 30
+      },
       {
         key: "beams",
         phaseRu: "СВЕРХСПОСОБНОСТЬ — HYPERLUMINAL BEAM",
         phaseEn: "ULTIMATE — HYPERLUMINAL BEAM",
         actionRu: "6 лучей «Гиперсветового ускорителя» (32% AoE каждый, копит Source Energy)",
         actionEn: "6x Hyperluminal Particle Beam (32% AoE each, stacks Source Energy)",
-        descRu: "32% ATK по всем врагам, 6 срабатываний. Каждый луч даёт 1 ед. Source Energy (макс. 3).",
-        descEn: "32% ATK to all enemies, 6 instances. Each beam grants 1 Source Energy (max 3).",
-        mv: 0.32, targets: 3, count: 6
+        descRu: "32% ATK по всем врагам, 6 срабатываний. Каждый луч даёт 1 ед. Source Energy.",
+        descEn: "32% ATK to all enemies, 6 instances. Each beam grants 1 Source Energy.",
+        mv: 0.32,
+        adjacentMv: 0.32,
+        targets: 3,
+        count: 6
       },
       {
         key: "pulse",
         phaseRu: "СВЕРХСПОСОБНОСТЬ — ORBITAL PULSE",
         phaseEn: "ULTIMATE — ORBITAL ANNIHILATION PULSE",
-        actionRu: "3 залпа «Орбитального уничтожения» (20% AoE + 2×60%×SE по случайным целям, след A6: +30% к множителю случайных)",
-        actionEn: "3x Orbital Annihilation Pulse (20% AoE + 2x60% per SE randoms, A6 trace: +30% random multiplier)",
-        descRu: "20% ATK по всем + 2 случайных удара по 60% ATK (30% базово + 30% от следа A6 при 3 ед. Source Energy). До 140% ATK за залп по боссу.",
-        descEn: "20% ATK AoE + 2 random hits of 60% ATK (30% base + 30% from A6 trace at 3 Source Energy). Up to 140% ATK per volley on one target.",
-        mv: 1.4, targets: 1, count: 3
+        actionRu: "3 залпа «Орбитального уничтожения» (140% ATK по цели + 70% по смежным)",
+        actionEn: "3x Orbital Annihilation Pulse (140% primary + 70% adjacent)",
+        descRu: "3 мощных орбитальных залпа по боссу и соседним целям со следом A6 при 3 SE.",
+        descEn: "3 powerful orbital pulses to primary target and adjacents with A6 trace at 3 SE.",
+        mv: 1.4,
+        adjacentMv: 0.7,
+        targets: 3,
+        count: 3
       },
       {
         key: "final",
-        phaseRu: "СВЕРХСПОСОБНОСТЬ — FINAL HIT",
-        phaseEn: "ULTIMATE — FINAL HIT",
-        actionRu: "Финальный залп: 3×80% ATK по случайным целям",
-        actionEn: "Final Hit: 3x 80% ATK random targets",
-        descRu: "Финал цикла Starblazer: 3 инстанса по 80% ATK.",
-        descEn: "Starblazer cycle finale: 3 instances of 80% ATK.",
-        mv: 0.8, targets: 1, count: 3
-      },
-      {
-        key: "basic",
-        phaseRu: "ЗАПОЛНЯЮЩИЕ ХОДЫ",
-        phaseEn: "FILLER TURNS",
-        actionRu: "2 базовые атаки (100% ATK) + бонус-атака таланта (3×90% ATK)",
-        actionEn: "2 Basic ATKs (100% ATK) + Talent FUA (3x 90% ATK)",
-        descRu: "Ходы между ультами: базовые атаки и срабатывания таланта «Of Fire and Far Faring».",
-        descEn: "Turns between ultimates: basic attacks and Talent procs.",
-        mv: 1.0, targets: 1, count: 2
+        phaseRu: "СВЕРХСПОСОБНОСТЬ — FINAL EXECUTION",
+        phaseEn: "ULTIMATE — FINAL EXECUTION",
+        actionRu: "Финальная детонация Starblazer: 240% ATK по цели + 120% по смежным",
+        actionEn: "Starblazer Finale: 240% primary + 120% adjacent",
+        descRu: "Завершающий взрыв сверхновой в конце боевого окна.",
+        descEn: "Supernova finisher at the end of the Starblazer combat window.",
+        mv: 2.4,
+        adjacentMv: 1.2,
+        targets: 3,
+        count: 1
       },
       {
         key: "talent_fua",
         phaseRu: "ТАЛАНТ — БОНУС-АТАКИ",
         phaseEn: "TALENT — FOLLOW-UP",
-        actionRu: "Бонус-атаки таланта между действиями союзников",
-        actionEn: "Talent follow-up procs between ally actions",
-        descRu: "3 срабатывания по 90% ATK (оценка по классу кита).",
-        descEn: "3 procs of 90% ATK (kit-class estimate).",
-        mv: 0.9, targets: 1, count: 3
+        actionRu: "2 бонус-атаки Таланта по пробитым врагам (140% AoE)",
+        actionEn: "2x Talent FUA on broken enemies (140% AoE)",
+        descRu: "Массовая огненная бонус-атака по всем противникам.",
+        descEn: "Multi-target Fire follow-up attack against all targets.",
+        mv: 1.4,
+        adjacentMv: 1.4,
+        targets: 3,
+        count: 2
       }
     ]
   },
