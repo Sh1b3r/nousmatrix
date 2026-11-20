@@ -621,9 +621,12 @@ export default function App() {
         relicSets: (activeChar.relic_sets || []).map(rs => rs.name)
       })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) return null;
+        return res.json().catch(() => null);
+      })
       .then(data => {
-        if (!isCancelled && data.success) {
+        if (!isCancelled && data && data.success) {
           setLeaderboardData(data);
         }
       })

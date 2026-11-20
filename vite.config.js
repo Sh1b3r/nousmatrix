@@ -30,6 +30,61 @@ export default defineConfig({
       name: "mihomo-dev-proxy",
       configureServer(server) {
         server.middlewares.use(async (req, res, next) => {
+          if (req.url && req.url.startsWith("/api/leaderboard")) {
+            try {
+              let body = {};
+              if (req.method === "POST") {
+                const buffers = [];
+                for await (const chunk of req) {
+                  buffers.push(chunk);
+                }
+                const raw = Buffer.concat(buffers).toString();
+                if (raw) {
+                  try {
+                    body = JSON.parse(raw);
+                  } catch {
+                    body = {};
+                  }
+                }
+              }
+              const score = Number(body.score || 50);
+              const numScore = Math.max(0, Math.min(100, score));
+              const mu = 66.5;
+              const sigma = 11.0;
+              const z = (numScore - mu) / sigma;
+              // Gaussian approximation for dev fallback
+              const t = 1 / (1 + 0.3275911 * Math.abs(z / Math.SQRT2));
+              const erfVal = (z >= 0 ? 1 : -1) * (1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(- (z * z) / 2));
+              const cdf = 0.5 * (1 + erfVal);
+              const topPercent = Math.min(99.0, Math.max(0.1, (1 - cdf) * 100));
+              const rank = Math.max(1, Math.round((topPercent / 100) * 2480));
+
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "application/json");
+              res.setHeader("Access-Control-Allow-Origin", "*");
+              res.end(JSON.stringify({
+                success: true,
+                rank,
+                total: 2480,
+                topPercent: parseFloat(topPercent.toFixed(1)),
+                isLiveDatabase: false
+              }));
+              return;
+            } catch (err) {
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "application/json");
+              res.setHeader("Access-Control-Allow-Origin", "*");
+              res.end(JSON.stringify({
+                success: true,
+                rank: 120,
+                total: 2480,
+                topPercent: 4.8,
+                isLiveDatabase: false
+              }));
+              return;
+            }
+          }
+
           if (req.url && req.url.startsWith("/api/mihomo")) {
             try {
               const url = new URL(req.url, "http://localhost:3000");

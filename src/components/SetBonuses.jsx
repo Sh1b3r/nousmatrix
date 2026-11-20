@@ -1,5 +1,5 @@
 import React from "react";
-import { iconUrl } from "../utils/audit";
+import { iconUrl, handleImageFallback } from "../utils/audit";
 import { SET_DEFINITIONS, resolveRelicSetInfo } from "../utils/setDefinitions.js";
 export default function SetBonuses({ character, t, lang = "ru" }) {
   if (!character) return null;
@@ -54,5 +54,26 @@ export default function SetBonuses({ character, t, lang = "ru" }) {
   if (finalSets.length === 0) {
     return  React.createElement("div", { style: { fontSize: "12px", color: "var(--text-tertiary)" } }, t.setsEmpty);
   }
-  return  React.createElement("div", null, finalSets.map((set, i) =>  React.createElement("div", { key: i, className: "set-box" },  React.createElement("div", { className: "set-head" },  React.createElement("img", { className: "set-icon", src: iconUrl(set.icon), alt: set.name, crossOrigin: "anonymous" }),  React.createElement("span", { className: "set-name" }, set.name),  React.createElement("span", { className: "set-num-badge" }, set.num === 2 ? t.pc2 : set.num === 4 ? t.pc4 : `${set.num} ${t.pc}`)),  React.createElement("div", { className: "set-desc" }, set.desc))));
+  return (
+    <div>
+      {finalSets.map((set, i) => (
+        <div key={set.key || i} className="set-box">
+          <div className="set-head">
+            <img
+              className="set-icon"
+              src={iconUrl(set.icon)}
+              alt={set.name}
+              crossOrigin="anonymous"
+              onError={(e) => handleImageFallback(e, set.icon)}
+            />
+            <span className="set-name">{set.name}</span>
+            <span className="set-num-badge">
+              {set.num === 2 ? t.pc2 : set.num === 4 ? t.pc4 : `${set.num} ${t.pc}`}
+            </span>
+          </div>
+          <div className="set-desc">{set.desc}</div>
+        </div>
+      ))}
+    </div>
+  );
 }
