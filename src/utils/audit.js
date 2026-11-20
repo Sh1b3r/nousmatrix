@@ -1,10 +1,11 @@
 import { resolveRelicSetInfo } from "./setDefinitions.js";
 import { calculateMarginalDamageWeights, getMarginalDamageRollWeight } from "./marginalDamage.js";
 export const CDN_MIRRORS = [
+  "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/",
+  "https://cdn.statically.io/gh/Mar-7th/StarRailRes/master/",
   "https://fastly.jsdelivr.net/gh/Mar-7th/StarRailRes@master/",
   "https://gcore.jsdelivr.net/gh/Mar-7th/StarRailRes@master/",
-  "https://cdn.jsdelivr.net/gh/Mar-7th/StarRailRes@master/",
-  "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/"
+  "https://cdn.jsdelivr.net/gh/Mar-7th/StarRailRes@master/"
 ];
 export const CDN_BASE = CDN_MIRRORS[0];
 export function iconUrl(path) {
@@ -20,7 +21,7 @@ export function handleImageFallback(e, originalPath) {
     e.target.src = `${nextMirror}${originalPath}`;
     return;
   }
-  // If specific piece relic failed across all mirrors (e.g. icon/relic/131_1.png), try base set icon (131.png)
+  // If specific piece relic failed across all mirrors (e.g. icon/relic/131_1.png or 131_2.png), try base set icon (131.png)
   if (originalPath.includes("icon/relic/") && originalPath.includes("_")) {
     const baseSetIcon = originalPath.replace(/_\d+\.png$/, ".png");
     if (baseSetIcon !== originalPath && !e.target.dataset.triedBase) {

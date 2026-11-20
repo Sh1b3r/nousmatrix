@@ -14,7 +14,7 @@ import DashboardNav from "./components/DashboardNav.jsx";
 import TrophyModal from "./components/TrophyModal";
 import LeaderboardModal from "./components/LeaderboardModal";
 import { RefreshIcon } from "./components/Icons.jsx";
-import { iconUrl, calculateCharacterAudit } from "./utils/audit";
+import { iconUrl, handleImageFallback, calculateCharacterAudit } from "./utils/audit";
 import { getDetectedLanguage, translations } from "./utils/i18n";
 let cachedPresets = null;
 async function getLocalizedPresets(lang) {
@@ -672,6 +672,7 @@ export default function App() {
                     className="player-avatar"
                     src={iconUrl(player.avatar.icon)}
                     alt={player.nickname}
+                    onError={(e) => handleImageFallback(e, player.avatar.icon)}
                   />
                 )}
                 <div className="player-name-block">
