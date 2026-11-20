@@ -5027,32 +5027,33 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(36, 161, 222, 0.12);
-  color: #29B6F6;
-  border: 1px solid rgba(41, 182, 246, 0.45);
+  background: #24A1DE;
+  color: #FFFFFF;
+  border: 1px solid #38B6FF;
   border-radius: 4px;
   padding: 6px 12px;
   font-size: 12px;
   font-family: var(--font-mono);
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
   min-height: 34px;
   box-sizing: border-box;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   flex-shrink: 0;
 }
 
 .nav-tg-btn:hover {
-  background: #24A1DE;
-  border-color: #24A1DE;
+  background: #38B6FF;
+  border-color: #68C8FF;
   color: #FFFFFF;
   transform: translateY(-1px);
 }
 
 .nav-tg-btn:active {
   background: #1B82B5;
+  border-color: #166E99;
   transform: translateY(0);
 }
 
@@ -5072,9 +5073,9 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: #EAB308;
-  color: #0E0A16;
-  border: 1px solid #FACC15;
+  background: #22C55E;
+  color: #02200D;
+  border: 1px solid #4ADE80;
   border-radius: 4px;
   padding: 6px 14px;
   font-size: 12px;
@@ -5090,15 +5091,15 @@ main {
 }
 
 .nav-donate-btn:hover {
-  background: #FACC15;
-  border-color: #FEF08A;
-  color: #050308;
+  background: #4ADE80;
+  border-color: #86EFAC;
+  color: #011408;
   transform: translateY(-1px);
 }
 
 .nav-donate-btn:active {
-  background: #CA8A04;
-  border-color: #A16207;
+  background: #16A34A;
+  border-color: #15803D;
   transform: translateY(0);
 }
 
