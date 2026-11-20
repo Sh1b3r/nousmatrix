@@ -4954,9 +4954,17 @@ main {
   margin: 0 auto;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   overflow-x: auto;
   scrollbar-width: none;
+}
+
+.nav-left-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .dashboard-nav-inner::-webkit-scrollbar {
@@ -5005,6 +5013,67 @@ main {
   color: #FFFFFF;
   font-weight: 600;
   box-shadow: 0 0 12px rgba(255, 60, 60, 0.2);
+}
+
+.nav-donate-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #EAB308;
+  color: #0E0A16;
+  border: 1px solid #FACC15;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 34px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.nav-donate-btn:hover {
+  background: #FACC15;
+  border-color: #FEF08A;
+  color: #050308;
+  transform: translateY(-1px);
+}
+
+.nav-donate-btn:active {
+  background: #CA8A04;
+  border-color: #A16207;
+  transform: translateY(0);
+}
+
+.donate-heart-icon {
+  flex-shrink: 0;
+}
+
+.donate-text-full {
+  display: inline;
+}
+
+.donate-text-short {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .donate-text-full {
+    display: none;
+  }
+  .donate-text-short {
+    display: inline;
+  }
+  .nav-donate-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-height: 32px;
+  }
 }
 
 /* 2. Executive Summary Verdict Bar on Hero Card */
