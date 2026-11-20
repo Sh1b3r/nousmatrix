@@ -1312,21 +1312,21 @@ export function determineCharacterMetrics(char, archetype, stats) {
     };
   }
   if (archetype === "HARMONY_CRIT") {
-    const spdStatus = spd >= 160 ? "[160+ HYPER]" : spd >= 134 ? "[134+ TUNED]" : "[SLOW]";
+    const spdStatus = spd >= 160 ? "[160+ HYPER]" : spd >= 143 ? "[143+ TUNED]" : spd >= 134 ? "[134+ TUNED]" : "[SLOW]";
     const cdStatus = cd >= 200 ? "[200%+ ELITE]" : cd >= 160 ? "[160%+ OK]" : "[LOW]";
     return {
       primary: {
         labelRu: "СКОРОСТЬ (SPD)",
         labelEn: "SPEED (SPD)",
         display: `${spd.toFixed(1)} SPD`,
-        percent: Math.min(100, spd / 160 * 100),
+        percent: spd >= 134 ? 100 : Math.min(100, Math.max(10, (spd / 134) * 100)),
         status: spdStatus
       },
       secondary: {
         labelRu: "КРИТ. УРОН (СКАЛЕЙЛЕР)",
         labelEn: "CRIT DMG (BUFF SCALE)",
         display: `${cd.toFixed(1)}% CD`,
-        percent: Math.min(100, cd / 220 * 100),
+        percent: cd >= 200 ? 100 : Math.min(100, (cd / 200) * 100),
         status: cdStatus
       }
     };
@@ -1458,7 +1458,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelRu: "ПОРОГ СКОРОСТИ",
         labelEn: "SPEED BREAKPOINT",
         display: `${spd.toFixed(1)} SPD`,
-        percent: Math.min(100, spd / 160 * 100),
+        percent: spd >= 134 ? 100 : Math.min(100, Math.max(10, (spd / 134) * 100)),
         status: spd >= 134 ? "[134+ OK]" : "[SLOW]"
       }
     };
@@ -1476,7 +1476,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelRu: "ПОРОГ СКОРОСТИ",
         labelEn: "SPEED BREAKPOINT",
         display: `${spd.toFixed(1)} SPD`,
-        percent: Math.min(100, spd / 160 * 100),
+        percent: spd >= 134 ? 100 : Math.min(100, Math.max(10, (spd / 134) * 100)),
         status: spd >= 134 ? "[134+ OK]" : "[SLOW]"
       }
     };
@@ -1494,7 +1494,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelRu: "ПОРОГ СКОРОСТИ",
         labelEn: "SPEED BREAKPOINT",
         display: `${spd.toFixed(1)} SPD`,
-        percent: Math.min(100, spd / 160 * 100),
+        percent: spd >= 134 ? 100 : Math.min(100, Math.max(10, (spd / 134) * 100)),
         status: spd >= 145 ? "[145+ OK]" : spd >= 134 ? "[134+ OK]" : "[SLOW]"
       }
     };
@@ -1512,7 +1512,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelRu: "ПОРОГ СКОРОСТИ",
         labelEn: "SPEED BREAKPOINT",
         display: `${spd.toFixed(1)} SPD`,
-        percent: Math.min(100, spd / 160 * 100),
+        percent: spd >= 134 ? 100 : Math.min(100, Math.max(10, (spd / 134) * 100)),
         status: spd >= 134 ? "[134+ OK]" : "[SLOW]"
       }
     };
@@ -1530,7 +1530,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
         labelRu: "ПОРОГ СКОРОСТИ",
         labelEn: "SPEED BREAKPOINT",
         display: `${spd.toFixed(1)} SPD`,
-        percent: Math.min(100, spd / 160 * 100),
+        percent: spd >= 134 ? 100 : Math.min(100, Math.max(10, (spd / 134) * 100)),
         status: spd >= 134 ? "[134+ OK]" : "[SLOW]"
       }
     };
@@ -1592,7 +1592,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
       labelRu: "ПОРОГ СКОРОСТИ",
       labelEn: "SPEED BREAKPOINT",
       display: `${spd.toFixed(1)} SPD`,
-      percent: Math.min(100, spd / 160 * 100),
+      percent: spd >= 134 ? 100 : Math.min(100, Math.max(10, (spd / 134) * 100)),
       status: spd >= 134 ? "[134+ OK]" : "[SLOW]"
     }
   };

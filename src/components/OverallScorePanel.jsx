@@ -259,7 +259,7 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
               style={{
                 width: `${audit.secondaryMetric
                   ? audit.secondaryMetric.percent
-                  : Math.min(100, (parseFloat(audit.spd) / 160) * 100)
+                  : (isSpdOk ? 100 : Math.min(100, (parseFloat(audit.spd) / 134) * 100))
                   }%`
               }}
             />
