@@ -229,6 +229,40 @@ export function RelicsAuditPanel({
                 <span>{isRu ? "Планарные украшения ожидают синхронизации в игре" : "Planar ornaments awaiting sync"}</span>
               </div>
             )}
+            {audit.craftAdvisor && (
+              <div className="relic-craft-advisor-card">
+                <div className="craft-advisor-header">
+                  <div className="craft-advisor-badge">
+                    <span className="craft-sparkle-icon">✨</span>
+                    <span>{isRu ? "СОВЕТНИК ПО САМОМОДЕЛИРУЮЩЕЙСЯ СМОЛЕ" : "SELF-MODELING RESIN CRAFT ADVISOR"}</span>
+                  </div>
+                  <span className={`craft-advisor-priority-tag ${audit.craftAdvisor.isWrongMainFix ? "critical" : "optimal"}`}>
+                    {audit.craftAdvisor.isWrongMainFix
+                      ? (isRu ? "ПРИОРИТЕТ: ИСПРАВЛЕНИЕ СТАТА" : "CRITICAL STAT FIX")
+                      : (isRu ? "ТОП-ПРИРОСТ ЭФФЕКТИВНОСТИ" : "MAX EFFICIENCY GAIN")}
+                  </span>
+                </div>
+                <div className="craft-advisor-content">
+                  <div className="craft-target-row">
+                    <div className="craft-target-item">
+                      <span className="craft-target-label">{isRu ? "Слот для крафта" : "Target Slot"}</span>
+                      <span className="craft-target-val highlight">{audit.craftAdvisor.slotName}</span>
+                    </div>
+                    <div className="craft-target-item">
+                      <span className="craft-target-label">{isRu ? "Рекомендуемый сет" : "Recommended Set"}</span>
+                      <span className="craft-target-val">{audit.craftAdvisor.recommendedSet}</span>
+                    </div>
+                    <div className="craft-target-item">
+                      <span className="craft-target-label">{isRu ? "Главный стат смолы" : "Resin Main Stat"}</span>
+                      <span className="craft-target-val main-stat-pill">{audit.craftAdvisor.recommendedMainStat}</span>
+                    </div>
+                  </div>
+                  <div className="craft-advisor-desc">
+                    {isRu ? audit.craftAdvisor.descRu : audit.craftAdvisor.descEn}
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>

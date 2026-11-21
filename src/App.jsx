@@ -30,11 +30,12 @@ async function getLocalizedPresets(lang) {
 }
 function getInitialSessionData() {
   if (typeof window === "undefined") {
-    return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null };
+    return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null, initialCharId: null };
   }
   try {
     const params = new URLSearchParams(window.location.search);
     const urlUid = params.get("uid");
+    const urlChar = params.get("char");
     const stored = sessionStorage.getItem("nousmatrix_cached_profiles");
     const cachedMap = new Map();
     let initialProfile = null;
@@ -67,9 +68,9 @@ function getInitialSessionData() {
         initialProfile = parsed[urlUid];
       }
     }
-    return { cachedMap, initialProfile, initialUrlUid: urlUid };
+    return { cachedMap, initialProfile, initialUrlUid: urlUid, initialCharId: urlChar };
   } catch {
-    return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null };
+    return { cachedMap: new Map(), initialProfile: null, initialUrlUid: null, initialCharId: null };
   }
 }
 
@@ -123,7 +124,7 @@ export default function App() {
   const [activeIndex, setActiveIndex] = useState(() => {
     if (initialData.initialProfile?.characters?.length) {
       const uid = initialData.initialProfile.player?.uid || initialData.initialUrlUid;
-      const pref = getSavedCharacterPreference(uid);
+      const pref = initialData.initialCharId ? { id: initialData.initialCharId } : getSavedCharacterPreference(uid);
       return findCharacterIndex(initialData.initialProfile.characters, pref);
     }
     return 0;
@@ -195,8 +196,13 @@ export default function App() {
       }
       const params = new URLSearchParams(window.location.search);
       const urlUid = params.get("uid") || e.state?.uid;
+      const urlChar = params.get("char") || e.state?.charId;
       if (urlUid) {
         if (currentProfile && String(currentProfile.player?.uid) === String(urlUid)) {
+          if (urlChar && currentProfile.characters) {
+            const charIdx = findCharacterIndex(currentProfile.characters, { id: urlChar });
+            setActiveIndex(charIdx);
+          }
           return;
         }
         let cached = profileCacheRef.current.get(String(urlUid));
@@ -205,7 +211,9 @@ export default function App() {
         }
         if (cached && cached.characters && cached.characters.length > 0) {
           const isSame = currentProfile?.player?.uid && String(currentProfile.player.uid) === String(urlUid);
-          const pref = isSame && lastSelectedCharRef.current
+          const pref = urlChar
+            ? { id: urlChar }
+            : isSame && lastSelectedCharRef.current
             ? lastSelectedCharRef.current
             : getSavedCharacterPreference(urlUid);
           setCurrentProfile(cached);
@@ -477,24 +485,32 @@ export default function App() {
           }
           const resolvedUid = String(data.player?.uid || uid);
           const isSame = currentProfile?.player?.uid && String(currentProfile.player.uid) === resolvedUid;
-          const pref = isSame && lastSelectedCharRef.current
+          const currentUrlParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+          const urlCharId = currentUrlParams?.get("char");
+          const pref = urlCharId
+            ? { id: urlCharId }
+            : isSame && lastSelectedCharRef.current
             ? lastSelectedCharRef.current
             : getSavedCharacterPreference(resolvedUid);
           setCurrentProfile(data);
           lastProfileRef.current = data;
-          setActiveIndex(findCharacterIndex(data.characters, pref));
+          const resolvedCharIdx = findCharacterIndex(data.characters, pref);
+          setActiveIndex(resolvedCharIdx);
           setErrorMsg("");
           setIsLoading(false);
-          const targetUrl = `?uid=${resolvedUid}`;
+          const selectedCharId = data.characters[resolvedCharIdx]?.id;
+          const targetUrl = selectedCharId
+            ? `?uid=${resolvedUid}&char=${selectedCharId}`
+            : `?uid=${resolvedUid}`;
           if (shouldPushHistory) {
             const currentParams = new URLSearchParams(window.location.search);
             if (currentParams.get("uid") !== resolvedUid) {
-              window.history.pushState({ view: "profile", uid: resolvedUid }, "", targetUrl);
+              window.history.pushState({ view: "profile", uid: resolvedUid, charId: selectedCharId }, "", targetUrl);
             } else {
-              window.history.replaceState({ view: "profile", uid: resolvedUid }, "", targetUrl);
+              window.history.replaceState({ view: "profile", uid: resolvedUid, charId: selectedCharId }, "", targetUrl);
             }
           } else {
-            window.history.replaceState({ view: "profile", uid: resolvedUid }, "", targetUrl);
+            window.history.replaceState({ view: "profile", uid: resolvedUid, charId: selectedCharId }, "", targetUrl);
           }
           return;
         } else if (data.player) {
@@ -575,6 +591,12 @@ export default function App() {
         name: char.name || ""
       };
       saveCharacterPreference(uid, char);
+      if (typeof window !== "undefined" && uid) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("uid", String(uid));
+        url.searchParams.set("char", String(char.id));
+        window.history.replaceState({ view: "profile", uid, charId: char.id }, "", url.toString());
+      }
     }
   };
 
@@ -762,7 +784,7 @@ export default function App() {
                     <span className="combat-title-main">{t.combatStatsTitle}</span>
                     <span className="combat-title-sub">{t.basePlusBonus}</span>
                   </div>
-                  <CombatStats character={activeChar} t={t} lang={lang} />
+                  <CombatStats character={activeChar} audit={audit} t={t} lang={lang} />
                 </div>
                 <div className="panel panel-relics-audit">
                   <RelicsAuditPanel audit={audit} t={t} lang={lang} layoutMode={relicsLayoutMode} />

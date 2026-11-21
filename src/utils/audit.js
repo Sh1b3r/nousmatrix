@@ -1174,6 +1174,128 @@ export function evaluateRelicMainStat(relic, archetype, char) {
   return { status: "optimal", scoreBonus: 0, labelRu: "ВЕРНЫЙ СТАТ", labelEn: "OPTIMAL" };
 }
 
+export function getRecommendedRelicMainStat(slotType, archetype, char, lang = "ru") {
+  const isRu = lang === "ru";
+  const num = Number(slotType);
+  if (num === 1) return isRu ? "HP (Фиксированное)" : "HP (Flat)";
+  if (num === 2) return isRu ? "Сила атаки (Фиксированная)" : "ATK (Flat)";
+
+  const elemName = char?.element?.name || (isRu ? "Стихийный" : "Elemental");
+
+  if (num === 3) {
+    // Body / Тело
+    switch (archetype) {
+      case "CRIT_DPS":
+        return isRu ? "Крит. шанс / Крит. урон" : "CRIT Rate / CRIT DMG";
+      case "HP_CRIT_DPS":
+      case "MORTENAX_HYBRID":
+        return isRu ? "Крит. шанс / Крит. урон (или HP%)" : "CRIT Rate / CRIT DMG (or HP%)";
+      case "MORTENAX_SUPPORT":
+        return isRu ? "HP% / Крит. шанс" : "HP% / CRIT Rate";
+      case "BREAK_DPS":
+        return isRu ? "Сила атаки% / HP%" : "ATK% / HP%";
+      case "DOT_DPS":
+        return isRu ? "Сила атаки% / Шанс попад. эффектов" : "ATK% / Effect Hit Rate";
+      case "HARMONY_CRIT":
+        return isRu ? "Крит. урон" : "CRIT DMG";
+      case "HARMONY_ATK":
+        return isRu ? "Сила атаки%" : "ATK%";
+      case "HARMONY_SPD":
+      case "HARMONY_BREAK":
+        return isRu ? "HP% / Защита%" : "HP% / DEF%";
+      case "PRESERVATION_DEF":
+        return isRu ? "Защита% (или Крит. урон)" : "DEF% (or CRIT DMG)";
+      case "PRESERVATION_HP":
+        return isRu ? "HP% / Защита%" : "HP% / DEF%";
+      case "ABUNDANCE_HP":
+      case "ABUNDANCE_BREAK":
+      case "ABUNDANCE_ATK":
+        return isRu ? "Исходящее исцеление / HP%" : "Outgoing Healing / HP%";
+      case "NIHILITY_DEBUFF":
+        return isRu ? "Шанс попад. эффектов (ШПЭ)" : "Effect Hit Rate (EHR)";
+      default:
+        return isRu ? "Крит. шанс / Крит. урон / АТК%" : "CRIT Rate / CRIT DMG / ATK%";
+    }
+  }
+
+  if (num === 4) {
+    // Feet / Сапоги
+    switch (archetype) {
+      case "CRIT_DPS":
+      case "BREAK_DPS":
+      case "DOT_DPS":
+        return isRu ? "Скорость (или АТК%)" : "Speed (or ATK%)";
+      case "HP_CRIT_DPS":
+      case "MORTENAX_SUPPORT":
+      case "MORTENAX_HYBRID":
+        return isRu ? "Скорость (или HP%)" : "Speed (or HP%)";
+      case "PRESERVATION_DEF":
+        return isRu ? "Скорость (или Защита%)" : "Speed (or DEF%)";
+      case "PRESERVATION_HP":
+      case "ABUNDANCE_HP":
+        return isRu ? "Скорость (или HP%)" : "Speed (or HP%)";
+      default:
+        return isRu ? "Скорость" : "Speed";
+    }
+  }
+
+  if (num === 5) {
+    // Sphere / Сфера
+    switch (archetype) {
+      case "CRIT_DPS":
+      case "BREAK_DPS":
+      case "DOT_DPS":
+        return isRu ? `Бонус ${elemName} урона (или АТК%)` : `${elemName} DMG Boost (or ATK%)`;
+      case "HP_CRIT_DPS":
+      case "MORTENAX_SUPPORT":
+      case "MORTENAX_HYBRID":
+        return isRu ? `Бонус ${elemName} урона / HP%` : `${elemName} DMG Boost / HP%`;
+      case "PRESERVATION_DEF":
+        return isRu ? "Защита%" : "DEF%";
+      case "PRESERVATION_HP":
+      case "ABUNDANCE_HP":
+        return isRu ? "HP%" : "HP%";
+      case "ABUNDANCE_ATK":
+      case "HARMONY_ATK":
+        return isRu ? "Сила атаки% / HP%" : "ATK% / HP%";
+      default:
+        return isRu ? `Бонус ${elemName} урона / HP%` : `${elemName} DMG Boost / HP%`;
+    }
+  }
+
+  if (num === 6) {
+    // Rope / Вервь
+    switch (archetype) {
+      case "BREAK_DPS":
+        return isRu ? "Эффект пробития" : "Break Effect";
+      case "HARMONY_BREAK":
+      case "ABUNDANCE_BREAK":
+        return isRu ? "Восст. энергии / Эффект пробития" : "Energy Regen Rate / Break Effect";
+      case "HARMONY_SPD":
+      case "HARMONY_CRIT":
+      case "HARMONY_ATK":
+      case "NIHILITY_DEBUFF":
+      case "ABUNDANCE_HP":
+      case "ABUNDANCE_ATK":
+        return isRu ? "Восстановление энергии (ВЭ)" : "Energy Regeneration Rate (ERR)";
+      case "PRESERVATION_DEF":
+        return isRu ? "Защита% / Восст. энергии" : "DEF% / Energy Regen Rate";
+      case "PRESERVATION_HP":
+        return isRu ? "HP% / Восст. энергии" : "HP% / Energy Regen Rate";
+      case "HP_CRIT_DPS":
+      case "MORTENAX_SUPPORT":
+      case "MORTENAX_HYBRID":
+        return isRu ? "HP% / Восст. энергии" : "HP% / Energy Regen Rate";
+      case "DOT_DPS":
+        return isRu ? "Сила атаки% / Восст. энергии" : "ATK% / Energy Regen Rate";
+      default:
+        return isRu ? "Сила атаки% (или ВЭ)" : "ATK% (or Energy Regen Rate)";
+    }
+  }
+
+  return isRu ? "Профильный стат" : "Primary Stat";
+}
+
 function erf(x) {
   const a1 = 0.254829592;
   const a2 = -0.284496736;
@@ -2380,6 +2502,74 @@ export function calculateCharacterAudit(char, lang = "ru") {
     err
   });
   const needsCrit = isCritDps(archetype);
+
+  // Speed Tuning: анализ близости к ключевым брейкпоинтам Зала Забвения (MoC)
+  // Пороги: 134.0 (2 хода в 1 цикле), 143.4 (3 хода в 2 циклах), 160.1 (4 хода в 2 циклах)
+  const speedBreakpoints = [
+    { threshold: 134.0, descRu: "2 действия в 1-м цикле", descEn: "2 actions in Cycle 0" },
+    { threshold: 143.4, descRu: "3 действия за первые 2 цикла", descEn: "3 actions in first 2 cycles" },
+    { threshold: 160.1, descRu: "4 действия за первые 2 цикла", descEn: "4 actions in first 2 cycles" }
+  ];
+  let speedAlert = null;
+  const numSpd = parseFloat(spd) || 0;
+  for (const bp of speedBreakpoints) {
+    const diff = bp.threshold - numSpd;
+    // Если не хватает от 0.1 до 1.8 SPD (буквально 1 сабстат)
+    if (diff > 0.05 && diff <= 1.85) {
+      speedAlert = {
+        currentSpd: numSpd,
+        targetThreshold: bp.threshold,
+        diff: parseFloat(diff.toFixed(1)),
+        descRu: bp.descRu,
+        descEn: bp.descEn,
+        labelRu: `До порога ${bp.threshold} SPD (${bp.descRu}) не хватает всего +${diff.toFixed(1)} SPD!`,
+        labelEn: `Only +${diff.toFixed(1)} SPD needed for ${bp.threshold} SPD breakpoint (${bp.descEn})!`
+      };
+      break;
+    }
+  }
+
+  // Self-Modeling Resin Craft Advisor ("Советник по смоле")
+  let craftSlotIdx = weakestRelicIndex;
+  if (wrongMainRelics.length > 0) {
+    craftSlotIdx = wrongMainRelics[0].idx;
+  }
+  const craftRelicObj = char.relics?.[craftSlotIdx];
+  const craftSlotType = craftRelicObj ? Number(craftRelicObj.type ?? craftRelicObj.pos ?? (craftSlotIdx + 1)) : (craftSlotIdx + 1);
+  const craftSlotName = isRu ? slotNamesRu[craftSlotIdx] || `Слот ${craftSlotIdx + 1}` : slotNamesEn[craftSlotIdx] || `Slot ${craftSlotIdx + 1}`;
+  
+  let craftSetName = "";
+  if (craftSlotType >= 5) {
+    craftSetName = planarSet || craftRelicObj?.set_name || (isRu ? "Рекомендуемый планарный сет" : "Recommended planar set");
+  } else {
+    craftSetName = cavernGroups.length > 0 ? cavernGroups[0].name : (craftRelicObj?.set_name || (isRu ? "Пещерный сет" : "Cavern set"));
+  }
+
+  const craftMainStat = getRecommendedRelicMainStat(craftSlotType, archetype, char, lang);
+  const isCraftSlotVariable = craftSlotType >= 3;
+  const craftAdvisor = {
+    slotIndex: craftSlotIdx,
+    slotType: craftSlotType,
+    slotName: craftSlotName,
+    relicName: craftRelicObj?.name || "",
+    isVariableMain: isCraftSlotVariable,
+    recommendedSet: craftSetName,
+    recommendedMainStat: craftMainStat,
+    isWrongMainFix: wrongMainRelics.length > 0,
+    titleRu: wrongMainRelics.length > 0
+      ? `Приоритет синтеза смолой: ${craftSlotName} (${craftMainStat})`
+      : `Рекомендация для смолы: ${craftSlotName} (${craftMainStat})`,
+    titleEn: wrongMainRelics.length > 0
+      ? `Resin Craft Priority: ${craftSlotName} (${craftMainStat})`
+      : `Resin Craft Target: ${craftSlotName} (${craftMainStat})`,
+    descRu: wrongMainRelics.length > 0
+      ? `Критичный апгрейд: в слоте «${craftSlotName}» стоит неверный главный стат. Синтез реликвии из набора «${craftSetName}» с главным статом [${craftMainStat}] даст максимальный мгновенный прирост урона и эффективности.`
+      : `В слоте «${craftSlotName}» сейчас наименьшее качество роллов. Синтез из сета «${craftSetName}» с нужным главным статом [${craftMainStat}] — самый надежный способ поднять общий балл сборки без случайных потерь смолы.`,
+    descEn: wrongMainRelics.length > 0
+      ? `Critical fix: "${craftSlotName}" has an incompatible main stat. Crafting a piece from "${craftSetName}" with [${craftMainStat}] provides the largest immediate damage jump.`
+      : `"${craftSlotName}" currently has the lowest substat efficiency. Crafting from "${craftSetName}" with [${craftMainStat}] is the highest value use of Self-Modeling Resin.`
+  };
+
   return {
     score: finalScore.toFixed(1),
     topPercent: topPercent.toFixed(1),
@@ -2390,6 +2580,8 @@ export function calculateCharacterAudit(char, lang = "ru") {
     needsCrit,
     spd: spd.toFixed(1),
     archetype,
+    speedAlert,
+    craftAdvisor,
     detectedRole,
     stats: {
       hp,

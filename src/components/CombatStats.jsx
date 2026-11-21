@@ -1,7 +1,7 @@
 import React from "react";
 import { iconUrl, handleImageFallback } from "../utils/audit";
 import { formatStatName } from "../utils/i18n";
-export default function CombatStats({ character, t, lang = "ru" }) {
+export default function CombatStats({ character, audit, t, lang = "ru" }) {
   if (!character) return null;
   const baseMap = {};
   (character.attributes || []).forEach((a) => {
@@ -81,7 +81,22 @@ export default function CombatStats({ character, t, lang = "ru" }) {
       alt: "SPD",
       onError: (e) => handleImageFallback(e, "icon/property/IconSpeed.png")
     }
-  ),  React.createElement("span", { className: "stat-name" }, t.spd)),  React.createElement("div", { className: "stat-values" },  React.createElement("span", { className: "stat-calc" }, spdBase, " ",  React.createElement("span", { className: "stat-bonus" }, "+", spdAdd), " ="),  React.createElement("span", { className: "stat-total" }, spdTotal))),  React.createElement("div", { className: "stat-entry" },  React.createElement("div", { className: "stat-left" },  React.createElement(
+  ),  React.createElement("span", { className: "stat-name" }, t.spd)),  React.createElement("div", { className: "stat-values" },  React.createElement("span", { className: "stat-calc" }, spdBase, " ",  React.createElement("span", { className: "stat-bonus" }, "+", spdAdd), " ="),  React.createElement("span", { className: "stat-total" }, spdTotal)),
+  audit?.speedAlert && React.createElement(
+    "div",
+    {
+      className: "speed-tuning-alert-pill",
+      title: lang === "ru" ? audit.speedAlert.labelRu : audit.speedAlert.labelEn
+    },
+    React.createElement("span", { className: "speed-tuning-icon" }, "⚡"),
+    React.createElement(
+      "span",
+      { className: "speed-tuning-text" },
+      lang === "ru"
+        ? `+${audit.speedAlert.diff} до порога ${audit.speedAlert.targetThreshold}`
+        : `+${audit.speedAlert.diff} to ${audit.speedAlert.targetThreshold} threshold`
+    )
+  )),  React.createElement("div", { className: "stat-entry" },  React.createElement("div", { className: "stat-left" },  React.createElement(
     "img",
     {
       className: "stat-icon",
