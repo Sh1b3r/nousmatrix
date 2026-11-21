@@ -26,11 +26,25 @@ function erf(x) {
   return sign * y;
 }
 
+const ARCHETYPE_DISTRIBUTIONS = {
+  CRIT_DPS: { mu: 68.5, sigma: 11.2 },
+  HP_CRIT_DPS: { mu: 67.5, sigma: 11.0 },
+  BREAK_DPS: { mu: 66.0, sigma: 10.8 },
+  DOT_DPS: { mu: 65.5, sigma: 10.5 },
+  HARMONY_SPD: { mu: 65.0, sigma: 10.0 },
+  HARMONY_ATK: { mu: 65.0, sigma: 10.2 },
+  HARMONY_CRIT: { mu: 66.5, sigma: 10.5 },
+  NIHILITY_DEBUFF: { mu: 64.5, sigma: 10.2 },
+  PRESERVATION_DEF: { mu: 64.0, sigma: 10.0 },
+  PRESERVATION_HP: { mu: 64.0, sigma: 10.0 },
+  ABUNDANCE_ATK: { mu: 64.0, sigma: 10.0 },
+  ABUNDANCE_HP: { mu: 63.5, sigma: 9.8 }
+};
+
 function calculateFallbackRanking(score, archetype = 'CRIT_DPS', baseSample = 2480) {
   const numScore = Math.max(0, Math.min(100, Number(score) || 50));
-  const mu = 66.5;
-  const sigma = 11.0;
-  const z = (numScore - mu) / sigma;
+  const dist = ARCHETYPE_DISTRIBUTIONS[archetype] || { mu: 68.5, sigma: 11.2 };
+  const z = (numScore - dist.mu) / dist.sigma;
   const cdf = 0.5 * (1 + erf(z / Math.SQRT2));
   const topPercent = Math.min(99.0, Math.max(0.1, (1 - cdf) * 100));
   const rank = Math.max(1, Math.round((topPercent / 100) * baseSample));
