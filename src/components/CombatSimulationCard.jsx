@@ -459,25 +459,25 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
                 {isTimelineCalculation
                   ? (isRu ? "Урон по врагам (HP + щит)" : "Enemy Damage (HP + Shield)")
                   : includeTeamBuffs
-                  ? (isRu ? "Боевой урон ротации (Отряд)" : "Rotation Cycle Damage (Squad)")
-                  : (isRu ? "Чистый соло-урон" : "Solo Lead Damage")}
+                  ? (isRu ? "⚡ Урон комбо-прокаста (Burst Combo)" : "⚡ Squad Burst Combo DMG")
+                  : (isRu ? "Чистый соло-урон прокаста" : "Solo Lead Burst DMG")}
               </span>
               <span className="sim-metric-value text-accent big">
-                {Number(rotationSim.rotationTotalDamage || 0).toLocaleString(isRu ? "ru-RU" : "en-US")}
+                {Number(rotationSim.burstComboDamage || rotationSim.rotationTotalDamage || 0).toLocaleString(isRu ? "ru-RU" : "en-US")}
               </span>
               <span className="sim-metric-hint">
                 {isTimelineCalculation
                   ? (isRu ? "По заданным событиям; HP цели учитывается, если задано" : "From configured events; target HP is applied when provided")
                   : includeTeamBuffs
-                  ? (isRu ? "Полный цикл ротации с учётом синергии и эффектов отряда" : "Full rotation cycle with squad synergy and effects applied")
-                  : (isRu ? "Урон персонажа в одиночку без баффов союзников" : "Lead character solo output without teammate buffs")}
+                  ? (isRu ? "Суммарный урон боевого окна (Ульт + Навык + Талант/FUA) под баффами саппортов" : "Damage of full burst combo (Ult + Skill + Talent/FUA) empowered by teammates")
+                  : (isRu ? "Урон боевого окна персонажа в одиночку без баффов союзников" : "Burst damage without teammate buffs")}
               </span>
             </div>
             <div className="combat-sim-metric-box">
               <span className="sim-metric-label">
                 {isTimelineCalculation
                   ? (isRu ? "Максимум одного попадания" : "Peak Hit Damage")
-                  : isRu ? "Максимальный урон действия" : "Peak Ability Damage"}
+                  : isRu ? "Максимальный удар (Peak Hit)" : "Peak Ability Hit DMG"}
               </span>
               <span className="sim-metric-value">
                 {Number(rotationSim.peakHitDamage || 0).toLocaleString(isRu ? "ru-RU" : "en-US")}
@@ -485,7 +485,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
               <span className="sim-metric-hint">
                 {isTimelineCalculation
                   ? (isRu ? "Фактически снятые HP и щит" : "Effective HP and shield damage")
-                  : isRu ? "Может суммировать цели AoE" : "May sum AoE targets"}
+                  : isRu ? "Пиковый урон сильнейшего удара по цели/волне" : "Peak single ability damage to target/wave"}
               </span>
             </div>
           </div>

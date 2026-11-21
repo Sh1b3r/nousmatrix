@@ -353,6 +353,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       : "Some enemies lack a specific level or elemental RES, so mode defaults are used.");
   }
   let rotationTotalDamage = 0;
+  let burstComboDamage = 0;
   let peakHitDamage = 0;
   if (!usesExplicitTimeline) matchedTeammates.forEach((tm) => {
     steps.push({
@@ -520,6 +521,10 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       const instDmg = Math.round(actionScalingStat * inst.count * actionKitDmgBonus
         * actionCritMultiplier * targetMotionValues.reduce((sum, weighted) => sum + weighted, 0));
       rotationTotalDamage += instDmg;
+      const isBurstAction = inst.isUlt || inst.key === "skill" || inst.key?.includes("fua") || inst.key?.includes("talent") || inst.key?.includes("burst") || inst.key?.includes("enhanced");
+      if (isBurstAction) {
+        burstComboDamage += instDmg;
+      }
       const perHit = Math.max(0, ...targetMotionValues.map((weighted) =>
         Math.round(actionScalingStat * inst.count * actionKitDmgBonus * actionCritMultiplier * weighted)
       ));
@@ -1277,6 +1282,7 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
   const timelineEnemyResistancePercent = timelinePrimaryEnemy?.resistancePercent ?? null;
   return {
     rotationTotalDamage,
+    burstComboDamage: burstComboDamage > 0 ? burstComboDamage : rotationTotalDamage,
     peakHitDamage,
     steps,
     enemyMode,
