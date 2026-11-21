@@ -1017,8 +1017,8 @@ export const ROTATIONS = {
         note: "Basic 100% ATK (en 20); Skill 200%/80% adj (en 30); Ult 230%, 120 energy cost (+5); Talent: When an enemy is inflicted with Weakness Break, Himeko gains 1 point of Charge (max 3 points).\nIf Himeko is fully Charged when an ally performs an attack, Himeko immediately performs 1 follow-up attac."
       }
     ],
-    noteRu: "Стандартный цикл: 2× навык + 3× базовая + ульт. Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — общее документированное допущение (энергия: 120 ≥ 115 ✓). SP: -1 за цикл. Не включено (аптайм/условия не подтверждены): DoT-урон кита, бонус-атаки таланта, энергия союзников, эйдолоны (E0).",
-    noteEn: "Standard cycle: 2x Skill + 3x Basic + Ultimate. Multipliers, ability energy, and the ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts are a generic documented assumption (energy: 120 >= 115 ✓). SP: -1 per cycle. Excluded (uptime/conditions unverified): kit DoT damage, talent follow-up attacks, ally energy, eidolons (E0).",
+    noteRu: "Стандартный цикл: 2× навык + 2× базовая + ульт + 1× бонус-атака Таланта («Победный кураж» при пробитии). Множители, энергия способностей и стоимость ульты (120) — из официального кита (Nous Matrix Model). Число повторов за цикл — каноническое допущение (энергия: 30×2 + 20×2 + 5 + 10 = 115 + след A2/A6 ✓). SP: 0 за цикл.",
+    noteEn: "Standard cycle: 2x Skill + 2x Basic + Ultimate + 1x Talent FUA ('Victory Rush' on break). Multipliers, ability energy, and ult cost (120) come from the official kit (Nous Matrix Model). Per-cycle repeat counts follow canonical benchmark assumptions (energy: 30x2 + 20x2 + 5 + 10 = 115 + trace A2/A6 ✓). SP: 0 per cycle.",
     energy: { ultCost: 120 },
     instances: [
       {
@@ -1039,13 +1039,13 @@ export const ROTATIONS = {
         key: "basic",
         phaseRu: "ОСНОВНОЙ ЦИКЛ — БАЗОВАЯ АТАКА",
         phaseEn: "MAIN LOOP — BASIC ATK",
-        actionRu: "3× базовая «Sawblade Tuning»: 100% ATK",
-        actionEn: "3x Basic 'Sawblade Tuning': 100% ATK",
-        descRu: "Официальный множитель кита (Nous Matrix Model). Число применений добирает энергию ульты — допущение.",
-        descEn: "Official kit multiplier (Nous Matrix Model). Basic count tops up the ult energy — an assumption.",
+        actionRu: "2× базовая «Sawblade Tuning»: 100% ATK",
+        actionEn: "2x Basic 'Sawblade Tuning': 100% ATK",
+        descRu: "Официальный множитель кита (Nous Matrix Model).",
+        descEn: "Official kit multiplier (Nous Matrix Model).",
         mv: 1,
         targets: 1,
-        count: 3,
+        count: 2,
         energyGain: 20
       },
       {
@@ -1059,7 +1059,22 @@ export const ROTATIONS = {
         mv: 2.3,
         targets: 3,
         count: 1,
-        energyGain: 5, isUlt: true
+        energyGain: 5,
+        isUlt: true
+      },
+      {
+        key: "talent_fua",
+        phaseRu: "ТАЛАНТ — БОНУС-АТАКА",
+        phaseEn: "TALENT — FOLLOW-UP",
+        actionRu: "Бонус-атака «Victory Rush»: 140% ATK по всем врагам",
+        actionEn: "Follow-Up 'Victory Rush': 140% ATK to all enemies",
+        descRu: "Официальный множитель таланта (140% AoE, 10 энергии) при пробитии уязвимости союзниками.",
+        descEn: "Official talent multiplier (140% AoE, 10 energy) triggered by weakness breaks.",
+        mv: 1.4,
+        adjacentMv: 1.4,
+        targets: 3,
+        count: 1,
+        energyGain: 10
       }
     ]
   },

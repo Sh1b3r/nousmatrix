@@ -24,6 +24,7 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   }, [charId]);
   const [includeTeamBuffs, setIncludeTeamBuffs] = useState(true);
   const [enemyMode, setEnemyMode] = useState("moc");
+  const [damageMode, setDamageMode] = useState("avg"); // 'avg' (E[X]) or 'crit' (Peak Hit)
   // Явное число срабатываний Weakness Break в сценарии ротации.
   const [breakProcsInput, setBreakProcsInput] = useState("");
   const breakProcs = Math.max(0, Math.floor(Number(breakProcsInput) || 0));
@@ -57,12 +58,13 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
   const rotationSim = useMemo(() => {
     return runFullTeamRotationSimulation(character, stats || {}, currentSquad, activeTeammates, lang, {
       enemyMode,
+      damageMode,
       language: lang,
       breakProcs,
       healingTally,
       superBreakProcs
     });
-  }, [character, stats, currentSquad, activeTeammates, lang, enemyMode, breakProcs, healingTally, superBreakProcs]);
+  }, [character, stats, currentSquad, activeTeammates, lang, enemyMode, damageMode, breakProcs, healingTally, superBreakProcs]);
   // Референсный эталон симуляции
   const benchmarkReference = useMemo(() => getBenchmarkReference(charId), [charId]);
   const equipmentCoverage = useMemo(() => resolveCombatEquipmentEffects(character, matchedTeammates, {
@@ -217,9 +219,24 @@ export default function CombatSimulationCard({ character, audit, stats, showcase
             title={isRu ? "Режим и активные данные врагов испытания" : "Mode and active challenge enemy data"}
           >
             <option value="moc">{isRu ? "MoC • Активный этаж" : "MoC • Active Floor"}</option>
-            <option value="pf">{isRu ? "PF • Активный этаж" : "PF • Active Floor"}</option>
+            <option value="pf">{isRu ? "PF • Активный этаж (5 целей)" : "PF • Active Floor (5 targets)"}</option>
             <option value="as">{isRu ? "AS • Активный этаж" : "AS • Active Floor"}</option>
           </select>
+          <button
+            type="button"
+            className={`sim-buff-toggle-btn ${damageMode === "crit" ? "active" : ""}`}
+            style={{ marginLeft: "4px" }}
+            onClick={() => setDamageMode((prev) => (prev === "crit" ? "avg" : "crit"))}
+            title={
+              isRu
+                ? (damageMode === "crit" ? "Режим гарантированного критического удара (Peak Crit Hit). Нажмите для переключения на среднее мат. ожидание." : "Режим среднего мат. ожидания (Average Damage). Нажмите для переключения на пиковый крит.")
+                : (damageMode === "crit" ? "Guaranteed Critical Hit (Peak Crit). Click for expected average." : "Expected Average Damage. Click for guaranteed crit.")
+            }
+          >
+            {damageMode === "crit"
+              ? (isRu ? "⚡ ПИКОВЫЙ КРИТ" : "⚡ PEAK CRIT")
+              : (isRu ? "СРЕДНИЙ УРОН" : "AVERAGE DMG")}
+          </button>
           {!isTimelineCalculation && (
             <label className="sim-break-procs" title={isRu ? "Явное число срабатываний слабостного пробития в сценарии; урон по официальной формуле пробития, без крита" : "Explicit number of Weakness Break procs in the scenario; damage uses the official break formula, no crit"}>
               <span>{isRu ? "Пробития" : "Breaks"}</span>

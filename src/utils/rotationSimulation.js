@@ -174,6 +174,16 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
         isMinion: true
       }
     );
+  } else if (enemyMode === "pf" && primaryEnemy) {
+    while (targetData.length < 5) {
+      const idx = targetData.length;
+      targetData.push({
+        ...primaryEnemy,
+        id: `${primaryEnemy.id}-pf-target-${idx}`,
+        name: isRu ? `Цель ${idx + 1}` : `Target ${idx + 1}`,
+        isMinion: idx > 0
+      });
+    }
   }
   const enemy = {
     lv: primaryEnemy.level,
@@ -275,11 +285,14 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
     + equipmentEffects.lightConeDamage.critDamage) / 100;
   // Crit vulnerability applies only to crit instances. Fold its expected value
   // into the expected crit multiplier instead of inflating every hit.
-  const critMultiplier = calculateExpectedCritMultiplier(
-    combatCr * 100,
-    combatCd * 100,
-    teamCritVuln
-  );
+  const isCritModeGlobal = options.damageMode === "crit";
+  const critMultiplier = isCritModeGlobal
+    ? (1 + combatCd) * (1 + teamCritVuln / 100)
+    : calculateExpectedCritMultiplier(
+        combatCr * 100,
+        combatCd * 100,
+        teamCritVuln
+      );
   const combatDmgBonus = 1 + (baseDmgBoost + teamDmgBoost + elationSurgeBonus
     + equipmentEffects.lightConeDamage.allDamage
     + equipmentEffects.eidolonDamage.lowHpDamage) / 100;
@@ -460,11 +473,14 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
       // инстанс (Талант Гиацины +80%x3 урона — только для Little Ica).
       const actionDmgBonus = 1 + (baseDmgBoost + (Number(b.dmgBoost) || 0) + (kitRotation.passiveDmgBoost || 0)
         + (Number(inst.extraDmgPercent) || 0)) / 100;
-      const actionCritMultiplier = calculateExpectedCritMultiplier(
-        actionCr * 100,
-        actionCd * 100,
-        Number(b.critVuln) || 0
-      );
+      const isCritMode = options.damageMode === "crit";
+      const actionCritMultiplier = isCritMode
+        ? (1 + actionCd) * (1 + (Number(b.critVuln) || 0) / 100)
+        : calculateExpectedCritMultiplier(
+            actionCr * 100,
+            actionCd * 100,
+            Number(b.critVuln) || 0
+          );
       // inst.hpMultPercent: множитель Max HP, гарантированный структурой
       // состояния (Мидей в Vendetta: +50% Max HP — все инстансы окна).
       const instHpMult = 1 + (Number(inst.hpMultPercent) || 0) / 100;
@@ -478,7 +494,9 @@ export function runFullTeamRotationSimulation(mainChar, mainStats, squad, matche
               : combatHp * spdHpMult * instHpMult)
             : actionAtk;
       const actionKitDmgBonus = actionDmgBonus;
-      const selectedTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, Number(inst.targets) || 1)));
+      const isAoE = Number(inst.targets) >= 3 && (inst.adjacentMv === undefined || inst.adjacentMv === inst.mv);
+      const configuredTargets = isAoE && enemyMode === "pf" ? 5 : Number(inst.targets) || 1;
+      const selectedTargets = enemy.targetData.slice(0, Math.min(enemy.targetData.length, Math.max(1, configuredTargets)));
       // Бонус ЭП кита: A2 Светлячка действует только в окне CC, A6 — всегда.
       const instBeBonus = a6BeBonus + (inst.inCompleteCombustion ? kitBeBonus : 0);
       // Множитель на цель: главный таргет — inst.mv (+ BE-часть), остальные — adjacentMv
