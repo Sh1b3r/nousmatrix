@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TrophyIcon, SparklesIcon } from "./Icons.jsx";
 
-export default function DashboardNav({ lang = "ru" }) {
+export default function DashboardNav({ lang = "ru", onOpenDonate }) {
   const isRu = lang === "ru";
   const [activeSection, setActiveSection] = useState("section-overview");
 
@@ -82,10 +82,9 @@ export default function DashboardNav({ lang = "ru" }) {
             <span className="tg-text-short">Telegram</span>
           </a>
 
-          <a
-            href="https://www.privat24.ua/send/k853c"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={onOpenDonate}
             className="nav-donate-btn"
             title={isRu ? "Поддержать развитие проекта Nous Matrix" : "Support Nous Matrix development"}
           >
@@ -94,7 +93,7 @@ export default function DashboardNav({ lang = "ru" }) {
             </svg>
             <span className="donate-text-full">{isRu ? "Поддержать проект" : "Support Project"}</span>
             <span className="donate-text-short">{isRu ? "Поддержать" : "Donate"}</span>
-          </a>
+          </button>
         </div>
       </div>
     </nav>

@@ -13,6 +13,7 @@ import CombatSimulationCard from "./components/CombatSimulationCard";
 import DashboardNav from "./components/DashboardNav.jsx";
 import TrophyModal from "./components/TrophyModal";
 import LeaderboardModal from "./components/LeaderboardModal";
+import DonateModal from "./components/DonateModal";
 import { RefreshIcon } from "./components/Icons.jsx";
 import { iconUrl, handleImageFallback, calculateCharacterAudit } from "./utils/audit";
 import { getDetectedLanguage, translations } from "./utils/i18n";
@@ -134,6 +135,7 @@ export default function App() {
   const isTrophyOpenRef = useRef(false);
   const [leaderboardData, setLeaderboardData] = useState(null);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [isDonateOpen, setIsDonateOpen] = useState(false);
   const [relicsLayoutMode, setRelicsLayoutMode] = useState(() => {
     try {
       return localStorage.getItem("nousmatrix_relics_layout_mode") || "grouped";
@@ -583,6 +585,7 @@ export default function App() {
 
   const handleSelectCharacter = (idx) => {
     setActiveIndex(idx);
+    setLeaderboardData(null);
     const char = currentProfile?.characters?.[idx];
     const uid = currentProfile?.player?.uid;
     if (char) {
@@ -762,7 +765,7 @@ export default function App() {
               lang={lang}
             />
 
-            <DashboardNav lang={lang} />
+            <DashboardNav lang={lang} onOpenDonate={() => setIsDonateOpen(true)} />
 
             <div id="section-overview">
               <CharacterOverview character={activeChar} audit={audit} t={t} lang={lang} />
@@ -846,6 +849,12 @@ export default function App() {
               uid={player?.uid}
               audit={audit}
               leaderboardData={leaderboardData}
+              lang={lang}
+            />
+
+            <DonateModal
+              isOpen={isDonateOpen}
+              onClose={() => setIsDonateOpen(false)}
               lang={lang}
             />
           </section>

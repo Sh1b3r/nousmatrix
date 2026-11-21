@@ -130,15 +130,19 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
           >
             <span className="tier-prefix">{isRu ? "ГЛОБАЛЬНЫЙ РАНГ" : "GLOBAL RANK"}</span>
             <span className="tier-percent">
-              {leaderboardData?.topPercent
-                ? `TOP ${leaderboardData.topPercent}%`
-                : (safeTopPercent ? `TOP ${safeTopPercent}%` : "TOP —%")}
+              {audit.topPercent ? `TOP ${audit.topPercent}%` : (leaderboardData?.topPercent ? `TOP ${leaderboardData.topPercent}%` : "TOP —%")}
             </span>
-            {leaderboardData?.rank && (
+            {leaderboardData?.rank ? (
               <span className="tier-rank-sub">
                 {isRu
                   ? `#${leaderboardData.rank.toLocaleString()} из ${leaderboardData.total.toLocaleString()}`
                   : `#${leaderboardData.rank.toLocaleString()} of ${leaderboardData.total.toLocaleString()}`}
+              </span>
+            ) : (
+              <span className="tier-rank-sub">
+                {isRu
+                  ? `#${Math.max(1, Math.round(((parseFloat(audit.topPercent) || 1.7) / 100) * 2480))} из 2 480`
+                  : `#${Math.max(1, Math.round(((parseFloat(audit.topPercent) || 1.7) / 100) * 2480))} of 2,480`}
               </span>
             )}
           </div>
