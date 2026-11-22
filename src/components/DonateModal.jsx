@@ -1,57 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 
 export default function DonateModal({ isOpen, onClose, lang = "ru" }) {
   if (!isOpen) return null;
   const isRu = lang === "ru";
-  const [copiedKey, setCopiedKey] = useState(null);
-
-  const copyToClipboard = (text, key) => {
-    if (!text) return;
-    try {
-      navigator.clipboard.writeText(text);
-      setCopiedKey(key);
-      setTimeout(() => setCopiedKey(null), 2000);
-    } catch {
-      // fallback
-    }
-  };
 
   const paymentOptions = [
     {
       id: "privat24",
-      badge: isRu ? "Украина / Карта" : "Ukraine / Card",
-      title: "Приват24 / Mono / UAH",
-      desc: isRu ? "Прямой перевод на карту (Privat24)" : "Direct card transfer (Privat24)",
+      badge: isRu ? "Visa / Mastercard · ПриватБанк" : "Visa / Mastercard · PrivatBank",
+      title: isRu ? "Помощь бабушке" : "Help Grandma",
+      desc: isRu
+        ? "Откроется страница ПриватБанка. Выберите «Другая карта» для оплаты Visa или Mastercard. Международные карты могут зависеть от страны и банка отправителя."
+        : "Opens PrivatBank’s page. Choose “Other card” to pay by Visa or Mastercard. International card availability may depend on the sender’s country and bank.",
       icon: "💳",
       link: "https://www.privat24.ua/send/k853c",
-      actionText: isRu ? "Перейти к оплате" : "Open Payment"
+      actionText: isRu ? "Перейти к оплате картой" : "Donate by card"
     },
     {
-      id: "crypto_usdt",
-      badge: "Global / Crypto",
-      title: "USDT (TRC-20)",
-      desc: isRu ? "Быстрый перевод без комиссий банков" : "Fast crypto transfer via TRC-20",
-      icon: "₮",
-      address: "TYZ88pTz92nS8f9s3WcE6X2pG11aBcD7eF", // Placeholder clean address
-      actionText: isRu ? "Скопировать адрес" : "Copy Address"
-    },
-    {
-      id: "crypto_ton",
-      badge: "Telegram / Crypto",
-      title: "TON (The Open Network)",
-      desc: isRu ? "Через кошелёк Telegram Wallet (@wallet)" : "Via Telegram Wallet or Tonkeeper",
-      icon: "💎",
-      address: "EQB_nousmatrix_donation_ton_wallet_holder",
-      actionText: isRu ? "Скопировать адрес" : "Copy Address"
-    },
-    {
-      id: "telegram_bot",
-      badge: isRu ? "Telegram Stars / Бот" : "Telegram Stars / Bot",
-      title: "Nous Matrix Telegram",
-      desc: isRu ? "Поддержка через звёзды и донат в боте" : "Support via stars & donate in bot",
-      icon: "✈️",
-      link: "https://t.me/Nousmatrix_bot",
-      actionText: isRu ? "Открыть бота" : "Open Bot"
+      id: "international-transfer",
+      badge: isRu ? "Личные сообщения" : "Private message",
+      title: isRu ? "Иностранный перевод" : "International bank transfer",
+      desc: isRu
+        ? "Напишите мне лично — отправлю реквизиты SWIFT в ответ"
+        : "Message me privately and I’ll send the SWIFT details",
+      icon: "💬",
+      link: "https://t.me/Spani_ard",
+      actionText: isRu ? "Написать в Telegram" : "Message me on Telegram"
     }
   ];
 
@@ -68,12 +42,12 @@ export default function DonateModal({ isOpen, onClose, lang = "ru" }) {
             <span className="donate-heart-badge">💖</span>
             <div>
               <h3 className="donate-modal-title">
-                {isRu ? "Поддержать развитие Nous Matrix" : "Support Nous Matrix Development"}
+                {isRu ? "Помогите бабушке с операцией" : "Help Grandma Get Her Surgery"}
               </h3>
               <p className="donate-modal-sub">
                 {isRu
-                  ? "Сайт создаётся для игроков и содержится на личные средства без навязчивой рекламы. Ваша поддержка помогает оплачивать серверы симуляции и API."
-                  : "The project is maintained independently without intrusive ads. Your support covers compute servers and real-time APIs."}
+                  ? "Бабушке уже заменили один тазобедренный сустав, теперь нужна операция на втором. Имплант стоит около 100 000 грн. Будем благодарны за любую помощь."
+                  : "My grandmother has already had one hip replaced and now needs surgery on her other hip. The implant costs about UAH 100,000. Any support is greatly appreciated."}
               </p>
             </div>
           </div>
@@ -98,32 +72,20 @@ export default function DonateModal({ isOpen, onClose, lang = "ru" }) {
                 <div className="donate-opt-title">{opt.title}</div>
                 <div className="donate-opt-desc">{opt.desc}</div>
               </div>
-              {opt.link ? (
-                <a
-                  href={opt.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="donate-opt-btn link"
-                >
-                  {opt.actionText} ↗
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  className={`donate-opt-btn copy ${copiedKey === opt.id ? "copied" : ""}`}
-                  onClick={() => copyToClipboard(opt.address, opt.id)}
-                >
-                  {copiedKey === opt.id
-                    ? (isRu ? "Скопировано! ✓" : "Copied! ✓")
-                    : opt.actionText}
-                </button>
-              )}
+              <a
+                href={opt.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="donate-opt-btn link"
+              >
+                {opt.actionText} ↗
+              </a>
             </div>
           ))}
         </div>
 
         <div className="donate-modal-footer">
-          <span>{isRu ? "Спасибо каждому Первопроходцу за поддержку проекта! 🚀" : "Thank you to every Trailblazer for supporting us! 🚀"}</span>
+          <span>{isRu ? "Спасибо за помощь и поддержку нашей семьи! 💛" : "Thank you for helping and supporting our family! 💛"}</span>
         </div>
       </div>
     </div>

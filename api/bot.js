@@ -29,6 +29,11 @@ function detectUserLang(from, chatId) {
 const I18N = {
   ru: {
     welcomeTitle: 'Добро пожаловать в Honkai: Star Rail бота!',
+    donateBtn: '💛 Помочь бабушке',
+    donateTitle: 'Сбор на второй тазобедренный сустав',
+    donateDesc: 'Первую операцию по замене тазобедренного сустава бабушка уже перенесла. Сейчас мы собираем 100 000 грн на замену второго сустава. Спасибо за любую помощь!\n\nПеревод с иностранной карты может зависеть от страны и банка отправителя. Чтобы запросить SWIFT-реквизиты, напишите мне лично.',
+    donateLinkBtn: '💳 Открыть Банку ПриватБанка',
+    donateContactBtn: '💬 Написать мне про перевод',
     welcomeDesc: 'Отправь мне <b>UID</b> своего аккаунта (например: <code>700123456</code>).\n\nТы сможешь просматривать:\n• 👥 <b>Персонажей с витрины</b>\n• 🎯 <b>Индекс боеспособности сборки (/100) и оценку</b>\n• 📊 <b>Боевые характеристики (HP, Сила атаки, Крит. шанс/урон, Скорость)</b>\n• 🛡 <b>Реликвии (сабстаты в столбик) и бонусы наборов</b>\n• 🗡 <b>Световые конусы с полным описанием пассивного навыка</b>\n• 🔮 <b>Уровни следов и навыков</b>',
     trailblazer: 'Первопроходец',
     level: 'Уровень',
@@ -78,6 +83,11 @@ const I18N = {
   },
   en: {
     welcomeTitle: 'Welcome to Honkai: Star Rail Bot!',
+    donateBtn: '💛 Help Grandma',
+    donateTitle: 'Help Grandma Get a Second Hip Replacement',
+    donateDesc: 'My grandmother has already had her first hip replacement. We are raising UAH 100,000 for her second hip replacement. Any contribution is greatly appreciated.\n\nWhether an international card works depends on the donor’s country and card issuer. To request SWIFT details, message me privately.',
+    donateLinkBtn: '💳 Open the PrivatBank jar',
+    donateContactBtn: '💬 Message me about a transfer',
     welcomeDesc: 'Send me your account <b>UID</b> (e.g. <code>700123456</code>).\n\nYou can easily inspect:\n• 👥 <b>Showcase Characters</b>\n• 🎯 <b>Combat Readiness Index (/100) & Grade</b>\n• 📊 <b>Combat Stats (HP, ATK, CRIT, Speed, etc.)</b>\n• 🛡 <b>Relics (column substats) & Set Bonuses</b>\n• 🗡 <b>Light Cones with full passive skill effect</b>\n• 🔮 <b>Trace & Skill levels</b>',
     trailblazer: 'Trailblazer',
     level: 'Level',
@@ -127,6 +137,11 @@ const I18N = {
   },
   uk: {
     welcomeTitle: 'Вітаю у Honkai: Star Rail боті!',
+    donateBtn: '💛 Допомогти бабусі',
+    donateTitle: 'Збір на другий кульшовий суглоб',
+    donateDesc: 'Бабуся вже перенесла першу операцію із заміни кульшового суглоба. Зараз ми збираємо 100 000 грн на заміну другого суглоба. Будемо вдячні за будь-яку допомогу!\n\nМожливість переказу з іноземної картки залежить від країни та банку відправника. Щоб запросити SWIFT-реквізити, напишіть мені особисто.',
+    donateLinkBtn: '💳 Відкрити Банку ПриватБанку',
+    donateContactBtn: '💬 Написати мені про переказ',
     welcomeDesc: 'Надішли мені <b>UID</b> свого акаунту (наприклад: <code>700123456</code>).\n\nТи зможеш зручно переглядати:\n• 👥 <b>Персонажів з вітрини</b>\n• 🎯 <b>Індекс боєздатності білда (/100) та оцінку</b>\n• 📊 <b>Характеристики (HP, ATK, Крит. шанс/шкода, Швидкість)</b>\n• 🛡 <b>Реліквії (сабстати в стовпчик) та бонуси сетів</b>\n• 🗡 <b>Світлові конуси з повною пасивною навичкою</b>\n• 🔮 <b>Рівні слідів та навичок</b>',
     trailblazer: 'Першопроходець',
     level: 'Рівень',
@@ -175,6 +190,22 @@ const I18N = {
     invalidUid: 'Будь ласка, надішліть числовий <b>UID</b> (наприклад: <code>700123456</code>).'
   }
 };
+
+const PRIVAT_DONATION_URL = 'https://www.privat24.ua/send/k853c';
+const DONATION_CONTACT_URL = 'https://t.me/Spani_ard';
+
+function buildDonationScreen(lang = 'ru') {
+  const t = I18N[lang] || I18N.ru;
+  const keyboard = [
+    [{ text: t.donateLinkBtn, url: PRIVAT_DONATION_URL }],
+    [{ text: t.donateContactBtn, url: DONATION_CONTACT_URL }]
+  ];
+
+  return {
+    text: `💛 <b>${t.donateTitle}</b>\n\n${t.donateDesc}`,
+    reply_markup: { inline_keyboard: keyboard }
+  };
+}
 
 const SLOT_NAMES = {
   ru: { 1: '👑 Голова', 2: '🧤 Руки', 3: '👕 Тело', 4: '👟 Ноги (Сапоги)', 5: '🔮 Планарная сфера', 6: '🎗 Соединительная вервь' },
@@ -690,6 +721,17 @@ export default async function handler(req, res) {
       const parts = data.split(':');
       const action = parts[0];
 
+      if (action === 'donate') {
+        const screen = buildDonationScreen(userLang);
+        await sendTg('sendMessage', {
+          chat_id: chatId,
+          text: screen.text,
+          parse_mode: 'HTML',
+          reply_markup: screen.reply_markup
+        });
+        return res.status(200).json({ ok: true });
+      }
+
       // Перемикання мови по кнопці (ru -> en -> uk -> ru)
       if (action === 'lang') {
         const uid = parts[1];
@@ -833,7 +875,21 @@ ${t.welcomeDesc}
     await sendTg('sendMessage', {
       chat_id: chatId,
       text: welcome,
-      parse_mode: 'HTML'
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [[{ text: t.donateBtn, callback_data: 'donate' }]]
+      }
+    });
+    return res.status(200).json({ ok: true });
+  }
+
+  if (rawText === '/donate') {
+    const screen = buildDonationScreen(userLang);
+    await sendTg('sendMessage', {
+      chat_id: chatId,
+      text: screen.text,
+      parse_mode: 'HTML',
+      reply_markup: screen.reply_markup
     });
     return res.status(200).json({ ok: true });
   }
