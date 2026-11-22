@@ -501,6 +501,7 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
 
   const isHarmony = path === "Shaman" || path === "Harmony";
   const isMemory = path === "Memory" || path === "Remembrance";
+  const isElation = path === "Joy" || path === "Elation" || path === "Aha";
   const isYaoGuangChar = lowerName.includes("яо") || lowerName.includes("yao") || lowerName.includes("гуан") || lowerName.includes("guang") || lowerName.includes("爻光") || charId === "1502";
   const isSunday = charId === "1313" || lowerName.includes("воскресенье") || lowerName.includes("sunday");
   const isRobinSummeretto = charId === "1512" || lowerName.includes("summeretto");
@@ -511,7 +512,8 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
   const isTingyun = charId === "1202" || lowerName.includes("тинъюнь") || lowerName.includes("тиньъюнь") || lowerName.includes("tingyun");
 
   const isSupportChar = isHarmony || isYaoGuangChar || isSunday || isRobin || isRuanMei || isSparkle || isBronya || isTingyun ||
-    (isMemory && (isErrRope || hasSupportPlanar || (spd >= 145 && cr >= 45) || err > 0));
+    (isMemory && (isErrRope || hasSupportPlanar || (spd >= 145 && cr >= 45) || err > 0)) ||
+    (isElation && (isErrRope || hasSupportPlanar || isYaoGuangChar || spd >= 150));
 
   if (isSupportChar) {
     if (isYaoGuangChar || (spd >= 155 && cr >= 45)) {
@@ -519,10 +521,10 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         type: "SUPPORT",
         role: "SUPPORT",
         icon: "buffer",
-        labelRu: "САППОРТ (СКОРОСТЬ И АУРА)",
-        labelEn: "SUPPORT (SPEED & AURA)",
-        descRu: "Сборка на гиперскоростное продвижение отряда (+40% AV), генерацию SP и командную ауру критов (+20% КШ / +50% КУ).",
-        descEn: "Built for hyperspeed action advance (+40% AV), SP battery, and team crit aura (+20% CR / +50% CD).",
+        labelRu: "САППОРТ РАДОСТИ (СКОРОСТЬ И АУРА)",
+        labelEn: "ELATION SUPPORT (SPEED & AURA)",
+        descRu: "Сборка Пути Радости на гиперскоростное продвижение отряда (+40% AV), генерацию SP и командную ауру критов (+20% КШ / +50% КУ).",
+        descEn: "Path of Elation build for hyperspeed action advance (+40% AV), SP battery, and team crit aura (+20% CR / +50% CD).",
         targetArchetype: "HARMONY_SPD"
       });
     }
