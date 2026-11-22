@@ -514,7 +514,7 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru", optio
       metric1Value: isSpeedCap ? "+40.0% AV (160+ SPD)" : "+25.0% AV",
       metric2Label: isRu ? "ГЕНЕРАЦИЯ ОЧКОВ НАВЫКОВ" : "SKILL POINT GENERATION",
       metric2Value: "+4 SP ЗА РОТАЦИЮ",
-      metric3Label: isRu ? "КОМАНДНАЯ КРИТ. АУРА" : "TEAM CRIT RATE & DMG AURA",
+      metric3Label: isRu ? "ЗОНА БАФФА КРИТОВ" : "CRIT BUFF ZONE",
       metric3Value: "+20% КШ • +50% КУ ОТРЯДУ",
       teamDpsAmp: `+${teamDpsAmp}%`,
       teamUtilityBadges: [
@@ -529,13 +529,13 @@ function runCombatSimulationHeuristic(char, stats, archetype, lang = "ru", optio
           desc: isRu ? "Полностью покрывает расход SP для прожорливых ДПС вроде Дань Хэна ПЛ или Ахерон." : "Completely covers heavy SP consumption for Dan Heng IL or Acheron."
         },
         {
-          label: isRu ? "КРИТИЧЕСКАЯ АУРА СВЕТА" : "CRIT RATE & DMG AURA",
+          label: isRu ? "ЗОНА УСИЛЕНИЯ КРИТОВ" : "CRIT BUFF ZONE",
           value: isRu ? "+20% Крит. шанс • +50% Крит. урон" : "+20% Crit Rate • +50% Crit DMG",
-          desc: isRu ? "При соблюдении порога 70% КШ даёт мощную ауру урона для всех союзников." : "Aura granting +20% CR / +50% CD to whole team when 70% CR reached."
+          desc: isRu ? "При соблюдении порога 70% КШ активирует командную Зону баффа урона для всех союзников." : "Activates teamwide Crit Buff Zone (+20% CR / +50% CD) when reaching 70% CR."
         }
       ],
-      summaryRu: `Яо Гуан обеспечивает гиперскоростное продвижение отряда (+40% AV при скорости ${spd.toFixed(1)} SPD), генерирует +4 SP за ротацию и даёт ауру +20% КШ и +50% КУ всей команде.`,
-      summaryEn: `Yao Guang delivers hyperspeed team advance (+40% AV at ${spd.toFixed(1)} SPD), feeds +4 SP per cycle and empowers team with +20% CR and +50% CD aura.`
+      summaryRu: `Яо Гуан обеспечивает гиперскоростное продвижение отряда (+40% AV при скорости ${spd.toFixed(1)} SPD), генерирует +4 SP за ротацию и активирует Зону с +20% КШ и +50% КУ для всей команды.`,
+      summaryEn: `Yao Guang delivers hyperspeed team advance (+40% AV at ${spd.toFixed(1)} SPD), feeds +4 SP per cycle and empowers team with a +20% CR and +50% CD buff Zone.`
     };
   }
   if (isRobin) {

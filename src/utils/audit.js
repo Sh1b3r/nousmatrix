@@ -521,10 +521,10 @@ export function detectCharacterBuildRole(char, stats, relics = [], lang = "ru") 
         type: "SUPPORT",
         role: "SUPPORT",
         icon: "buffer",
-        labelRu: "САППОРТ РАДОСТИ (СКОРОСТЬ И АУРА)",
-        labelEn: "ELATION SUPPORT (SPEED & AURA)",
-        descRu: "Сборка Пути Радости на гиперскоростное продвижение отряда (+40% AV), генерацию SP и командную ауру критов (+20% КШ / +50% КУ).",
-        descEn: "Path of Elation build for hyperspeed action advance (+40% AV), SP battery, and team crit aura (+20% CR / +50% CD).",
+        labelRu: "САППОРТ РАДОСТИ (СКОРОСТЬ И ЗОНА БАФФА)",
+        labelEn: "ELATION BUFFER (SPEED & CRIT ZONE)",
+        descRu: "Сборка Пути Радости на гиперскоростное продвижение отряда (+40% AV), генерацию SP и командную Зону усиления критов (+20% КШ / +50% КУ).",
+        descEn: "Path of Elation build for hyperspeed action advance (+40% AV), SP battery, and teamwide Crit Buff Zone (+20% CR / +50% CD).",
         targetArchetype: "HARMONY_SPD"
       });
     }
@@ -712,8 +712,8 @@ export function evaluateRelicMainStat(relic, archetype, char) {
           scoreBonus: -18,
           labelRu: "НЕПОДХОДЯЩИЙ СТАТ",
           labelEn: "WRONG MAIN STAT",
-          recommendedRu: "Крит. Шанс (для командной ауры Яо Гуан) или HP%/Защита%",
-          recommendedEn: "CRIT Rate (for Yao Guang team aura) or HP%/DEF%"
+          recommendedRu: "Крит. Шанс (для Зоны баффа Яо Гуан) или HP%/Защита%",
+          recommendedEn: "CRIT Rate (for Yao Guang's Buff Zone) or HP%/DEF%"
         };
       case "HARMONY_CRIT":
         if (field === "crit_dmg") {
@@ -2072,10 +2072,10 @@ export function calculateCharacterAudit(char, lang = "ru") {
           desc: isRu ? "Установите сапоги на Скорость и доберите сабстаты скорости." : "Equip SPD boots and prioritize speed substats."
         });
       } else if (isYaoGuang && cr < 50) {
-        bottleneck = isRu ? `Крит. шанс (${cr}%) ниже порога 50-70% для активации командной крит-ауры (+20% КШ / +50% КУ).` : `CRIT Rate (${cr}%) is below the 50-70% threshold required to activate +20% CR / +50% CD team aura.`;
+        bottleneck = isRu ? `Крит. шанс (${cr}%) ниже порога 50-70% для активации Зоны усиления критов отряда (+20% КШ / +50% КУ).` : `CRIT Rate (${cr}%) is below the 50-70% threshold required to activate the +20% CR / +50% CD team buff Zone.`;
         actions.push({
           title: isRu ? "Приоритет: 70.0% Крит. шанса" : "Priority: 70.0% CRIT Rate",
-          desc: isRu ? "Используйте тело на Крит. шанс и сабстаты КШ для командной ауры +20% КШ / +50% КУ." : "Equip CRIT Rate body and CR substats for +20% CR / +50% CD team aura."
+          desc: isRu ? "Используйте тело на Крит. шанс и сабстаты КШ для Зоны усиления команды (+20% КШ / +50% КУ)." : "Equip CRIT Rate body and CR substats for the +20% CR / +50% CD team buff Zone."
         });
       } else if (err < 19.4) {
         bottleneck = isRu ? `Отсутствует вервь на Восстановление энергии (+19.4% ВЭ). Ультимейт заряжается медленнее.` : `Missing Energy Regeneration Rate rope (+19.4% ERR). Ultimate uptime is delayed.`;
