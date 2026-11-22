@@ -431,12 +431,6 @@ export default function App() {
       } catch (err) {
         console.warn("API fetch warning:", err);
       }
-      if (!data && !forceRefresh) {
-        const localizedPresets = await getLocalizedPresets(lang);
-        if (localizedPresets && localizedPresets[uid]) {
-          data = localizedPresets[uid];
-        }
-      }
       if (!data && lastStatus !== 404) {
         try {
           const directController = new AbortController();
@@ -452,6 +446,15 @@ export default function App() {
             data = await directRes.json();
           }
         } catch {
+        }
+      }
+      // Presets are a recovery path for known demo profiles. Keep their large
+      // chunk off the critical UID lookup path so a failed API request can
+      // retry Mihomo immediately instead of waiting for that download.
+      if (!data && !forceRefresh) {
+        const localizedPresets = await getLocalizedPresets(lang);
+        if (localizedPresets && localizedPresets[uid]) {
+          data = localizedPresets[uid];
         }
       }
       if (data) {

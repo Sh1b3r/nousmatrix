@@ -21,6 +21,7 @@ const AVERAGE_ROLL = {
 const SIMULATED_DAMAGE_ARCHETYPES = new Set([
   "CRIT_DPS", "HP_CRIT_DPS", "BREAK_DPS", "MORTENAX_HYBRID"
 ]);
+const marginalDamageCache = new WeakMap();
 
 function readBaseStat(character, field) {
   return Number((character?.attributes || []).find((entry) => entry.field === field)?.value || 0);
@@ -64,9 +65,20 @@ function rollKey(substat) {
  */
 export function calculateMarginalDamageWeights(character, stats, archetype, lang = "ru") {
   if (!SIMULATED_DAMAGE_ARCHETYPES.has(archetype)) return null;
+  // Reuse the result across dashboard, roster, and repeated React renders.
+  const cacheKey = `${lang}:${archetype}:${JSON.stringify(stats)}`;
+  let characterCache = marginalDamageCache.get(character);
+  if (characterCache?.has(cacheKey)) return characterCache.get(cacheKey);
+  if (!characterCache) {
+    characterCache = new Map();
+    marginalDamageCache.set(character, characterCache);
+  }
   const baseResult = runCombatSimulation(character, stats, archetype, lang);
   const baseDamage = Number(baseResult?.personalDpa);
-  if (!Number.isFinite(baseDamage) || baseDamage <= 0) return null;
+  if (!Number.isFinite(baseDamage) || baseDamage <= 0) {
+    characterCache.set(cacheKey, null);
+    return null;
+  }
 
   const candidates = [
     { field: "atk", percent: false }, { field: "atk", percent: true },
@@ -86,8 +98,11 @@ export function calculateMarginalDamageWeights(character, stats, archetype, lang
     maxGain = Math.max(maxGain, gains[key]);
   }
 
-  if (maxGain <= 0) return null;
-  return {
+  if (maxGain <= 0) {
+    characterCache.set(cacheKey, null);
+    return null;
+  }
+  const result = {
     baseDamage,
     weights: Object.fromEntries(Object.entries(gains).map(([key, gain]) => [key, gain / maxGain])),
     rollGains: Object.fromEntries(Object.entries(gains).map(([key, gain]) => [key, {
@@ -95,6 +110,9 @@ export function calculateMarginalDamageWeights(character, stats, archetype, lang
       percent: gain / baseDamage * 100
     }]))
   };
+  if (characterCache.size >= 8) characterCache.delete(characterCache.keys().next().value);
+  characterCache.set(cacheKey, result);
+  return result;
 }
 
 export function getMarginalDamageRollWeight(substat, result) {

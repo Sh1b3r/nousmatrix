@@ -25,6 +25,13 @@ const KNOWN_NEW_SETS = {
   }
 };
 
+function fetchWithTimeout(url, options, timeoutMs) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { ...options, signal: controller.signal })
+    .finally(() => clearTimeout(timeoutId));
+}
+
 export default async function handler(req, res) {
   const { uid, lang = 'en' } = req.query;
   const cleanUid = String(uid || '').trim().replace(/\D/g, '');
@@ -56,9 +63,11 @@ export default async function handler(req, res) {
       outgoingHeaders['Pragma'] = 'no-cache';
     }
 
-    const response = await fetch(`https://api.mihomo.me/sr_info_parsed/${cleanUid}?lang=${targetLang}${forceParam}${cacheBuster}`, {
-      headers: outgoingHeaders
-    });
+    const response = await fetchWithTimeout(
+      `https://api.mihomo.me/sr_info_parsed/${cleanUid}?lang=${targetLang}${forceParam}${cacheBuster}`,
+      { headers: outgoingHeaders },
+      8000
+    );
 
     if (!response.ok) {
       return res.status(response.status).json({
@@ -95,9 +104,11 @@ export default async function handler(req, res) {
 
       if (stillMissingPlanar) {
         try {
-          const rawRes = await fetch(`https://api.mihomo.me/sr_info/${cleanUid}${forceParam}${cacheBuster}`, {
-            headers: outgoingHeaders
-          });
+          const rawRes = await fetchWithTimeout(
+            `https://api.mihomo.me/sr_info/${cleanUid}${forceParam}${cacheBuster}`,
+            { headers: outgoingHeaders },
+            1800
+          );
           if (rawRes.ok) {
             const rawData = await rawRes.json();
             const rawAvatars = rawData.detailInfo?.avatarDetailList || [];
@@ -165,9 +176,11 @@ export default async function handler(req, res) {
 
         if (stillMissingPlanar) {
           try {
-            const enkaRes = await fetch(`https://enka.network/api/hsr/uid/${cleanUid}`, {
-              headers: { 'User-Agent': 'NousMatrix/1.0' }
-            });
+            const enkaRes = await fetchWithTimeout(
+              `https://enka.network/api/hsr/uid/${cleanUid}`,
+              { headers: { 'User-Agent': 'NousMatrix/1.0' } },
+              1800
+            );
             if (enkaRes.ok) {
               const enkaData = await enkaRes.json();
               const enkaAvatars = enkaData.detailInfo?.avatarDetailList || [];
@@ -231,7 +244,9 @@ export default async function handler(req, res) {
     if (isForce) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     } else {
-      res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
+      // Vercel's edge cache serves common UID lookups without invoking this
+      // function; stale data is returned while the CDN refreshes it in back.
+      res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400');
     }
     return res.status(200).json(data);
   } catch (err) {
