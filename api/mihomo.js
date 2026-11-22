@@ -25,6 +25,57 @@ const KNOWN_NEW_SETS = {
   }
 };
 
+// StarRailRes republishes the client resource tables by locale. We only load
+// this fallback catalog when an upstream profile omits a piece name or returns
+// the set name in its place. Normal Mihomo responses already carry this name.
+const relicCatalogCache = new Map();
+
+async function getRelicCatalog(lang) {
+  const targetLang = lang === 'ru' ? 'ru' : 'en';
+  if (relicCatalogCache.has(targetLang)) return relicCatalogCache.get(targetLang);
+
+  try {
+    const response = await fetchWithTimeout(
+      `https://cdn.jsdelivr.net/gh/Mar-7th/StarRailRes@master/index_new/${targetLang}/relics.json`,
+      { headers: { 'User-Agent': 'NousMatrix/1.0' } },
+      3500
+    );
+    const catalog = response.ok ? await response.json() : {};
+    relicCatalogCache.set(targetLang, catalog);
+    return catalog;
+  } catch {
+    return {};
+  }
+}
+
+function resourceRelicName(catalog, relicId, fallback = '') {
+  const exactName = catalog?.[String(relicId || '')]?.name;
+  return typeof exactName === 'string' && exactName.trim() ? exactName : fallback;
+}
+
+function profileNeedsRelicCatalog(data) {
+  return (data?.characters || []).some((character) =>
+    [...(character.relics || []), ...(character.ornaments || [])].some((relic) => {
+      const name = String(relic?.name || '').trim();
+      const setName = String(relic?.set_name || '').trim();
+      return !name || Boolean(setName && name === setName);
+    })
+  );
+}
+
+function hydrateMissingRelicNames(data, catalog) {
+  if (!catalog || !data?.characters) return;
+  data.characters.forEach((character) => {
+    [...(character.relics || []), ...(character.ornaments || [])].forEach((relic) => {
+      const name = String(relic?.name || '').trim();
+      const setName = String(relic?.set_name || '').trim();
+      if (!name || (setName && name === setName)) {
+        relic.name = resourceRelicName(catalog, relic.id || relic.tid, name || setName);
+      }
+    });
+  });
+}
+
 function fetchWithTimeout(url, options, timeoutMs) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -78,6 +129,15 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // Preserve Mihomo's localized value whenever it is present. The catalog is
+    // used only to repair incomplete item records, never to replace a valid
+    // profile item name.
+    let relicCatalog = null;
+    if (profileNeedsRelicCatalog(data)) {
+      relicCatalog = await getRelicCatalog(targetLang);
+      hydrateMissingRelicNames(data, relicCatalog);
+    }
+
     // 1. Ensure ornaments are merged into relics if Mihomo returned them in separate arrays
     if (data && Array.isArray(data.characters)) {
       data.characters.forEach(c => {
@@ -104,6 +164,7 @@ export default async function handler(req, res) {
 
       if (stillMissingPlanar) {
         try {
+          if (!relicCatalog) relicCatalog = await getRelicCatalog(targetLang);
           const rawRes = await fetchWithTimeout(
             `https://api.mihomo.me/sr_info/${cleanUid}${forceParam}${cacheBuster}`,
             { headers: outgoingHeaders },
@@ -130,11 +191,11 @@ export default async function handler(req, res) {
                       ? (setDef?.nameRu || 'Планарный орнамент')
                       : (setDef?.nameEn || 'Planar Ornament');
 
-                    let pieceName = setName;
+                    let pieceName = resourceRelicName(relicCatalog, tid, '');
                     if (typeNum === 5) {
-                      pieceName = isRu ? (KNOWN_NEW_SETS[setId]?.sphereRu || `${setName}: Сфера`) : (KNOWN_NEW_SETS[setId]?.sphereEn || `${setName}: Sphere`);
+                      pieceName = pieceName || (isRu ? (KNOWN_NEW_SETS[setId]?.sphereRu || `${setName}: Сфера`) : (KNOWN_NEW_SETS[setId]?.sphereEn || `${setName}: Sphere`));
                     } else if (typeNum === 6) {
-                      pieceName = isRu ? (KNOWN_NEW_SETS[setId]?.ropeRu || `${setName}: Вервь`) : (KNOWN_NEW_SETS[setId]?.ropeEn || `${setName}: Rope`);
+                      pieceName = pieceName || (isRu ? (KNOWN_NEW_SETS[setId]?.ropeRu || `${setName}: Вервь`) : (KNOWN_NEW_SETS[setId]?.ropeEn || `${setName}: Rope`));
                     }
 
                     c.relics.push({
@@ -176,6 +237,7 @@ export default async function handler(req, res) {
 
         if (stillMissingPlanar) {
           try {
+            if (!relicCatalog) relicCatalog = await getRelicCatalog(targetLang);
             const enkaRes = await fetchWithTimeout(
               `https://enka.network/api/hsr/uid/${cleanUid}`,
               { headers: { 'User-Agent': 'NousMatrix/1.0' } },
@@ -202,11 +264,11 @@ export default async function handler(req, res) {
                         ? (setDef?.nameRu || 'Планарный орнамент')
                         : (setDef?.nameEn || 'Planar Ornament');
 
-                      let pieceName = setName;
+                      let pieceName = resourceRelicName(relicCatalog, tid, '');
                       if (typeNum === 5) {
-                        pieceName = isRu ? (KNOWN_NEW_SETS[setId]?.sphereRu || `${setName}: Сфера`) : (KNOWN_NEW_SETS[setId]?.sphereEn || `${setName}: Sphere`);
+                        pieceName = pieceName || (isRu ? (KNOWN_NEW_SETS[setId]?.sphereRu || `${setName}: Сфера`) : (KNOWN_NEW_SETS[setId]?.sphereEn || `${setName}: Sphere`));
                       } else if (typeNum === 6) {
-                        pieceName = isRu ? (KNOWN_NEW_SETS[setId]?.ropeRu || `${setName}: Вервь`) : (KNOWN_NEW_SETS[setId]?.ropeEn || `${setName}: Rope`);
+                        pieceName = pieceName || (isRu ? (KNOWN_NEW_SETS[setId]?.ropeRu || `${setName}: Вервь`) : (KNOWN_NEW_SETS[setId]?.ropeEn || `${setName}: Rope`));
                       }
 
                       c.relics.push({

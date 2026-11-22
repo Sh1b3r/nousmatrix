@@ -729,6 +729,10 @@ export default function TrophyModal({
 
                     const relicSetInfo = resolveRelicSetInfo(piece, lang);
                     const relicSetName = relicSetInfo?.name || (isRu ? "Неизвестный набор" : "Unknown Set");
+                    const rawPieceName = String(piece.name || "").trim();
+                    const alternatePieceName = String(piece.relic_name || "").trim();
+                    const rawNameIsSet = rawPieceName && rawPieceName === String(piece.set_name || "").trim();
+                    const relicPieceName = (!rawNameIsSet ? rawPieceName : alternatePieceName) || rawPieceName || relicSetName;
                     const relicEff = getRelicEfficiency(piece);
 
                     return (
@@ -739,7 +743,7 @@ export default function TrophyModal({
                               <img
                                 className="showcase-relic-icon-img"
                                 src={iconUrl(piece.icon)}
-                                alt={piece.name || relicSetName}
+                                alt={relicPieceName}
                                 crossOrigin="anonymous"
                                 onError={(e) => handleImageFallback(e, piece.icon)}
                               />
@@ -760,7 +764,7 @@ export default function TrophyModal({
                                 </span>
                               )}
                             </div>
-                            <span className="relic-name-truncate" title={relicSetName}>{relicSetName}</span>
+                            <span className="relic-name-truncate" title={relicPieceName}>{relicPieceName}</span>
                           </div>
                         </div>
 
