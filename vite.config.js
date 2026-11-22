@@ -214,6 +214,32 @@ export default defineConfig({
       }
     }
   ],
+  build: {
+    // The telemetry dataset is lazy-loaded with the simulation panel. Its
+    // compressed transfer size is about 53 kB, so use a limit that reflects
+    // the intentionally large source dataset rather than flagging it on each build.
+    chunkSizeWarningLimit: 1800,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom"],
+          "team-data": [
+            "./src/data/teamStatistics.json",
+            "./src/utils/teamSynergy.js"
+          ],
+          "rotations": ["./src/data/rotations.js"],
+          "simulation": [
+            "./src/utils/simulation.js",
+            "./src/utils/rotationSimulation.js",
+            "./src/utils/combatTimeline.js",
+            "./src/utils/combatEquipmentEffects.js"
+          ],
+          "audit-chunk": ["./src/utils/audit.js"],
+          "set-definitions": ["./src/utils/setDefinitions.js"]
+        }
+      }
+    }
+  },
   server: {
     port: 3e3
   }

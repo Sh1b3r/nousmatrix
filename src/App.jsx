@@ -9,11 +9,11 @@ import SetBonuses from "./components/SetBonuses";
 import AuditPanel from "./components/AuditPanel";
 import OverallScorePanel from "./components/OverallScorePanel";
 import RelicsAuditPanel from "./components/RelicsAuditPanel.jsx";
-import CombatSimulationCard from "./components/CombatSimulationCard";
 import DashboardNav from "./components/DashboardNav.jsx";
-import TrophyModal from "./components/TrophyModal";
-import LeaderboardModal from "./components/LeaderboardModal";
-import DonateModal from "./components/DonateModal";
+const CombatSimulationCard = React.lazy(() => import("./components/CombatSimulationCard"));
+const TrophyModal = React.lazy(() => import("./components/TrophyModal"));
+const LeaderboardModal = React.lazy(() => import("./components/LeaderboardModal"));
+const DonateModal = React.lazy(() => import("./components/DonateModal"));
 import { RefreshIcon } from "./components/Icons.jsx";
 import { iconUrl, handleImageFallback, calculateCharacterAudit } from "./utils/audit";
 import { getDetectedLanguage, translations } from "./utils/i18n";
@@ -819,44 +819,48 @@ export default function App() {
                   <SetBonuses character={activeChar} t={t} lang={lang} />
                 </div>
                 <div id="section-simulation">
-                  <CombatSimulationCard
-                    character={activeChar}
-                    audit={audit}
-                    stats={audit?.stats}
-                    showcase={currentProfile?.characters || []}
-                    lang={lang}
-                  />
+                  <React.Suspense fallback={null}>
+                    <CombatSimulationCard
+                      character={activeChar}
+                      audit={audit}
+                      stats={audit?.stats}
+                      showcase={currentProfile?.characters || []}
+                      lang={lang}
+                    />
+                  </React.Suspense>
                 </div>
               </div>
             </div>
 
-            <TrophyModal
-              isOpen={isTrophyOpen}
-              onClose={handleCloseTrophy}
-              character={activeChar}
-              audit={audit}
-              uid={player?.uid}
-              t={t}
-              lang={lang}
-              layoutMode={relicsLayoutMode}
-              onLayoutModeChange={handleRelicsLayoutModeChange}
-            />
+            <React.Suspense fallback={null}>
+              <TrophyModal
+                isOpen={isTrophyOpen}
+                onClose={handleCloseTrophy}
+                character={activeChar}
+                audit={audit}
+                uid={player?.uid}
+                t={t}
+                lang={lang}
+                layoutMode={relicsLayoutMode}
+                onLayoutModeChange={handleRelicsLayoutModeChange}
+              />
 
-            <LeaderboardModal
-              isOpen={isLeaderboardOpen}
-              onClose={() => setIsLeaderboardOpen(false)}
-              character={activeChar}
-              uid={player?.uid}
-              audit={audit}
-              leaderboardData={leaderboardData}
-              lang={lang}
-            />
+              <LeaderboardModal
+                isOpen={isLeaderboardOpen}
+                onClose={() => setIsLeaderboardOpen(false)}
+                character={activeChar}
+                uid={player?.uid}
+                audit={audit}
+                leaderboardData={leaderboardData}
+                lang={lang}
+              />
 
-            <DonateModal
-              isOpen={isDonateOpen}
-              onClose={() => setIsDonateOpen(false)}
-              lang={lang}
-            />
+              <DonateModal
+                isOpen={isDonateOpen}
+                onClose={() => setIsDonateOpen(false)}
+                lang={lang}
+              />
+            </React.Suspense>
           </section>
         )}
       </main>
