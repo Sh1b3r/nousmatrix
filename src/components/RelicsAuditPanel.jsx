@@ -19,11 +19,15 @@ export function RelicsAuditPanel({
   const totalUseful = cavernUseful + planarUseful;
   const totalRolls = cavernTotal + planarTotal;
 
-  const cavernEff = Number(cavern?.efficiency || 0);
-  const planarEff = Number(planar?.efficiency || 0);
-  const combinedEfficiency = totalRolls > 0
-    ? Math.round((cavernEff * cavernTotal + planarEff * planarTotal) / totalRolls)
-    : (cavernEff || planarEff || 0);
+  const cavernQuality = Number(cavern?.rollQuality ?? cavern?.efficiency ?? 0);
+  const planarQuality = Number(planar?.rollQuality ?? planar?.efficiency ?? 0);
+  const combinedQuality = Number(
+    audit.rollQuality ?? (
+      totalRolls > 0
+        ? (cavernQuality * cavernTotal + planarQuality * planarTotal) / totalRolls
+        : (cavernQuality || planarQuality || 0)
+    )
+  ).toFixed(1);
 
   // Критмасса высчитывается и показывается ТОЛЬКО тем, кому она нужна (ДД)
   const needsCrit = Boolean(
@@ -81,15 +85,15 @@ export function RelicsAuditPanel({
 
               <div className="metric-row" style={{ marginTop: "10px" }}>
                 <div className="metric-label-line">
-                  <span>{isRu ? "Качество роллов всех слотов (6 реликвий)" : "All Relics Roll Quality (6 Relics)"}</span>
+                  <span title={isRu ? "Фактические значения всех проков относительно максимумов 5★. Полезность статов для персонажа показана отдельным счётчиком выше." : "Actual values of all rolls relative to 5★ maxima. Character-specific stat usefulness is shown separately above."}>{isRu ? "Качество значений проков (6 реликвий)" : "Roll Value Quality (6 Relics)"}</span>
                   <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--accent)" }}>
-                    {combinedEfficiency}%
+                    {combinedQuality}%
                   </span>
                 </div>
                 <div className="metric-bar-bg">
                   <div
                     className="metric-bar-fill accent"
-                    style={{ width: `${combinedEfficiency}%` }}
+                    style={{ width: `${combinedQuality}%` }}
                   />
                 </div>
               </div>
@@ -145,13 +149,13 @@ export function RelicsAuditPanel({
                   </div>
                   <div className="metric-row" style={{ marginTop: "10px" }}>
                     <div className="metric-label-line">
-                      <span>{isRu ? "Качество роллов пещерных сетов (Голова + Руки + Тело + Сапоги)" : "Cavern Relics Roll Quality"}</span>
+                      <span title={isRu ? "Значения проков относительно максимумов 5★; каждый начальный и дополнительный прок учитывается отдельно." : "Roll values relative to 5★ maxima; every initial and upgrade roll is weighted individually."}>{isRu ? "Качество значений проков пещерных реликвий" : "Cavern Roll Value Quality"}</span>
                       <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--accent)" }}>
-                        {cavern.efficiency}%
+                        {cavernQuality}%
                       </span>
                     </div>
                     <div className="metric-bar-bg">
-                      <div className="metric-bar-fill accent" style={{ width: `${cavern.efficiency}%` }} />
+                      <div className="metric-bar-fill accent" style={{ width: `${cavernQuality}%` }} />
                     </div>
                   </div>
                   {needsCrit && cavern.cv && parseFloat(cavern.cv) > 0 && (
@@ -197,13 +201,13 @@ export function RelicsAuditPanel({
                   </div>
                   <div className="metric-row" style={{ marginTop: "10px" }}>
                     <div className="metric-label-line">
-                      <span>{isRu ? "Качество роллов планарок (Сфера + Вервь)" : "Planar Roll Quality"}</span>
+                      <span title={isRu ? "Значения проков относительно максимумов 5★; каждый начальный и дополнительный прок учитывается отдельно." : "Roll values relative to 5★ maxima; every initial and upgrade roll is weighted individually."}>{isRu ? "Качество значений проков планарок" : "Planar Roll Value Quality"}</span>
                       <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--accent)" }}>
-                        {planar.efficiency}%
+                        {planarQuality}%
                       </span>
                     </div>
                     <div className="metric-bar-bg">
-                      <div className="metric-bar-fill accent" style={{ width: `${planar.efficiency}%` }} />
+                      <div className="metric-bar-fill accent" style={{ width: `${planarQuality}%` }} />
                     </div>
                   </div>
                   {needsCrit && planar.cv && parseFloat(planar.cv) > 0 && (

@@ -1912,6 +1912,7 @@ main {
 }
 
 .overall-status-dot {
+  flex: 0 0 6px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -5676,11 +5677,12 @@ main {
 }
 
 .score-provenance-footer .prov-dot {
+  flex: 0 0 6px;
   width: 6px;
   height: 6px;
+  aspect-ratio: 1;
   border-radius: 50%;
   background: var(--text-tertiary);
-  flex-shrink: 0;
 }
 
 .sim-provenance-tag {

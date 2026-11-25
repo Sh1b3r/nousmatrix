@@ -1,4 +1,76 @@
 import { Redis } from '@upstash/redis';
+import { calculateCharacterAudit } from '../src/utils/audit.js';
+import { runFullTeamRotationSimulation } from '../src/utils/rotationSimulation.js';
+import {
+  checkDamageScenarioEligibility,
+  getDamageLeaderboardScenario,
+  toPublicDamageScenario
+} from '../src/data/damageLeaderboardScenarios.js';
+
+// A board is deliberately scoped to one character and one calculation version.
+// Do not reuse a key after changing the score formula: create the next version
+// instead, so historical placements never mix incompatible measurements.
+const BUILD_INDEX_SCENARIO = Object.freeze({
+  gameVersion: '4.7',
+  calculationVersion: 'build-index-v1',
+  metric: 'nous-build-index',
+  metricLabelRu: 'Индекс готовности билда NousMatrix',
+  metricLabelEn: 'NousMatrix Build Readiness Index',
+  methodologyRu: 'Сравниваются только сборки одного персонажа. Это рейтинг текущего индекса сборки, а не рейтинг урона фиксированной команды.',
+  methodologyEn: 'Only builds of the same character are compared. This ranks the current build index, not damage in a fixed team.'
+});
+
+function getBoardScenario(characterId, requestedScenarioId = null) {
+  const cleanCharacterId = String(characterId || '').trim();
+  const damageScenario = getDamageLeaderboardScenario(requestedScenarioId);
+  if (damageScenario && damageScenario.status === 'published' && damageScenario.characterId === cleanCharacterId) {
+    return { ...toPublicDamageScenario(damageScenario), boardType: 'damage' };
+  }
+  return {
+    ...BUILD_INDEX_SCENARIO,
+    characterId: cleanCharacterId,
+    id: `hsr-${BUILD_INDEX_SCENARIO.gameVersion}:char-${cleanCharacterId}:${BUILD_INDEX_SCENARIO.calculationVersion}`,
+    boardType: 'build-index'
+  };
+}
+
+function getLeaderboardKey(scenario) {
+  return `lb:scenario:${scenario.id}`;
+}
+
+function getBuildKey(scenario, uid) {
+  return `build:scenario:${scenario.id}:${uid}`;
+}
+
+async function fetchVerifiedBuild(uid, characterId) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 6500);
+  try {
+    try {
+      const response = await fetch(
+        `https://api.mihomo.me/sr_info_parsed/${uid}?lang=en`,
+        { headers: { 'User-Agent': 'NousMatrix/1.0 leaderboard verification' }, signal: controller.signal }
+      );
+      if (!response.ok) throw new Error(`Profile source returned ${response.status}`);
+
+      const profile = await response.json();
+      const character = (profile.characters || []).find((item) => String(item?.id) === String(characterId));
+      if (!character) throw new Error('Character is not present in the public profile');
+
+      const audit = calculateCharacterAudit(character, 'en');
+      const score = Number(audit?.score);
+      if (!Number.isFinite(score)) throw new Error('Unable to calculate a verified build score');
+
+      return { profile, character, audit, score: Number(score.toFixed(1)) };
+    } catch (cause) {
+      const error = new Error(`Profile verification failed: ${cause.message}`);
+      error.code = 'PROFILE_VERIFICATION_FAILED';
+      throw error;
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
 const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
@@ -41,18 +113,14 @@ const ARCHETYPE_DISTRIBUTIONS = {
   ABUNDANCE_HP: { mu: 63.5, sigma: 9.8 }
 };
 
-function calculateFallbackRanking(score, archetype = 'CRIT_DPS', baseSample = 2480) {
+function calculateModelPercentile(score, archetype = 'CRIT_DPS') {
   const numScore = Math.max(0, Math.min(100, Number(score) || 50));
   const dist = ARCHETYPE_DISTRIBUTIONS[archetype] || { mu: 68.5, sigma: 11.2 };
   const z = (numScore - dist.mu) / dist.sigma;
   const cdf = 0.5 * (1 + erf(z / Math.SQRT2));
   const topPercent = Math.min(99.0, Math.max(0.1, (1 - cdf) * 100));
-  const rank = Math.max(1, Math.round((topPercent / 100) * baseSample));
   return {
-    rank,
-    total: baseSample,
-    topPercent: parseFloat(topPercent.toFixed(1)),
-    isLiveDatabase: false
+    topPercent: parseFloat(topPercent.toFixed(1))
   };
 }
 
@@ -67,26 +135,28 @@ export default async function handler(req, res) {
 
   // 1. GET: Fetch leaderboard or query rank
   if (req.method === 'GET') {
-    const { characterId, uid, limit = 25 } = req.query;
+    const { characterId, uid, limit = 25, scenarioId } = req.query;
 
     if (!characterId) {
       return res.status(400).json({ error: 'characterId is required' });
     }
 
     const cleanCharId = String(characterId).trim();
+    const scenario = getBoardScenario(cleanCharId, scenarioId);
 
     if (!redis) {
       return res.status(200).json({
         success: true,
         isLiveDatabase: false,
         characterId: cleanCharId,
+        scenario,
         leaderboard: [],
         message: 'Upstash Redis credentials not configured yet. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN in environment.'
       });
     }
 
     try {
-      const lbKey = `lb:char:${cleanCharId}`;
+      const lbKey = getLeaderboardKey(scenario);
       const total = (await redis.zcard(lbKey)) || 0;
 
       // If specific UID requested
@@ -97,6 +167,7 @@ export default async function handler(req, res) {
           return res.status(200).json({
             success: true,
             isLiveDatabase: true,
+            scenario,
             found: false,
             characterId: cleanCharId,
             uid: cleanUid
@@ -104,12 +175,13 @@ export default async function handler(req, res) {
         }
         const rank = rank0 + 1;
         const topPercent = total > 0 ? parseFloat(((rank / total) * 100).toFixed(1)) : 100.0;
-        const rawBuild = await redis.get(`build:${cleanCharId}:${cleanUid}`);
+        const rawBuild = await redis.get(getBuildKey(scenario, cleanUid));
         const build = typeof rawBuild === 'string' ? JSON.parse(rawBuild) : rawBuild;
 
         return res.status(200).json({
           success: true,
           isLiveDatabase: true,
+          scenario,
           found: true,
           rank,
           total,
@@ -127,7 +199,7 @@ export default async function handler(req, res) {
         const entryUid = topEntries[i];
         const entryScore = Number(topEntries[i + 1]);
         const rank = Math.floor(i / 2) + 1;
-        const rawBuild = await redis.get(`build:${cleanCharId}:${entryUid}`);
+        const rawBuild = await redis.get(getBuildKey(scenario, entryUid));
         const build = typeof rawBuild === 'string' ? JSON.parse(rawBuild) : rawBuild;
 
         leaderboard.push({
@@ -148,6 +220,7 @@ export default async function handler(req, res) {
         success: true,
         isLiveDatabase: true,
         characterId: cleanCharId,
+        scenario,
         total,
         leaderboard
       });
@@ -178,44 +251,100 @@ export default async function handler(req, res) {
 
       const cleanUid = String(uid || '').trim().replace(/\D/g, '');
       const cleanCharId = String(characterId || '').trim();
+      const damageScenario = getDamageLeaderboardScenario(body.scenarioId);
+      const isDamageBoard = Boolean(
+        damageScenario && damageScenario.status === 'published' && damageScenario.characterId === cleanCharId
+      );
+      const scenario = getBoardScenario(cleanCharId, isDamageBoard ? damageScenario.id : null);
       const numScore = parseFloat(Number(score || 0).toFixed(1));
 
-      if (!cleanUid || !cleanCharId || isNaN(numScore)) {
-        return res.status(400).json({ error: 'Valid uid, characterId, and numerical score are required' });
+      if (!cleanUid || !cleanCharId || (!isDamageBoard && isNaN(numScore))) {
+        return res.status(400).json({ error: 'Valid uid and characterId are required; index boards also require a numerical score' });
       }
 
       if (!redis) {
-        // Fallback calculation when Redis is not yet connected
-        const fallback = calculateFallbackRanking(numScore, archetype);
+        if (isDamageBoard) {
+          return res.status(503).json({ error: 'A live leaderboard database is required for damage-board submissions' });
+        }
+        // A model estimate must never be presented as a player placement.
+        const modelEstimate = calculateModelPercentile(numScore, archetype);
         return res.status(200).json({
           success: true,
-          ...fallback,
+          isLiveDatabase: false,
+          isModelEstimate: true,
+          ...modelEstimate,
           score: numScore,
           characterId: cleanCharId,
+          scenario,
           uid: cleanUid
         });
       }
 
-      const lbKey = `lb:char:${cleanCharId}`;
-      const buildKey = `build:${cleanCharId}:${cleanUid}`;
+      const lbKey = getLeaderboardKey(scenario);
+      const buildKey = getBuildKey(scenario, cleanUid);
+      const verified = await fetchVerifiedBuild(cleanUid, cleanCharId);
+      const verifiedPlayer = verified.profile?.player || {};
+      const verifiedCharacter = verified.character;
+      let verifiedScore = verified.score;
+      let verifiedRotationDmg = null;
 
-      // Store in Redis Sorted Set: ZADD lb:char:{id} score uid
-      await redis.zadd(lbKey, { score: numScore, member: cleanUid });
+      if (isDamageBoard) {
+        const eligibility = checkDamageScenarioEligibility(verifiedCharacter, damageScenario);
+        if (!eligibility.eligible) {
+          return res.status(422).json({
+            error: 'Build does not meet this damage leaderboard\'s standardized requirements',
+            eligibility,
+            scenario
+          });
+        }
+
+        const standardizedTeam = damageScenario.teammates.map((teammate) => ({
+          ...teammate,
+          isEquippedInShowcase: false,
+          characterName: teammate.nameEn,
+          characterIcon: `icon/character/${teammate.id}.png`
+        }));
+        const rotation = runFullTeamRotationSimulation(
+          verifiedCharacter,
+          verified.audit.stats,
+          { id: damageScenario.id, teammates: standardizedTeam },
+          standardizedTeam,
+          'en',
+          { ...damageScenario.enemy, damageMode: 'avg', language: 'en' }
+        );
+        const totalDamage = Number(rotation?.rotationTotalDamage);
+        if (!Number.isFinite(totalDamage) || totalDamage <= 0) {
+          return res.status(422).json({ error: 'The standardized scenario could not calculate cycle damage', scenario });
+        }
+        verifiedScore = Number(totalDamage.toFixed(1));
+        verifiedRotationDmg = verifiedScore;
+      }
+
+      // Store in the versioned board for this character and scoring method.
+      await redis.zadd(lbKey, { score: verifiedScore, member: cleanUid });
 
       // Store full build metadata
       const buildData = {
         uid: cleanUid,
-        nickname: nickname || null,
+        nickname: verifiedPlayer.nickname || nickname || null,
         characterId: cleanCharId,
-        characterName: characterName || null,
-        score: numScore,
-        rotationDmg: Number(rotationDmg) || null,
-        archetype: archetype || null,
-        cv: cv ? Number(cv) : null,
-        spd: spd ? Number(spd) : null,
-        stats: stats || null,
-        lightCone: lightCone || null,
-        relicSets: relicSets || [],
+        scenarioId: scenario.id,
+        calculationVersion: scenario.calculationVersion,
+        characterName: verifiedCharacter.name || characterName || null,
+        score: verifiedScore,
+        rotationDmg: verifiedRotationDmg ?? (Number(rotationDmg) || null),
+        archetype: verified.audit.archetype || archetype || null,
+        cv: verified.audit.cv ? Number(verified.audit.cv) : (cv ? Number(cv) : null),
+        spd: verified.audit.spd ? Number(verified.audit.spd) : (spd ? Number(spd) : null),
+        stats: verified.audit.stats || stats || null,
+        lightCone: verifiedCharacter.light_cone ? {
+          name: verifiedCharacter.light_cone.name || null,
+          rank: Number(verifiedCharacter.light_cone.rank) || 1,
+          level: Number(verifiedCharacter.light_cone.level) || null,
+          icon: verifiedCharacter.light_cone.icon || null
+        } : (lightCone || null),
+        relicSets: (verifiedCharacter.relic_sets || []).map((set) => set?.name).filter(Boolean),
+        verifiedAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
 
@@ -233,13 +362,18 @@ export default async function handler(req, res) {
         rank,
         total,
         topPercent,
-        score: numScore,
+        score: verifiedScore,
+        rotationDmg: verifiedRotationDmg,
         characterId: cleanCharId,
+        scenario,
         uid: cleanUid
       });
     } catch (err) {
       console.error('Redis POST error:', err);
-      return res.status(500).json({ error: 'Internal database error', details: err.message });
+    if (err?.code === 'PROFILE_VERIFICATION_FAILED') {
+      return res.status(502).json({ error: 'Unable to verify the public profile for leaderboard submission' });
+    }
+    return res.status(500).json({ error: 'Internal database error' });
     }
   }
 

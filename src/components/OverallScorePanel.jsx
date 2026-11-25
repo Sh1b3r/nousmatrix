@@ -28,6 +28,14 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
 
   const gradeInfo = getGradeTier(audit.score);
   const safeTopPercent = audit.topPercent || (audit.score ? (Math.max(0.1, 100 - Number(audit.score))).toFixed(1) : null);
+  const hasLiveRank = Boolean(
+    leaderboardData?.isLiveDatabase &&
+    Number.isFinite(Number(leaderboardData?.rank)) &&
+    Number(leaderboardData?.total) > 0
+  );
+  const displayedTopPercent = hasLiveRank
+    ? leaderboardData.topPercent
+    : (audit.topPercent || safeTopPercent);
 
   return (
     <div className="overall-score-panel">
@@ -72,8 +80,8 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
             className="overall-matrix-badge"
             title={
               isRu
-                ? "Модель NousMatrix: 70% оценки зависит от достижения целевых порогов характеристик, 30% — от полезных роллов реликвий"
-                : "NousMatrix composite score: 70% archetype stat thresholds, 30% relic roll efficiency"
+                ? "Модель NousMatrix: 70% оценки зависит от целевых порогов характеристик, 30% — от полезности сабстатов с учётом реальной величины каждого прока"
+                : "NousMatrix composite score: 70% archetype stat thresholds, 30% substat utility weighted by each roll's actual value"
             }
           >
             {t.matrix100 || "Matrix 100"}
@@ -123,16 +131,24 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
             className={`score-tier-badge ${onOpenLeaderboard ? "clickable" : ""}`}
             onClick={onOpenLeaderboard || undefined}
             title={
-              isRu
-                ? `Глобальный перцентиль сборки (${audit.archetype}): рейтинг в реальном времени (стандарт Nous Matrix). Нажмите, чтобы открыть таблицу лидеров.`
-                : `Global build leaderboard percentile (${audit.archetype}): real-time live ranking (Nous Matrix calibrated distribution). Click to view leaderboard.`
+              hasLiveRank
+                ? (isRu
+                  ? `Ранг среди ${leaderboardData.total.toLocaleString()} сборок этого персонажа, отправленных в NousMatrix. Нажмите, чтобы открыть таблицу.`
+                  : `Rank among ${leaderboardData.total.toLocaleString()} builds for this character submitted to NousMatrix. Click to open the table.`)
+                : (isRu
+                  ? `Это статистическая оценка NousMatrix для архетипа ${audit.archetype}, а не место среди игроков. Реальный ранг появится после подключения и наполнения базы.`
+                  : `This is a NousMatrix archetype estimate, not a player rank. A real rank appears only after the live database is connected and populated.`)
             }
           >
-            <span className="tier-prefix">{isRu ? "ГЛОБАЛЬНЫЙ РАНГ" : "GLOBAL RANK"}</span>
-            <span className="tier-percent">
-              {audit.topPercent ? `TOP ${audit.topPercent}%` : (leaderboardData?.topPercent ? `TOP ${leaderboardData.topPercent}%` : "TOP —%")}
+            <span className="tier-prefix">
+              {hasLiveRank
+                ? (isRu ? "РАНГ СООБЩЕСТВА" : "COMMUNITY RANK")
+                : (isRu ? "ОЦЕНКА NOUSMATRIX" : "NOUSMATRIX ESTIMATE")}
             </span>
-            {leaderboardData?.rank ? (
+            <span className="tier-percent">
+              {displayedTopPercent ? `TOP ${hasLiveRank ? "" : "≈"}${displayedTopPercent}%` : "TOP —%"}
+            </span>
+            {hasLiveRank ? (
               <span className="tier-rank-sub">
                 {isRu
                   ? `#${leaderboardData.rank.toLocaleString()} из ${leaderboardData.total.toLocaleString()}`
@@ -141,8 +157,8 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
             ) : (
               <span className="tier-rank-sub">
                 {isRu
-                  ? `#${Math.max(1, Math.round(((parseFloat(audit.topPercent) || 1.7) / 100) * 2480))} из 2 480`
-                  : `#${Math.max(1, Math.round(((parseFloat(audit.topPercent) || 1.7) / 100) * 2480))} of 2,480`}
+                  ? "Не является местом среди игроков"
+                  : "Not a player placement"}
               </span>
             )}
           </div>
@@ -188,23 +204,23 @@ export default function OverallScorePanel({ audit, t, lang = "ru", leaderboardDa
       )}
 
       <div className="overall-metrics-list">
-        {/* Metric 1: Roll Efficiency */}
+        {/* Metric 1: Actual roll-value quality, independent of build archetype. */}
         <div className="metric-row">
           <div className="metric-label-line">
             <div className="metric-name-wrap">
               <span className="metric-name">
-                {t.rollEfficiency || (isRu ? "Качество роллов (Roll Efficiency)" : "Roll Efficiency")}
+                {isRu ? "Качество значений проков" : "Roll Value Quality"}
               </span>
-              <span className="metric-provenance-tag calc" title={isRu ? "Рассчитано сайтом на основе сабстатов реликвий" : "Computed by model"}>
+              <span className="metric-provenance-tag calc" title={isRu ? "Сумма фактических значений всех проков, делённая на сумму их максимумов для 5★ реликвий. Каждый прок имеет одинаковый вес." : "Sum of actual roll values divided by their 5★ maxima. Every individual roll has equal weight."}>
                 {isRu ? "Расчёт модели" : "Model calc"}
               </span>
             </div>
-            <span className="metric-val">{audit.rollEfficiency}%</span>
+            <span className="metric-val">{audit.rollQuality ?? audit.rollEfficiency}%</span>
           </div>
           <div className="metric-bar-bg">
             <div
-              className={`metric-bar-fill ${Number(audit.rollEfficiency) >= 80 ? "success" : "cyan"}`}
-              style={{ width: `${audit.rollEfficiency}%` }}
+              className={`metric-bar-fill ${Number(audit.rollQuality ?? audit.rollEfficiency) >= 90 ? "success" : "cyan"}`}
+              style={{ width: `${audit.rollQuality ?? audit.rollEfficiency}%` }}
             />
           </div>
         </div>

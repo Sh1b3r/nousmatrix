@@ -8,10 +8,12 @@ import {
   resolvePathIcon
 } from "../utils/audit";
 import { SparklesIcon, WarnIcon, CheckIcon } from "./Icons.jsx";
+import { localizeCharacterName } from "../utils/i18n";
 
 export default function CharacterOverview({ character, audit, t, lang = "ru" }) {
   if (!character) return null;
   const isRu = lang === "ru";
+  const displayName = localizeCharacterName(character, lang);
   const elemIcon = resolveElementIcon(character.element);
   const pathIcon = resolvePathIcon(character.path);
 
@@ -73,12 +75,12 @@ export default function CharacterOverview({ character, audit, t, lang = "ru" }) 
             <img
               className="char-portrait-img"
               src={getCharHeadIcon(character)}
-              alt={character.name}
+              alt={displayName}
               onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
             />
           </div>
           <div className="char-details-primary">
-            <h2>{character.name}</h2>
+            <h2>{displayName}</h2>
             <span className="char-stars">{"★".repeat(character.rarity || 5)}</span>
             <div className="char-tags-row">
               <span className="char-pill">

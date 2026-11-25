@@ -9,6 +9,18 @@ export function getDetectedLanguage() {
   }
   return "en";
 }
+
+// API/demo data can arrive in English while the interface is Russian.
+// Keep official Russian names here instead of transliterating at render time.
+const RU_CHARACTER_NAMES_BY_ID = Object.freeze({
+  "1407": "Кастория"
+});
+
+export function localizeCharacterName(character, lang = "en") {
+  if (lang !== "ru") return character?.name || "";
+  return RU_CHARACTER_NAMES_BY_ID[String(character?.id || "")] || character?.name || "";
+}
+
 export function formatStatName(rawName, lang = "en") {
   if (!rawName) return "";
   const isRu = lang === "ru";

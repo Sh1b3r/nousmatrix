@@ -1,28 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { getCharAvatarPath, getCharHeadIcon, handleImageFallback, iconUrl } from "../utils/audit";
 import { runCombatSimulation } from "../utils/simulation";
-import { formatStatName } from "../utils/i18n";
+import { formatStatName, localizeCharacterName } from "../utils/i18n";
 import { resolveRelicSetInfo } from "../utils/setDefinitions";
+import { getRelicRollQuality, getSubstatRollQuality } from "../utils/relicRolls";
 import { TrophyIcon, CopyIcon, DownloadIcon, CheckIcon, SparklesIcon, SphereIcon, RopeIcon, WarnIcon } from "./Icons.jsx";
 
-const SUBSTAT_MAX_PER_ROLL = {
-  percent: { hp: 0.0432, atk: 0.0432, def: 0.054, crit_rate: 0.0324, crit_dmg: 0.0648, effect_hit: 0.0432, effect_res: 0.0432, break_dmg: 0.0648 },
-  flat: { hp: 42.33751, atk: 21.168754, def: 21.168754, spd: 2.6 }
-};
-
-const getSubEfficiency = (sub) => {
-  const table = SUBSTAT_MAX_PER_ROLL[sub.percent ? "percent" : "flat"];
-  const maxPerRoll = table && table[sub.field];
-  const count = sub.count || 1;
-  if (!maxPerRoll || !sub.value) return null;
-  return Math.min(100, Math.round((sub.value / (maxPerRoll * count)) * 100));
-};
-
-const getRelicEfficiency = (piece) => {
-  const subs = (piece.sub_affix || []).map(getSubEfficiency).filter((v) => v !== null);
-  if (!subs.length) return null;
-  return Math.round(subs.reduce((a, b) => a + b, 0) / subs.length);
-};
+const getSubEfficiency = (sub) => getSubstatRollQuality(sub)?.percent ?? null;
+const getRelicEfficiency = (piece) => getRelicRollQuality([piece])?.percent ?? null;
 
 const effClass = (v) => (v >= 90 ? "gold" : v >= 75 ? "good" : v >= 60 ? "ok" : "low");
 
@@ -143,6 +128,7 @@ export default function TrophyModal({
   if (!isOpen || !character || !audit) return null;
 
   const isRu = lang === "ru";
+  const displayCharacterName = localizeCharacterName(character, lang);
   const stats = audit.stats || {};
   const archetype = audit.detectedRole?.targetArchetype || "CRIT_DPS";
   const combatSim = runCombatSimulation(character, stats, archetype, lang);
@@ -306,7 +292,7 @@ export default function TrophyModal({
       if (!canvas) return;
       const src = canvas.toDataURL("image/png");
       const link = document.createElement("a");
-      link.download = `NousMatrix_${character.name.replace(/\s+/g, "_")}_UID${uid}.png`;
+      link.download = `NousMatrix_${displayCharacterName.replace(/\s+/g, "_")}_UID${uid}.png`;
       link.href = src;
       document.body.appendChild(link);
       link.click();
@@ -391,14 +377,14 @@ export default function TrophyModal({
                   <div className="showcase-avatar-ring">
                     <img
                       src={getCharHeadIcon(character)}
-                      alt={character.name}
+                      alt={displayCharacterName}
                       className="showcase-avatar-img"
                       crossOrigin="anonymous"
                       onError={(e) => handleImageFallback(e, getCharAvatarPath(character))}
                     />
                   </div>
                   <div className="showcase-name-col">
-                    <h2 className="showcase-char-name">{character.name}</h2>
+                    <h2 className="showcase-char-name">{displayCharacterName}</h2>
                     <span className="showcase-stars">{"★".repeat(character.rarity || 5)}</span>
                     <div className="showcase-pills-row">
                       <span className="showcase-pill">{isRu ? "УР. " : "LV. "}{character.level}/80</span>

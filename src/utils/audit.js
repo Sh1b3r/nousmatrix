@@ -1,5 +1,6 @@
 import { resolveRelicSetInfo } from "./setDefinitions.js";
 import { calculateMarginalDamageWeights, getMarginalDamageRollWeight } from "./marginalDamage.js";
+import { getRelicRollQuality, getSubstatRollQuality } from "./relicRolls.js";
 export const CDN_MIRRORS = [
   "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/",
   "https://cdn.statically.io/gh/Mar-7th/StarRailRes/master/",
@@ -1672,7 +1673,7 @@ export function determineCharacterMetrics(char, archetype, stats) {
     };
   }
   if (archetype === "HP_CRIT_DPS") {
-    const isCastorice = lowerName.includes("castorice") || lowerName.includes("касторице") || charId === "1407";
+    const isCastorice = lowerName.includes("castorice") || lowerName.includes("кастория") || charId === "1407";
     const hpTarget = isCastorice ? 9500 : 7500;
     const hpMinOk = isCastorice ? 8500 : 7e3;
     return {
@@ -1920,7 +1921,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       archetype = "PRESERVATION_HP";
     } else if ((charId === "1205" || lowerName.includes("блэйд") || lowerName.includes("blade")) && charId !== "1507") {
       archetype = "HP_CRIT_DPS";
-    } else if (charId === "1407" || lowerName.includes("касторице") || lowerName.includes("castorice")) {
+    } else if (charId === "1407" || lowerName.includes("кастория") || lowerName.includes("castorice")) {
       archetype = "HP_CRIT_DPS";
     } else if (isYaoGuang) {
       archetype = "HARMONY_SPD";
@@ -1958,6 +1959,8 @@ export function calculateCharacterAudit(char, lang = "ru") {
   }
   let totalRollsCount = 0;
   let usefulRollsSum = 0;
+  let totalRollValueQuality = 0;
+  let totalQualityRolls = 0;
   let relicScores = [];
   // Предельная полезность характеристик (Marginal Stat Value):
   // In-game overcap handling: excess stats beyond the character's breakpoint do not add value:
@@ -1979,16 +1982,22 @@ export function calculateCharacterAudit(char, lang = "ru") {
     let pTotal = 0;
     (rel.sub_affix || []).forEach((sub) => {
       const rollCount = Math.max(0, Number(sub.count) || 1);
+      const quality = getSubstatRollQuality(sub);
+      const qualityRatio = quality?.ratio ?? 1;
       pTotal += rollCount;
       totalRollsCount += rollCount;
+      if (quality) {
+        totalRollValueQuality += quality.ratio * rollCount;
+        totalQualityRolls += rollCount;
+      }
       let weight = getRollWeight(sub);
       if (!marginalDamageWeights && sub.field === "crit_rate" && isCrOvercapped) {
         weight = 0.0; // Оверкап КШ выше 100% обесценивается
       } else if (!marginalDamageWeights && sub.field === "effect_hit" && isEhrOvercapped) {
         weight = 0.2; // Избыток ШПЭ выше 120% даёт минимальную ценность
       }
-      pScore += rollCount * weight;
-      usefulRollsSum += rollCount * weight;
+      pScore += rollCount * weight * qualityRatio;
+      usefulRollsSum += rollCount * weight * qualityRatio;
     });
     const mainEval = evaluateRelicMainStat(rel, archetype, char);
     rel.main_eval = mainEval;
@@ -2004,6 +2013,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
     }
   });
   const rollEfficiency = totalRollsCount > 0 ? usefulRollsSum / totalRollsCount * 100 : 0;
+  const rollQuality = totalQualityRolls > 0 ? totalRollValueQuality / totalQualityRolls * 100 : 0;
   let statPoints = 0;
   let bottleneck = "";
   let actions = [];
@@ -2277,6 +2287,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
   const planarSet = pInfo0?.name || (planarRelics.length > 0 ? planarRelics[0].set_name || "" : "");
   const isPlanarSetComplete = planarRelics.length === 2 && (planarRelics[0].set_id === planarRelics[1].set_id || pInfo0?.name && pInfo0.name === pInfo1?.name);
   const planarEfficiency = planarRollsTotal > 0 ? Math.min(100, Math.round((planarUsefulRollsWeighted / planarRollsTotal) * 100)) : 0;
+  const planarRollQuality = getRelicRollQuality(planarRelics);
   let planarCondition = "";
   let isConditionMet = true;
   if (/Салсотто|Salsotto/i.test(planarSet)) {
@@ -2432,6 +2443,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
     });
   });
   const cavernEfficiency = cavernRollsTotal > 0 ? Math.min(100, Math.round((cavernUsefulRollsWeighted / cavernRollsTotal) * 100)) : 0;
+  const cavernRollQuality = getRelicRollQuality(cavernRelics);
   const cavernSetCounts = {};
   cavernRelics.forEach((r) => {
     const info = resolveRelicSetInfo(r, isRu ? "ru" : "en");
@@ -2576,6 +2588,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
     score: finalScore.toFixed(1),
     topPercent: topPercent.toFixed(1),
     rollEfficiency: rollEfficiency.toFixed(1),
+    rollQuality: rollQuality.toFixed(1),
     rollEfficiencyMethod: marginalDamageWeights ? "marginal-damage-plus-role-utility" : "role-utility-heuristic",
     marginalDamageRolls: marginalDamageWeights?.rollGains || null,
     cv: needsCrit ? cv.toFixed(1) : null,
@@ -2612,6 +2625,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       setName: cavernGroups.length > 0 ? cavernGroups[0].name : "",
       isComplete: isCavernComplete,
       efficiency: cavernEfficiency,
+      rollQuality: cavernRollQuality ? Number(cavernRollQuality.percent.toFixed(1)) : null,
       cv: needsCrit && cavernCv > 0 ? cavernCv.toFixed(1) : null,
       condition: cavernStatusText,
       rollsTotal: cavernRollsTotal,
@@ -2622,6 +2636,7 @@ export function calculateCharacterAudit(char, lang = "ru") {
       setName: planarSet,
       isComplete: isPlanarSetComplete,
       efficiency: planarEfficiency,
+      rollQuality: planarRollQuality ? Number(planarRollQuality.percent.toFixed(1)) : null,
       cv: needsCrit && planarCv > 0 ? planarCv.toFixed(1) : null,
       condition: planarCondition,
       rollsTotal: planarRollsTotal,

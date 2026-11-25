@@ -6,6 +6,7 @@ import {
   handleImageFallback,
   calculateCharacterAudit
 } from "../utils/audit";
+import { localizeCharacterName } from "../utils/i18n";
 
 export default function ShowcaseRoster({ characters, activeIndex, onSelect, t, lang }) {
   const trackRef = useRef(null);
@@ -68,6 +69,7 @@ export default function ShowcaseRoster({ characters, activeIndex, onSelect, t, l
 
         <div className="roster-track" ref={trackRef}>
           {characters.map((char, idx) => {
+              const displayName = localizeCharacterName(char, lang);
             const isActive = idx === activeIndex;
             const audit = calculateCharacterAudit(char, lang);
             return (
@@ -88,13 +90,13 @@ export default function ShowcaseRoster({ characters, activeIndex, onSelect, t, l
                   <img
                     className="roster-avatar-img"
                     src={getCharHeadIcon(char)}
-                    alt={char.name}
+                    alt={displayName}
                     onError={(e) => handleImageFallback(e, getCharAvatarPath(char))}
                     loading="lazy"
                   />
                 </div>
-                <div className="roster-char-name" title={char.name}>
-                  {char.name}
+                <div className="roster-char-name" title={displayName}>
+                  {displayName}
                 </div>
                 <div className="roster-char-meta">
                   {t.lvl} {char.level} • E{char.rank}
