@@ -17,6 +17,7 @@ const DonateModal = React.lazy(() => import("./components/DonateModal"));
 import { RefreshIcon } from "./components/Icons.jsx";
 import { iconUrl, handleImageFallback, calculateCharacterAudit } from "./utils/audit";
 import { getDetectedLanguage, translations } from "./utils/i18n";
+import { getDamageLeaderboardScenariosForCharacter } from "./data/damageLeaderboardScenarios.js";
 let cachedPresets = null;
 async function getLocalizedPresets(lang) {
   if (!cachedPresets) {
@@ -659,6 +660,21 @@ export default function App() {
         }
       })
       .catch(err => console.warn("Leaderboard sync warning:", err));
+
+    // Damage boards are opt-in by strict scenario requirements on the server.
+    // Ineligible profiles are simply omitted; the build-index board still syncs.
+    getDamageLeaderboardScenariosForCharacter(charId).forEach((scenario) => {
+      fetch("/api/leaderboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid,
+          characterId: charId,
+          scenarioId: scenario.id,
+          score: audit.score
+        })
+      }).catch((err) => console.warn("Damage leaderboard sync warning:", err));
+    });
 
     return () => {
       isCancelled = true;
