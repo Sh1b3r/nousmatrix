@@ -1,8 +1,3 @@
-// Public, versioned damage-board definitions. A scenario may be published only
-// when every player is evaluated against the same character investment, team,
-// enemy wave and cycle assumption. This deliberately follows the Akasha model:
-// a result is meaningful only inside the named scenario.
-
 const ACHERON_E0S1_MORTENAX_WELT_HUOHUO = {
   id: "acheron-e0s1-mortenax-welt-huohuo-moc12-v1",
   status: "published",
