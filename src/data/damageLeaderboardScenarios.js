@@ -935,6 +935,204 @@ const HERTA_E6_ROBIN_JADE_LINGSHA = {
   ]
 };
 
+const SERVAL_E6_ROBIN_SUNDAY_HUOHUO = {
+  id: "serval-e6-robin-sunday-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1103",
+  nameRu: "Сервал E6 — Зарянка · Воскресенье · Хохо",
+  nameEn: "Serval E6 — Robin · Sunday · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Сервал E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Serval with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 20 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +20% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +20% CRIT DMG." },
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / энергия", roleEn: "Healing / Energy", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+  ],
+  sources: [{ title: "Serval Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/serval", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
+const SUSHANG_E6_RUANMEI_HMC_LINGSHA = {
+  id: "sushang-e6-ruanmei-hmc-lingsha-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1206",
+  nameRu: "Сушан E6 — Жуань Мэй · ГГ Гармонии · Линша",
+  nameEn: "Sushang E6 — Ruan Mei · Harmony TB · Lingsha",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Сушан E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Sushang with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", names: ["Жуань Мэй", "Ruan Mei"], roleRu: "Гармония / пробитие", roleEn: "Harmony / break", dynamicBuffs: { breakEffect: 20, resPen: 25, spdPercent: 10 }, dynamicBuffDescRu: "Жуань Мэй: +20% эффекта пробития, +25% пробития сопротивления и +10% СКОР.", dynamicBuffDescEn: "Ruan Mei: +20% Break Effect, +25% All-Type RES PEN and +10% SPD." },
+    { id: "8006", nameRu: "Первопроходец (Гармония)", nameEn: "Trailblazer (Harmony)", names: ["Первопроходец (Гармония)", "Trailblazer (Harmony)"], roleRu: "Гармония / суперпробитие", roleEn: "Harmony / super break", dynamicBuffs: { breakEffect: 63 }, dynamicBuffDescRu: "ГГ Гармонии: +63% эффекта пробития и Суперпробитие.", dynamicBuffDescEn: "Harmony TB: +63% Break Effect and Super Break." },
+    { id: "1222", nameRu: "Линша", nameEn: "Lingsha", names: ["Линша", "Lingsha"], roleRu: "Изобилие / пробитие", roleEn: "Abundance / break", dynamicBuffs: { allVuln: 25 }, dynamicBuffDescRu: "Линша: +25% получаемого урона пробития.", dynamicBuffDescEn: "Lingsha: +25% Break DMG taken." }
+  ],
+  sources: [{ title: "Sushang Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/sushang", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
+const DANHENG_E6_SUNDAY_ROBIN_HUOHUO = {
+  id: "danheng-e6-sunday-robin-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1002",
+  nameRu: "Дань Хэн E6 — Воскресенье · Зарянка · Хохо",
+  nameEn: "Dan Heng E6 — Sunday · Robin · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Дань Хэн E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Dan Heng with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 20 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +20% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +20% CRIT DMG." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / АТК", roleEn: "Healing / ATK", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+  ],
+  sources: [{ title: "Dan Heng Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/dan-heng", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
+const HOOK_E6_SUNDAY_ROBIN_HUOHUO = {
+  id: "hook-e6-sunday-robin-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1109",
+  nameRu: "Хук E6 — Воскресенье · Зарянка · Хохо",
+  nameEn: "Hook E6 — Sunday · Robin · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Хук E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Hook with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 20 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +20% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +20% CRIT DMG." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / АТК", roleEn: "Healing / ATK", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+  ],
+  sources: [{ title: "Hook Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/hook", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
+const ARLAN_E6_SUNDAY_ROBIN_AVENTURINE = {
+  id: "arlan-e6-sunday-robin-aventurine-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1008",
+  nameRu: "Арлан E6 — Воскресенье · Зарянка · Авантюрин",
+  nameEn: "Arlan E6 — Sunday · Robin · Aventurine",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Арлан E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Arlan with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 20 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +20% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +20% CRIT DMG." },
+    { id: "1304", nameRu: "Авантюрин", nameEn: "Aventurine", names: ["Авантюрин", "Aventurine"], roleRu: "Сохранение / щит", roleEn: "Preservation / shield", dynamicBuffs: { critDmg: 15 }, dynamicBuffDescRu: "Авантюрин: щит для низкого HP Арлана и +15% крит. урона.", dynamicBuffDescEn: "Aventurine: shield for low-HP Arlan and +15% CRIT DMG." }
+  ],
+  sources: [{ title: "Arlan Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/arlan", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
+const MISHA_E6_SUNDAY_RUANMEI_HUOHUO = {
+  id: "misha-e6-sunday-ruanmei-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1312",
+  nameRu: "Миша E6 — Воскресенье · Жуань Мэй · Хохо",
+  nameEn: "Misha E6 — Sunday · Ruan Mei · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Миша E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Misha with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", names: ["Жуань Мэй", "Ruan Mei"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { dmgBoost: 68, resPen: 25, spdPercent: 10 }, dynamicBuffDescRu: "Жуань Мэй: +68% урона, +25% пробития сопротивления и +10% СКОР.", dynamicBuffDescEn: "Ruan Mei: +68% DMG, +25% All-Type RES PEN and +10% SPD." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / энергия", roleEn: "Healing / Energy", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК и залив энергии.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK and Energy regen." }
+  ],
+  sources: [{ title: "Misha Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/misha", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
+const SAMPO_E6_KAFKA_RUANMEI_HUOHUO = {
+  id: "sampo-e6-kafka-ruanmei-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1108",
+  nameRu: "Сампо E6 — Кафка · Жуань Мэй · Хохо",
+  nameEn: "Sampo E6 — Kafka · Ruan Mei · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Сампо E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Sampo with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1005", nameRu: "Кафка", nameEn: "Kafka", names: ["Кафка", "Kafka"], roleRu: "Небытие / детонация", roleEn: "Nihility / detonation", dynamicBuffs: {}, dynamicBuffDescRu: "Кафка: детонация Выветривания.", dynamicBuffDescEn: "Kafka: Wind Shear detonation." },
+    { id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", names: ["Жуань Мэй", "Ruan Mei"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { dmgBoost: 68, resPen: 25, spdPercent: 10 }, dynamicBuffDescRu: "Жуань Мэй: +68% урона, +25% пробития сопротивления и +10% СКОР.", dynamicBuffDescEn: "Ruan Mei: +68% DMG, +25% All-Type RES PEN and +10% SPD." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / АТК", roleEn: "Healing / ATK", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+  ],
+  sources: [{ title: "Sampo Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/sampo", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
+const GUINAIFEN_E6_KAFKA_RUANMEI_HUOHUO = {
+  id: "guinaifen-e6-kafka-ruanmei-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1210",
+  nameRu: "Гуйнайфэнь E6 — Кафка · Жуань Мэй · Хохо",
+  nameEn: "Guinaifen E6 — Kafka · Ruan Mei · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Гуйнайфэнь E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Guinaifen with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1005", nameRu: "Кафка", nameEn: "Kafka", names: ["Кафка", "Kafka"], roleRu: "Небытие / детонация", roleEn: "Nihility / detonation", dynamicBuffs: {}, dynamicBuffDescRu: "Кафка: детонация Горения.", dynamicBuffDescEn: "Kafka: Burn detonation." },
+    { id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", names: ["Жуань Мэй", "Ruan Mei"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { dmgBoost: 68, resPen: 25, spdPercent: 10 }, dynamicBuffDescRu: "Жуань Мэй: +68% урона, +25% пробития сопротивления и +10% СКОР.", dynamicBuffDescEn: "Ruan Mei: +68% DMG, +25% All-Type RES PEN and +10% SPD." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / АТК", roleEn: "Healing / ATK", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+  ],
+  sources: [{ title: "Guinaifen Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/guinaifen", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
+const LUKA_E6_RUANMEI_HMC_GALLAGHER = {
+  id: "luka-e6-ruanmei-hmc-gallagher-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1111",
+  nameRu: "Лука E6 — Жуань Мэй · ГГ Гармонии · Галлахер",
+  nameEn: "Luka E6 — Ruan Mei · Harmony TB · Gallagher",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Лука E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Luka with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", names: ["Жуань Мэй", "Ruan Mei"], roleRu: "Гармония / пробитие", roleEn: "Harmony / break", dynamicBuffs: { breakEffect: 20, resPen: 25, spdPercent: 10 }, dynamicBuffDescRu: "Жуань Мэй: +20% эффекта пробития, +25% пробития сопротивления и +10% СКОР.", dynamicBuffDescEn: "Ruan Mei: +20% Break Effect, +25% All-Type RES PEN and +10% SPD." },
+    { id: "8006", nameRu: "Первопроходец (Гармония)", nameEn: "Trailblazer (Harmony)", names: ["Первопроходец (Гармония)", "Trailblazer (Harmony)"], roleRu: "Гармония / суперпробитие", roleEn: "Harmony / super break", dynamicBuffs: { breakEffect: 63 }, dynamicBuffDescRu: "ГГ Гармонии: +63% эффекта пробития и Суперпробитие.", dynamicBuffDescEn: "Harmony TB: +63% Break Effect and Super Break." },
+    { id: "1301", nameRu: "Галлахер", nameEn: "Gallagher", names: ["Галлахер", "Gallagher"], roleRu: "Изобилие / пробитие", roleEn: "Abundance / break", dynamicBuffs: { allVuln: 13.2 }, dynamicBuffDescRu: "Галлахер: +13.2% получаемого урона пробития.", dynamicBuffDescEn: "Gallagher: +13.2% Break DMG taken." }
+  ],
+  sources: [{ title: "Luka Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/luka", retrievedAt: "2026-11-22", use: "kit & team synergy" }]
+};
+
 export const DAMAGE_LEADERBOARD_SCENARIOS = Object.freeze([
   ACHERON_E0S1_MORTENAX_WELT_HUOHUO,
   FEIXIAO_E0S1_ROBIN_TOPAZ_AVENTURINE,
@@ -962,7 +1160,16 @@ export const DAMAGE_LEADERBOARD_SCENARIOS = Object.freeze([
   QINGQUE_E6_SPARKLE_SUNDAY_HUOHUO,
   XUEYI_E6_RUANMEI_HMC_LINGSHA,
   MOZE_E6_ROBIN_TOPAZ_AVENTURINE,
-  HERTA_E6_ROBIN_JADE_LINGSHA
+  HERTA_E6_ROBIN_JADE_LINGSHA,
+  SERVAL_E6_ROBIN_SUNDAY_HUOHUO,
+  SUSHANG_E6_RUANMEI_HMC_LINGSHA,
+  DANHENG_E6_SUNDAY_ROBIN_HUOHUO,
+  HOOK_E6_SUNDAY_ROBIN_HUOHUO,
+  ARLAN_E6_SUNDAY_ROBIN_AVENTURINE,
+  MISHA_E6_SUNDAY_RUANMEI_HUOHUO,
+  SAMPO_E6_KAFKA_RUANMEI_HUOHUO,
+  GUINAIFEN_E6_KAFKA_RUANMEI_HUOHUO,
+  LUKA_E6_RUANMEI_HMC_GALLAGHER
 ]);
 
 export function getDamageLeaderboardScenario(id) {
