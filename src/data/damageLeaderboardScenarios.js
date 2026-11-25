@@ -647,6 +647,294 @@ const SEELE_E0S1_SUNDAY_ROBIN_HUOHUO = {
   ]
 };
 
+const YUNLI_E0S1_ROBIN_SUNDAY_HUOHUO = {
+  id: "yunli-e0s1-robin-sunday-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1221",
+  nameRu: "Юньли E0S1 — Зарянка · Воскресенье · Хохо",
+  nameEn: "Yunli E0S1 — Robin · Sunday · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются только Юньли E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Only level 80 E0 Yunli with S1 signature Light Cone and levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23030", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 45 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +45% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +45% CRIT DMG." },
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / энергия", roleEn: "Healing / Energy", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК и залив энергии.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK and Energy regen." }
+  ],
+  sources: [
+    { title: "Yunli Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/yunli", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const ARGENTI_E0S1_SUNDAY_ROBIN_HUOHUO = {
+  id: "argenti-e0s1-sunday-robin-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1302",
+  nameRu: "Аргенти E0S1 — Воскресенье · Зарянка · Хохо",
+  nameEn: "Argenti E0S1 — Sunday · Robin · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются только Аргенти E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Only level 80 E0 Argenti with S1 signature Light Cone and levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23018", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / энергия", roleEn: "Harmony / Energy", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 20 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +20% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +20% CRIT DMG." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / энергия", roleEn: "Healing / Energy", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК и залив энергии.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK and Energy regen." }
+  ],
+  sources: [
+    { title: "Argenti Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/argenti", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const HIMEKO_E0S1_RUANMEI_HMC_LINGSHA = {
+  id: "himeko-e0s1-ruanmei-hmc-lingsha-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1003",
+  nameRu: "Химеко E0S1 — Жуань Мэй · ГГ Гармонии · Линша",
+  nameEn: "Himeko E0S1 — Ruan Mei · Harmony TB · Lingsha",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются только Химеко E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Only level 80 E0 Himeko with S1 signature Light Cone and levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23000", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", names: ["Жуань Мэй", "Ruan Mei"], roleRu: "Гармония / пробитие", roleEn: "Harmony / break", dynamicBuffs: { breakEffect: 20, resPen: 25, spdPercent: 10 }, dynamicBuffDescRu: "Жуань Мэй: +20% эффекта пробития, +25% пробития сопротивления и +10% СКОР.", dynamicBuffDescEn: "Ruan Mei: +20% Break Effect, +25% All-Type RES PEN and +10% SPD." },
+    { id: "8006", nameRu: "Первопроходец (Гармония)", nameEn: "Trailblazer (Harmony)", names: ["Первопроходец (Гармония)", "Trailblazer (Harmony)"], roleRu: "Гармония / суперпробитие", roleEn: "Harmony / super break", dynamicBuffs: { breakEffect: 63 }, dynamicBuffDescRu: "ГГ Гармонии: +63% эффекта пробития и Суперпробитие.", dynamicBuffDescEn: "Harmony TB: +63% Break Effect and Super Break." },
+    { id: "1222", nameRu: "Линша", nameEn: "Lingsha", names: ["Линша", "Lingsha"], roleRu: "Изобилие / пробитие", roleEn: "Abundance / break", dynamicBuffs: { allVuln: 25 }, dynamicBuffDescRu: "Линша: +25% получаемого урона пробития.", dynamicBuffDescEn: "Lingsha: +25% Break DMG taken." }
+  ],
+  sources: [
+    { title: "Himeko Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/himeko", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const CLARA_E0S1_ROBIN_SUNDAY_HUOHUO = {
+  id: "clara-e0s1-robin-sunday-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1107",
+  nameRu: "Клара E0S1 — Зарянка · Воскресенье · Хохо",
+  nameEn: "Clara E0S1 — Robin · Sunday · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются только Клара E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Only level 80 E0 Clara with S1 signature Light Cone and levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23002", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 45 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +45% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +45% CRIT DMG." },
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / АТК", roleEn: "Healing / ATK", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+  ],
+  sources: [
+    { title: "Clara Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/clara", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const JADE_E0S1_ROBIN_TOPAZ_LINGSHA = {
+  id: "jade-e0s1-robin-topaz-lingsha-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1314",
+  nameRu: "Яшма E0S1 — Зарянка · Топаз · Линша",
+  nameEn: "Jade E0S1 — Robin · Topaz · Lingsha",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются только Яшма E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Only level 80 E0 Jade with S1 signature Light Cone and levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23028", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 45 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +45% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +45% CRIT DMG." },
+    { id: "1112", nameRu: "Топаз", nameEn: "Topaz", names: ["Топаз", "Topaz"], roleRu: "Охота / саб-ДД", roleEn: "Hunt / sub-DPS", dynamicBuffs: { allVuln: 50 }, dynamicBuffDescRu: "Метка Топаз: +50% получаемого урона от бонус-атак.", dynamicBuffDescEn: "Topaz Proof of Debt: +50% follow-up DMG taken." },
+    { id: "1222", nameRu: "Линша", nameEn: "Lingsha", names: ["Линша", "Lingsha"], roleRu: "Изобилие / стаки", roleEn: "Abundance / stacks", dynamicBuffs: {}, dynamicBuffDescRu: "Линша: массовые атаки для набора стаков Яшмы.", dynamicBuffDescEn: "Lingsha: AoE attacks for Jade stack generation." }
+  ],
+  sources: [
+    { title: "Jade Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/jade", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const TOPAZ_E0S1_ROBIN_AVENTURINE_RATIO = {
+  id: "topaz-e0s1-robin-aventurine-ratio-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1112",
+  nameRu: "Топаз E0S1 — Зарянка · Доктор Рацио · Авантюрин",
+  nameEn: "Topaz E0S1 — Robin · Dr. Ratio · Aventurine",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются только Топаз E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Only level 80 E0 Topaz with S1 signature Light Cone and levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23016", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 45 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +45% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +45% CRIT DMG." },
+    { id: "1305", nameRu: "Доктор Рацио", nameEn: "Dr. Ratio", names: ["Доктор Рацио", "Dr. Ratio"], roleRu: "Охота / бонус-атаки", roleEn: "Hunt / follow-up", dynamicBuffs: {}, dynamicBuffDescRu: "Доктор Рацио: продвижение Счетовода бонус-атаками.", dynamicBuffDescEn: "Dr. Ratio: Numby action advance via follow-ups." },
+    { id: "1304", nameRu: "Авантюрин", nameEn: "Aventurine", names: ["Авантюрин", "Aventurine"], roleRu: "Сохранение / дебафф", roleEn: "Preservation / debuff", dynamicBuffs: { critDmg: 15 }, dynamicBuffDescRu: "Сверхспособность Авантюрина: +15% крит. урона по цели.", dynamicBuffDescEn: "Aventurine Ultimate: +15% CRIT DMG against target." }
+  ],
+  sources: [
+    { title: "Topaz Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/topaz", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const BLACKSWAN_E0S1_KAFKA_RUANMEI_HUOHUO = {
+  id: "blackswan-e0s1-kafka-ruanmei-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1307",
+  nameRu: "Чёрный Лебедь E0S1 — Кафка · Жуань Мэй · Хохо",
+  nameEn: "Black Swan E0S1 — Kafka · Ruan Mei · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются только Чёрный Лебедь E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Only level 80 E0 Black Swan with S1 signature Light Cone and levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23022", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1005", nameRu: "Кафка", nameEn: "Kafka", names: ["Кафка", "Kafka"], roleRu: "Небытие / детонация", roleEn: "Nihility / detonation", dynamicBuffs: {}, dynamicBuffDescRu: "Кафка: мгновенная детонация Арканы.", dynamicBuffDescEn: "Kafka: instant Arcana detonation." },
+    { id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", names: ["Жуань Мэй", "Ruan Mei"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { dmgBoost: 68, resPen: 25, spdPercent: 10 }, dynamicBuffDescRu: "Жуань Мэй: +68% урона, +25% пробития сопротивления и +10% СКОР.", dynamicBuffDescEn: "Ruan Mei: +68% DMG, +25% All-Type RES PEN and +10% SPD." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / АТК", roleEn: "Healing / ATK", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+  ],
+  sources: [
+    { title: "Black Swan Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/black-swan", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const YANQING_E0S1_SUNDAY_ROBIN_AVENTURINE = {
+  id: "yanqing-e0s1-sunday-robin-aventurine-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1209",
+  nameRu: "Яньцин E0S1 — Воскресенье · Зарянка · Авантюрин",
+  nameEn: "Yanqing E0S1 — Sunday · Robin · Aventurine",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются только Яньцин E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Only level 80 E0 Yanqing with S1 signature Light Cone and levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23012", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 20 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +20% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +20% CRIT DMG." },
+    { id: "1304", nameRu: "Авантюрин", nameEn: "Aventurine", names: ["Авантюрин", "Aventurine"], roleRu: "Сохранение / щит", roleEn: "Preservation / shield", dynamicBuffs: { critDmg: 15 }, dynamicBuffDescRu: "Авантюрин: щит для сохранения пассивки Яньцина и +15% крит. урона.", dynamicBuffDescEn: "Aventurine: shield uptime for Yanqing passive and +15% CRIT DMG." }
+  ],
+  sources: [
+    { title: "Yanqing Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/yanqing", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const QINGQUE_E6_SPARKLE_SUNDAY_HUOHUO = {
+  id: "qingque-e6-sparkle-sunday-huohuo-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1201",
+  nameRu: "Цинцюэ E6 — Искорка · Воскресенье · Хохо",
+  nameEn: "Qingque E6 — Sparkle · Sunday · Huohuo",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Цинцюэ E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Qingque with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1306", nameRu: "Искорка", nameEn: "Sparkle", names: ["Искорка", "Sparkle"], roleRu: "Гармония / ОД", roleEn: "Harmony / SP", dynamicBuffs: { critDmg: 95, dmgBoost: 48, atkPercent: 15 }, dynamicBuffDescRu: "Искорка: +95% крит. урона, +48% урона и +15% АТК.", dynamicBuffDescEn: "Sparkle: +95% CRIT DMG, +48% DMG and +15% ATK." },
+    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
+    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / АТК", roleEn: "Healing / ATK", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+  ],
+  sources: [
+    { title: "Qingque Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/qingque", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const XUEYI_E6_RUANMEI_HMC_LINGSHA = {
+  id: "xueyi-e6-ruanmei-hmc-lingsha-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1214",
+  nameRu: "Сюэи E6 — Жуань Мэй · ГГ Гармонии · Линша",
+  nameEn: "Xueyi E6 — Ruan Mei · Harmony TB · Lingsha",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Сюэи E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Xueyi with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1303", nameRu: "Жуань Мэй", nameEn: "Ruan Mei", names: ["Жуань Мэй", "Ruan Mei"], roleRu: "Гармония / пробитие", roleEn: "Harmony / break", dynamicBuffs: { breakEffect: 20, resPen: 25, spdPercent: 10 }, dynamicBuffDescRu: "Жуань Мэй: +20% эффекта пробития, +25% пробития сопротивления и +10% СКОР.", dynamicBuffDescEn: "Ruan Mei: +20% Break Effect, +25% All-Type RES PEN and +10% SPD." },
+    { id: "8006", nameRu: "Первопроходец (Гармония)", nameEn: "Trailblazer (Harmony)", names: ["Первопроходец (Гармония)", "Trailblazer (Harmony)"], roleRu: "Гармония / суперпробитие", roleEn: "Harmony / super break", dynamicBuffs: { breakEffect: 63 }, dynamicBuffDescRu: "ГГ Гармонии: +63% эффекта пробития и Суперпробитие.", dynamicBuffDescEn: "Harmony TB: +63% Break Effect and Super Break." },
+    { id: "1222", nameRu: "Линша", nameEn: "Lingsha", names: ["Линша", "Lingsha"], roleRu: "Изобилие / пробитие", roleEn: "Abundance / break", dynamicBuffs: { allVuln: 25 }, dynamicBuffDescRu: "Линша: +25% получаемого урона пробития.", dynamicBuffDescEn: "Lingsha: +25% Break DMG taken." }
+  ],
+  sources: [
+    { title: "Xueyi Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/xueyi", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const MOZE_E6_ROBIN_TOPAZ_AVENTURINE = {
+  id: "moze-e6-robin-topaz-aventurine-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1223",
+  nameRu: "Моцзэ E6 — Зарянка · Топаз · Авантюрин",
+  nameEn: "Moze E6 — Robin · Topaz · Aventurine",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Моцзэ E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Moze with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 45 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +45% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +45% CRIT DMG." },
+    { id: "1112", nameRu: "Топаз", nameEn: "Topaz", names: ["Топаз", "Topaz"], roleRu: "Охота / саб-ДД", roleEn: "Hunt / sub-DPS", dynamicBuffs: { allVuln: 50 }, dynamicBuffDescRu: "Метка Топаз: +50% получаемого урона от бонус-атак.", dynamicBuffDescEn: "Topaz Proof of Debt: +50% follow-up DMG taken." },
+    { id: "1304", nameRu: "Авантюрин", nameEn: "Aventurine", names: ["Авантюрин", "Aventurine"], roleRu: "Сохранение / дебафф", roleEn: "Preservation / debuff", dynamicBuffs: { critDmg: 15 }, dynamicBuffDescRu: "Сверхспособность Авантюрина: +15% крит. урона по цели.", dynamicBuffDescEn: "Aventurine Ultimate: +15% CRIT DMG against target." }
+  ],
+  sources: [
+    { title: "Moze Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/moze", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
+const HERTA_E6_ROBIN_JADE_LINGSHA = {
+  id: "herta-e6-robin-jade-lingsha-moc12-v1",
+  status: "published",
+  gameVersion: "4.7",
+  calculationVersion: "damage-cycle-v1",
+  characterId: "1013",
+  nameRu: "Герта E6 — Зарянка · Яшма · Линша",
+  nameEn: "Herta E6 — Robin · Jade · Lingsha",
+  metricRu: "Расчётный урон полного цикла",
+  metricEn: "Standardized full-cycle damage",
+  methodologyRu: "Сравниваются Герта E6 с уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
+  methodologyEn: "Level 80 E6 Herta with levelled core skills are compared against the same MoC 4.7 wave.",
+  requirements: { characterLevel: 80, eidolon: 6, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
+  enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
+  teammates: [
+    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 45 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +45% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +45% CRIT DMG." },
+    { id: "1314", nameRu: "Яшма", nameEn: "Jade", names: ["Яшма", "Jade"], roleRu: "Эрудиция / саб-ДД", roleEn: "Erudition / sub-DPS", dynamicBuffs: { spdFlat: 30 }, dynamicBuffDescRu: "Сборщик долгов Яшмы: +30 СКОР для Герты.", dynamicBuffDescEn: "Jade Debt Collector: +30 SPD for Herta." },
+    { id: "1222", nameRu: "Линша", nameEn: "Lingsha", names: ["Линша", "Lingsha"], roleRu: "Изобилие / лечение", roleEn: "Abundance / sustain", dynamicBuffs: {}, dynamicBuffDescRu: "Линша: массовое лечение.", dynamicBuffDescEn: "Lingsha: AoE sustain." }
+  ],
+  sources: [
+    { title: "Herta Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/herta", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+  ]
+};
+
 export const DAMAGE_LEADERBOARD_SCENARIOS = Object.freeze([
   ACHERON_E0S1_MORTENAX_WELT_HUOHUO,
   FEIXIAO_E0S1_ROBIN_TOPAZ_AVENTURINE,
@@ -662,7 +950,19 @@ export const DAMAGE_LEADERBOARD_SCENARIOS = Object.freeze([
   BLADE_E0S1_SUNDAY_RUANMEI_HUOHUO,
   JINGYUAN_E0S1_SUNDAY_ROBIN_HUOHUO,
   DRRATIO_E0S1_ROBIN_TOPAZ_AVENTURINE,
-  SEELE_E0S1_SUNDAY_ROBIN_HUOHUO
+  SEELE_E0S1_SUNDAY_ROBIN_HUOHUO,
+  YUNLI_E0S1_ROBIN_SUNDAY_HUOHUO,
+  ARGENTI_E0S1_SUNDAY_ROBIN_HUOHUO,
+  HIMEKO_E0S1_RUANMEI_HMC_LINGSHA,
+  CLARA_E0S1_ROBIN_SUNDAY_HUOHUO,
+  JADE_E0S1_ROBIN_TOPAZ_LINGSHA,
+  TOPAZ_E0S1_ROBIN_AVENTURINE_RATIO,
+  BLACKSWAN_E0S1_KAFKA_RUANMEI_HUOHUO,
+  YANQING_E0S1_SUNDAY_ROBIN_AVENTURINE,
+  QINGQUE_E6_SPARKLE_SUNDAY_HUOHUO,
+  XUEYI_E6_RUANMEI_HMC_LINGSHA,
+  MOZE_E6_ROBIN_TOPAZ_AVENTURINE,
+  HERTA_E6_ROBIN_JADE_LINGSHA
 ]);
 
 export function getDamageLeaderboardScenario(id) {
