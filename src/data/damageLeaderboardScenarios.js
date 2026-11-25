@@ -622,14 +622,14 @@ const DRRATIO_E0S1_ROBIN_TOPAZ_AVENTURINE = {
   ]
 };
 
-const SEELE_E0S1_SUNDAY_ROBIN_HUOHUO = {
-  id: "seele-e0s1-sunday-robin-huohuo-moc12-v1",
+const SEELE_E0S1_SPARKLE_SILVERWOLF_FUXUAN = {
+  id: "seele-e0s1-sparkle-silverwolf-fuxuan-moc12-v1",
   status: "published",
   gameVersion: "4.7",
   calculationVersion: "damage-cycle-v1",
   characterId: "1102",
-  nameRu: "Зеле E0S1 — Воскресенье · Зарянка · Хохо",
-  nameEn: "Seele E0S1 — Sunday · Robin · Huohuo",
+  nameRu: "Зеле E0S1 — Искорка · Серебряный Волк · Фу Сюань",
+  nameEn: "Seele E0S1 — Sparkle · Silver Wolf · Fu Xuan",
   metricRu: "Расчётный урон полного цикла",
   metricEn: "Standardized full-cycle damage",
   methodologyRu: "Сравниваются только Зеле E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
@@ -637,12 +637,12 @@ const SEELE_E0S1_SUNDAY_ROBIN_HUOHUO = {
   requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23001", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
   enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
   teammates: [
-    { id: "1313", nameRu: "Воскресенье", nameEn: "Sunday", names: ["Воскресенье", "Sunday"], roleRu: "Гармония / продвижение", roleEn: "Harmony / advance", dynamicBuffs: { critRate: 20, critDmg: 75, dmgBoost: 30 }, dynamicBuffDescRu: "Воскресенье: +20% крит. шанса, +75% крит. урона и +30% урона.", dynamicBuffDescEn: "Sunday: +20% CRIT Rate, +75% CRIT DMG and +30% DMG." },
-    { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 20 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +20% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +20% CRIT DMG." },
-    { id: "1217", nameRu: "Хохо", nameEn: "Huohuo", names: ["Хохо", "Huohuo"], roleRu: "Исцеление / АТК", roleEn: "Healing / ATK", dynamicBuffs: { atkPercent: 40 }, dynamicBuffDescRu: "Сверхспособность Хохо: +40% АТК.", dynamicBuffDescEn: "Huohuo Ultimate: +40% ATK." }
+    { id: "1306", nameRu: "Искорка", nameEn: "Sparkle", names: ["Искорка", "Sparkle"], roleRu: "Гармония / Моно-Квант", roleEn: "Harmony / Mono-Quantum", dynamicBuffs: { critDmg: 95, dmgBoost: 48, atkPercent: 45 }, dynamicBuffDescRu: "Искорка: +95% крит. урона, +48% урона и +45% АТК (Моно-Квант).", dynamicBuffDescEn: "Sparkle: +95% CRIT DMG, +48% DMG and +45% ATK (Mono-Quantum)." },
+    { id: "1006", nameRu: "Серебряный Волк", nameEn: "Silver Wolf", names: ["Серебряный Волк", "Silver Wolf"], roleRu: "Небытие / уязвимость", roleEn: "Nihility / weakness", dynamicBuffs: { defShred: 45, resPen: 13 }, dynamicBuffDescRu: "Серебряный Волк: −45% ЗАЩ и −13% сопр. к Кванту.", dynamicBuffDescEn: "Silver Wolf: −45% DEF and −13% Quantum RES." },
+    { id: "1208", nameRu: "Фу Сюань", nameEn: "Fu Xuan", names: ["Фу Сюань", "Fu Xuan"], roleRu: "Сохранение / Крит", roleEn: "Preservation / CRIT", dynamicBuffs: { critRate: 12 }, dynamicBuffDescRu: "Матрица предвидения Фу Сюань: +12% крит. шанса.", dynamicBuffDescEn: "Fu Xuan Matrix of Prescience: +12% CRIT Rate." }
   ],
   sources: [
-    { title: "Seele Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/seele", retrievedAt: "2026-11-22", use: "kit & team synergy" },
+    { title: "Seele Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/seele", retrievedAt: "2026-11-22", use: "Mono-Quantum team synergy" },
     { title: "TurnBasedGameData 4.7 snapshot", url: "https://github.com/DimbreathBot/TurnBasedGameData/tree/dad9155eb00fdeda31fb8456507c53590d49071f", retrievedAt: "2026-11-22", use: "MoC enemy wave" }
   ]
 };
@@ -743,14 +743,14 @@ const CLARA_E0S1_ROBIN_SUNDAY_HUOHUO = {
   ]
 };
 
-const JADE_E0S1_ROBIN_TOPAZ_LINGSHA = {
-  id: "jade-e0s1-robin-topaz-lingsha-moc12-v1",
+const JADE_E0S1_ROBIN_BLADE_LINGSHA = {
+  id: "jade-e0s1-robin-blade-lingsha-moc12-v1",
   status: "published",
   gameVersion: "4.7",
   calculationVersion: "damage-cycle-v1",
   characterId: "1314",
-  nameRu: "Яшма E0S1 — Зарянка · Топаз · Линша",
-  nameEn: "Jade E0S1 — Robin · Topaz · Lingsha",
+  nameRu: "Яшма E0S1 — Блэйд · Зарянка · Линша",
+  nameEn: "Jade E0S1 — Blade · Robin · Lingsha",
   metricRu: "Расчётный урон полного цикла",
   metricEn: "Standardized full-cycle damage",
   methodologyRu: "Сравниваются только Яшма E0 с сигнатурным конусом S1, уровнем 80 и прокачанными основными навыками. Союзники и их баффы фиксированы; урон рассчитывается по волне Воспоминаний хаоса 4.7.",
@@ -758,12 +758,12 @@ const JADE_E0S1_ROBIN_TOPAZ_LINGSHA = {
   requirements: { characterLevel: 80, eidolon: 0, lightCone: { id: "23028", superimposition: 1, level: 80 }, coreSkillLevels: { BPSkill: 10, Ultra: 10, Talent: 10 } },
   enemy: { mode: "moc", enemyDataReferenceDate: "2026-11-22", enemySide: 1, enemyStageIndex: -1, enemyWaveIndex: -1 },
   teammates: [
+    { id: "1205", nameRu: "Блэйд", nameEn: "Blade", names: ["Блэйд", "Blade"], roleRu: "Разрушение / Сборщик долгов", roleEn: "Destruction / Debt Collector", dynamicBuffs: {}, dynamicBuffDescRu: "Блэйд: быстрый набор стаков Яшмы за счёт массовых атак и бонус-атак.", dynamicBuffDescEn: "Blade: rapid Jade stack generation via AoE & follow-up attacks." },
     { id: "1309", nameRu: "Зарянка", nameEn: "Robin", names: ["Зарянка", "Robin"], roleRu: "Гармония / баффер", roleEn: "Harmony / buffer", dynamicBuffs: { atkPercent: 45, dmgBoost: 50, critDmg: 45 }, dynamicBuffDescRu: "Зарянка: +45% АТК, +50% урона и +45% крит. урона.", dynamicBuffDescEn: "Robin: +45% ATK, +50% DMG and +45% CRIT DMG." },
-    { id: "1112", nameRu: "Топаз", nameEn: "Topaz", names: ["Топаз", "Topaz"], roleRu: "Охота / саб-ДД", roleEn: "Hunt / sub-DPS", dynamicBuffs: { allVuln: 50 }, dynamicBuffDescRu: "Метка Топаз: +50% получаемого урона от бонус-атак.", dynamicBuffDescEn: "Topaz Proof of Debt: +50% follow-up DMG taken." },
-    { id: "1222", nameRu: "Линша", nameEn: "Lingsha", names: ["Линша", "Lingsha"], roleRu: "Изобилие / стаки", roleEn: "Abundance / stacks", dynamicBuffs: {}, dynamicBuffDescRu: "Линша: массовые атаки для набора стаков Яшмы.", dynamicBuffDescEn: "Lingsha: AoE attacks for Jade stack generation." }
+    { id: "1222", nameRu: "Линша", nameEn: "Lingsha", names: ["Линша", "Lingsha"], roleRu: "Изобилие / стаки", roleEn: "Abundance / stacks", dynamicBuffs: {}, dynamicBuffDescRu: "Линша: массовое лечение.", dynamicBuffDescEn: "Lingsha: AoE sustain." }
   ],
   sources: [
-    { title: "Jade Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/jade", retrievedAt: "2026-11-22", use: "kit & team synergy" }
+    { title: "Jade Build Guide — Prydwen", url: "https://www.prydwen.gg/star-rail/characters/jade", retrievedAt: "2026-11-22", use: "Blade + Jade synergy" }
   ]
 };
 
@@ -1148,12 +1148,12 @@ export const DAMAGE_LEADERBOARD_SCENARIOS = Object.freeze([
   BLADE_E0S1_SUNDAY_RUANMEI_HUOHUO,
   JINGYUAN_E0S1_SUNDAY_ROBIN_HUOHUO,
   DRRATIO_E0S1_ROBIN_TOPAZ_AVENTURINE,
-  SEELE_E0S1_SUNDAY_ROBIN_HUOHUO,
+  SEELE_E0S1_SPARKLE_SILVERWOLF_FUXUAN,
   YUNLI_E0S1_ROBIN_SUNDAY_HUOHUO,
   ARGENTI_E0S1_SUNDAY_ROBIN_HUOHUO,
   HIMEKO_E0S1_RUANMEI_HMC_LINGSHA,
   CLARA_E0S1_ROBIN_SUNDAY_HUOHUO,
-  JADE_E0S1_ROBIN_TOPAZ_LINGSHA,
+  JADE_E0S1_ROBIN_BLADE_LINGSHA,
   TOPAZ_E0S1_ROBIN_AVENTURINE_RATIO,
   BLACKSWAN_E0S1_KAFKA_RUANMEI_HUOHUO,
   YANQING_E0S1_SUNDAY_ROBIN_AVENTURINE,
